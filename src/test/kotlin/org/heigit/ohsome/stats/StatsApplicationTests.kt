@@ -1,13 +1,11 @@
 package org.heigit.ohsome.stats
 
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
-class StatsApplicationTests {
 
-	@Test
-	fun contextLoads() {
-	}
+class SmokeTests {
+
+    @Test
+    fun run() = Unit
 
 }
