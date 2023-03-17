@@ -1,0 +1,65 @@
+build:
+  maxIssues: 0
+  excludeCorrectable: false
+
+
+config:
+  validation: true
+  warningsAsErrors: true
+
+
+processors:
+  active: true
+
+
+console-reports:
+  active: true
+  exclude:
+    - 'NotificationReport'
+    - 'FindingsReport'
+    - 'FileBasedFindingsReport'
+
+
+output-reports:
+  active: true
+
+
+complexity:
+  active: true
+  excludes: [ '**/test/**' ]
+  ComplexCondition:
+    active: true
+    threshold: 3
+  ComplexMethod:
+    active: true
+    threshold: 4
+    ignoreSingleWhenExpression: false
+    ignoreSimpleWhenEntries: false
+    ignoreNestingFunctions: false
+    nestingFunctions:
+      - 'also'
+      - 'apply'
+      - 'forEach'
+      - 'isNotNull'
+      - 'ifNull'
+      - 'let'
+      - 'run'
+      - 'use'
+      - 'with'
+  LargeClass:
+    active: true
+    threshold: 200
+  LongMethod:
+    active: true
+    threshold: 17
+  LongParameterList:
+    active: true
+    functionThreshold: 5
+    constructorThreshold: 5
+    ignoreDefaultParameters: false
+    ignoreDataClasses: true
+    ignoreAnnotatedParameter: [ ]
+  NestedBlockDepth:
+    active: true
+    threshold: 3
+
