@@ -52,9 +52,7 @@ kover {
         rule {
             isEnabled = true
             bound {
-
-                // TODO reset to 80%
-                minValue = 0
+                minValue = 80
             }
         }
     }
