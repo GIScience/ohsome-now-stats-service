@@ -1,5 +1,6 @@
 package org.heigit.ohsome.stats
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -12,6 +13,7 @@ class StatsController {
 
 
     @GetMapping("/stats")
+    @Operation(summary = "Returns a static snapshot of OSM statistics (for now)")
     fun stats() = mapOf(
         "changesets" to 65009011,
         "users" to 3003842,
