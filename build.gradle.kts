@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.spring") version "1.8.10"
 
     id("io.gitlab.arturbosch.detekt").version("1.21.0")
-
+    id("org.jetbrains.kotlinx.kover") version "0.6.1"
 }
 
 group = "org.heigit.ohsome"
@@ -28,12 +28,34 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "17"
-	}
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "17"
+    }
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+    useJUnitPlatform()
+}
+
+
+
+kover {
+
+    htmlReport {
+        onCheck.set(true)
+    }
+
+    verify {
+        onCheck.set(true)
+        rule {
+            isEnabled = true
+            bound {
+
+                // TODO reset to 80%
+                minValue = 0
+            }
+        }
+    }
+
 }
