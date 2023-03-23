@@ -22,3 +22,32 @@
 * Code Coverage: Kover
     * test coverage > 80%
 
+## Running Locally
+
+The service does not have a deployment yet,
+but can be run locally on every machine with a Java Runtime (JDK 17 or higher.)
+
+To do so run the following start script (on *nix systems):
+
+    ./gradlew bootRun   
+
+or (on Windows systems):
+
+    ./gradlew.bat bootRun   
+
+Once the system has started,
+the API documentation including links to endpoints is available here:
+
+http://localhost:8080/doc.html
+
+
+
+
+
+
+
+
+
+
+
+
