@@ -21,10 +21,13 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
 
-//	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("com.clickhouse:clickhouse-jdbc:0.4.1:all")
+
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
