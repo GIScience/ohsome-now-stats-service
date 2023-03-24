@@ -24,16 +24,32 @@
 
 ## Running Locally
 
+### Secret management
+
+For local execution, the application requires a (git-ignored) properties file here: `/src/main/resources/secrets.properties`.
+
+It contains the database password in Java property-file format:
+
+```properties
+spring.datasource.password=<clickhouse db password here>
+```
+
+### Running
+
 The service does not have a deployment yet,
 but can be run locally on every machine with a Java Runtime (JDK 17 or higher.)
 
 To do so run the following start script (on *nix systems):
 
-    ./gradlew bootRun   
+```shell
+./gradlew bootRun   
+```
 
 or (on Windows systems):
 
-    ./gradlew.bat bootRun   
+```shell
+./gradlew.bat bootRun   
+```
 
 Once the system has started,
 the API documentation including links to endpoints is available here:
