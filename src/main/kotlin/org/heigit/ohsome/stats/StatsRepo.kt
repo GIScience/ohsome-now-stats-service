@@ -33,7 +33,7 @@ class StatsRepo {
 
 
     //TODO: add key for hashtag used for query
-    fun getStats() = create(dataSource)
+    fun getStats(hashtag: String = "*") = create(dataSource)
         .withHandle<Map<String, Any>, RuntimeException>(::asMap)
 
 
