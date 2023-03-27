@@ -25,7 +25,7 @@ class StatsControllerTests {
 
 
     //language=JSON
-    private val expected = """{
+    private val expectedStatic = """{
           "changesets": 65009011,
           "users": 3003842,
           "roads": 45964973.0494135,
@@ -57,7 +57,7 @@ class StatsControllerTests {
             .perform(get("/stats_static"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(content().json(expected, false))
+            .andExpect(content().json(expectedStatic, false))
 
     }
 
