@@ -26,6 +26,8 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.clickhouse:clickhouse-jdbc:0.4.1:all")
+    implementation("org.jdbi:jdbi3-core:3.37.1")
+
 
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
