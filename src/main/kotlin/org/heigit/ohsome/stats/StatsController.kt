@@ -15,13 +15,14 @@ class StatsController {
     lateinit var repo: StatsRepo
 
 
-    @GetMapping("/stats_db")
+    //TODO: add spring path variable for 'hashtag'
+    @GetMapping("/stats")
     @Operation(summary = "Returns live data from DB")
     fun statsDB() = this.repo.getStats()
 
 
     // static data taken from http://osm-stats-production-api.azurewebsites.net/stats at 2pm, 20 March 2023
-    @GetMapping("/stats")
+    @GetMapping("/stats_static")
     @Operation(summary = "Returns a static snapshot of OSM statistics (for now)")
     fun stats() = mapOf(
         "changesets" to 65009011,

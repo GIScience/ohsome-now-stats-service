@@ -1,9 +1,9 @@
 package org.heigit.ohsome.stats
 
-import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -12,6 +12,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @WebMvcTest(StatsController::class)
 class StatsControllerTests {
+
+
+    @MockBean
+    private lateinit var repo: StatsRepo
+
 
     @Autowired
     private lateinit var mockMvc: MockMvc
@@ -33,7 +38,7 @@ class StatsControllerTests {
     fun `stats should return a static map of stats values`() {
 
         this.mockMvc
-            .perform(get("/stats"))
+            .perform(get("/stats_static"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(content().json(expected, false))
