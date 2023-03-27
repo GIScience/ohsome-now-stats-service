@@ -1,6 +1,8 @@
 package org.heigit.ohsome.stats
 
+import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -35,7 +37,21 @@ class StatsControllerTests {
 
 
     @Test
-    fun `stats should return a static map of stats values`() {
+    fun `stats should return data from the db repo`() {
+
+        `when`(repo.getStats())
+            .thenReturn(mapOf("hashtag" to "*"))
+
+        this.mockMvc
+            .perform(get("/stats"))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(content().string(containsString(""""hashtag":""")))
+    }
+
+
+    @Test
+    fun `stats_static should return a static map of stats values`() {
 
         this.mockMvc
             .perform(get("/stats_static"))
