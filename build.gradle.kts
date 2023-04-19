@@ -29,8 +29,10 @@ dependencies {
     implementation("org.jdbi:jdbi3-core:3.37.1")
 
 
-
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
+    testImplementation("org.testcontainers:clickhouse:1.17.6")
+
 }
 
 tasks.withType<KotlinCompile> {
