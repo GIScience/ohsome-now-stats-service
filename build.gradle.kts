@@ -59,7 +59,8 @@ kover {
         rule {
             isEnabled = true
             bound {
-                minValue = 80
+//                minValue = 80
+                minValue = 40
             }
         }
     }

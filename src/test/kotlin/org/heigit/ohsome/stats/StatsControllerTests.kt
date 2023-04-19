@@ -1,6 +1,7 @@
 package org.heigit.ohsome.stats
 
 import org.hamcrest.CoreMatchers.containsString
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,6 +37,7 @@ class StatsControllerTests {
       }"""
 
 
+    @Disabled("endpoint currently disabled")
     @Test
     fun `stats should return data from the db repo`() {
 
