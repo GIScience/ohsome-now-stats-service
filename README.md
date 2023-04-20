@@ -66,7 +66,7 @@ In order to run the service within a Docker environment, run the following comma
 
 ```shell
 
-./gradlew build
+./gradlew clean build
 
 docker build -t heigit/hot-api .
 docker run -p 8080:8080 heigit/hot-api
