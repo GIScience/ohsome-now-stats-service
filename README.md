@@ -8,7 +8,7 @@
 ## Technology
 
 * JVM: Java 17
-* Base framework: Spring Boot 6
+* Base framework: Spring Boot 3
 * Build tool: Gradle 7.6
 * Implementation language: Kotlin 1.8
 * Test Framework: JUnit Jupiter 5.9
