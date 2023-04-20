@@ -47,6 +47,11 @@ tasks.withType<Test> {
 }
 
 
+// only build the 'fat' jar
+tasks.named<Jar>("jar") {
+    enabled = false
+}
+
 
 kover {
 
