@@ -1,17 +1,18 @@
+FROM eclipse-temurin:17 AS buildstage
 
-# simple setup according to https://spring.io/guides/topicals/spring-boot-docker/
-# could also be set up 'layered' to speed up build and startup times
+WORKDIR /tmp/build-ocs
 
+# copy and cache gradle
+COPY gradlew build.gradle.kts settings.gradle.kts ./
+COPY gradle gradle
+RUN ./gradlew --version
 
-# this base image was picked for no special reason except being compatible with Mac M1
-# feel free to replace with better/smaller/safer variant
-FROM eclipse-temurin:17.0.6_10-jre-focal
-VOLUME /tmp
+# copy source files and build
+COPY config config
+COPY hurl hurl
+COPY src src
+RUN ./gradlew --no-daemon clean assemble
 
-COPY build/libs/*.jar app.jar
+FROM eclipse-temurin:17-alpine
 
-# database credentials will soon be injected here via environment variables
-ENTRYPOINT ["java","-jar","/app.jar"]
-
-
-
+COPY --from=buildstage /tmp/build-ocs/build/libs/*.jar app.jar
