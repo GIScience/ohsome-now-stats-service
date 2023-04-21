@@ -28,7 +28,7 @@ class StatsRepo {
             FROM_UNIXTIME(intDiv(max(changeset_timestamp), 1000)) as latest
         FROM "__stats_all_unnested"
         WHERE
-            hashtag = '#missingmaps';
+            hashtag = '#hotosm-project-3151';
         """.trimIndent()
 
 
