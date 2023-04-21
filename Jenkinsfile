@@ -61,6 +61,8 @@ pipeline {
       steps {
         /* remove the following line when secrets.properties is no longer necessary */
         sh 'echo spring.datasource.password= > src/main/resources/secrets.properties'
+        /* integrate this property properly e.g. into the docker setup */
+        sh 'echo server.servlet.context-path=/api >> src/main/resources/application.properties'
         sh 'docker compose -f docker-compose.yml -f docker-compose.integration.yml up -d --build --force-recreate'
       }
     }
