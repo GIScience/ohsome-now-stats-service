@@ -8,7 +8,7 @@ import org.springframework.boot.runApplication
 
 @OpenAPIDefinition(
     info = Info(
-        title = "Ohsome Contribution Stats Service: OpenAPI definition",
+        title = "ohsome Contribution Stats Service: OpenAPI definition",
         description = "This document describes the REST endpoints for OSM contribution statistics.",
         version = "v1"
     )
