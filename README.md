@@ -62,20 +62,23 @@ http://localhost:8080/doc.html
 
 ### Running within Docker
 
-In order to run the service within a Docker environment, run the following commands:
+In order to run the service and a development database with dummy data within a Docker environment, run the following commands:
 
 ```shell
-
-./gradlew clean build
-
-docker build -t heigit/hot-api .
-docker run -p 8080:8080 heigit/hot-api
-
+docker compose up -d
 ```
 
-This relies on the  [Dockerfile](./Dockerfile) in this repository.
+If you want to only run a development database in Docker and run the API natively (i.e. with gradle), run the following commands:
+```shell
+# start dev database
+docker compose up -d clickhouse-database
+# run API using the gradle wrapper
+./gradlew bootRun --args=--spring.datasource.url=jdbc:clickhouse://localhost
+```
 
-**Note:** The database credentials will be injected into the dockerized app via environment variables (soon). 
+This relies on the  [Dockerfile](./Dockerfile),  in this repository.
+
+**Note:** The database credentials will be injected into the dockerized app via environment variables (soon). The Docker database setup currently relies on an empty password set in `secrets.properties` (see above).
 
 
 
