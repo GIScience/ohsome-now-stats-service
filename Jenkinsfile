@@ -59,6 +59,8 @@ pipeline {
 
     stage ('Deploy') {
       steps {
+        /* remove the following line when secrets.properties is no longer necessary */
+        sh 'echo spring.datasource.password= > src/main/resources/secrets.properties'
         sh 'docker compose -f docker-compose.yml -f docker-compose.integration.yml up -d --build --force-recreate'
       }
     }
