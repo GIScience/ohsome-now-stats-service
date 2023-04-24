@@ -64,8 +64,6 @@ pipeline {
         }
       }
       steps {
-        /* integrate this property properly e.g. into the docker setup */
-        sh 'echo server.servlet.context-path=/api >> src/main/resources/application.properties'
         sh 'docker compose -f docker-compose.yml -f docker-compose.integration.yml up -d --build --force-recreate'
       }
     }
