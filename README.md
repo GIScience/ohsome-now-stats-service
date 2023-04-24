@@ -29,16 +29,6 @@ The service can be run directly on the OS or within a docker image
 
 ### Running Locally
 
-#### Secret management
-
-For local execution, the application requires a (git-ignored) properties file here: `/src/main/resources/secrets.properties`.
-
-It contains the database password in Java property-file format:
-
-```properties
-spring.datasource.password=<clickhouse db password here>
-```
-
 #### Starting the service
 
 The service can be run on every machine with a Java Runtime (JDK 17 or higher.)
@@ -73,7 +63,7 @@ If you want to only run a development database in Docker and run the API nativel
 # start dev database
 docker compose up -d clickhouse-database
 # run API using the gradle wrapper
-./gradlew bootRun --args=--spring.datasource.url=jdbc:clickhouse://localhost
+./gradlew bootRun
 ```
 
 This relies on the  [Dockerfile](./Dockerfile),  in this repository.
