@@ -30,8 +30,8 @@ dependencies {
 
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
-    testImplementation("org.testcontainers:clickhouse:1.17.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.18.0")
+    testImplementation("org.testcontainers:clickhouse:1.18.0")
 
 }
 
