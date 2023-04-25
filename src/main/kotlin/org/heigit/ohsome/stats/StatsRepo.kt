@@ -10,8 +10,6 @@ import javax.sql.DataSource
 @Component
 class StatsRepo {
 
-    //TODO: https://www.baeldung.com/spring-boot-jdbi
-
 
     @Autowired
     lateinit var dataSource: DataSource
@@ -26,7 +24,7 @@ class StatsRepo {
             count(building_area) as buildings,
             count(*) as edits,
             FROM_UNIXTIME(intDiv(max(changeset_timestamp), 1000)) as latest
-        FROM "__stats_all_unnested"
+        FROM "stats"
         WHERE
             hashtag = '#hotosm-project-3151';
         """.trimIndent()
