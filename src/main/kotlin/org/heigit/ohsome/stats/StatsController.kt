@@ -3,6 +3,7 @@ package org.heigit.ohsome.stats
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 
@@ -15,15 +16,14 @@ class StatsController {
     lateinit var repo: StatsRepo
 
 
-//    TODO: add spring path variable for 'hashtag'
-@GetMapping("/stats")
-@Operation(summary = "Returns live data from DB")
-fun statsDB() = this.repo.getStats("#&uganda")
+    @Operation(summary = "Returns live data from DB")
+    @GetMapping("/stats/{hashtag}")
+    fun statsDB(@PathVariable hashtag: String) = this.repo.getStats(hashtag)
 
 
     // static data taken from http://osm-stats-production-api.azurewebsites.net/stats at 2pm, 20 March 2023
-    @GetMapping("/stats_static")
     @Operation(summary = "Returns a static snapshot of OSM statistics (for now)")
+    @GetMapping("/stats_static")
     fun stats() = mapOf(
         "changesets" to 65009011,
         "users" to 3003842,

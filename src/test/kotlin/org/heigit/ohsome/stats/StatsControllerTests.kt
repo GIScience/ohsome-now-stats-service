@@ -39,11 +39,11 @@ class StatsControllerTests {
     @Test
     fun `stats should return data from the db repo`() {
 
-        `when`(repo.getStats("#&uganda"))
+        `when`(repo.getStats("&uganda"))
             .thenReturn(mapOf("hashtag" to "*"))
 
         this.mockMvc
-            .perform(get("/stats"))
+            .perform(get("/stats/&uganda"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(content().string(containsString(""""hashtag":""")))
