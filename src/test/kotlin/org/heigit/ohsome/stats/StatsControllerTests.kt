@@ -39,7 +39,7 @@ class StatsControllerTests {
     @Test
     fun `stats should return data from the db repo`() {
 
-        `when`(repo.getStats())
+        `when`(repo.getStats("#&uganda"))
             .thenReturn(mapOf("hashtag" to "*"))
 
         this.mockMvc

@@ -42,7 +42,7 @@ class StatsRepoIntegrationTests {
 
         assertTrue(clickHouse.isRunning)
 
-        val result = this.repo.getStats()
+        val result = this.repo.getStats("#&uganda")
         println(result)
 
         assertEquals(6, result.size)

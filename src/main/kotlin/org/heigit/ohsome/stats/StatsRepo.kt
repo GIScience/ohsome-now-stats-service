@@ -26,19 +26,17 @@ class StatsRepo {
             FROM_UNIXTIME(intDiv(max(changeset_timestamp), 1000)) as latest
         FROM "stats"
         WHERE
-            hashtag = '#&uganda';
+            hashtag = ?;
         """.trimIndent()
 
 
-    //TODO: add key for hashtag used for query
-    fun getStats(hashtag: String = "*") = create(dataSource)
-        .withHandle<Map<String, Any>, RuntimeException>(::asMap)
+    fun getStats(hashtag: String) = create(dataSource)
+        .withHandle<Map<String, Any>, RuntimeException> { asMap(it, hashtag) }
 
 
-    private fun asMap(handle: Handle) = handle
-        .createQuery(sql)
+    private fun asMap(handle: Handle, hashtag: String) = handle
+        .select(sql, hashtag)
         .mapToMap()
         .single()
-
 
 }
