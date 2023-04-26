@@ -26,7 +26,7 @@ class StatsRepo {
             FROM_UNIXTIME(intDiv(max(changeset_timestamp), 1000)) as latest
         FROM "stats"
         WHERE
-            hashtag = '#hotosm-project-3151';
+            hashtag = '#&uganda';
         """.trimIndent()
 
 

@@ -37,25 +37,16 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql"])
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `stats should return data from the db repo`() {
 
         assertTrue(clickHouse.isRunning)
 
         val result = this.repo.getStats()
         println(result)
+
         assertEquals(6, result.size)
-        assertEquals("{changesets=0, users=0, roads=null, buildings=0, edits=0, latest=1970-01-01T00:00}", result.toString())
-
-
-//        this yields problems with clickhouse data types:
-
-//        assertEquals(0, result["changesets"] )
-//        assertEquals(0, result["users"] )
-//        assertEquals(0.0, result["roads"] )
-//        assertEquals(0, result["buildings"] )
-//        assertEquals(0, result["edits"] )
-
+        assertEquals("{changesets=1, users=1, roads=1326.4405878618195, buildings=22, edits=22, latest=2017-12-19T00:52:03}", result.toString())
 
     }
 
