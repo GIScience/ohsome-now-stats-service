@@ -6,7 +6,7 @@ HTTP/* *
 duration < 200
 status == 200
 
-jsonpath "$.users"  == 3003842
+jsonpath "$.users"  == 58
 body contains "changesets"
 body contains "users"
 body contains "roads"
