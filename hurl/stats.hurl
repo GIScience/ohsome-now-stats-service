@@ -1,4 +1,4 @@
-GET http://localhost:8080/stats
+GET http://localhost:8080/stats/hotosm-project-11850
 
 HTTP/* *
 
