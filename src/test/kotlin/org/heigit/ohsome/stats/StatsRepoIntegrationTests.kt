@@ -36,6 +36,9 @@ class StatsRepoIntegrationTests {
     lateinit var repo: StatsRepo
 
 
+    val expected = "{changesets=1, users=1, roads=1326.4405878618195, buildings=22, edits=22, latest=2017-12-19T00:52:03, hashtag=&uganda}"
+
+
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `stats should return data from the db repo`() {
@@ -45,8 +48,8 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStats("&uganda")
         println(result)
 
-        assertEquals(6, result.size)
-        assertEquals("{changesets=1, users=1, roads=1326.4405878618195, buildings=22, edits=22, latest=2017-12-19T00:52:03}", result.toString())
+        assertEquals(7, result.size)
+        assertEquals(expected, result.toString())
 
     }
 

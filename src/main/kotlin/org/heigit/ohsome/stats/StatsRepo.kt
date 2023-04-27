@@ -31,7 +31,7 @@ class StatsRepo {
 
 
     fun getStats(hashtag: String) = create(dataSource)
-        .withHandle<Map<String, Any>, RuntimeException> { asMap(it, "#$hashtag") }
+        .withHandle<Map<String, Any>, RuntimeException> { asMap(it, "#$hashtag") } + ("hashtag" to hashtag)
 
 
     private fun asMap(handle: Handle, hashtag: String) = handle
