@@ -4,6 +4,8 @@ services:
   api-service:
     build:
       dockerfile: Dockerfile
-    command: "java -jar app.jar --spring.datasource.url=jdbc:clickhouse://localhost --server.servlet.context-path=/api"
+    command: "java -jar app.jar --spring.datasource.url=jdbc:clickhouse://host.docker.internal --server.servlet.context-path=/api"
     ports:
       - "127.0.0.1:8081:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
