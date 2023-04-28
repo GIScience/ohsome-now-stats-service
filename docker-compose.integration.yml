@@ -1,6 +1,9 @@
 version: "3"
+name: "ohsome-cs-service"
 services:
   api-service:
-    command: "java -jar app.jar --spring.datasource.url=jdbc:clickhouse://clickhouse-database --server.servlet.context-path=/api"
+    build:
+      dockerfile: Dockerfile
+    command: "java -jar app.jar --spring.datasource.url=jdbc:clickhouse://localhost --server.servlet.context-path=/api"
     ports:
       - "127.0.0.1:8081:8080"

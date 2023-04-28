@@ -64,7 +64,7 @@ pipeline {
         }
       }
       steps {
-        sh 'docker compose -f docker-compose.yml -f docker-compose.integration.yml up -d --build --force-recreate'
+        sh 'docker compose -f docker-compose.integration.yml up -d --build --force-recreate'
       }
     }
 

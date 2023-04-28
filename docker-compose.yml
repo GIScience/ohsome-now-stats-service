@@ -5,7 +5,8 @@ services:
     build:
       dockerfile: Dockerfile
     command: "java -jar app.jar --spring.datasource.url=jdbc:clickhouse://clickhouse-database"
-    # ports are added in docker-compose.override.yml and docker-compose.integration.yml
+    ports:
+      - "127.0.0.1:8080:8080"
     depends_on:
       - clickhouse-database
 
