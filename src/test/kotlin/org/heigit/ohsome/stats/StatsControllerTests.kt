@@ -37,7 +37,7 @@ class StatsControllerTests {
 
 
     @Test
-    fun `stats should return data from the db repo`() {
+    fun `stats can be served without date restriction`() {
 
         `when`(repo.getStats("&uganda"))
             .thenReturn(mapOf("hashtag" to "*"))
@@ -47,6 +47,24 @@ class StatsControllerTests {
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(content().string(containsString(""""hashtag":""")))
+    }
+
+    @Test
+    fun `stats can be served with explicit start date`() {
+
+        `when`(repo.getStats("&uganda"))
+            .thenReturn(mapOf("hashtag" to "*"))
+
+        this.mockMvc
+            .perform(
+                get("/stats/&uganda")
+                    .queryParam("startdate", "2017-10-01T04:00")
+            )
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(content().string(containsString(""""hashtag":""")))
+            .andExpect(content().string(containsString(""""startdate"""")))
+            .andExpect(content().string(containsString(""""2017-10-01T04:00"""")))
     }
 
 
