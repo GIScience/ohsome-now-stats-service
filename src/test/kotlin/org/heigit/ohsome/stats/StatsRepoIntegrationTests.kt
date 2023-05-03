@@ -15,6 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 
 @SpringBootTest(webEnvironment = NONE)
 @Testcontainers
+@Sql(*["/init_schema.sql", "/stats_400rows.sql"])
 class StatsRepoIntegrationTests {
 
 
