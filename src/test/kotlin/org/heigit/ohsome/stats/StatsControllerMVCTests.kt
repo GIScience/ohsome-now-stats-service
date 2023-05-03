@@ -57,7 +57,6 @@ class StatsControllerMVCTests {
     }
 
 
-    //TODO: separate tests for startdate and enddate combinations
     @Test
     fun `stats can be served with explicit start date`() {
 
