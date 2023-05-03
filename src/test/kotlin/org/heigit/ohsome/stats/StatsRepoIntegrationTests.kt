@@ -1,6 +1,7 @@
 package org.heigit.ohsome.stats
 
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,6 +18,10 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @Testcontainers
 @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
 class StatsRepoIntegrationTests {
+
+
+    @BeforeEach
+    fun checkClickhouse() = assertTrue(clickHouse.isRunning)
 
 
     companion object {
@@ -51,7 +56,6 @@ class StatsRepoIntegrationTests {
     @Test
     fun `stats should return data from the db repo`() {
 
-        assertTrue(clickHouse.isRunning)
 
         val result = this.repo.getStats("&uganda")
         println(result)
