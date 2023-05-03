@@ -1,6 +1,7 @@
 package org.heigit.ohsome.stats
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
@@ -22,8 +23,14 @@ class StatsController {
     @Operation(summary = "Returns live data from DB")
     @GetMapping("/stats/{hashtag}")
     fun statsDB(
-        @PathVariable hashtag: String,
-        @RequestParam("startdate", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) startDate: OffsetDateTime?
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @PathVariable
+        hashtag: String,
+
+        @Parameter(description = "the start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam("startdate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        startDate: OffsetDateTime?
     ): Map<String, Any> {
 
         if (startDate == null)
