@@ -27,16 +27,30 @@ class StatsController {
         @PathVariable
         hashtag: String,
 
-        @Parameter(description = "the start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam("startdate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        startDate: OffsetDateTime?
+        startDate: OffsetDateTime?,
+
+        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam("enddate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        endDate: OffsetDateTime?
     ): Map<String, Any> {
 
-        if (startDate == null)
-            return this.repo.getStats(hashtag)
+        var extraMap = emptyMap<String, Any>()
 
-        return this.repo.getStats(hashtag) + mapOf("startdate" to startDate)
+        startDate?.let {
+            extraMap = extraMap + mapOf("startdate" to startDate)
+        }
+
+        endDate?.let {
+            extraMap = extraMap + mapOf("enddate" to endDate)
+        }
+
+
+        return this.repo.getStats(hashtag) + extraMap
+
     }
 
 
