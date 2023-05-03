@@ -37,11 +37,16 @@ class StatsControllerTests {
       }"""
 
 
+    private fun setupMockRepo() {
+        `when`(repo.getStats(hashtag))
+            .thenReturn(mapOf("hashtag" to hashtag))
+    }
+
+
     @Test
     fun `stats can be served without date restriction`() {
 
-        `when`(repo.getStats(hashtag))
-            .thenReturn(mapOf("hashtag" to hashtag))
+        setupMockRepo()
 
         this.mockMvc
             .perform(get("/stats/$hashtag"))
@@ -56,8 +61,7 @@ class StatsControllerTests {
     @Test
     fun `stats can be served with explicit start date`() {
 
-        `when`(repo.getStats(hashtag))
-            .thenReturn(mapOf("hashtag" to hashtag))
+        setupMockRepo()
 
         val GET = get("/stats/$hashtag")
             .queryParam("startdate", "2017-10-01T04:00+05:00")
@@ -84,5 +88,6 @@ class StatsControllerTests {
             .andExpect(content().json(expectedStatic, false))
 
     }
+
 
 }
