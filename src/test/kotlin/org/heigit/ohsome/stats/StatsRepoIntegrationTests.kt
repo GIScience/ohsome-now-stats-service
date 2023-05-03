@@ -16,7 +16,6 @@ import org.testcontainers.junit.jupiter.Testcontainers
 
 @SpringBootTest(webEnvironment = NONE)
 @Testcontainers
-@Sql(*["/init_schema.sql", "/stats_400rows.sql"])
 class StatsRepoIntegrationTests {
 
 
@@ -54,10 +53,21 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    fun `stats should return data from the db repo`() {
-
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `stats should return all data`() {
 
         val result = this.repo.getStats("&uganda")
+        println(result)
+
+        assertEquals(7, result.size)
+        assertEquals(expected.toString(), result.toString())
+
+    }
+
+    @Test
+    fun `getStatsForTimeSpan should still return all data in time span when using default time span`() {
+
+        val result = this.repo.getStatsForTimeSpan("&uganda")
         println(result)
 
         assertEquals(7, result.size)

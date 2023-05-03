@@ -4,6 +4,9 @@ import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi.create
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.time.Instant
+import java.time.Instant.EPOCH
+import java.time.Instant.now
 import javax.sql.DataSource
 
 
@@ -31,6 +34,10 @@ class StatsRepo {
 
 
     fun getStats(hashtag: String) = create(dataSource)
+        .withHandle<Map<String, Any>, RuntimeException> { asMap(it, "#$hashtag") } + ("hashtag" to hashtag)
+
+
+    fun getStatsForTimeSpan(hashtag: String, startDate: Instant = EPOCH, endDate: Instant = now()) = create(dataSource)
         .withHandle<Map<String, Any>, RuntimeException> { asMap(it, "#$hashtag") } + ("hashtag" to hashtag)
 
 
