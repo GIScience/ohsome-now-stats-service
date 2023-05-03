@@ -43,7 +43,7 @@ class StatsController {
     }
 
 
-    private fun echoRequestParameters(startDate: OffsetDateTime?, endDate: OffsetDateTime?): Map<String, OffsetDateTime> {
+    fun echoRequestParameters(startDate: OffsetDateTime?, endDate: OffsetDateTime?): Map<String, OffsetDateTime> {
         var extraMap = emptyMap<String, OffsetDateTime>()
 
         startDate?.let {

@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 
 @WebMvcTest(StatsController::class)
-class StatsControllerTests {
+class StatsControllerMVCTests {
 
     private val hashtag = "&uganda"
 
