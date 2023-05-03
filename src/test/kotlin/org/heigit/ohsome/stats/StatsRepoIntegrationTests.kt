@@ -36,11 +36,18 @@ class StatsRepoIntegrationTests {
     lateinit var repo: StatsRepo
 
 
-    val expected = "{changesets=1, users=1, roads=1326.4405878618195, buildings=22, edits=22, latest=2017-12-19T00:52:03, hashtag=&uganda}"
+    val expected = mapOf(
+        "changesets" to 1,
+        "users" to 1,
+        "roads" to 1326.4405878618195,
+        "buildings" to 22,
+        "edits" to 22,
+        "latest" to "2017-12-19T00:52:03",
+        "hashtag" to "&uganda"
+    )
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `stats should return data from the db repo`() {
 
         assertTrue(clickHouse.isRunning)
@@ -49,7 +56,7 @@ class StatsRepoIntegrationTests {
         println(result)
 
         assertEquals(7, result.size)
-        assertEquals(expected, result.toString())
+        assertEquals(expected.toString(), result.toString())
 
     }
 
