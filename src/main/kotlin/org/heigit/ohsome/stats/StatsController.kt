@@ -38,7 +38,13 @@ class StatsController {
         endDate: OffsetDateTime?
     ): Map<String, Any> {
 
-        var extraMap = emptyMap<String, Any>()
+        return this.repo.getStats(hashtag) + echoRequestParameters(startDate, endDate)
+
+    }
+
+
+    private fun echoRequestParameters(startDate: OffsetDateTime?, endDate: OffsetDateTime?): Map<String, OffsetDateTime> {
+        var extraMap = emptyMap<String, OffsetDateTime>()
 
         startDate?.let {
             extraMap = extraMap + mapOf("startdate" to startDate)
@@ -48,9 +54,7 @@ class StatsController {
             extraMap = extraMap + mapOf("enddate" to endDate)
         }
 
-
-        return this.repo.getStats(hashtag) + extraMap
-
+        return extraMap
     }
 
 

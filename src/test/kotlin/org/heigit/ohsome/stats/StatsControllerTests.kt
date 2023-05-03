@@ -1,6 +1,5 @@
 package org.heigit.ohsome.stats
 
-import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +13,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @WebMvcTest(StatsController::class)
 class StatsControllerTests {
+
+    private val hashtag = "&uganda"
 
 
     @MockBean
@@ -39,14 +40,15 @@ class StatsControllerTests {
     @Test
     fun `stats can be served without date restriction`() {
 
-        `when`(repo.getStats("&uganda"))
-            .thenReturn(mapOf("hashtag" to "*"))
+        `when`(repo.getStats(hashtag))
+            .thenReturn(mapOf("hashtag" to hashtag))
 
         this.mockMvc
-            .perform(get("/stats/&uganda"))
+            .perform(get("/stats/$hashtag"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(content().string(containsString(""""hashtag":""")))
+            .andExpect(jsonPath("$.hashtag").value(hashtag))
+
     }
 
 
@@ -54,24 +56,21 @@ class StatsControllerTests {
     @Test
     fun `stats can be served with explicit start date`() {
 
-        `when`(repo.getStats("&uganda"))
-            .thenReturn(mapOf("hashtag" to "*"))
+        `when`(repo.getStats(hashtag))
+            .thenReturn(mapOf("hashtag" to hashtag))
 
-        val GET = get("/stats/&uganda")
+        val GET = get("/stats/$hashtag")
             .queryParam("startdate", "2017-10-01T04:00+05:00")
             .queryParam("enddate", "2020-10-01T04:00+00:00")
 
-
-        //TODO: use json to validate instead of string
 
         this.mockMvc
             .perform(GET)
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(content().string(containsString(""""hashtag":""")))
-            .andExpect(content().string(containsString(""""startdate"""")))
-            .andExpect(content().string(containsString(""""2017-10-01T04:00:00+05:00"""")))
-            .andExpect(content().string(containsString(""""2020-10-01T04:00:00Z"""")))
+            .andExpect(jsonPath("$.hashtag").value(hashtag))
+            .andExpect(jsonPath("$.startdate").value("2017-10-01T04:00:00+05:00"))
+            .andExpect(jsonPath("$.enddate").value("2020-10-01T04:00:00Z"))
     }
 
 
