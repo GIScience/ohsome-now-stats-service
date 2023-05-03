@@ -72,7 +72,7 @@ class StatsControllerMVCTests {
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.hashtag").value(hashtag))
-            .andExpect(jsonPath("$.startdate").value("2017-10-01T04:00:00+05:00"))
+            .andExpect(jsonPath("$.startdate").value("2017-09-30T23:00:00Z"))
             .andExpect(jsonPath("$.enddate").value("2020-10-01T04:00:00Z"))
     }
 

@@ -2,7 +2,7 @@ package org.heigit.ohsome.stats
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.time.OffsetDateTime.now
+import java.time.Instant.now
 import java.util.Map.entry
 
 

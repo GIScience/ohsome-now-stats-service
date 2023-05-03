@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.time.OffsetDateTime
+import java.time.Instant
 
 
 @RestController
@@ -30,12 +30,12 @@ class StatsController {
         @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam("startdate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        startDate: OffsetDateTime?,
+        startDate: Instant?,
 
         @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam("enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        endDate: OffsetDateTime?
+        endDate: Instant?
     ): Map<String, Any> {
 
         return this.repo.getStats(hashtag) + echoRequestParameters(startDate, endDate)
@@ -43,8 +43,8 @@ class StatsController {
     }
 
 
-    fun echoRequestParameters(startDate: OffsetDateTime?, endDate: OffsetDateTime?): Map<String, OffsetDateTime> {
-        var extraMap = emptyMap<String, OffsetDateTime>()
+    fun echoRequestParameters(startDate: Instant?, endDate: Instant?): Map<String, Instant> {
+        var extraMap = emptyMap<String, Instant>()
 
         startDate?.let {
             extraMap = extraMap + mapOf("startdate" to startDate)
