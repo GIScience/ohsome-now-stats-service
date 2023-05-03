@@ -2,11 +2,13 @@ package org.heigit.ohsome.stats
 
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-
+import java.time.OffsetDateTime
 
 
 @RestController
@@ -19,7 +21,10 @@ class StatsController {
 
     @Operation(summary = "Returns live data from DB")
     @GetMapping("/stats/{hashtag}")
-    fun statsDB(@PathVariable hashtag: String, @RequestParam("startdate", required = false) startDate: String?): Map<String, Any> {
+    fun statsDB(
+        @PathVariable hashtag: String,
+        @RequestParam("startdate", required = false) @DateTimeFormat(iso = ISO.DATE_TIME) startDate: OffsetDateTime?
+    ): Map<String, Any> {
 
         if (startDate == null)
             return this.repo.getStats(hashtag)

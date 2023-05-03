@@ -58,13 +58,13 @@ class StatsControllerTests {
         this.mockMvc
             .perform(
                 get("/stats/&uganda")
-                    .queryParam("startdate", "2017-10-01T04:00")
+                    .queryParam("startdate", "2017-10-01T04:00+05:00")
             )
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(content().string(containsString(""""hashtag":""")))
             .andExpect(content().string(containsString(""""startdate"""")))
-            .andExpect(content().string(containsString(""""2017-10-01T04:00"""")))
+            .andExpect(content().string(containsString(""""2017-10-01T04:00:00+05:00"""")))
     }
 
 
