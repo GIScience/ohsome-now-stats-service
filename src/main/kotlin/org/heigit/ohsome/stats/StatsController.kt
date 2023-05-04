@@ -22,7 +22,7 @@ class StatsController {
 
     @Operation(summary = "Returns live data from DB")
     @GetMapping("/stats/{hashtag}")
-    fun statsDB(
+    fun stats(
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
         hashtag: String,
@@ -61,7 +61,7 @@ class StatsController {
     // static data taken from http://osm-stats-production-api.azurewebsites.net/stats at 2pm, 20 March 2023
     @Operation(summary = "Returns a static snapshot of OSM statistics (for now)")
     @GetMapping("/stats_static")
-    fun stats() = mapOf(
+    fun statsStatic() = mapOf(
         "changesets" to 65009011,
         "users" to 3003842,
         "roads" to 45964973.0494135,
