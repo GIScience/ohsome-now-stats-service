@@ -38,7 +38,8 @@ class StatsController {
         endDate: Instant?
     ): Map<String, Any> {
 
-        return this.repo.getStats(hashtag) + echoRequestParameters(startDate, endDate)
+        return this.repo.getStatsForTimeSpan(hashtag, startDate, endDate) +
+                echoRequestParameters(startDate, endDate)
 
     }
 

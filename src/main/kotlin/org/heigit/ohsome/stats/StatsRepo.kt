@@ -51,9 +51,10 @@ class StatsRepo {
         .withHandle<Map<String, Any>, RuntimeException> { asMap(it, "#$hashtag") } + ("hashtag" to hashtag)
 
 
-    fun getStatsForTimeSpan(hashtag: String, startDate: Instant = EPOCH, endDate: Instant = now()) = create(dataSource)
-        .withHandle<Map<String, Any>, RuntimeException> { asMapFromTimeSpan(it, "#$hashtag", startDate, endDate) } +
-            ("hashtag" to hashtag)
+    fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?) = create(dataSource)
+        .withHandle<Map<String, Any>, RuntimeException> {
+            asMapFromTimeSpan(it, "#$hashtag", startDate ?: EPOCH, endDate ?: now())
+        } + ("hashtag" to hashtag)
 
 
     private fun asMap(handle: Handle, hashtag: String) = handle
@@ -62,7 +63,7 @@ class StatsRepo {
         .single()
 
     private fun asMapFromTimeSpan(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant) = handle
-            .select(statsFromTimeSpan, hashtag, startDate.toEpochMilli(), endDate.toEpochMilli())
-            .mapToMap()
+        .select(statsFromTimeSpan, hashtag, startDate.toEpochMilli(), endDate.toEpochMilli())
+        .mapToMap()
             .single()
 }

@@ -68,7 +68,7 @@ class StatsRepoIntegrationTests {
     @Test
     fun `getStatsForTimeSpan should still return all data in time span when using default time span`() {
 
-        val timeSpanResult = this.repo.getStatsForTimeSpan("&ui-state")
+        val timeSpanResult = this.repo.getStatsForTimeSpan("&ui-state", null, null)
         val result = this.repo.getStats("&ui-state")
         println(timeSpanResult)
 
@@ -92,9 +92,9 @@ class StatsRepoIntegrationTests {
 
     @Test
     fun `getStatsForTimeSpan returns partial data in time span for start date only`() {
-        val start = Instant.ofEpochSecond(1420991470, 0)
+        val startDate = Instant.ofEpochSecond(1420991470, 0)
 
-        val result = this.repo.getStatsForTimeSpan("&ui-state", startDate = start)
+        val result = this.repo.getStatsForTimeSpan("&ui-state", startDate, null)
         println(result)
 
         assertEquals(7, result.size)
@@ -106,7 +106,7 @@ class StatsRepoIntegrationTests {
     fun `getStatsForTimeSpan returns partial data in time span for end date only`() {
         val endDate = Instant.ofEpochSecond(  1420992000, 0)
 
-        val result = this.repo.getStatsForTimeSpan("&ui-state", endDate = endDate)
+        val result = this.repo.getStatsForTimeSpan("&ui-state", null, endDate)
         println(result)
 
         assertEquals(7, result.size)

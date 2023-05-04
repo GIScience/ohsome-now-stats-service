@@ -1,7 +1,7 @@
 package org.heigit.ohsome.stats
 
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -9,6 +9,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.time.Instant
 
 
 @WebMvcTest(StatsController::class)
@@ -37,16 +38,12 @@ class StatsControllerMVCTests {
       }"""
 
 
-    private fun setupMockRepo() {
-        `when`(repo.getStats(hashtag))
-            .thenReturn(mapOf("hashtag" to hashtag))
-    }
-
 
     @Test
     fun `stats can be served without date restriction`() {
 
-        setupMockRepo()
+        `when`(repo.getStatsForTimeSpan(hashtag, null, null))
+            .thenReturn(mapOf("hashtag" to hashtag))
 
         this.mockMvc
             .perform(get("/stats/$hashtag"))
@@ -58,9 +55,11 @@ class StatsControllerMVCTests {
 
 
     @Test
-    fun `stats can be served with explicit start date`() {
+    fun `stats can be served with explicit start and end dates`() {
 
-        setupMockRepo()
+        `when`(repo.getStatsForTimeSpan(anyString(), any(Instant::class.java), any(Instant::class.java)))
+            .thenReturn(mapOf("hashtag" to hashtag))
+
 
         val GET = get("/stats/$hashtag")
             .queryParam("startdate", "2017-10-01T04:00+05:00")
