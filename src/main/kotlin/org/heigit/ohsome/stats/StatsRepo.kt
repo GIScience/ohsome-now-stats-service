@@ -19,7 +19,7 @@ class StatsRepo {
 
 
     //language=SQL
-    val sql = """
+    val stats = """
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
@@ -32,18 +32,40 @@ class StatsRepo {
             hashtag = ?;
         """.trimIndent()
 
+    val statsFromTimeSpan = """
+        SELECT
+            count(distinct changeset_id) as changesets,
+            count(distinct user_id) as users,
+            sum(road_length) as roads,
+            count(building_area) as buildings,
+            count(*) as edits,
+            FROM_UNIXTIME(intDiv(max(changeset_timestamp), 1000)) as latest
+        FROM "stats"
+        WHERE
+            hashtag = ? and changeset_timestamp > ? and changeset_timestamp < ?;
+            
+        """.trimIndent()
+
 
     fun getStats(hashtag: String) = create(dataSource)
         .withHandle<Map<String, Any>, RuntimeException> { asMap(it, "#$hashtag") } + ("hashtag" to hashtag)
 
 
     fun getStatsForTimeSpan(hashtag: String, startDate: Instant = EPOCH, endDate: Instant = now()) = create(dataSource)
-        .withHandle<Map<String, Any>, RuntimeException> { asMap(it, "#$hashtag") } + ("hashtag" to hashtag)
+        .withHandle<Map<String, Any>, RuntimeException>(fun(it: Handle): Map<String, Any>? {
+            println(startDate)
+            println(endDate)
+            return asMapFromTimeSpan(it, "#$hashtag", startDate, endDate)
+        }) + ("hashtag" to hashtag)
 
 
     private fun asMap(handle: Handle, hashtag: String) = handle
-        .select(sql, hashtag)
+        .select(stats, hashtag)
         .mapToMap()
         .single()
 
+    private fun asMapFromTimeSpan(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant) = handle
+            .select(statsFromTimeSpan, hashtag, startDate.toEpochMilli(), endDate.toEpochMilli())
+            .mapToMap()
+            .single()
 }

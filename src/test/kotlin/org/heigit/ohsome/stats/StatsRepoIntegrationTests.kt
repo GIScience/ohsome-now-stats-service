@@ -12,6 +12,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.time.Instant
 
 
 @SpringBootTest(webEnvironment = NONE)
@@ -67,12 +68,47 @@ class StatsRepoIntegrationTests {
     @Test
     fun `getStatsForTimeSpan should still return all data in time span when using default time span`() {
 
-        val result = this.repo.getStatsForTimeSpan("&uganda")
+        val timeSpanResult = this.repo.getStatsForTimeSpan("&ui-state")
+        val result = this.repo.getStats("&ui-state")
+        println(timeSpanResult)
+
+        assertEquals(result.size, timeSpanResult.size)
+        assertEquals(result["changesets"], timeSpanResult["changesets"])
+        assertEquals(result["latest"], timeSpanResult["latest"])
+    }
+    @Test
+    fun `getStatsForTimeSpan returns partial data in time span`() {
+        val startDate = Instant.ofEpochSecond(1420991470, 0)
+        val endDate = Instant.ofEpochSecond(1420992000, 0)
+
+        val result = this.repo.getStatsForTimeSpan("&ui-state", startDate, endDate)
         println(result)
 
         assertEquals(7, result.size)
-        assertEquals(expected.toString(), result.toString())
+        assertEquals("3", result["changesets"].toString())
+        assertEquals("2015-01-11T15:59:06", result["latest"].toString())
+    }
+    @Test
+    fun `getStatsForTimeSpan returns partial data in time span for start date only`() {
+        val start = Instant.ofEpochSecond(1420991470, 0)
 
+        val result = this.repo.getStatsForTimeSpan("&ui-state", startDate = start)
+        println(result)
+
+        assertEquals(7, result.size)
+        assertEquals("8", result["changesets"].toString())
+        assertEquals("2015-01-11T19:45:10", result["latest"].toString())
+    }
+    @Test
+    fun `getStatsForTimeSpan returns partial data in time span for end date only`() {
+        val endDate = Instant.ofEpochSecond(  1420992000, 0)
+
+        val result = this.repo.getStatsForTimeSpan("&ui-state", endDate = endDate)
+        println(result)
+
+        assertEquals(7, result.size)
+        assertEquals("4", result["changesets"].toString())
+        assertEquals("2015-01-11T15:59:06", result["latest"].toString())
     }
 
 
