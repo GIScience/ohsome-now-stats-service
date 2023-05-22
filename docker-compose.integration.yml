@@ -7,5 +7,6 @@ services:
     command: "java -jar app.jar --spring.datasource.url=jdbc:clickhouse://host.docker.internal --server.servlet.context-path=/api"
     ports:
       - "127.0.0.1:8081:8080"
+    restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
