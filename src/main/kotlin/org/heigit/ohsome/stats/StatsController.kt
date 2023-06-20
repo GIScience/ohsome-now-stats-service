@@ -91,8 +91,7 @@ class StatsController {
     @GetMapping("/stats/{hashtag}/interval")
     fun statsInterval(
             @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
-            @PathVariable
-            hashtag: String,
+            @PathVariable hashtag: String,
 
             @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
             @RequestParam("startdate", required = false)
@@ -107,7 +106,12 @@ class StatsController {
             @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
             @RequestParam("interval", required = false)
             interval: String = "auto"
-    ): Map<String, Any> {
+    ): Map<String, Any> = getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval)
+
+
+
+    private fun getStatsForTimeSpanInterval(hashtag:String, startDate:Instant, endDate:Instant, interval:String):Map<String, Any>{
+
         val response = mutableMapOf<String, Any>()
 
         val executionTime = measureTimeMillis {
@@ -117,11 +121,22 @@ class StatsController {
 
         response["attribution"] = mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
         response["apiVersion"] = "1.9.0"
-        response["metadata"] = mapOf(
+        response["metadata"] = buildMetadata(executionTime)
+        response["query"] = buildQueryInfo(startDate, endDate, interval, hashtag)
+        response["latest"] = Instant.now().toString() // ToDo: Replace with the actual latest timestamp
+
+        return response
+    }
+
+    private fun buildMetadata(executionTime: Long): Map<String, Any> {
+        return mapOf(
                 "executionTime" to executionTime,
                 "requestUrl" to "https://stats.ohsome.org/..." // ToDo: Update with the actual request URL
         )
-        response["query"] = mapOf(
+    }
+
+    private fun buildQueryInfo(startDate: Instant, endDate: Instant, interval: String, hashtag: String): Map<String, Any> {
+        return mapOf(
                 "timespan" to mapOf(
                         "startDate" to startDate.toString(),
                         "endDate" to endDate.toString(),
@@ -129,9 +144,5 @@ class StatsController {
                 ),
                 "hashtag" to hashtag
         )
-        response["latest"] = Instant.now().toString() // ToDo: Replace with the actual latest timestamp
-
-        return response
     }
-
 }
