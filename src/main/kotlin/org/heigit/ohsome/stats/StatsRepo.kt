@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 
 @Component
 class StatsRepo {
+    //please add valuable docs here
 
     @Autowired
     lateinit var dataSource: DataSource
@@ -47,7 +48,7 @@ class StatsRepo {
         """.trimIndent()
 
     private val statsFromTimeSpanInterval = """
-        SELECT 
+       SELECT 
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
             sum(road_length) as roads,
@@ -55,11 +56,11 @@ class StatsRepo {
             count(*) as edits,
             toStartOfInterval(fromUnixTimestamp((changeset_timestamp / 1000)::integer), INTERVAL ?) as startdate,
             toStartOfInterval(fromUnixTimestamp((changeset_timestamp / 1000)::integer), INTERVAL ?) + INTERVAL ? as enddate
-        FROM "stats"
+        FROM "stats"    
         WHERE
             hashtag = ? and changeset_timestamp > ? and changeset_timestamp < ?
         GROUP BY 
-            startdate;
+            startdate
     """.trimIndent()
 
     /**
@@ -105,65 +106,32 @@ class StatsRepo {
     }
 
     /**
-     * Converts a duration to its SQL string representation.
-     *
-     * @return The SQL string representation of the duration.
-     */
-    fun Duration.toSqlString(): String {
-        val days = toDays()
-        val hours = toHoursPart()
-        val minutes = toMinutesPart()
-        return "INTERVAL '${days}D ${hours}H ${minutes}M'"
-    }
-
-    /**
      * Translates a custom ISO 8601 interval to the corresponding ClickHouse query for aggregator and grouper.
      *
      * @param interval The custom ISO 8601 interval string.
      * @return The aggregator string for the ClickHouse query.
      *         If the interval is not in the expected format, an empty string is returned.
      */
+
+    fun String.replaceDate() = this.replace("P", "")
+            .replace("Y", " YEAR")
+            .replace("M", " MONTH")
+            .replace("W", " WEEK")
+            .replace("D", " DAY")
+
+    fun String.replaceTime() = this.replace("PT","")
+            .replace("H", " HOUR")
+            .replace("M", " MINUTE")
+
     fun getGroupbyInterval(interval: String): String {
-        // Regular expression pattern to match the ISO 8601 interval format
-        val pattern = """^P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?)?$""".toRegex()
-        val matchResult = pattern.find(interval)
-
-        if (matchResult == null) {
-            logger.error("Invalid interval format: $interval")
-            return ""
-        }
-
-        // Extract the components (years, months, weeks, days, hours, minutes) from the interval
-        val (years, months, weeks, days, hours, minutes) = matchResult.destructured
-
-        // Build the aggregator string based on the extracted components
-        val aggregator = buildString {
-            if (!years.isNullOrEmpty()) {
-                append(years.removeSuffix("Y"))
-                append(" YEAR")
-            } else if (!months.isNullOrEmpty()) {
-                append(months.removeSuffix("M"))
-                append(" MONTH")
-            } else if (!weeks.isNullOrEmpty()) {
-                append(weeks.removeSuffix("W"))
-                append(" WEEK")
-            } else if (!days.isNullOrEmpty()) {
-                append(days.removeSuffix("D"))
-                append(" DAY")
-            } else if (!hours.isNullOrEmpty()) {
-                append(hours.removePrefix("T").removeSuffix("H"))
-                append(" HOUR")
-            } else if (!minutes.isNullOrEmpty()) {
-                append(minutes.removePrefix("T").removeSuffix("M"))
-                append(" MINUTE")
-            }
-        }
-
-        return aggregator.trim()
+        if ("T" in  interval) return interval.replaceTime()
+        else return interval.replaceDate()
     }
 
+
     private fun asMap(handle: Handle, hashtag: String) = handle.select(stats, hashtag).mapToMap().single()
-    private fun asMapFromTimeSpan(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant)
-            = handle.select(statsFromTimeSpan, hashtag, startDate.toEpochMilli(), endDate.toEpochMilli()).mapToMap().single()
+    private fun asMapFromTimeSpan(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant) = handle.select(statsFromTimeSpan, hashtag, startDate.toEpochMilli(), endDate.toEpochMilli()).mapToMap().single()
+
+    @Suppress("LongParameterList")
     private fun asMapFromTimeSpanInterval(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant, groupBy: String): List<Map<String, Any>> = handle.select(statsFromTimeSpanInterval, groupBy, groupBy, groupBy, hashtag, startDate.toEpochMilli(), endDate.toEpochMilli()).mapToMap().list()
 }
