@@ -54,7 +54,7 @@ class StatsController {
      * @param endDate the (exclusive) end date for the query
      * @return a map containing the request parameters
      */
-    private fun echoRequestParameters(startDate: Instant?, endDate: Instant?): Map<String, Instant> {
+    fun echoRequestParameters(startDate: Instant?, endDate: Instant?): Map<String, Instant> {
         val extraParams = mutableMapOf<String, Instant>()
         startDate?.let { extraParams["startdate"] = it }
         endDate?.let { extraParams["enddate"] = it }
