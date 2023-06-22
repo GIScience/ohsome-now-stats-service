@@ -2,8 +2,7 @@ package org.heigit.ohsome.stats
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.mockito.Mockito
+
 
 
 class StatsRepoUnitTests {
