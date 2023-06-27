@@ -140,24 +140,25 @@ class StatsController {
         )
     }
 
+    @Suppress("LongParameterList")
     private fun buildQueryInfoTimespan(
         startDate: Instant,
         endDate: Instant,
-        hashtag: String?=null,
-        interval: String?=null,
-        limit: Int?=null
-    ): Map<String, Any> {
+        hashtag: String? = null,
+        interval: String? = null,
+        limit: Int? = null
+    ): Map<String, Any?> {
+        val timespan = mapOf(
+            "startDate" to startDate.toString(),
+            "endDate" to endDate.toString(),
+            "interval" to interval
+        ).filterValues { it != null }
 
-        val timespan = mutableMapOf<String, String>()
-        timespan["startDate"] = startDate.toString()
-        timespan["endDate"] = endDate.toString()
-        if (interval != null) timespan["interval"] = interval
-        val queryInfo = mutableMapOf<String, Any>()
-
-        queryInfo["timespan"] = timespan
-
-        if (hashtag != null) queryInfo["hashtag"] = hashtag
-        if (limit != null) queryInfo["limit"] = limit
+        val queryInfo = mapOf(
+            "timespan" to timespan,
+            "hashtag" to hashtag,
+            "limit" to limit
+        ).filterValues { it != null }
 
         return queryInfo
     }
