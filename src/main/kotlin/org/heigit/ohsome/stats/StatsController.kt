@@ -2,7 +2,6 @@ package org.heigit.ohsome.stats
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import jakarta.validation.constraints.Pattern
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
@@ -144,9 +143,11 @@ class StatsController {
     private fun buildQueryInfoTimespan(
         startDate: Instant,
         endDate: Instant,
-        hashtag: String?,
-        interval: String?
+        hashtag: String?=null,
+        interval: String?=null,
+        limit: Int?=null
     ): Map<String, Any> {
+
         val timespan = mutableMapOf<String, String>()
         timespan["startDate"] = startDate.toString()
         timespan["endDate"] = endDate.toString()
@@ -156,6 +157,7 @@ class StatsController {
         queryInfo["timespan"] = timespan
 
         if (hashtag != null) queryInfo["hashtag"] = hashtag
+        if (limit != null) queryInfo["limit"] = limit
 
         return queryInfo
     }
@@ -195,7 +197,7 @@ class StatsController {
             mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
         response["apiVersion"] = "tbd"
         response["metadata"] = buildMetadata(executionTime)
-        response["query"] = buildQueryInfoTimespan(startDate, endDate, null, null)
+        response["query"] = buildQueryInfoTimespan(startDate, endDate, limit =  limit)
         response["latest"] = Instant.now().toString() // ToDo: Replace with the actual latest timestamp
 
         return response
