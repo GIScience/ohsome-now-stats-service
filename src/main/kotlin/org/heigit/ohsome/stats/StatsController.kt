@@ -2,6 +2,7 @@ package org.heigit.ohsome.stats
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import jakarta.validation.constraints.Pattern
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
@@ -175,20 +176,25 @@ class StatsController {
         endDate: Instant?,
 
         @Parameter(description = "the number of hashtags to return")
-        @RequestParam(name = "limit", defaultValue = "10")
-        limit: Int
+        @RequestParam(name = "limit", required = false, defaultValue = "10")
+        limit: Int,
+
+        @Parameter(description = "the set of units to rank the trending hashtags")
+        @RequestParam(name = "measures", required = false,defaultValue = "changesets")
+        @Pattern(regexp = "(changesets|buildings|users|roads|total_edits)")
+        measures: List<String>
     ): Map<String, Any> {
         val finalEndDate = endDate?: Instant.now()
         val finalStartDate = startDate?: finalEndDate.minus(1,ChronoUnit.DAYS)
-        return getTrendingHashtags(finalStartDate,finalEndDate, limit)
+        return getTrendingHashtags(finalStartDate,finalEndDate, limit, measures)
     }
 
-    private fun getTrendingHashtags(startDate: Instant, endDate: Instant,limit:Int): Map<String, Any> {
+    private fun getTrendingHashtags(startDate: Instant, endDate: Instant,limit:Int,measures: List<String>): Map<String, Any> {
 
         val response = mutableMapOf<String, Any>()
         val executionTime = measureTimeMillis {
             //is there a better way to handle default values?
-            val queryResult = repo.getTrendingHashtags(startDate, endDate,limit)
+            val queryResult = repo.getTrendingHashtags(startDate, endDate,limit, measures)
             response["result"] = queryResult
         }
 

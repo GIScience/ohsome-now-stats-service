@@ -20,6 +20,14 @@ class StatsRepo {
 
     private val logger: Logger = LoggerFactory.getLogger(StatsRepo::class.java)
 
+    private val measuresMap: Map<String,String>  = mapOf(
+        "changesets" to "count(DISTINCT changeset_id)",
+        "total_edits" to "count(*)",
+        "road_length" to "sum(road_length)",
+        "buildings" to "count(building_area)",
+        "users" to "count(distinct user_id)"
+    )
+
     //language=SQL
     private val stats = """
         SELECT
@@ -63,9 +71,9 @@ class StatsRepo {
             startdate
     """.trimIndent()
 
-    private val tredingHashtags ="""
+    private val trendingHashtags ="""
         SELECT 
-            hashtag, ? as measure
+            hashtag, measureUnit as measure
         FROM "stats"
         WHERE
             changeset_timestamp > ? and changeset_timestamp < ?
@@ -125,7 +133,6 @@ class StatsRepo {
      * @return The aggregator string for the ClickHouse query.
      *         If the interval is not in the expected format, an empty string is returned.
      */
-
     fun String.replaceDate() = this.replace("P", "")
             .replace("Y", " YEAR")
             .replace("M", " MONTH")
@@ -141,24 +148,19 @@ class StatsRepo {
         else return interval.replaceDate()
     }
 
-    fun getTrendingHashtags(startDate: Instant, endDate: Instant, limit: Int): Map<String,List<Map<String,Any>>> {
+    fun getTrendingHashtags(startDate: Instant, endDate: Instant, limit: Int, measures: List<String>): Map<String,List<Map<String,Any>>> {
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
         return create(dataSource).withHandle<Map<String,List<Map<String, Any>>>, RuntimeException> {
-            asMapFromTimeSpanTrending(it, startDate, endDate, limit)
+            asMapFromTimeSpanTrending(it, startDate, endDate, limit, measures)
         }
     }
 
-    private fun asMapFromTimeSpanTrending(handle: Handle, startDate: Instant, endDate: Instant, limit: Int): Map<String,List<Map<String, Any>>> {
-        val measures = mapOf(
-            "changesets" to "count(DISTINCT changeset_id)",
-            "total_edits" to "count(*)",
-            "road_length" to "sum(road_length)",
-            "buildings" to "count(building_area",
-            "users" to "count(distinct user_id"
-        )
+    @Suppress("LongParameterList")
+    private fun asMapFromTimeSpanTrending(handle: Handle, startDate: Instant, endDate: Instant, limit: Int, measures: List<String>): Map<String,List<Map<String, Any>>> {
         val result = mutableMapOf<String,List<Map<String, Any>>>()
-        for ((key, value) in measures){
-            result.put(key,handle.select(tredingHashtags, value,startDate.toEpochMilli(), endDate.toEpochMilli(),limit).mapToMap().list())
+        for (key in measures){
+            val value = measuresMap.get(key)
+            result.put(key,handle.select(value?.let { trendingHashtags.replace("measureUnit", it) },startDate.toEpochMilli(), endDate.toEpochMilli(),limit).mapToMap().list())
         }
         return result
     }
