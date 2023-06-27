@@ -8,9 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
-import java.time.Period
 import java.time.temporal.ChronoUnit
-import java.util.Optional
 import kotlin.system.measureTimeMillis
 
 @CrossOrigin
@@ -177,24 +175,19 @@ class StatsController {
 
         @Parameter(description = "the number of hashtags to return")
         @RequestParam(name = "limit", required = false, defaultValue = "10")
-        limit: Int,
-
-        @Parameter(description = "the set of units to rank the trending hashtags")
-        @RequestParam(name = "measures", required = false,defaultValue = "changesets")
-        @Pattern(regexp = "(changesets|buildings|users|roads|total_edits)")
-        measures: List<String>
+        limit: Int?
     ): Map<String, Any> {
         val finalEndDate = endDate?: Instant.now()
         val finalStartDate = startDate?: finalEndDate.minus(1,ChronoUnit.DAYS)
-        return getTrendingHashtags(finalStartDate,finalEndDate, limit, measures)
+        return getTrendingHashtags(finalStartDate,finalEndDate, limit)
     }
 
-    private fun getTrendingHashtags(startDate: Instant, endDate: Instant,limit:Int,measures: List<String>): Map<String, Any> {
+    private fun getTrendingHashtags(startDate: Instant, endDate: Instant,limit:Int?): Map<String, Any> {
 
         val response = mutableMapOf<String, Any>()
         val executionTime = measureTimeMillis {
             //is there a better way to handle default values?
-            val queryResult = repo.getTrendingHashtags(startDate, endDate,limit, measures)
+            val queryResult = repo.getTrendingHashtags(startDate, endDate,limit?:10,) //avoid second definition of default values
             response["result"] = queryResult
         }
 

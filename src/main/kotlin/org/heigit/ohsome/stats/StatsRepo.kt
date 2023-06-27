@@ -20,14 +20,6 @@ class StatsRepo {
 
     private val logger: Logger = LoggerFactory.getLogger(StatsRepo::class.java)
 
-    private val measuresMap: Map<String,String>  = mapOf(
-        "changesets" to "count(DISTINCT changeset_id)",
-        "total_edits" to "count(*)",
-        "road_length" to "sum(road_length)",
-        "buildings" to "count(building_area)",
-        "users" to "count(distinct user_id)"
-    )
-
     //language=SQL
     private val stats = """
         SELECT
@@ -73,7 +65,7 @@ class StatsRepo {
 
     private val trendingHashtags ="""
         SELECT 
-            hashtag, measureUnit as measure
+            hashtag, COUNT(DISTINCT user_id) as measure
         FROM "stats"
         WHERE
             changeset_timestamp > ? and changeset_timestamp < ?
@@ -148,21 +140,16 @@ class StatsRepo {
         else return interval.replaceDate()
     }
 
-    fun getTrendingHashtags(startDate: Instant, endDate: Instant, limit: Int, measures: List<String>): Map<String,List<Map<String,Any>>> {
+    fun getTrendingHashtags(startDate: Instant, endDate: Instant, limit: Int?): List<Map<String,Any>>{
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
-        return create(dataSource).withHandle<Map<String,List<Map<String, Any>>>, RuntimeException> {
-            asMapFromTimeSpanTrending(it, startDate, endDate, limit, measures)
+        return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
+            asMapFromTimeSpanTrending(it, startDate, endDate, limit)
         }
     }
 
     @Suppress("LongParameterList")
-    private fun asMapFromTimeSpanTrending(handle: Handle, startDate: Instant, endDate: Instant, limit: Int, measures: List<String>): Map<String,List<Map<String, Any>>> {
-        val result = mutableMapOf<String,List<Map<String, Any>>>()
-        for (key in measures){
-            val value = measuresMap.get(key)
-            result.put(key,handle.select(value?.let { trendingHashtags.replace("measureUnit", it) },startDate.toEpochMilli(), endDate.toEpochMilli(),limit).mapToMap().list())
-        }
-        return result
+    private fun asMapFromTimeSpanTrending(handle: Handle, startDate: Instant, endDate: Instant, limit: Int?): List<Map<String, Any>> {
+        return handle.select(trendingHashtags,startDate.toEpochMilli(), endDate.toEpochMilli(),limit).mapToMap().list()
     }
 
     private fun asMap(handle: Handle, hashtag: String) = handle.select(stats, hashtag).mapToMap().single()
