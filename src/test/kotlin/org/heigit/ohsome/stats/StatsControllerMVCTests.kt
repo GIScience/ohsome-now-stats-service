@@ -1,6 +1,7 @@
 package org.heigit.ohsome.stats
 
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -55,26 +56,22 @@ class StatsControllerMVCTests {
 
 
     @Test
-    fun `stats can be served with explicit start and end dates`() {
+    fun `stats per interval can be served with explicit start and end dates`() {
+        `when`(repo.getStatsForTimeSpanInterval(anyString(),any(Instant::class.java),any(Instant::class.java), anyString()))
+                .thenReturn(listOf(mapOf("hashtag" to hashtag)))
 
-        `when`(repo.getStatsForTimeSpan(anyString(), any(Instant::class.java), any(Instant::class.java)))
-            .thenReturn(mapOf("hashtag" to hashtag))
+        val GET = get("/stats/$hashtag/interval")
+                .queryParam("startdate", "2017-10-01T04:00+05:00")
+                .queryParam("enddate", "2020-10-01T04:00+00:00")
+                .queryParam("interval", "P1M")
 
-
-        val GET = get("/stats/$hashtag")
-            .queryParam("startdate", "2017-10-01T04:00+05:00")
-            .queryParam("enddate", "2020-10-01T04:00+00:00")
-
-
-        this.mockMvc
-            .perform(GET)
+        this.mockMvc.perform(GET)
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.hashtag").value(hashtag))
-            .andExpect(jsonPath("$.startdate").value("2017-09-30T23:00:00Z"))
-            .andExpect(jsonPath("$.enddate").value("2020-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.query.hashtag").value(hashtag))
+            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-09-30T23:00:00Z"))
+            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
     }
-
 
     @Test
     fun `stats_static should return a static map of stats values`() {
@@ -87,5 +84,5 @@ class StatsControllerMVCTests {
 
     }
 
-
+    private fun <T> any(type:Class<T>): T = Mockito.any<T>(type)
 }
