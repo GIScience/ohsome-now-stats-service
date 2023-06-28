@@ -14,7 +14,6 @@ class StatsControllerUnitTests {
 
     @Test
     fun `missing start and end dates lead to empty echo map`() {
-
         val result = this.controller.echoRequestParameters(null, null)
         assertThat(result).isEmpty()
     }
