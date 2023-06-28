@@ -1,16 +1,16 @@
 package org.heigit.ohsome.stats
 
+import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.heigit.ohsome.stats.utils.getGroupbyInterval
 import org.jdbi.v3.core.Jdbi.create
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
 import javax.sql.DataSource
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.heigit.ohsome.stats.utils.HashtagHandler as HashtagHandler
 
 @Component
 class StatsRepo {
@@ -124,7 +124,7 @@ class StatsRepo {
      * @param endDate The end date of the time span.
      * @return A list of maps containing the statistics for each interval.
      */
-    fun getTrendingHashtags(startDate: Instant, endDate: Instant, limit: Int?): List<Map<String, Any>> {
+    fun getMostUsedHashtags(startDate: Instant, endDate: Instant, limit: Int?): List<Map<String, Any>> {
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
 
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {

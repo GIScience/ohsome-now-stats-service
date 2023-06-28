@@ -167,7 +167,7 @@ class StatsController {
         return queryInfo
     }
 
-    @Operation(summary = "Returns the most used Hashtag in a given Timeperiod.")
+    @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod. Default is the last 24 Hours.")
     @GetMapping("/trending")
     fun trendingHashtags(
             @Parameter(description = "the start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
@@ -192,7 +192,7 @@ class StatsController {
     private fun getTrendingHashtags(startDate: Instant, endDate: Instant, limit: Int?): Map<String, Any> {
         val response = mutableMapOf<String, Any>()
         val executionTime = measureTimeMillis {
-            val queryResult = repo.getTrendingHashtags(
+            val queryResult = repo.getMostUsedHashtags(
                     startDate, endDate,
                     limit
                             ?: 10,
