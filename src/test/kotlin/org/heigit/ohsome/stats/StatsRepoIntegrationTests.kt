@@ -126,6 +126,21 @@ class StatsRepoIntegrationTests {
         assertEquals(7, result[0].size)
         assertEquals("2021-12-01", result[0]["startdate"].toString())
     }
+
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getMostUsedHashtags returns the most used hashtags in given time range for start and enddate`() {
+        val startDate = Instant.ofEpochSecond(1420991470)
+        val endDate = Instant.ofEpochSecond(1639054890)
+        val result = this.repo.getMostUsedHashtags(startDate,endDate,10)
+        println(result)
+        assertTrue(result[0] is Map)
+        assertTrue(result[0].containsKey("hashtag"))
+        assertTrue(result[0].containsKey("measure"))
+        assertTrue(result[0].size == 2)
+        assertTrue(result.size == 6)
+    }
 }
 
 
