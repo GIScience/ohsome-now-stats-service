@@ -101,7 +101,18 @@ class StatsRepoIntegrationTests {
         assertEquals("2021-12-09T13:01:28", result["latest"].toString())
     }
 
-
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForTimeSpanInterval returns partial data in time span for start and  end date with hashtag aggregated by month`() {
+        val startDate = Instant.ofEpochSecond(1420991470)
+        val endDate = Instant.ofEpochSecond(1639054890)
+        val hashtagHandler = HashtagHandler("&group")
+        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate,"P1M")
+        println(result)
+        assertEquals(1, result.size)
+        assertEquals(7, result[0].size)
+        assertEquals("2021-12-01", result[0]["startdate"].toString())
+    }
 }
 
 
