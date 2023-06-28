@@ -45,9 +45,9 @@ class StatsRepoIntegrationTests {
     val expected = mapOf(
         "changesets" to 1,
         "users" to 1,
-        "roads" to 1326.4405878618195,
-        "buildings" to 22,
-        "edits" to 22,
+        "roads" to 140,
+        "buildings" to 1,
+        "edits" to 1,
         "latest" to "2017-12-19T00:52:03",
         "hashtag" to "&uganda"
     )
@@ -58,60 +58,60 @@ class StatsRepoIntegrationTests {
     fun `stats should return all data`() {
 
         val result = this.repo.getStats("&uganda")
-        println(result)
-
         assertEquals(7, result.size)
         assertEquals(expected.toString(), result.toString())
 
     }
 
     @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpan should still return all data in time span when using default time span`() {
 
         val timeSpanResult = this.repo.getStatsForTimeSpan("&ui-state", null, null)
         val result = this.repo.getStats("&ui-state")
-        println(timeSpanResult)
-
         assertEquals(result.size, timeSpanResult.size)
         assertEquals(result["changesets"], timeSpanResult["changesets"])
         assertEquals(result["latest"], timeSpanResult["latest"])
     }
 
     @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns partial data in time span`() {
-        val startDate = Instant.ofEpochSecond(1420991470, 0)
-        val endDate = Instant.ofEpochSecond(1420992000, 0)
-
-        val result = this.repo.getStatsForTimeSpan("&ui-state", startDate, endDate)
+        val startDate = Instant.ofEpochSecond(1457186410)
+        val endDate = Instant.ofEpochSecond(1457186430)
+        println(startDate)
+        val result = this.repo.getStatsForTimeSpan("&", startDate, endDate)
         println(result)
 
         assertEquals(7, result.size)
-        assertEquals("3", result["changesets"].toString())
-        assertEquals("2015-01-11T15:59:06", result["latest"].toString())
+        assertEquals("1", result["changesets"].toString())
+        assertEquals("2016-03-05T14:00:20", result["latest"].toString())
     }
 
     @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns partial data in time span for start date only`() {
-        val startDate = Instant.ofEpochSecond(1420991470, 0)
+        val startDate = Instant.ofEpochSecond(1420991470)
 
-        val result = this.repo.getStatsForTimeSpan("&ui-state", startDate, null)
+        val result = this.repo.getStatsForTimeSpan("&group", startDate, null)
         println(result)
 
         assertEquals(7, result.size)
-        assertEquals("8", result["changesets"].toString())
-        assertEquals("2015-01-11T19:45:10", result["latest"].toString())
+        assertEquals("1", result["changesets"].toString())
+        assertEquals("2021-12-09T13:01:28", result["latest"].toString())
     }
 
     @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns partial data in time span for end date only`() {
-        val endDate = Instant.ofEpochSecond(  1420992000, 0)
+        val endDate = Instant.ofEpochSecond(  1639054890)
 
-        val result = this.repo.getStatsForTimeSpan("&ui-state", null, endDate)
+        val result = this.repo.getStatsForTimeSpan("&group", null, endDate)
         println(result)
 
         assertEquals(7, result.size)
-        assertEquals("4", result["changesets"].toString())
-        assertEquals("2015-01-11T15:59:06", result["latest"].toString())
+        assertEquals("1", result["changesets"].toString())
+        assertEquals("2021-12-09T13:01:28", result["latest"].toString())
     }
 
 

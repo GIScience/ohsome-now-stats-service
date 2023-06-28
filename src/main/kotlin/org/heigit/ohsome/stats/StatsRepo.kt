@@ -28,12 +28,13 @@ class StatsRepo {
             sum(road_length) as roads,
             count(building_area) as buildings,
             count(*) as edits,
-            FROM_UNIXTIME(intDiv(max(changeset_timestamp), 1000)) as latest
+            max(changeset_timestamp) as latest
         FROM "stats"
         WHERE
             hashtag = ?;
         """.trimIndent()
 
+    //language=SQL
     private val statsFromTimeSpan = """
         SELECT
             count(distinct changeset_id) as changesets,
@@ -41,12 +42,13 @@ class StatsRepo {
             sum(road_length) as roads,
             count(building_area) as buildings,
             count(*) as edits,
-            FROM_UNIXTIME(intDiv(max(changeset_timestamp), 1000)) as latest
+            max(changeset_timestamp) as latest
         FROM "stats"
         WHERE
-            hashtag = ? and changeset_timestamp > ? and changeset_timestamp < ?;
+            hashtag = ? and changeset_timestamp > parseDateTimeBestEffortOrNull(?) and changeset_timestamp < parseDateTimeBestEffortOrNull(?);
         """.trimIndent()
 
+    //language=SQL
     private val statsFromTimeSpanInterval = """
        SELECT 
             count(distinct changeset_id) as changesets,
@@ -54,8 +56,8 @@ class StatsRepo {
             sum(road_length) as roads,
             count(building_area) as buildings,
             count(*) as edits,
-            toStartOfInterval(fromUnixTimestamp((changeset_timestamp / 1000)::integer), INTERVAL ?) as startdate,
-            toStartOfInterval(fromUnixTimestamp((changeset_timestamp / 1000)::integer), INTERVAL ?) + INTERVAL ? as enddate
+            toStartOfInterval(changeset_timestamp), INTERVAL ?) as startdate,
+            toStartOfInterval(changeset_timestamp), INTERVAL ?) + INTERVAL ? as enddate
         FROM "stats"    
         WHERE
             hashtag = ? and changeset_timestamp > ? and changeset_timestamp < ?
@@ -63,6 +65,7 @@ class StatsRepo {
             startdate
     """.trimIndent()
 
+    //language=SQL
     private val trendingHashtags ="""
         SELECT 
             hashtag, COUNT(DISTINCT user_id) as measure
@@ -149,13 +152,13 @@ class StatsRepo {
 
     @Suppress("LongParameterList")
     private fun asMapFromTimeSpanTrending(handle: Handle, startDate: Instant, endDate: Instant, limit: Int?): List<Map<String, Any>> {
-        return handle.select(trendingHashtags,startDate.toEpochMilli(), endDate.toEpochMilli(),limit).mapToMap().list()
+        return handle.select(trendingHashtags,startDate, endDate,limit).mapToMap().list()
     }
 
     private fun asMap(handle: Handle, hashtag: String) = handle.select(stats, hashtag).mapToMap().single()
-    private fun asMapFromTimeSpan(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant) = handle.select(statsFromTimeSpan, hashtag, startDate.toEpochMilli(), endDate.toEpochMilli()).mapToMap().single()
+    private fun asMapFromTimeSpan(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant) = handle.select(statsFromTimeSpan, hashtag, startDate, endDate).mapToMap().single()
 
     @Suppress("LongParameterList")
-    private fun asMapFromTimeSpanInterval(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant, groupBy: String): List<Map<String, Any>> = handle.select(statsFromTimeSpanInterval, groupBy, groupBy, groupBy, hashtag, startDate.toEpochMilli(), endDate.toEpochMilli()).mapToMap().list()
+    private fun asMapFromTimeSpanInterval(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant, groupBy: String): List<Map<String, Any>> = handle.select(statsFromTimeSpanInterval, groupBy, groupBy, groupBy, hashtag, startDate, endDate).mapToMap().list()
 
 }
