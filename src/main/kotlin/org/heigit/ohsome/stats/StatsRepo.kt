@@ -1,6 +1,6 @@
 package org.heigit.ohsome.stats
 
-import org.jdbi.v3.core.Handle
+import org.heigit.ohsome.stats.utils.getGroupbyInterval
 import org.jdbi.v3.core.Jdbi.create
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -10,6 +10,7 @@ import java.time.Instant.now
 import javax.sql.DataSource
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.heigit.ohsome.stats.utils.HashtagHandler as HashtagHandler
 
 @Component
 class StatsRepo {
@@ -21,7 +22,7 @@ class StatsRepo {
     private val logger: Logger = LoggerFactory.getLogger(StatsRepo::class.java)
 
     //language=SQL
-    private val stats = """
+    private fun getStatsFromTimeSpan(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
@@ -31,25 +32,13 @@ class StatsRepo {
             max(changeset_timestamp) as latest
         FROM "stats"
         WHERE
-            hashtag = ?;
+            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?) 
+            and changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
+            and changeset_timestamp < parseDateTimeBestEffortOrNull(?);
         """.trimIndent()
 
     //language=SQL
-    private val statsFromTimeSpan = """
-        SELECT
-            count(distinct changeset_id) as changesets,
-            count(distinct user_id) as users,
-            sum(road_length) as roads,
-            count(building_area) as buildings,
-            count(*) as edits,
-            max(changeset_timestamp) as latest
-        FROM "stats"
-        WHERE
-            hashtag = ? and changeset_timestamp > parseDateTimeBestEffortOrNull(?) and changeset_timestamp < parseDateTimeBestEffortOrNull(?);
-        """.trimIndent()
-
-    //language=SQL
-    private val statsFromTimeSpanInterval = """
+    private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
        SELECT 
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
@@ -60,13 +49,15 @@ class StatsRepo {
             toStartOfInterval(changeset_timestamp), INTERVAL ?) + INTERVAL ? as enddate
         FROM "stats"    
         WHERE
-            hashtag = ? and changeset_timestamp > ? and changeset_timestamp < ?
+            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)  
+            and changeset_timestamp > ? 
+            and changeset_timestamp < ?
         GROUP BY 
             startdate
     """.trimIndent()
 
     //language=SQL
-    private val trendingHashtags ="""
+    private val trendingHashtags = """
         SELECT 
             hashtag, COUNT(DISTINCT user_id) as measure
         FROM "stats"
@@ -80,85 +71,71 @@ class StatsRepo {
     """.trimIndent()
 
     /**
-     * Retrieves statistics for a specific hashtag.
-     *
-     * @param hashtag The hashtag to retrieve statistics for.
-     * @return A map containing the statistics.
-     */
-    fun getStats(hashtag: String): Map<String, Any> {
-        logger.info("Getting stats for hashtag: $hashtag")
-        return create(dataSource).withHandle<Map<String, Any>, RuntimeException> { asMap(it, "#$hashtag") } + ("hashtag" to hashtag)
-    }
-
-    /**
      * Retrieves statistics for a specific hashtag within a time span.
      *
-     * @param hashtag The hashtag to retrieve statistics for.
+     * @param hashtagHandler Contains the hashtag to retrieve statistics for.
      * @param startDate The start date of the time span.
      * @param endDate The end date of the time span.
      * @return A map containing the statistics.
      */
-    fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?): Map<String, Any> {
-        logger.info("Getting stats for hashtag: $hashtag, startDate: $startDate, endDate: $endDate")
+    fun getStatsForTimeSpan(hashtagHandler: HashtagHandler, startDate: Instant?, endDate: Instant?): Map<String, Any> {
+        logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
+
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
-            asMapFromTimeSpan(it, "#$hashtag", startDate ?: EPOCH, endDate ?: now())
-        } + ("hashtag" to hashtag)
+            it.select(
+                    getStatsFromTimeSpan(hashtagHandler),
+                    "#${hashtagHandler.hashtag}",
+                    startDate ?: EPOCH,
+                    endDate ?: now()
+            ).mapToMap().single()
+        } + ("hashtag" to hashtagHandler.hashtag)
     }
 
     /**
      * Retrieves statistics for a specific hashtag within a time span and interval.
      *
-     * @param hashtag The hashtag to retrieve statistics for.
+     * @param hashtagHandler Contains the hashtag to retrieve statistics for.
      * @param startDate The start date of the time span.
      * @param endDate The end date of the time span.
      * @param interval The interval for grouping the statistics.
      * @return A list of maps containing the statistics for each interval.
      */
-    fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant, endDate: Instant, interval: String): List<Map<String, Any>> {
-        logger.info("Getting stats for hashtag: $hashtag, startDate: $startDate, endDate: $endDate, interval: $interval")
+    fun getStatsForTimeSpanInterval(hashtagHandler: HashtagHandler, startDate: Instant, endDate: Instant, interval: String): List<Map<String, Any>> {
+        logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
+
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
-            asMapFromTimeSpanInterval(it, "#$hashtag", startDate, endDate, getGroupbyInterval(interval))
+            it.select(
+                    getStatsFromTimeSpanInterval(hashtagHandler),
+                    getGroupbyInterval(interval),
+                    getGroupbyInterval(interval),
+                    getGroupbyInterval(interval),
+                    "#${hashtagHandler.hashtag}",
+                    startDate,
+                    endDate
+            ).mapToMap().list()
         }
     }
 
     /**
-     * Translates a custom ISO 8601 interval to the corresponding ClickHouse query for aggregator and grouper.
+     * Retrieves the most used Hashtags in the selected Timeperiod.
      *
-     * @param interval The custom ISO 8601 interval string.
-     * @return The aggregator string for the ClickHouse query.
-     *         If the interval is not in the expected format, an empty string is returned.
+     * @param hashtag The hashtag to retrieve statistics for.
+     * @param startDate The start date of the time span.
+     * @param endDate The end date of the time span.
+     * @return A list of maps containing the statistics for each interval.
      */
-    fun String.replaceDate() = this.replace("P", "")
-            .replace("Y", " YEAR")
-            .replace("M", " MONTH")
-            .replace("W", " WEEK")
-            .replace("D", " DAY")
-
-    fun String.replaceTime() = this.replace("PT","")
-            .replace("H", " HOUR")
-            .replace("M", " MINUTE")
-
-    fun getGroupbyInterval(interval: String): String {
-        if ("T" in  interval) return interval.replaceTime()
-        else return interval.replaceDate()
-    }
-
-    fun getTrendingHashtags(startDate: Instant, endDate: Instant, limit: Int?): List<Map<String,Any>>{
+    fun getTrendingHashtags(startDate: Instant, endDate: Instant, limit: Int?): List<Map<String, Any>> {
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
+
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
-            asMapFromTimeSpanTrending(it, startDate, endDate, limit)
+            it.select(
+                    trendingHashtags,
+                    startDate,
+                    endDate,
+                    limit
+            ).mapToMap().list()
         }
     }
 
-    @Suppress("LongParameterList")
-    private fun asMapFromTimeSpanTrending(handle: Handle, startDate: Instant, endDate: Instant, limit: Int?): List<Map<String, Any>> {
-        return handle.select(trendingHashtags,startDate, endDate,limit).mapToMap().list()
-    }
-
-    private fun asMap(handle: Handle, hashtag: String) = handle.select(stats, hashtag).mapToMap().single()
-    private fun asMapFromTimeSpan(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant) = handle.select(statsFromTimeSpan, hashtag, startDate, endDate).mapToMap().single()
-
-    @Suppress("LongParameterList")
-    private fun asMapFromTimeSpanInterval(handle: Handle, hashtag: String, startDate: Instant, endDate: Instant, groupBy: String): List<Map<String, Any>> = handle.select(statsFromTimeSpanInterval, groupBy, groupBy, groupBy, hashtag, startDate, endDate).mapToMap().list()
 
 }

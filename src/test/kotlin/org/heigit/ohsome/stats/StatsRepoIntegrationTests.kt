@@ -1,5 +1,6 @@
 package org.heigit.ohsome.stats
 
+import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -34,44 +35,29 @@ class StatsRepoIntegrationTests {
         @JvmStatic
         @DynamicPropertySource
         fun clickhouseUrl(registry: DynamicPropertyRegistry) = registry.add("spring.datasource.url") { clickHouse.jdbcUrl }
-
     }
-
 
     @Autowired
     lateinit var repo: StatsRepo
 
-
     val expected = mapOf(
-        "changesets" to 1,
-        "users" to 1,
-        "roads" to 140,
-        "buildings" to 1,
-        "edits" to 1,
-        "latest" to "2017-12-19T00:52:03",
-        "hashtag" to "&uganda"
+            "changesets" to 1,
+            "users" to 1,
+            "roads" to 140,
+            "buildings" to 1,
+            "edits" to 1,
+            "latest" to "2017-12-19T00:52:03",
+            "hashtag" to "&uganda"
     )
 
-
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
-    fun `stats should return all data`() {
-
-        val result = this.repo.getStats("&uganda")
+    fun `getStatsForTimeSpan should return all data when using no time span`() {
+        val hashtagHandler = HashtagHandler("&uganda")
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null)
         assertEquals(7, result.size)
+        println(result)
         assertEquals(expected.toString(), result.toString())
-
-    }
-
-    @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
-    fun `getStatsForTimeSpan should still return all data in time span when using default time span`() {
-
-        val timeSpanResult = this.repo.getStatsForTimeSpan("&ui-state", null, null)
-        val result = this.repo.getStats("&ui-state")
-        assertEquals(result.size, timeSpanResult.size)
-        assertEquals(result["changesets"], timeSpanResult["changesets"])
-        assertEquals(result["latest"], timeSpanResult["latest"])
     }
 
     @Test
@@ -80,7 +66,8 @@ class StatsRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(1457186410)
         val endDate = Instant.ofEpochSecond(1457186430)
         println(startDate)
-        val result = this.repo.getStatsForTimeSpan("&", startDate, endDate)
+        val hashtagHandler = HashtagHandler("&")
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate)
         println(result)
 
         assertEquals(7, result.size)
@@ -92,8 +79,8 @@ class StatsRepoIntegrationTests {
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns partial data in time span for start date only`() {
         val startDate = Instant.ofEpochSecond(1420991470)
-
-        val result = this.repo.getStatsForTimeSpan("&group", startDate, null)
+        val hashtagHandler = HashtagHandler("&group")
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, startDate, null)
         println(result)
 
         assertEquals(7, result.size)
@@ -104,9 +91,9 @@ class StatsRepoIntegrationTests {
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns partial data in time span for end date only`() {
-        val endDate = Instant.ofEpochSecond(  1639054890)
-
-        val result = this.repo.getStatsForTimeSpan("&group", null, endDate)
+        val endDate = Instant.ofEpochSecond(1639054890)
+        val hashtagHandler = HashtagHandler("&group")
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, endDate)
         println(result)
 
         assertEquals(7, result.size)

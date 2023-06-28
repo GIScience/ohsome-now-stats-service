@@ -1,5 +1,6 @@
 package org.heigit.ohsome.stats
 
+import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
@@ -39,25 +40,22 @@ class StatsControllerMVCTests {
       }"""
 
 
-
     @Test
     fun `stats can be served without date restriction`() {
-
-        `when`(repo.getStatsForTimeSpan(hashtag, null, null))
-            .thenReturn(mapOf("hashtag" to hashtag))
+        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
+                .thenReturn(mapOf("hashtag" to hashtag))
 
         this.mockMvc
-            .perform(get("/stats/$hashtag"))
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.hashtag").value(hashtag))
-
+                .perform(get("/stats/$hashtag"))
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.hashtag").value(hashtag))
     }
 
 
     @Test
     fun `stats per interval can be served with explicit start and end dates`() {
-        `when`(repo.getStatsForTimeSpanInterval(anyString(),any(Instant::class.java),any(Instant::class.java), anyString()))
+        `when`(repo.getStatsForTimeSpanInterval(any(HashtagHandler::class.java), any(Instant::class.java), any(Instant::class.java), anyString()))
                 .thenReturn(listOf(mapOf("hashtag" to hashtag)))
 
         val GET = get("/stats/$hashtag/interval")
@@ -66,23 +64,23 @@ class StatsControllerMVCTests {
                 .queryParam("interval", "P1M")
 
         this.mockMvc.perform(GET)
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.query.hashtag").value(hashtag))
-            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-09-30T23:00:00Z"))
-            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.query.hashtag").value(hashtag))
+                .andExpect(jsonPath("$.query.timespan.startDate").value("2017-09-30T23:00:00Z"))
+                .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
     }
 
     @Test
     fun `stats_static should return a static map of stats values`() {
 
         this.mockMvc
-            .perform(get("/stats_static"))
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(content().json(expectedStatic, false))
+                .perform(get("/stats_static"))
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(content().json(expectedStatic, false))
 
     }
 
-    private fun <T> any(type:Class<T>): T = Mockito.any<T>(type)
+    private fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
 }
