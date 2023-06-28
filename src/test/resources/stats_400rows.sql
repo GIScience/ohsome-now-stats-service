@@ -34,10 +34,13 @@ VALUES
   ('yQ1gW3hZ5B', 114743552, toDateTime(1639054888), '#&group', 552187, 'way/684210394875', NULL, 0, 0, NULL, 492, 492, NULL, ['HUN']),
   ('zS9bX2dH8K', 114743552, toDateTime(1639054888), '#&group', 552187, 'node/5428710439801', 0, 0, 0, NULL, 54, 54, NULL, ['HUN']),
   ('nB2dV5cR7K', 114743552, toDateTime(1639054888), '#&group', 552187, 'way/71098765432109', NULL, 0, 0, NULL, 175, 175, NULL, ['HUN']),
+  ('yQ1gW3hd5B', 1147435529, toDateTime(1639054888), '#&groupExtra', 552187, 'way/684210394875', NULL, 0, 0, NULL, 492, 492, NULL, ['HUN']),
+  ('zS9bX2dh8K', 1147435529, toDateTime(1639054888), '#&groupExtra', 552187, 'node/5428710439801', 0, 0, 0, NULL, 54, 54, NULL, ['HUN']),
+  ('nB2dV5cs7K', 1147435529, toDateTime(1639054888), '#&groupExtra', 552187, 'way/71098765432109', NULL, 0, 0, NULL, 175, 175, NULL, ['HUN']),
   ('xM2dC4fA6V', 54746053, toDateTime(1513644723), '#&uganda', 6791950, 'node/123456789012345', NULL, 0, 0, NULL, 140, -9, NULL, ['UGA']),
-  ('r5G9P2eD7F', 114743252, toDateTime(1513644723), '#&test', 123456, 'way/3698274', -1, 175, 175, 1, 0, 0, NULL, ['MM']),
-  ('sT8aY6nX1Z', 114743252, toDateTime(1513644723), '#&test', 123456, 'node/7805319', NULL, 183, 183, 0, 0, 0, NULL, ['MM']),
+  ('r5G9P2eD7F', 114743252, toDateTime(1513644723), '#&test', 123456, 'way/3698274', -1, 175, 175, 1, 0, 0, NULL, ['DE']),
+  ('sT8aY6nX1Z', 114743252, toDateTime(1513644723), '#&test', 123456, 'node/7805319', NULL, 183, 183, 0, 0, 0, NULL, ['DE']),
   ('wK3pR7vE2T', 114743252, toDateTime(1513644723), '#&test', 123456, 'way/21875648', NULL, 1499, -290, -1, 0, 0, NULL, []),
-  ('xM2dC4fA6V', 114743252, toDateTime(1513644723), '#&test', 123456, 'way/64192853', NULL, 0, 3, 1, 0, 0, NULL, ['MM']),
-  ('yQ1gW3hZ5B', 114743252, toDateTime(1513644723), '#&test', 123456, 'node/102547876', 0, 770, -492, 1, 0, 0, NULL, ['MM'])
+  ('xM2dC4fA6V', 114743252, toDateTime(1513644723), '#&test', 123456, 'way/64192853', NULL, 0, 3, 1, 0, 0, NULL, ['DE']),
+  ('yQ1gW3hZ5B', 114743252, toDateTime(1513644723), '#&test', 123456, 'node/102547876', 0, 770, -492, 1, 0, 0, NULL, ['DE'])
 ;

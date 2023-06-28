@@ -45,8 +45,8 @@ class StatsRepo {
             sum(road_length) as roads,
             count(building_area) as buildings,
             count(*) as edits,
-            toStartOfInterval(changeset_timestamp), INTERVAL ?) as startdate,
-            toStartOfInterval(changeset_timestamp), INTERVAL ?) + INTERVAL ? as enddate
+            toStartOfInterval(changeset_timestamp, INTERVAL ?) as startdate,
+            toStartOfInterval(changeset_timestamp, INTERVAL ?) + INTERVAL ? as enddate
         FROM "stats"    
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)  

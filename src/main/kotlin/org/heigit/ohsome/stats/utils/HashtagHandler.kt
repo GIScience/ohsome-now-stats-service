@@ -8,7 +8,7 @@ class HashtagHandler(var hashtag: String, var isWildCard: Boolean = false) {
     fun detectWildCard(hashtag: String) {
         isWildCard = hashtag.last() == '*'
         if (isWildCard) {
-            this.hashtag.dropLast(1)
+            this.hashtag = hashtag.dropLast(1)
         }
     }
 }
