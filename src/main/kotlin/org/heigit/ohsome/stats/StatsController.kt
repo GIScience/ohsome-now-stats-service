@@ -138,7 +138,9 @@ class StatsController {
     private fun buildMetadata(executionTime: Long): Map<String, Any> {
         return mapOf(
                 "executionTime" to executionTime,
-                "requestUrl" to "https://stats.ohsome.org/..." // ToDo: Update with the actual request URL
+                "requestUrl" to "https://stats.ohsome.org/...", // ToDo: Update with the actual request URL
+                "apiVersion" to "tbd"
+
         )
     }
 
@@ -188,10 +190,8 @@ class StatsController {
     }
 
     private fun getTrendingHashtags(startDate: Instant, endDate: Instant, limit: Int?): Map<String, Any> {
-
         val response = mutableMapOf<String, Any>()
         val executionTime = measureTimeMillis {
-            //is there a better way to handle default values?
             val queryResult = repo.getTrendingHashtags(
                     startDate, endDate,
                     limit
@@ -199,14 +199,10 @@ class StatsController {
             ) //avoid second definition of default values
             response["result"] = queryResult
         }
-
         response["attribution"] =
                 mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
-        response["apiVersion"] = "tbd"
         response["metadata"] = buildMetadata(executionTime)
         response["query"] = buildQueryInfoTimespan(startDate, endDate, limit = limit)
-        response["latest"] = Instant.now().toString() // ToDo: Replace with the actual latest timestamp
-
         return response
     }
 
