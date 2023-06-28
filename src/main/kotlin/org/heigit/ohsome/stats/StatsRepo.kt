@@ -38,6 +38,7 @@ class StatsRepo {
         """.trimIndent()
 
     //language=SQL
+    @Suppress("LongMethod")
     private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
        SELECT 
             count(distinct changeset_id) as changesets,

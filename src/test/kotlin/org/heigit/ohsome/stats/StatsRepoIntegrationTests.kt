@@ -101,6 +101,18 @@ class StatsRepoIntegrationTests {
         assertEquals("2021-12-09T13:01:28", result["latest"].toString())
     }
 
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForTimeSpan returns combined data of multiple hashtags with wildcard`() {
+        val hashtagHandlerWildcard = HashtagHandler("&group*")
+        val resultWildCard = this.repo.getStatsForTimeSpan(hashtagHandlerWildcard, null, null)
+
+        val hashtagHandler = HashtagHandler("&group")
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null)
+
+        assertTrue(result["changesets"].toString().toInt() < resultWildCard["changesets"].toString().toInt())
+    }
+
 
 }
 
