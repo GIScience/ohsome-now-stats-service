@@ -84,10 +84,10 @@ class StatsRepo {
 
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
             it.select(
-                    getStatsFromTimeSpan(hashtagHandler),
-                    "#${hashtagHandler.hashtag}",
-                    startDate ?: EPOCH,
-                    endDate ?: now()
+                getStatsFromTimeSpan(hashtagHandler),
+                "#${hashtagHandler.hashtag}",
+                startDate ?: EPOCH,
+                endDate ?: now()
             ).mapToMap().single()
         } + ("hashtag" to hashtagHandler.hashtag)
     }
@@ -101,18 +101,23 @@ class StatsRepo {
      * @param interval The interval for grouping the statistics.
      * @return A list of maps containing the statistics for each interval.
      */
-    fun getStatsForTimeSpanInterval(hashtagHandler: HashtagHandler, startDate: Instant, endDate: Instant, interval: String): List<Map<String, Any>> {
+    fun getStatsForTimeSpanInterval(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant? = EPOCH,
+        endDate: Instant? = now(),
+        interval: String
+    ): List<Map<String, Any>> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
 
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-                    getStatsFromTimeSpanInterval(hashtagHandler),
-                    getGroupbyInterval(interval),
-                    getGroupbyInterval(interval),
-                    getGroupbyInterval(interval),
-                    "#${hashtagHandler.hashtag}",
-                    startDate,
-                    endDate
+                getStatsFromTimeSpanInterval(hashtagHandler),
+                getGroupbyInterval(interval),
+                getGroupbyInterval(interval),
+                getGroupbyInterval(interval),
+                "#${hashtagHandler.hashtag}",
+                startDate,
+                endDate
             ).mapToMap().list()
         }
     }
@@ -125,15 +130,18 @@ class StatsRepo {
      * @param endDate The end date of the time span.
      * @return A list of maps containing the statistics for each interval.
      */
-    fun getMostUsedHashtags(startDate: Instant, endDate: Instant, limit: Int?): List<Map<String, Any>> {
+    fun getMostUsedHashtags(
+        startDate: Instant? = EPOCH,
+        endDate: Instant? = now(),
+        limit: Int? = 10
+    ): List<Map<String, Any>> {
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
-
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-                    trendingHashtags,
-                    startDate,
-                    endDate,
-                    limit
+                trendingHashtags,
+                startDate,
+                endDate,
+                limit
             ).mapToMap().list()
         }
     }
