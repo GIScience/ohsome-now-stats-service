@@ -197,4 +197,20 @@ class StatsController {
         return response
     }
 
+    @Operation(summary = "Returns maximum and minimum timestamps of the database.")
+    @GetMapping("/metadata")
+    fun metadata(
+    ): Map<String, Any> {
+        val response = mutableMapOf<String, Any>()
+        val executionTime = measureTimeMillis {
+            val queryResult = repo.getMetadata()
+            response["result"] = queryResult
+        }
+        response["attribution"] =
+            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
+        response["metadata"] = buildMetadata(executionTime)
+        return response
+    }
+
+
 }
