@@ -1,5 +1,6 @@
 package org.heigit.ohsome.stats
 
+import com.clickhouse.client.internal.google.type.DateTime
 import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -14,6 +15,7 @@ import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Instant
+import java.time.LocalDateTime
 
 
 @SpringBootTest(webEnvironment = NONE)
@@ -34,20 +36,21 @@ class StatsRepoIntegrationTests {
 
         @JvmStatic
         @DynamicPropertySource
-        fun clickhouseUrl(registry: DynamicPropertyRegistry) = registry.add("spring.datasource.url") { clickHouse.jdbcUrl }
+        fun clickhouseUrl(registry: DynamicPropertyRegistry) =
+            registry.add("spring.datasource.url") { clickHouse.jdbcUrl }
     }
 
     @Autowired
     lateinit var repo: StatsRepo
 
     val expected = mapOf(
-            "changesets" to 1,
-            "users" to 1,
-            "roads" to 140,
-            "buildings" to 1,
-            "edits" to 1,
-            "latest" to "2017-12-19T00:52:03",
-            "hashtag" to "&uganda"
+        "changesets" to 1,
+        "users" to 1,
+        "roads" to 140,
+        "buildings" to 1,
+        "edits" to 1,
+        "latest" to "2017-12-19T00:52:03",
+        "hashtag" to "&uganda"
     )
 
     @Test
@@ -120,7 +123,7 @@ class StatsRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&group")
-        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate,"P1M")
+        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
         println(result)
         assertEquals(1, result.size)
         assertEquals(7, result[0].size)
@@ -133,13 +136,22 @@ class StatsRepoIntegrationTests {
     fun `getMostUsedHashtags returns the most used hashtags in given time range for start and enddate`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1639054890)
-        val result = this.repo.getMostUsedHashtags(startDate,endDate,10)
+        val result = this.repo.getMostUsedHashtags(startDate, endDate, 10)
         println(result)
         assertTrue(result[0] is Map)
         assertTrue(result[0].containsKey("hashtag"))
-        assertTrue(result[0].containsKey("measure"))
+        assertTrue(result[0].containsKey("number_of_users"))
         assertTrue(result[0].size == 2)
         assertTrue(result.size == 6)
+    }
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getMetadata returns the minimum and maximum timestamp`() {
+        val result = this.repo.getMetadata()
+        println(result)
+        assertEquals(LocalDateTime.parse("2016-03-05T14:00:20"), result["min_timestamp"])
+        assertEquals(LocalDateTime.parse("2021-12-09T13:01:28"), result["max_timestamp"])
     }
 }
 

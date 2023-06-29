@@ -58,17 +58,25 @@ class StatsRepo {
     """.trimIndent()
 
     //language=SQL
-    private val trendingHashtags = """
+    private val mostUsedHashtags = """
         SELECT 
-            hashtag, COUNT(DISTINCT user_id) as measure
+            hashtag, COUNT(DISTINCT user_id) as number_of_users
         FROM "stats"
         WHERE
             changeset_timestamp > ? and changeset_timestamp < ?
         GROUP BY
             hashtag
         ORDER BY
-            measure DESC
+            number_of_users DESC
         LIMIT ?
+    """.trimIndent()
+
+    //language=SQL
+    private val metadata = """
+        SELECT 
+            max(changeset_timestamp) as max_timestamp,
+            min(changeset_timestamp) as min_timestamp
+        FROM "stats"
     """.trimIndent()
 
     /**
@@ -138,11 +146,25 @@ class StatsRepo {
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-                trendingHashtags,
+                mostUsedHashtags,
                 startDate,
                 endDate,
                 limit
             ).mapToMap().list()
+        }
+    }
+
+    /**
+     * Get min_timestamp and max_timestamp for the entire database.
+     *
+     * @return  A map containing the two keys.
+     */
+    fun getMetadata(
+    ): Map<String, Any> {
+        return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
+            it.select(
+                metadata
+            ).mapToMap().single()
         }
     }
 
