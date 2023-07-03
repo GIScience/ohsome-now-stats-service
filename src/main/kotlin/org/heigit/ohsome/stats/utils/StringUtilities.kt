@@ -1,5 +1,7 @@
 package org.heigit.ohsome.stats.utils
 
+import jakarta.servlet.http.HttpServletRequest
+
 
 /**
  * Translates a custom ISO 8601 interval to the corresponding ClickHouse query for aggregator and grouper.
@@ -29,3 +31,7 @@ fun String.replaceTime() = this
     // Adjust the time section
     .replace("H", " HOUR")
     .replace("M", " MINUTE")
+
+fun makeUrl(request: HttpServletRequest): String {
+    return request.requestURI.toString() + "?" + request.queryString
+}

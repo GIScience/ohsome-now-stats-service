@@ -77,6 +77,10 @@ class StatsControllerMVCTests {
             .andExpect(jsonPath("$.query.hashtag").value(hashtag))
             .andExpect(jsonPath("$.query.timespan.startDate").value("2017-09-30T23:00:00Z"))
             .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+            .andExpect(
+                jsonPath("$.metadata.requestUrl")
+                    .value("/stats/&uganda/interval?startdate=2017-10-01T04:00+05:00&enddate=2020-10-01T04:00+00:00&interval=P1M")
+            )
     }
 
     @Test
@@ -87,7 +91,6 @@ class StatsControllerMVCTests {
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(content().json(expectedStatic, false))
-
     }
 
     @Test
