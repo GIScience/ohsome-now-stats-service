@@ -54,19 +54,6 @@ class StatsController {
         return stats + extraParams
     }
 
-    /**
-     * Echoes the request parameters as a map.
-     *
-     * @param startDate the (inclusive) start date for the query
-     * @param endDate the (exclusive) end date for the query
-     * @return a map containing the request parameters
-     */
-    fun echoRequestParameters(startDate: Instant?, endDate: Instant?): Map<String, Instant> {
-        val extraParams = mutableMapOf<String, Instant>()
-        startDate?.let { extraParams["startdate"] = it }
-        endDate?.let { extraParams["enddate"] = it }
-        return extraParams
-    }
 
     /**
      * Returns a static snapshot of OSM statistics.
@@ -130,38 +117,6 @@ class StatsController {
     }
 
 
-    private fun buildMetadata(executionTime: Long, httpServletRequest: HttpServletRequest): Map<String, Any> {
-        return mapOf(
-            "executionTime" to executionTime,
-            "requestUrl" to makeUrl(httpServletRequest),
-            "apiVersion" to "tbd"
-
-        )
-    }
-
-    @Suppress("LongParameterList")
-    private fun buildQueryInfoTimespan(
-        startDate: Instant? = EPOCH,
-        endDate: Instant? = now(),
-        hashtag: String? = null,
-        interval: String? = null,
-        limit: Int? = null
-    ): Map<String, Any?> {
-        val timespan = mapOf(
-            "startDate" to startDate.toString(),
-            "endDate" to endDate.toString(),
-            "interval" to interval
-        ).filterValues { it != null }
-
-        val queryInfo = mapOf(
-            "timespan" to timespan,
-            "hashtag" to hashtag,
-            "limit" to limit
-        ).filterValues { it != null }
-
-        return queryInfo
-    }
-
     @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod.")
     @GetMapping("/mostUsedHashtags")
     fun mostUsedHashtags(
@@ -212,5 +167,51 @@ class StatsController {
         return response
     }
 
+
+    private fun buildMetadata(executionTime: Long, httpServletRequest: HttpServletRequest): Map<String, Any> {
+        return mapOf(
+            "executionTime" to executionTime,
+            "requestUrl" to makeUrl(httpServletRequest),
+            "apiVersion" to "tbd"
+
+        )
+    }
+
+    @Suppress("LongParameterList")
+    private fun buildQueryInfoTimespan(
+        startDate: Instant? = EPOCH,
+        endDate: Instant? = now(),
+        hashtag: String? = null,
+        interval: String? = null,
+        limit: Int? = null
+    ): Map<String, Any?> {
+        val timespan = mapOf(
+            "startDate" to startDate.toString(),
+            "endDate" to endDate.toString(),
+            "interval" to interval
+        ).filterValues { it != null }
+
+        val queryInfo = mapOf(
+            "timespan" to timespan,
+            "hashtag" to hashtag,
+            "limit" to limit
+        ).filterValues { it != null }
+
+        return queryInfo
+    }
+
+    /**
+     * Echoes the request parameters as a map.
+     *
+     * @param startDate the (inclusive) start date for the query
+     * @param endDate the (exclusive) end date for the query
+     * @return a map containing the request parameters
+     */
+    fun echoRequestParameters(startDate: Instant?, endDate: Instant?): Map<String, Instant> {
+        val extraParams = mutableMapOf<String, Instant>()
+        startDate?.let { extraParams["startdate"] = it }
+        endDate?.let { extraParams["enddate"] = it }
+        return extraParams
+    }
 
 }
