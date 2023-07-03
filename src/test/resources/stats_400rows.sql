@@ -15,7 +15,7 @@ INSERT INTO stats (
   "country_iso_a3"
 )
 VALUES
-  ('r5G9P2eD7F', 37627942, toDateTime(1457186420), '#&', 2186388, 'way/3698274', NULL, 0, 0, NULL, 0, 0, NULL, ['FIN']),
+  ('r5G9P2eD7F', 37627942, toDateTime(1240437600), '#&', 2186388, 'way/3698274', NULL, 0, 0, NULL, 0, 0, NULL, ['FIN']),
   ('sT8aY6nX1Z', 37627942, toDateTime(1457186420), '#&', 2186388, 'node/7805319', 1, 0, 0, NULL, 0, 0, NULL, ['FIN']),
   ('wK3pR7vE2T', 37627942, toDateTime(1457186420), '#&', 2186388, 'way/21875648', 0, 0, 0, NULL, 0, 0, NULL, []),
   ('xM2dC4fA6V', 110552980, toDateTime(1630486233), '#&gid', 219908, 'way/64192853', NULL, 0, 0, NULL, 613, 0, 1, ['BEL']),
@@ -42,5 +42,5 @@ VALUES
   ('sT8aY6nX1Z', 114743252, toDateTime(1513644723), '#&test', 123456, 'node/7805319', NULL, 183, 183, 0, 0, 0, NULL, ['DE']),
   ('wK3pR7vE2T', 114743252, toDateTime(1513644723), '#&test', 123456, 'way/21875648', NULL, 1499, -290, -1, 0, 0, NULL, []),
   ('xM2dC4fA6V', 114743252, toDateTime(1513644723), '#&test', 123456, 'way/64192853', NULL, 0, 3, 1, 0, 0, NULL, ['DE']),
-  ('yQ1gW3hZ5B', 114743252, toDateTime(1513644723), '#&test', 123456, 'node/102547876', 0, 770, -492, 1, 0, 0, NULL, ['DE'])
+  ('yQ1gW3hZ5B', 114743252, toDateTime(1688042925), '#&test', 123456, 'node/102547876', 0, 770, -492, 1, 0, 0, NULL, ['DE'])
 ;

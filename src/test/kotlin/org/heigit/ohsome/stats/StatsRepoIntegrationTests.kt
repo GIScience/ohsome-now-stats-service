@@ -150,8 +150,8 @@ class StatsRepoIntegrationTests {
     fun `getMetadata returns the minimum and maximum timestamp`() {
         val result = this.repo.getMetadata()
         println(result)
-        assertEquals(LocalDateTime.parse("2016-03-05T14:00:20"), result["min_timestamp"])
-        assertEquals(LocalDateTime.parse("2021-12-09T13:01:28"), result["max_timestamp"])
+        assertEquals(LocalDateTime.parse("2009-04-22T22:00"), result["min_timestamp"])
+        assertEquals(LocalDateTime.parse("2023-06-29T12:48:45"), result["max_timestamp"])
     }
 }
 
