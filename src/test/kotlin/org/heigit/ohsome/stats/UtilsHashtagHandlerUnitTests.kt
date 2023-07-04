@@ -2,11 +2,10 @@ package org.heigit.ohsome.stats
 
 import org.junit.jupiter.api.Assertions.*
 import org.heigit.ohsome.stats.utils.HashtagHandler
-import org.heigit.ohsome.stats.utils.getGroupbyInterval
 import org.junit.jupiter.api.Test
 
 
-class UtilsHashTagHandlerUnitTests {
+class UtilsHashtagHandlerUnitTests {
 
     @Test
     fun `check if normal hashtag is wildcard`() {

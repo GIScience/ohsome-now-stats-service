@@ -116,6 +116,16 @@ class StatsRepoIntegrationTests {
         assertTrue(result["changesets"].toString().toInt() < resultWildCard["changesets"].toString().toInt())
     }
 
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForTimeSpan returns all data on everything with only wildcard character`() {
+        // wasn't sure about the sql behavior of startWith(""), but it seems that it selects everything like expected
+        val hashtagHandlerWildcard = HashtagHandler("*")
+        val resultWildCard = this.repo.getStatsForTimeSpan(hashtagHandlerWildcard, null, null)
+
+        assertEquals(6, resultWildCard["changesets"].toString().toInt())
+    }
+
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
@@ -150,8 +160,8 @@ class StatsRepoIntegrationTests {
     fun `getMetadata returns the minimum and maximum timestamp`() {
         val result = this.repo.getMetadata()
         println(result)
-        assertEquals(LocalDateTime.parse("2016-03-05T14:00:20"), result["min_timestamp"])
-        assertEquals(LocalDateTime.parse("2021-12-09T13:01:28"), result["max_timestamp"])
+        assertEquals(LocalDateTime.parse("2009-04-22T22:00"), result["min_timestamp"])
+        assertEquals(LocalDateTime.parse("2023-06-29T12:48:45"), result["max_timestamp"])
     }
 }
 

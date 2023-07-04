@@ -2,7 +2,9 @@ package org.heigit.ohsome.stats
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.stats.utils.HashtagHandler
+import org.heigit.ohsome.stats.utils.makeUrl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
@@ -52,19 +54,6 @@ class StatsController {
         return stats + extraParams
     }
 
-    /**
-     * Echoes the request parameters as a map.
-     *
-     * @param startDate the (inclusive) start date for the query
-     * @param endDate the (exclusive) end date for the query
-     * @return a map containing the request parameters
-     */
-    fun echoRequestParameters(startDate: Instant?, endDate: Instant?): Map<String, Instant> {
-        val extraParams = mutableMapOf<String, Instant>()
-        startDate?.let { extraParams["startdate"] = it }
-        endDate?.let { extraParams["enddate"] = it }
-        return extraParams
-    }
 
     /**
      * Returns a static snapshot of OSM statistics.
@@ -94,7 +83,9 @@ class StatsController {
      */
     @Operation(summary = "Returns live data from DB aggregated by month")
     @GetMapping("/stats/{hashtag}/interval")
+    @Suppress("LongParameterList")
     fun statsInterval(
+        httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable hashtag: String,
 
@@ -110,14 +101,7 @@ class StatsController {
 
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
-        interval: String
-    ): Map<String, Any> = getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval)
-
-    private fun getStatsForTimeSpanInterval(
-        hashtag: String,
-        startDate: Instant?,
-        endDate: Instant?,
-        interval: String
+        interval: String,
     ): Map<String, Any> {
         val response = mutableMapOf<String, Any>()
         val hashtagHandler = HashtagHandler(hashtag)
@@ -127,15 +111,67 @@ class StatsController {
         }
         response["attribution"] =
             mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
-        response["metadata"] = buildMetadata(executionTime)
+        response["metadata"] = buildMetadata(executionTime, httpServletRequest)
         response["query"] = buildQueryInfoTimespan(startDate, endDate, hashtag, interval)
         return response
     }
 
-    private fun buildMetadata(executionTime: Long): Map<String, Any> {
+
+    @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod.")
+    @GetMapping("/mostUsedHashtags")
+    fun mostUsedHashtags(
+        httpServletRequest: HttpServletRequest,
+        @Parameter(description = "the start date for the query in ISO format (e.g. 2014-01-01T00:00:00Z). Default: start of data")
+        @RequestParam(name = "startdate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        startDate: Instant?,
+
+        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2023-01-01T00:00:00Z). Default: now")
+        @RequestParam(name = "enddate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        endDate: Instant?,
+
+        @Parameter(description = "the number of hashtags to return")
+        @RequestParam(name = "limit", required = false, defaultValue = "10")
+        limit: Int?
+    ): Map<String, Any> {
+        val response = mutableMapOf<String, Any>()
+        val executionTime = measureTimeMillis {
+            val queryResult = repo.getMostUsedHashtags(
+                startDate,
+                endDate,
+                limit,
+            )
+            response["result"] = queryResult
+        }
+        response["attribution"] =
+            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
+        response["metadata"] = buildMetadata(executionTime, httpServletRequest)
+        response["query"] = buildQueryInfoTimespan(startDate, endDate, limit = limit)
+        return response
+    }
+
+    @Operation(summary = "Returns maximum and minimum timestamps of the database.")
+    @GetMapping("/metadata")
+    fun metadata(
+        httpServletRequest: HttpServletRequest
+    ): Map<String, Any> {
+        val response = mutableMapOf<String, Any>()
+        val executionTime = measureTimeMillis {
+            val queryResult = repo.getMetadata()
+            response["result"] = queryResult
+        }
+        response["attribution"] =
+            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
+        response["metadata"] = buildMetadata(executionTime, httpServletRequest)
+        return response
+    }
+
+
+    private fun buildMetadata(executionTime: Long, httpServletRequest: HttpServletRequest): Map<String, Any> {
         return mapOf(
             "executionTime" to executionTime,
-            "requestUrl" to "https://stats.ohsome.org/...", // ToDo: Update with the actual request URL
+            "requestUrl" to makeUrl(httpServletRequest),
             "apiVersion" to "tbd"
 
         )
@@ -164,53 +200,18 @@ class StatsController {
         return queryInfo
     }
 
-    @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod.")
-    @GetMapping("/mostUsedHashtags")
-    fun mostUsedHashtags(
-        @Parameter(description = "the start date for the query in ISO format (e.g. 2014-01-01T00:00:00Z). Default: start of data")
-        @RequestParam(name = "startdate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
-        startDate: Instant?,
-
-        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2023-01-01T00:00:00Z). Default: now")
-        @RequestParam(name = "enddate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
-        endDate: Instant?,
-
-        @Parameter(description = "the number of hashtags to return")
-        @RequestParam(name = "limit", required = false, defaultValue = "10")
-        limit: Int?
-    ): Map<String, Any> {
-        val response = mutableMapOf<String, Any>()
-        val executionTime = measureTimeMillis {
-            val queryResult = repo.getMostUsedHashtags(
-                startDate,
-                endDate,
-                limit,
-            )
-            response["result"] = queryResult
-        }
-        response["attribution"] =
-            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
-        response["metadata"] = buildMetadata(executionTime)
-        response["query"] = buildQueryInfoTimespan(startDate, endDate, limit = limit)
-        return response
+    /**
+     * Echoes the request parameters as a map.
+     *
+     * @param startDate the (inclusive) start date for the query
+     * @param endDate the (exclusive) end date for the query
+     * @return a map containing the request parameters
+     */
+    fun echoRequestParameters(startDate: Instant?, endDate: Instant?): Map<String, Instant> {
+        val extraParams = mutableMapOf<String, Instant>()
+        startDate?.let { extraParams["startdate"] = it }
+        endDate?.let { extraParams["enddate"] = it }
+        return extraParams
     }
-
-    @Operation(summary = "Returns maximum and minimum timestamps of the database.")
-    @GetMapping("/metadata")
-    fun metadata(
-    ): Map<String, Any> {
-        val response = mutableMapOf<String, Any>()
-        val executionTime = measureTimeMillis {
-            val queryResult = repo.getMetadata()
-            response["result"] = queryResult
-        }
-        response["attribution"] =
-            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
-        response["metadata"] = buildMetadata(executionTime)
-        return response
-    }
-
 
 }

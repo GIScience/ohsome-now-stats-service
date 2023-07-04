@@ -1,5 +1,7 @@
 package org.heigit.ohsome.stats.utils
 
+import jakarta.servlet.http.HttpServletRequest
+
 
 /**
  * Translates a custom ISO 8601 interval to the corresponding ClickHouse query for aggregator and grouper.
@@ -14,12 +16,22 @@ fun getGroupbyInterval(interval: String): String {
 }
 
 
-fun String.replaceDate() = this.replace("P", "")
-        .replace("Y", " YEAR")
-        .replace("M", " MONTH")
-        .replace("W", " WEEK")
-        .replace("D", " DAY")
+fun String.replaceDate() = this
+    // Remove the start of the ISO string
+    .replace("P", "")
+    // Adjust the date section
+    .replace("Y", " YEAR")
+    .replace("M", " MONTH")
+    .replace("W", " WEEK")
+    .replace("D", " DAY")
 
-fun String.replaceTime() = this.replace("PT", "")
-        .replace("H", " HOUR")
-        .replace("M", " MINUTE")
+fun String.replaceTime() = this
+    // Remove the start of the ISO string
+    .replace("PT", "")
+    // Adjust the time section
+    .replace("H", " HOUR")
+    .replace("M", " MINUTE")
+
+fun makeUrl(request: HttpServletRequest): String {
+    return request.requestURI.toString() + "?" + request.queryString
+}

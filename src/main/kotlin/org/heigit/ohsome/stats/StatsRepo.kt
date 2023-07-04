@@ -77,7 +77,9 @@ class StatsRepo {
             max(changeset_timestamp) as max_timestamp,
             min(changeset_timestamp) as min_timestamp
         FROM "stats"
-    """.trimIndent()
+        WHERE changeset_timestamp > now() - toIntervalMonth(1) 
+        OR changeset_timestamp < parseDateTimeBestEffortOrNull('2009-04-23T00:00:00.000000Z')
+    """.trimIndent() // todo: delete in clickhouse TESTHASTAGPLEASEDELETE
 
     /**
      * Retrieves statistics for a specific hashtag within a time span.
