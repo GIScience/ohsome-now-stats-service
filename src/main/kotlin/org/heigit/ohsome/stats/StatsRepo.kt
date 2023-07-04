@@ -68,8 +68,7 @@ class StatsRepo {
             sum(road_length) as roads,
             count(building_area) as buildings,
             count(*) as edits,
-            toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime as startdate,
-            toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime + INTERVAL ? as enddate,
+            max(changeset_timestamp) as latest,
             country_iso_a3 as country
         FROM "stats"
         ARRAY JOIN country_iso_a3
@@ -78,7 +77,7 @@ class StatsRepo {
             and changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
             and changeset_timestamp < parseDateTimeBestEffortOrNull(?)
         GROUP BY
-            country, startdate
+            country
         """.trimIndent()
 
     //language=clickhouse
@@ -194,21 +193,20 @@ class StatsRepo {
         }
     }
 
-    fun getStatsForTimeSpanCountry(hashtagHandler: HashtagHandler, startDate: Instant?=EPOCH, endDate: Instant?= now(), interval: String): Map<String,List<Map<String,Any>>> {
+    fun getStatsForTimeSpanCountry(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant? = EPOCH,
+        endDate: Instant? = now()
+    ): List<Map<String, Any>> {
         val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
                 getStatsFromTimeSpanCountry(hashtagHandler),
-                getGroupbyInterval(interval),
-                getGroupbyInterval(interval),
-                getGroupbyInterval(interval),
                 "#${hashtagHandler.hashtag}",
                 startDate,
                 endDate
             ).mapToMap().list()
         }
-        //return maps of string to any with startdate as key
-
-    return result.groupBy{ it["startdate"].toString() }
+        return result
     }
 
 

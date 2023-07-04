@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.HandlerMapping
 import java.time.Instant
 import java.time.Instant.EPOCH
-import java.time.Instant.now
+
 import kotlin.system.measureTimeMillis
 
 @Suppress("largeClass")
@@ -57,11 +58,11 @@ class StatsController {
         val executionTime = measureTimeMillis {
             stats = repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate)
         }
-        if (!ohsomeFormat) {
+        return if (!ohsomeFormat) {
             val extraParams = echoRequestParameters(startDate, endDate)
-            return stats + extraParams
+            stats + extraParams
         } else {
-            return buildOhsomeFormat(stats, executionTime, httpServletRequest)
+            buildOhsomeFormat(stats, executionTime, httpServletRequest)
         }
     }
 
@@ -155,7 +156,7 @@ class StatsController {
 
     @Suppress("LongParameterList")
     @Operation(summary = "Returns live data from DB aggregated by country")
-    @GetMapping("/stats/{hashtag}/interval/country")
+    @GetMapping("/stats/{hashtag}/country")
     fun statsCountry(
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable hashtag: String,
@@ -170,15 +171,12 @@ class StatsController {
         @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?,
 
-        @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
-        @RequestParam(name = "interval", defaultValue = "P1M", required = false)
-        interval: String,
         httpServletRequest: HttpServletRequest,
     ): Map<String, Any> {
-        lateinit var response: Map<String, Any>
+        lateinit var response: List<Map<String, Any>>
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
-            response = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, interval)
+            response = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
         }
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
@@ -208,15 +206,15 @@ class StatsController {
 
     @Suppress("LongParameterList")
     private fun buildQueryInfoTimespan(
-        startDate: Instant? = EPOCH,
-        endDate: Instant? = now(),
+        startDate: String,
+        endDate: String,
         hashtag: String? = null,
         interval: String? = null,
         limit: Int? = null
     ): Map<String, Any?> {
         val timespan = mapOf(
-            "startDate" to startDate.toString(),
-            "endDate" to endDate.toString(),
+            "startDate" to startDate,
+            "endDate" to endDate,
             "interval" to interval
         ).filterValues { it != null }
 
@@ -243,16 +241,19 @@ class StatsController {
         return extraParams
     }
 
+    @Suppress("LongMethod")
     fun buildOhsomeFormat(stats: Any, executionTime: Long, httpServletRequest: HttpServletRequest): Map<String, Any> {
         val response = mutableMapOf<String, Any>()
         response["result"] = stats
         response["attribution"] =
             mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
         response["metadata"] = buildMetadata(executionTime, httpServletRequest)
+        val pathVariables: Map<String, String>? =
+            httpServletRequest.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as? Map<String, String>
         response["query"] = buildQueryInfoTimespan(
-            Instant.parse((httpServletRequest.getParameter("startDate") ?: EPOCH).toString()),
-            Instant.parse(httpServletRequest.getParameter("endDate") ?: now().toString()),
-            //httpServletRequest.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)["hashtag"],
+            ((if (httpServletRequest.getParameter("startdate") != null) Instant.parse(httpServletRequest.getParameter("startdate")) else EPOCH)).toString(),
+            ((if (httpServletRequest.getParameter("enddate") != null) Instant.parse(httpServletRequest.getParameter("enddate")) else EPOCH)).toString(),
+            pathVariables?.get("hashtag"),
             httpServletRequest.getParameter("interval"),
             limit = httpServletRequest.getParameter("limit")?.toInt(),
         )

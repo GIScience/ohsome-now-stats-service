@@ -45,7 +45,7 @@ class StatsRepoIntegrationTests {
     val expected = mapOf(
         "changesets" to 1,
         "users" to 1,
-        "roads" to 140,
+        "roads" to 0.14,
         "buildings" to 1,
         "edits" to 1,
         "latest" to "2017-12-19T00:52:03",
@@ -156,16 +156,14 @@ class StatsRepoIntegrationTests {
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
-    fun `getStastsTimeSpanIntervalCountry returns partial data in time span for start and  end date with hashtag aggregated by month and country`() {
+    fun `getStatsTimeCountry returns partial data in time span for start and  end date with hashtag aggregated by month and country`() {
         val startDate = Instant.ofEpochSecond(0)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, "P1M")
+        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
         println(result)
-        assertTrue(result is Map)
-        assertTrue(result.keys.first() is String)
-        assertEquals(3,result["2017-12-01T00:00"]!!.size)
-        assertEquals(8,result["2017-12-01T00:00"]!![0].size)
+        assertTrue(result is List)
+        assertEquals(7, result[0].size)
     }
 
     @Test

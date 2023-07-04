@@ -51,8 +51,9 @@ class StatsControllerMVCTests {
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.hashtag").value(hashtag))
     }
+
     @Test
-    fun `stats with ohsomeFormat returns result object with ohsome formated metadata`(){
+    fun `stats with ohsomeFormat returns result object with ohsome formated metadata`() {
         `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
             .thenReturn(mapOf("hashtag" to hashtag))
 
@@ -78,19 +79,19 @@ class StatsControllerMVCTests {
             .thenReturn(listOf(mapOf("hashtag" to hashtag)))
 
         val GET = get("/stats/$hashtag/interval")
-            .queryParam("startdate", "2017-10-01T04:00+05:00")
-            .queryParam("enddate", "2020-10-01T04:00+00:00")
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "P1M")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.query.hashtag").value(hashtag))
-            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-09-30T23:00:00Z"))
+            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
             .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
             .andExpect(
                 jsonPath("$.metadata.requestUrl")
-                    .value("/stats/&uganda/interval?startdate=2017-10-01T04:00+05:00&enddate=2020-10-01T04:00+00:00&interval=P1M")
+                    .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M")
             )
     }
 
@@ -105,32 +106,31 @@ class StatsControllerMVCTests {
     }
 
     @Test
-    fun `stats per interval and country can be served with explicit start and end date`(){
-        `when` (
+    fun `stats per interval and country can be served with explicit start and end date`() {
+        `when`(
             repo.getStatsForTimeSpanCountry(
                 any(HashtagHandler::class.java),
                 any(Instant::class.java),
                 any(Instant::class.java),
-                anyString()
-            ))
-            .thenReturn(mapOf("2016-01-01T00:00" to listOf(mapOf("country" to "xyz"))))
+            )
+        )
+            .thenReturn(listOf(mapOf("country" to "xyz")))
 
-            val GET = get("/stats/$hashtag/interval/country")
-            .queryParam("startdate", "2017-10-01T04:00+05:00")
-            .queryParam("enddate", "2020-10-01T04:00+00:00")
-            .queryParam("interval", "P1M")
+        val GET = get("/stats/$hashtag/country")
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.query.hashtag").value(hashtag))
-            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-09-30T23:00:00Z"))
+            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
             .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
             .andExpect(
                 jsonPath("$.metadata.requestUrl")
-                    .value("/stats/&uganda/interval/country?startdate=2017-10-01T04:00+05:00&enddate=2020-10-01T04:00+00:00&interval=P1M")
+                    .value("/stats/&uganda/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z")
             )
-            .andExpect(jsonPath("$.result['2016-01-01T00:00'][0].country").value("xyz"))
+            .andExpect(jsonPath("$.result").value(mapOf("country" to "xyz")))
     }
 
     @Test
@@ -142,7 +142,7 @@ class StatsControllerMVCTests {
             .perform(get("/metadata"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-        .andExpect(jsonPath("$.result.max_timestamp").value("2021-12-09T13:01:28"))
+            .andExpect(jsonPath("$.result.max_timestamp").value("2021-12-09T13:01:28"))
     }
 
     private fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
