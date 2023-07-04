@@ -45,12 +45,30 @@ class StatsController {
         @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam("enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        endDate: Instant?
+        endDate: Instant?,
+        @Parameter(description = "indicate whether the results should be returned with additional Metadata")
+        @RequestParam(name = "ohsomeFormat", defaultValue = "false", required = false)
+        ohsomeFormat: Boolean,
+        httpServletRequest: HttpServletRequest
     ): Map<String, Any> {
         val hashtagHandler = HashtagHandler(hashtag)
-        val stats = repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate)
-        val extraParams = echoRequestParameters(startDate, endDate)
-        return stats + extraParams
+        lateinit var stats: Map<String, Any>
+        val executionTime = measureTimeMillis {
+            stats = repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate)
+        }
+        if (!ohsomeFormat){
+            val extraParams = echoRequestParameters(startDate, endDate)
+            return stats + extraParams}
+        else {
+            val response = mutableMapOf<String, Any>()
+            response["result"] = stats
+
+            response["attribution"] =
+                mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
+            response["metadata"] = buildMetadata(executionTime, httpServletRequest)
+            response["query"] = buildQueryInfoTimespan(startDate, endDate, hashtag)
+            return response
+        }
     }
 
 
@@ -169,7 +187,7 @@ class StatsController {
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
         interval: String,
-        httpServletRequest: HttpServletRequest
+        httpServletRequest: HttpServletRequest,
     ): Map<String,Any> {
         val response = mutableMapOf<String, Any>()
         val hashtagHandler = HashtagHandler(hashtag)
@@ -178,7 +196,7 @@ class StatsController {
             response["result"] = queryResult
         }
         response["attribution"] =
-            mapOf("url" to "https://www.naturalearthdata.com/about/terms-of-use", "text" to "© Natural Earth")
+            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
         response["metadata"] = buildMetadata(executionTime,httpServletRequest)
         response["query"] = buildQueryInfoTimespan(startDate, endDate, hashtag)
         return response

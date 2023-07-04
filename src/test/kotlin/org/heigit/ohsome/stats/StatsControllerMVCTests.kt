@@ -51,7 +51,19 @@ class StatsControllerMVCTests {
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.hashtag").value(hashtag))
     }
+    @Test
+    fun `stats with ohsomeFormat returns result object with ohsome formated metadata`(){
+        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
+            .thenReturn(mapOf("hashtag" to hashtag))
 
+        this.mockMvc
+            .perform(get("/stats/$hashtag?ohsomeFormat=true"))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.result.hashtag").value(hashtag))
+            .andExpect(jsonPath("$.query.timespan.endDate").exists())
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/&uganda?ohsomeFormat=true"))
+    }
 
     @Test
     fun `stats per interval can be served with explicit start and end dates`() {
