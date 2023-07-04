@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.HandlerMapping
 import java.time.Instant
 import java.time.Instant.EPOCH
+import java.time.Instant.now
 
 import kotlin.system.measureTimeMillis
 
@@ -204,17 +205,21 @@ class StatsController {
         )
     }
 
+    private fun buildAttribution(): Map<String, String> {
+        return mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
+    }
+
     @Suppress("LongParameterList")
     private fun buildQueryInfoTimespan(
-        startDate: String,
-        endDate: String,
+        startDate: String?,
+        endDate: String?,
         hashtag: String? = null,
         interval: String? = null,
         limit: Int? = null
     ): Map<String, Any?> {
         val timespan = mapOf(
-            "startDate" to startDate,
-            "endDate" to endDate,
+            "startDate" to (startDate ?: EPOCH.toString()),
+            "endDate" to (endDate ?: now().toString()),
             "interval" to interval
         ).filterValues { it != null }
 
@@ -241,23 +246,22 @@ class StatsController {
         return extraParams
     }
 
-    @Suppress("LongMethod")
+
     fun buildOhsomeFormat(stats: Any, executionTime: Long, httpServletRequest: HttpServletRequest): Map<String, Any> {
-        val response = mutableMapOf<String, Any>()
-        response["result"] = stats
-        response["attribution"] =
-            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
-        response["metadata"] = buildMetadata(executionTime, httpServletRequest)
-        val pathVariables: Map<String, String>? =
+        val pathVariables =
             httpServletRequest.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as? Map<String, String>
-        response["query"] = buildQueryInfoTimespan(
-            ((if (httpServletRequest.getParameter("startdate") != null) Instant.parse(httpServletRequest.getParameter("startdate")) else EPOCH)).toString(),
-            ((if (httpServletRequest.getParameter("enddate") != null) Instant.parse(httpServletRequest.getParameter("enddate")) else EPOCH)).toString(),
-            pathVariables?.get("hashtag"),
-            httpServletRequest.getParameter("interval"),
-            limit = httpServletRequest.getParameter("limit")?.toInt(),
+        return mutableMapOf(
+            "result" to stats,
+            "attribution" to buildAttribution(),
+            "metadata" to buildMetadata(executionTime, httpServletRequest),
+            "query" to buildQueryInfoTimespan(
+                httpServletRequest.getParameter("startdate"),
+                httpServletRequest.getParameter("enddate"),
+                pathVariables?.get("hashtag"),
+                httpServletRequest.getParameter("interval"),
+                httpServletRequest.getParameter("limit")?.toInt(),
+            )
         )
-        return response
     }
 
 
