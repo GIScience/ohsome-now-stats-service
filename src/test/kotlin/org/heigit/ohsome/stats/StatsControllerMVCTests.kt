@@ -92,6 +92,34 @@ class StatsControllerMVCTests {
             .andExpect(content().json(expectedStatic, false))
     }
 
+    @Test
+    fun `stats per interval and country can be served with explicit start and end date`(){
+        `when` (
+            repo.getStatsForTimeSpanCountry(
+                any(HashtagHandler::class.java),
+                any(Instant::class.java),
+                any(Instant::class.java),
+                anyString()
+            ))
+            .thenReturn(mapOf("2016-01-01T00:00" to listOf(mapOf("country" to "xyz"))))
+
+            val GET = get("/stats/$hashtag/interval/country")
+            .queryParam("startdate", "2017-10-01T04:00+05:00")
+            .queryParam("enddate", "2020-10-01T04:00+00:00")
+            .queryParam("interval", "P1M")
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.query.hashtag").value(hashtag))
+            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-09-30T23:00:00Z"))
+            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+            .andExpect(
+                jsonPath("$.metadata.requestUrl")
+                    .value("/stats/&uganda/interval/country?startdate=2017-10-01T04:00+05:00&enddate=2020-10-01T04:00+00:00&interval=P1M")
+            )
+            .andExpect(jsonPath("$.result['2016-01-01T00:00'][0].country").value("xyz"))
+    }
 
     @Test
     fun `metadata should return max_timestamp and min_timestamp`() {

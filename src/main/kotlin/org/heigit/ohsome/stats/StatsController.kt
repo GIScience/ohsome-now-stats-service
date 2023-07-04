@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*
 import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
-import java.time.temporal.ChronoUnit
 import kotlin.system.measureTimeMillis
 
 @CrossOrigin
@@ -92,12 +91,12 @@ class StatsController {
         @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam(name = "startdate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        startDate: Instant,
+        startDate: Instant?,
 
         @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam(name = "enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        endDate: Instant,
+        endDate: Instant?,
 
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
@@ -148,6 +147,40 @@ class StatsController {
             mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
         response["metadata"] = buildMetadata(executionTime, httpServletRequest)
         response["query"] = buildQueryInfoTimespan(startDate, endDate, limit = limit)
+        return response
+    }
+    @Suppress("LongParameterList")
+    @Operation(summary = "Returns live data from DB aggregated by country")
+    @GetMapping("/stats/{hashtag}/interval/country")
+    fun statsCountry(
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @PathVariable hashtag: String,
+
+        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam(name = "startdate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        startDate: Instant?,
+
+        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam(name = "enddate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        endDate: Instant?,
+
+        @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
+        @RequestParam(name = "interval", defaultValue = "P1M", required = false)
+        interval: String,
+        httpServletRequest: HttpServletRequest
+    ): Map<String,Any> {
+        val response = mutableMapOf<String, Any>()
+        val hashtagHandler = HashtagHandler(hashtag)
+        val executionTime = measureTimeMillis {
+            val queryResult = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, interval)
+            response["result"] = queryResult
+        }
+        response["attribution"] =
+            mapOf("url" to "https://www.naturalearthdata.com/about/terms-of-use", "text" to "© Natural Earth")
+        response["metadata"] = buildMetadata(executionTime,httpServletRequest)
+        response["query"] = buildQueryInfoTimespan(startDate, endDate, hashtag)
         return response
     }
 
