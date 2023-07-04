@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.*
 import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
-import java.time.temporal.ChronoUnit
 import kotlin.system.measureTimeMillis
 
+@Suppress("largeClass")
 @CrossOrigin
 @RestController
 class StatsController {
-
 
     @Autowired
     lateinit var repo: StatsRepo
@@ -31,6 +30,7 @@ class StatsController {
      * @param endDate the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)
      * @return a map containing the response data with the aggregated statistics and request parameters
      */
+    @Suppress("LongParameterList")
     @Operation(summary = "Returns live data from DB")
     @GetMapping("/stats/{hashtag}")
     fun stats(
@@ -46,12 +46,23 @@ class StatsController {
         @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam("enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        endDate: Instant?
+        endDate: Instant?,
+        @Parameter(description = "indicate whether the results should be returned with additional Metadata")
+        @RequestParam(name = "ohsomeFormat", defaultValue = "false", required = false)
+        ohsomeFormat: Boolean,
+        httpServletRequest: HttpServletRequest
     ): Map<String, Any> {
         val hashtagHandler = HashtagHandler(hashtag)
-        val stats = repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate)
-        val extraParams = echoRequestParameters(startDate, endDate)
-        return stats + extraParams
+        lateinit var stats: Map<String, Any>
+        val executionTime = measureTimeMillis {
+            stats = repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate)
+        }
+        if (!ohsomeFormat) {
+            val extraParams = echoRequestParameters(startDate, endDate)
+            return stats + extraParams
+        } else {
+            return buildOhsomeFormat(stats, executionTime, httpServletRequest)
+        }
     }
 
 
@@ -92,28 +103,23 @@ class StatsController {
         @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam(name = "startdate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        startDate: Instant,
+        startDate: Instant?,
 
         @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam(name = "enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        endDate: Instant,
+        endDate: Instant?,
 
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
         interval: String,
     ): Map<String, Any> {
-        val response = mutableMapOf<String, Any>()
+        lateinit var response: List<Any>
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
-            val queryResult = repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval)
-            response["result"] = queryResult
+            response = repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval)
         }
-        response["attribution"] =
-            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
-        response["metadata"] = buildMetadata(executionTime, httpServletRequest)
-        response["query"] = buildQueryInfoTimespan(startDate, endDate, hashtag, interval)
-        return response
+        return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
 
@@ -135,20 +141,46 @@ class StatsController {
         @RequestParam(name = "limit", required = false, defaultValue = "10")
         limit: Int?
     ): Map<String, Any> {
-        val response = mutableMapOf<String, Any>()
+        lateinit var response: List<Any>
         val executionTime = measureTimeMillis {
-            val queryResult = repo.getMostUsedHashtags(
+            response = repo.getMostUsedHashtags(
                 startDate,
                 endDate,
                 limit,
             )
-            response["result"] = queryResult
         }
-        response["attribution"] =
-            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
-        response["metadata"] = buildMetadata(executionTime, httpServletRequest)
-        response["query"] = buildQueryInfoTimespan(startDate, endDate, limit = limit)
-        return response
+        return buildOhsomeFormat(response, executionTime, httpServletRequest)
+    }
+
+
+    @Suppress("LongParameterList")
+    @Operation(summary = "Returns live data from DB aggregated by country")
+    @GetMapping("/stats/{hashtag}/interval/country")
+    fun statsCountry(
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @PathVariable hashtag: String,
+
+        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam(name = "startdate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        startDate: Instant?,
+
+        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam(name = "enddate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        endDate: Instant?,
+
+        @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
+        @RequestParam(name = "interval", defaultValue = "P1M", required = false)
+        interval: String,
+        httpServletRequest: HttpServletRequest,
+    ): Map<String, Any> {
+        lateinit var response: Map<String, Any>
+        val hashtagHandler = HashtagHandler(hashtag)
+        val executionTime = measureTimeMillis {
+            response = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, interval)
+        }
+        return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
     @Operation(summary = "Returns maximum and minimum timestamps of the database.")
@@ -156,15 +188,12 @@ class StatsController {
     fun metadata(
         httpServletRequest: HttpServletRequest
     ): Map<String, Any> {
-        val response = mutableMapOf<String, Any>()
+        lateinit var response: Map<String, Any>
         val executionTime = measureTimeMillis {
             val queryResult = repo.getMetadata()
-            response["result"] = queryResult
+            response = queryResult
         }
-        response["attribution"] =
-            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
-        response["metadata"] = buildMetadata(executionTime, httpServletRequest)
-        return response
+        return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
 
@@ -213,5 +242,22 @@ class StatsController {
         endDate?.let { extraParams["enddate"] = it }
         return extraParams
     }
+
+    fun buildOhsomeFormat(stats: Any, executionTime: Long, httpServletRequest: HttpServletRequest): Map<String, Any> {
+        val response = mutableMapOf<String, Any>()
+        response["result"] = stats
+        response["attribution"] =
+            mapOf("url" to "https://ohsome.org/copyrights", "text" to "© OpenStreetMap contributors")
+        response["metadata"] = buildMetadata(executionTime, httpServletRequest)
+        response["query"] = buildQueryInfoTimespan(
+            Instant.parse((httpServletRequest.getParameter("startDate") ?: EPOCH).toString()),
+            Instant.parse(httpServletRequest.getParameter("endDate") ?: now().toString()),
+            //httpServletRequest.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)["hashtag"],
+            httpServletRequest.getParameter("interval"),
+            limit = httpServletRequest.getParameter("limit")?.toInt(),
+        )
+        return response
+    }
+
 
 }

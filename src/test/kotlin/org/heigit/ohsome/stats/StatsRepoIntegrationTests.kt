@@ -1,6 +1,5 @@
 package org.heigit.ohsome.stats
 
-import com.clickhouse.client.internal.google.type.DateTime
 import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -137,7 +136,7 @@ class StatsRepoIntegrationTests {
         println(result)
         assertEquals(1, result.size)
         assertEquals(7, result[0].size)
-        assertEquals("2021-12-01", result[0]["startdate"].toString())
+        assertEquals("2021-12-01T00:00", result[0]["startdate"].toString())
     }
 
 
@@ -153,6 +152,20 @@ class StatsRepoIntegrationTests {
         assertTrue(result[0].containsKey("number_of_users"))
         assertTrue(result[0].size == 2)
         assertTrue(result.size == 6)
+    }
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStastsTimeSpanIntervalCountry returns partial data in time span for start and  end date with hashtag aggregated by month and country`() {
+        val startDate = Instant.ofEpochSecond(0)
+        val endDate = Instant.ofEpochSecond(1639054890)
+        val hashtagHandler = HashtagHandler("*")
+        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, "P1M")
+        println(result)
+        assertTrue(result is Map)
+        assertTrue(result.keys.first() is String)
+        assertEquals(3,result["2017-12-01T00:00"]!!.size)
+        assertEquals(8,result["2017-12-01T00:00"]!![0].size)
     }
 
     @Test

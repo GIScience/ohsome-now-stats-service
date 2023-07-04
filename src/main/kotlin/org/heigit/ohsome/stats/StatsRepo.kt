@@ -21,7 +21,7 @@ class StatsRepo {
 
     private val logger: Logger = LoggerFactory.getLogger(StatsRepo::class.java)
 
-    //language=SQL
+    //language=clickhouse
     private fun getStatsFromTimeSpan(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
@@ -36,9 +36,10 @@ class StatsRepo {
             and changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
             and changeset_timestamp < parseDateTimeBestEffortOrNull(?);
         """.trimIndent()
-    
+
+
     @Suppress("LongMethod")
-    //language=SQL
+    //language=clickhouse
     private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
        SELECT 
             count(distinct changeset_id) as changesets,
@@ -46,18 +47,41 @@ class StatsRepo {
             sum(road_length)/1000 as roads,
             count(building_area) as buildings,
             count(*) as edits,
-            toStartOfInterval(changeset_timestamp, INTERVAL ?) as startdate,
-            toStartOfInterval(changeset_timestamp, INTERVAL ?) + INTERVAL ? as enddate
+            toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime as startdate,
+            toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime + INTERVAL ? as enddate
         FROM "stats"    
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)  
-            and changeset_timestamp > ? 
-            and changeset_timestamp < ?
+            AND changeset_timestamp > ? 
+            AND changeset_timestamp < ?
         GROUP BY 
             startdate
     """.trimIndent()
 
-    //language=SQL
+
+    @Suppress("LongMethod")
+    //language=clickhouse
+    private fun getStatsFromTimeSpanCountry(hashtagHandler: HashtagHandler) = """
+        SELECT
+            count(distinct changeset_id) as changesets,
+            count(distinct user_id) as users,
+            sum(road_length) as roads,
+            count(building_area) as buildings,
+            count(*) as edits,
+            toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime as startdate,
+            toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime + INTERVAL ? as enddate,
+            country_iso_a3 as country
+        FROM "stats"
+        ARRAY JOIN country_iso_a3
+        WHERE
+            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
+            and changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
+            and changeset_timestamp < parseDateTimeBestEffortOrNull(?)
+        GROUP BY
+            country, startdate
+        """.trimIndent()
+
+    //language=clickhouse
     private val mostUsedHashtags = """
         SELECT 
             hashtag, COUNT(DISTINCT user_id) as number_of_users
@@ -71,7 +95,7 @@ class StatsRepo {
         LIMIT ?
     """.trimIndent()
 
-    //language=SQL
+    //language=clickhouse
     private val metadata = """
         SELECT 
             max(changeset_timestamp) as max_timestamp,
@@ -168,6 +192,23 @@ class StatsRepo {
                 metadata
             ).mapToMap().single()
         }
+    }
+
+    fun getStatsForTimeSpanCountry(hashtagHandler: HashtagHandler, startDate: Instant?=EPOCH, endDate: Instant?= now(), interval: String): Map<String,List<Map<String,Any>>> {
+        val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
+            it.select(
+                getStatsFromTimeSpanCountry(hashtagHandler),
+                getGroupbyInterval(interval),
+                getGroupbyInterval(interval),
+                getGroupbyInterval(interval),
+                "#${hashtagHandler.hashtag}",
+                startDate,
+                endDate
+            ).mapToMap().list()
+        }
+        //return maps of string to any with startdate as key
+
+    return result.groupBy{ it["startdate"].toString() }
     }
 
 
