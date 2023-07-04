@@ -26,7 +26,7 @@ class StatsRepo {
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
-            sum(road_length) as roads,
+            sum(road_length)/1000 as roads,
             count(building_area) as buildings,
             count(*) as edits,
             max(changeset_timestamp) as latest
@@ -36,14 +36,14 @@ class StatsRepo {
             and changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
             and changeset_timestamp < parseDateTimeBestEffortOrNull(?);
         """.trimIndent()
-
-    //language=SQL
+    
     @Suppress("LongMethod")
+    //language=SQL
     private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
        SELECT 
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
-            sum(road_length) as roads,
+            sum(road_length)/1000 as roads,
             count(building_area) as buildings,
             count(*) as edits,
             toStartOfInterval(changeset_timestamp, INTERVAL ?) as startdate,
