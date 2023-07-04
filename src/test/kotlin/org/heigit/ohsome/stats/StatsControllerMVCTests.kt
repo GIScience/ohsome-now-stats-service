@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Instant
-import java.time.LocalDateTime
 
 
 @WebMvcTest(StatsController::class)
@@ -90,13 +89,17 @@ class StatsControllerMVCTests {
 
     }
 
+
     @Test
     fun `metadata should return max_timestamp and min_timestamp`() {
+        `when`(repo.getMetadata())
+            .thenReturn(mapOf("max_timestamp" to "2021-12-09T13:01:28"))
+
         this.mockMvc
             .perform(get("/metadata"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-        //.andExpect(jsonPath("$.result.max_timestamp").value(LocalDateTime.parse("2021-12-09T13:01:28")))
+        .andExpect(jsonPath("$.result.max_timestamp").value("2021-12-09T13:01:28"))
     }
 
     private fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
