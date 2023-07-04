@@ -24,14 +24,7 @@ class StatsController {
     @Autowired
     lateinit var repo: StatsRepo
 
-    /**
-     * Returns live data from the database for a specific hashtag and time range.
-     *
-     * @param hashtag the hashtag to query for - case-insensitive and without the leading '#'
-     * @param startDate the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)
-     * @param endDate the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)
-     * @return a map containing the response data with the aggregated statistics and request parameters
-     */
+
     @Suppress("LongParameterList")
     @Operation(summary = "Returns live data from DB")
     @GetMapping("/stats/{hashtag}")
@@ -68,11 +61,6 @@ class StatsController {
     }
 
 
-    /**
-     * Returns a static snapshot of OSM statistics.
-     *
-     * @return a map containing the static OSM statistics
-     */
     @Operation(summary = "Returns a static snapshot of OSM statistics (for now)")
     @GetMapping("/stats_static")
     fun statsStatic(): Map<String, Any> = mapOf(
@@ -85,15 +73,7 @@ class StatsController {
         "hashtag" to "*"
     )
 
-    /**
-     * Retrieves live data from the database aggregated by interval.
-     *
-     * @param hashtag the hashtag to query for - case-insensitive and without the leading '#'
-     * @param startDate the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)
-     * @param endDate the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)
-     * @param interval the granularity defined as Intervals in ISO 8601 time format (e.g. P1M)
-     * @return a map containing the response data with aggregated statistics, metadata, and request information
-     */
+
     @Operation(summary = "Returns live data from DB aggregated by month")
     @GetMapping("/stats/{hashtag}/interval")
     @Suppress("LongParameterList")
