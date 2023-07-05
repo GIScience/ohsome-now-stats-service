@@ -31,7 +31,3 @@ fun String.replaceTime() = this
     // Adjust the time section
     .replace("H", " HOUR")
     .replace("M", " MINUTE")
-
-fun makeUrl(request: HttpServletRequest): String {
-    return request.requestURI.toString() + "?" + request.queryString
-}
