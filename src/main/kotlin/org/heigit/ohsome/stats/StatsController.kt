@@ -31,6 +31,7 @@ class StatsController {
     @Operation(summary = "Returns live data from DB")
     @GetMapping("/stats/{hashtag}")
     fun stats(
+        httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
         hashtag: String,
@@ -44,10 +45,10 @@ class StatsController {
         @RequestParam("enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?,
+
         @Parameter(description = "indicate whether the results should be returned with additional Metadata")
         @RequestParam(name = "ohsomeFormat", defaultValue = "false", required = false)
-        ohsomeFormat: Boolean,
-        httpServletRequest: HttpServletRequest
+        ohsomeFormat: Boolean
     ): Map<String, Any> {
         val hashtagHandler = HashtagHandler(hashtag)
         lateinit var stats: Map<String, Any>
@@ -96,7 +97,7 @@ class StatsController {
 
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
-        interval: String,
+        interval: String
     ): Map<String, Any> {
         lateinit var response: List<Any>
         val hashtagHandler = HashtagHandler(hashtag)
@@ -137,10 +138,10 @@ class StatsController {
     }
 
 
-    @Suppress("LongParameterList")
     @Operation(summary = "Returns live data from DB aggregated by country")
     @GetMapping("/stats/{hashtag}/country")
     fun statsCountry(
+        httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable hashtag: String,
 
@@ -152,9 +153,7 @@ class StatsController {
         @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam(name = "enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        endDate: Instant?,
-
-        httpServletRequest: HttpServletRequest,
+        endDate: Instant?
     ): Map<String, Any> {
         lateinit var response: List<Map<String, Any>>
         val hashtagHandler = HashtagHandler(hashtag)
