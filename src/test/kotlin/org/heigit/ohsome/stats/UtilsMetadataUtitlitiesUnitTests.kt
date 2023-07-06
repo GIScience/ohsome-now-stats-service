@@ -1,20 +1,20 @@
 package org.heigit.ohsome.stats
 
 import org.assertj.core.api.Assertions.assertThat
+import org.heigit.ohsome.stats.utils.echoRequestParameters
 import org.junit.jupiter.api.Test
 import java.time.Instant.now
 import java.util.Map.entry
 
 
-class StatsControllerUnitTests {
+class UtilsMetadataUtitlitiesUnitTests {
 
-    private val controller = StatsController()
     private val offsetDateTime = now()
 
 
     @Test
     fun `missing start and end dates lead to empty echo map`() {
-        val result = this.controller.echoRequestParameters(null, null)
+        val result = echoRequestParameters(null, null)
         assertThat(result).isEmpty()
     }
 
@@ -22,10 +22,10 @@ class StatsControllerUnitTests {
     @Test
     fun `one of the dates present leads to only one entry in the echo map`() {
 
-        val result1 = this.controller.echoRequestParameters(startDate = offsetDateTime, endDate = null)
+        val result1 = echoRequestParameters(startDate = offsetDateTime, endDate = null)
         assertThat(result1).containsExactly(entry("startdate", offsetDateTime))
 
-        val result2 = this.controller.echoRequestParameters(startDate = null, endDate = offsetDateTime)
+        val result2 = echoRequestParameters(startDate = null, endDate = offsetDateTime)
         assertThat(result2).containsExactly(entry("enddate", offsetDateTime))
     }
 
@@ -33,7 +33,7 @@ class StatsControllerUnitTests {
     @Test
     fun `both dates present lead to two entry in the echo map`() {
 
-        val result = this.controller.echoRequestParameters(startDate = offsetDateTime, endDate = offsetDateTime)
+        val result = echoRequestParameters(startDate = offsetDateTime, endDate = offsetDateTime)
         assertThat(result).containsExactly(entry("startdate", offsetDateTime), entry("enddate", offsetDateTime))
     }
 

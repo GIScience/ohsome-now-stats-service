@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS stats
     `road_length` Int64,
     `road_length_delta` Int64,
     `road_edit` Nullable(Int8), -- -1, 0, 1, NULL
+
     `country_iso_a3` Array(String),
 )
 ENGINE = MergeTree

@@ -27,6 +27,18 @@ class StatsController {
     lateinit var repo: StatsRepo
 
 
+    @Operation(summary = "Returns a static snapshot of OSM statistics (for now)")
+    @GetMapping("/stats_static")
+    fun statsStatic(): Map<String, Any> = mapOf(
+        "changesets" to 65009011,
+        "users" to 3003842,
+        "roads" to 45964973.0494135,
+        "buildings" to 844294167,
+        "edits" to 1095091515,
+        "latest" to "2023-03-20T10:55:38.000Z",
+        "hashtag" to "*"
+    )
+
     @Suppress("LongParameterList")
     @Operation(summary = "Returns live data from DB")
     @GetMapping("/stats/{hashtag}")
@@ -63,20 +75,6 @@ class StatsController {
         }
     }
 
-
-    @Operation(summary = "Returns a static snapshot of OSM statistics (for now)")
-    @GetMapping("/stats_static")
-    fun statsStatic(): Map<String, Any> = mapOf(
-        "changesets" to 65009011,
-        "users" to 3003842,
-        "roads" to 45964973.0494135,
-        "buildings" to 844294167,
-        "edits" to 1095091515,
-        "latest" to "2023-03-20T10:55:38.000Z",
-        "hashtag" to "*"
-    )
-
-
     @Operation(summary = "Returns live data from DB aggregated by month")
     @GetMapping("/stats/{hashtag}/interval")
     @Suppress("LongParameterList")
@@ -108,6 +106,31 @@ class StatsController {
     }
 
 
+    @Operation(summary = "Returns live data from DB aggregated by country")
+    @GetMapping("/stats/{hashtag}/country")
+    fun statsCountry(
+        httpServletRequest: HttpServletRequest,
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @PathVariable hashtag: String,
+
+        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam(name = "startdate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        startDate: Instant?,
+
+        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam(name = "enddate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        endDate: Instant?
+    ): Map<String, Any> {
+        lateinit var response: List<Map<String, Any>>
+        val hashtagHandler = HashtagHandler(hashtag)
+        val executionTime = measureTimeMillis {
+            response = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
+        }
+        return buildOhsomeFormat(response, executionTime, httpServletRequest)
+    }
+
     @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod.")
     @GetMapping("/mostUsedHashtags")
     fun mostUsedHashtags(
@@ -133,32 +156,6 @@ class StatsController {
                 endDate,
                 limit,
             )
-        }
-        return buildOhsomeFormat(response, executionTime, httpServletRequest)
-    }
-
-
-    @Operation(summary = "Returns live data from DB aggregated by country")
-    @GetMapping("/stats/{hashtag}/country")
-    fun statsCountry(
-        httpServletRequest: HttpServletRequest,
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
-        @PathVariable hashtag: String,
-
-        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
-        @RequestParam(name = "startdate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
-        startDate: Instant?,
-
-        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
-        @RequestParam(name = "enddate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
-        endDate: Instant?
-    ): Map<String, Any> {
-        lateinit var response: List<Map<String, Any>>
-        val hashtagHandler = HashtagHandler(hashtag)
-        val executionTime = measureTimeMillis {
-            response = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
         }
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }

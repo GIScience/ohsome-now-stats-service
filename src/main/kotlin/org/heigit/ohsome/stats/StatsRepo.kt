@@ -21,7 +21,7 @@ class StatsRepo {
 
     private val logger: Logger = LoggerFactory.getLogger(StatsRepo::class.java)
 
-    //language=clickhouse
+    //language=sql
     private fun getStatsFromTimeSpan(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
@@ -39,7 +39,7 @@ class StatsRepo {
 
 
     @Suppress("LongMethod")
-    //language=clickhouse
+    //language=sql
     private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
        SELECT 
             count(distinct changeset_id) as changesets,
@@ -60,7 +60,7 @@ class StatsRepo {
 
 
     @Suppress("LongMethod")
-    //language=clickhouse
+    //language=sql
     private fun getStatsFromTimeSpanCountry(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
@@ -80,7 +80,21 @@ class StatsRepo {
             country
         """.trimIndent()
 
-    //language=clickhouse
+    //language=sql
+    private val statsForUserIdForHotOSMProject = """
+        select
+            count(building_area) as building_count,
+            sum(road_length) as road_length,
+            count(*) as object_edits,
+            user_id from stats
+        where
+            user_id = ?
+            and startsWith(hashtag, '#hotosm-project-')
+        group by user_id
+
+    """.trimIndent()
+
+    //language=sql
     private val mostUsedHashtags = """
         SELECT 
             hashtag, COUNT(DISTINCT user_id) as number_of_users
@@ -94,7 +108,7 @@ class StatsRepo {
         LIMIT ?
     """.trimIndent()
 
-    //language=clickhouse
+    //language=sql
     private val metadata = """
         SELECT 
             max(changeset_timestamp) as max_timestamp,
@@ -102,7 +116,7 @@ class StatsRepo {
         FROM "stats"
         WHERE changeset_timestamp > now() - toIntervalMonth(1) 
         OR changeset_timestamp < parseDateTimeBestEffortOrNull('2009-04-23T00:00:00.000000Z')
-    """.trimIndent() // todo: delete in clickhouse TESTHASTAGPLEASEDELETE
+    """.trimIndent()
 
     /**
      * Retrieves statistics for a specific hashtag within a time span.
@@ -156,6 +170,49 @@ class StatsRepo {
     }
 
     /**
+     * Retrieves aggregated HOT-TM-project statistics for a specific user.
+     * ATTENTION: EXPOSING THIS QUERY MIGHT VIOLATE DATA PRIVACY
+     * @param user_id the osm userid which should be queried.
+     * @return A list of maps containing the statistics for all hotTM projects.
+     */
+    fun getStatsForUserIdForAllHotTMProjects(
+        user_id: String
+    ): Map<String, Any> {
+        logger.info("Getting HotOSM stats for user: ${user_id}")
+
+        return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
+            it.select(
+                statsForUserIdForHotOSMProject,
+                user_id
+            ).mapToMap().single()
+        }
+    }
+
+    /**
+     * Retrieves statistics for a specific hashtag grouped by country.
+     *
+     * @param hashtag The hashtag to retrieve statistics for.
+     * @param startDate The start date of the time span.
+     * @param endDate The end date of the time span.
+     * @return A list of maps containing the statistics for each interval.
+     */
+    fun getStatsForTimeSpanCountry(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant? = EPOCH,
+        endDate: Instant? = now()
+    ): List<Map<String, Any>> {
+        val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
+            it.select(
+                getStatsFromTimeSpanCountry(hashtagHandler),
+                "#${hashtagHandler.hashtag}",
+                startDate,
+                endDate
+            ).mapToMap().list()
+        }
+        return result
+    }
+
+    /**
      * Retrieves the most used Hashtags in the selected Timeperiod.
      *
      * @param hashtag The hashtag to retrieve statistics for.
@@ -191,22 +248,6 @@ class StatsRepo {
                 metadata
             ).mapToMap().single()
         }
-    }
-
-    fun getStatsForTimeSpanCountry(
-        hashtagHandler: HashtagHandler,
-        startDate: Instant? = EPOCH,
-        endDate: Instant? = now()
-    ): List<Map<String, Any>> {
-        val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
-            it.select(
-                getStatsFromTimeSpanCountry(hashtagHandler),
-                "#${hashtagHandler.hashtag}",
-                startDate,
-                endDate
-            ).mapToMap().list()
-        }
-        return result
     }
 
 

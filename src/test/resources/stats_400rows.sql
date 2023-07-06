@@ -17,7 +17,7 @@ INSERT INTO stats (
 VALUES
   ('r5G9P2eD7F', 37627942, toDateTime(1240437600), '#&', 2186388, 'way/3698274', NULL, 0, 0, NULL, 0, 0, NULL, ['FIN']),
   ('sT8aY6nX1Z', 37627942, toDateTime(1457186420), '#&', 2186388, 'node/7805319', 1, 0, 0, NULL, 0, 0, NULL, ['FIN']),
-  ('wK3pR7vE2T', 37627942, toDateTime(1457186420), '#&', 2186388, 'way/21875648', 0, 0, 0, NULL, 0, 0, NULL, []),
+  ('wK3pR7vE2T', 37627942, toDateTime(1457186420), '#hotosm-project-1', 2186388, 'way/21875648', 0, 0, 0, NULL, 0, 0, NULL, []),
   ('xM2dC4fA6V', 110552980, toDateTime(1630486233), '#&gid', 219908, 'way/64192853', NULL, 0, 0, NULL, 613, 0, 1, ['BEL']),
   ('yQ1gW3hZ5B', 110552980, toDateTime(1630486233), '#&gid', 219908, 'node/102547876', 0, 0, 0, NULL, 7, 0, 1, ['BEL']),
   ('zS9bX2dH8K', 110552980, toDateTime(1630486233), '#&gid', 219908, 'node/154769328', NULL, 0, 0, NULL, 226, 0, 1, ['BEL']),

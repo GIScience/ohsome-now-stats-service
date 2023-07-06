@@ -139,6 +139,27 @@ class StatsRepoIntegrationTests {
         assertEquals("2021-12-01T00:00", result[0]["startdate"].toString())
     }
 
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsTimeCountry returns partial data in time span for start and  end date with hashtag aggregated by month and country`() {
+        val startDate = Instant.ofEpochSecond(0)
+        val endDate = Instant.ofEpochSecond(1639054890)
+        val hashtagHandler = HashtagHandler("*")
+        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
+        println(result)
+        assertTrue(result is List)
+        assertEquals(7, result[0].size)
+    }
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForUserIdForAllHotTMProjects returns stats for only one userid`() {
+        val result = this.repo.getStatsForUserIdForAllHotTMProjects("2186388")
+        println(result)
+        assertTrue(result is Map)
+        assertEquals(4, result.size)
+    }
+
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
@@ -151,20 +172,9 @@ class StatsRepoIntegrationTests {
         assertTrue(result[0].containsKey("hashtag"))
         assertTrue(result[0].containsKey("number_of_users"))
         assertTrue(result[0].size == 2)
-        assertTrue(result.size == 6)
+        assertTrue(result.size == 7)
     }
 
-    @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
-    fun `getStatsTimeCountry returns partial data in time span for start and  end date with hashtag aggregated by month and country`() {
-        val startDate = Instant.ofEpochSecond(0)
-        val endDate = Instant.ofEpochSecond(1639054890)
-        val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
-        println(result)
-        assertTrue(result is List)
-        assertEquals(7, result[0].size)
-    }
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
