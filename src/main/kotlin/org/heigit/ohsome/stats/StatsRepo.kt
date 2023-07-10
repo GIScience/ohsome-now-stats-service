@@ -34,8 +34,8 @@ class StatsRepo {
         FROM "stats"
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?) 
-            and changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
-            and changeset_timestamp < parseDateTimeBestEffortOrNull(?);
+            and changeset_timestamp > parseDateTime64BestEffort(?) 
+            and changeset_timestamp < parseDateTime64BestEffort(?);
         """.trimIndent()
 
 
@@ -53,8 +53,8 @@ class StatsRepo {
         FROM "stats"    
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
-            AND changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
-            AND changeset_timestamp < parseDateTimeBestEffortOrNull(?)
+            AND changeset_timestamp > parseDateTime64BestEffort(?) 
+            AND changeset_timestamp < parseDateTime64BestEffort(?)
         GROUP BY 
             startdate
     """.trimIndent()
@@ -75,8 +75,8 @@ class StatsRepo {
         ARRAY JOIN country_iso_a3
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
-            and changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
-            and changeset_timestamp < parseDateTimeBestEffortOrNull(?)
+            and changeset_timestamp > parseDateTime64BestEffort(?) 
+            and changeset_timestamp < parseDateTime64BestEffort(?)
         GROUP BY
             country
         """.trimIndent()
@@ -102,7 +102,7 @@ class StatsRepo {
             hashtag, COUNT(DISTINCT user_id) as number_of_users
         FROM "stats"
         WHERE
-            changeset_timestamp > parseDateTimeBestEffortOrNull(?) and changeset_timestamp < parseDateTimeBestEffortOrNull(?)
+            changeset_timestamp > parseDateTime64BestEffort(?) and changeset_timestamp < parseDateTime64BestEffort(?)
         GROUP BY
             hashtag
         ORDER BY
@@ -117,7 +117,7 @@ class StatsRepo {
             min(changeset_timestamp) as min_timestamp
         FROM "stats"
         WHERE changeset_timestamp > now() - toIntervalMonth(1) 
-        OR changeset_timestamp < parseDateTimeBestEffortOrNull('2009-04-23T00:00:00.000000Z')
+        OR changeset_timestamp < parseDateTime64BestEffort('2009-04-23T00:00:00.000000Z')
     """.trimIndent()
 
     /**
@@ -153,7 +153,7 @@ class StatsRepo {
     fun getStatsForTimeSpanInterval(
         hashtagHandler: HashtagHandler,
         startDate: Instant? = EPOCH,
-        endDate: Instant? = now().truncatedTo(ChronoUnit.SECONDS),
+        endDate: Instant? = now(),
         interval: String
     ): List<Map<String, Any>> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
