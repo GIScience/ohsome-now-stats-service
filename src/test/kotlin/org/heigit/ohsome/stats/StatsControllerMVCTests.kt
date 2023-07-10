@@ -136,6 +136,22 @@ class StatsControllerMVCTests {
     }
 
     @Test
+    fun `statsHotTMUserStats returns stats for one user only`() {
+        `when`(
+            repo.getStatsForUserIdForAllHotTMProjects(
+                anyString(),
+            )
+        ).thenReturn(mutableMapOf("building_count" to 1))
+
+        val GET = get("/stats/HotTMUser")
+            .queryParam("userId", "12312")
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+    }
+
+    @Test
     fun `metadata should return max_timestamp and min_timestamp`() {
         `when`(repo.getMetadata(anyBoolean()))
             .thenReturn(mapOf("max_timestamp" to "2021-12-09T13:01:28"))

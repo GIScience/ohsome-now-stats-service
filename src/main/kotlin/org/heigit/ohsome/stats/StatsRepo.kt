@@ -39,6 +39,7 @@ class StatsRepo {
 
         """.trimIndent()
 
+
     @Suppress("LongMethod")
     //language=sql
     private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler, noCache: Boolean) = """
@@ -94,7 +95,6 @@ class StatsRepo {
         AND startsWith(hashtag, '#hotosm-project-')
     GROUP BY user_id
     ${if (noCache == true) "settings min_bytes_to_use_direct_io=1" else ""}
-
 """.trimIndent()
 
     //language=sql
@@ -108,7 +108,6 @@ class StatsRepo {
         ORDER BY number_of_users DESC
         LIMIT ?
         ${if (noCache == true) "settings min_bytes_to_use_direct_io=1" else ""}
-
     """.trimIndent()
 
     //language=sql
@@ -190,10 +189,10 @@ class StatsRepo {
     fun getStatsForUserIdForAllHotTMProjects(
         user_id: String,
         noCache: Boolean = false
-    ): Map<String, Any> {
+    ): MutableMap<String, Any> {
         logger.info("Getting HotOSM stats for user: ${user_id}")
 
-        return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
+        return create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
             it.select(
                 statsForUserIdForHotOSMProject(noCache),
                 user_id
@@ -265,4 +264,6 @@ class StatsRepo {
             ).mapToMap().single()
         }
     }
+
+
 }

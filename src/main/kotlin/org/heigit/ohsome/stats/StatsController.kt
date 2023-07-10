@@ -3,14 +3,21 @@ package org.heigit.ohsome.stats
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
+import org.apache.commons.lang3.math.NumberUtils.toDouble
 import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.heigit.ohsome.stats.utils.buildOhsomeFormat
 import org.heigit.ohsome.stats.utils.echoRequestParameters
+import org.heigit.ohsome.stats.utils.makeUrl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.HandlerMapping
 import java.time.Instant
+import java.time.Instant.EPOCH
+import java.time.Instant.now
+import kotlin.random.Random
+
 import kotlin.system.measureTimeMillis
 
 @Suppress("largeClass")
