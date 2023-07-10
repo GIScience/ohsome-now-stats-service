@@ -49,7 +49,7 @@ class StatsRepo {
             count(building_area) as buildings,
             count(map_feature_edit) as edits,
             toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime as startdate,
-            toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime + INTERVAL ? as enddate
+            (toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime + INTERVAL ?) as enddate
         FROM "stats"    
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
