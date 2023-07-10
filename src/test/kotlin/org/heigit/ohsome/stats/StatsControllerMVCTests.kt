@@ -42,7 +42,7 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats can be served without date restriction`() {
-        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
+        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any(), anyBoolean()))
             .thenReturn(mapOf("hashtag" to hashtag))
 
         this.mockMvc
@@ -54,7 +54,7 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats with ohsomeFormat returns result object with ohsome formated metadata`() {
-        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
+        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any(), anyBoolean()))
             .thenReturn(mapOf("hashtag" to hashtag))
 
         this.mockMvc
@@ -73,7 +73,8 @@ class StatsControllerMVCTests {
                 any(HashtagHandler::class.java),
                 any(Instant::class.java),
                 any(Instant::class.java),
-                anyString()
+                anyString(),
+                anyBoolean()
             )
         )
             .thenReturn(listOf(mapOf("hashtag" to hashtag)))
@@ -112,6 +113,7 @@ class StatsControllerMVCTests {
                 any(HashtagHandler::class.java),
                 any(Instant::class.java),
                 any(Instant::class.java),
+                anyBoolean(),
             )
         )
             .thenReturn(listOf(mapOf("country" to "xyz")))
@@ -135,7 +137,7 @@ class StatsControllerMVCTests {
 
     @Test
     fun `metadata should return max_timestamp and min_timestamp`() {
-        `when`(repo.getMetadata())
+        `when`(repo.getMetadata(anyBoolean()))
             .thenReturn(mapOf("max_timestamp" to "2021-12-09T13:01:28"))
 
         this.mockMvc
