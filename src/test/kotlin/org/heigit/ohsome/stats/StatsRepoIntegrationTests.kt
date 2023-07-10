@@ -17,6 +17,7 @@ import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 
 @SpringBootTest(webEnvironment = NONE)
@@ -146,7 +147,7 @@ class StatsRepoIntegrationTests {
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpanInterval returns all data when EPOCH is supplied as startdate`() {
         val startDate = EPOCH
-        val endDate = now()
+        val endDate = now().truncatedTo(ChronoUnit.SECONDS)
         val hashtagHandler = HashtagHandler("&group")
         val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
         println(result)

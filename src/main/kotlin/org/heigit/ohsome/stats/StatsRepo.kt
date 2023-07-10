@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
+import java.time.temporal.ChronoUnit
 import javax.sql.DataSource
 
 @Component
@@ -135,7 +136,7 @@ class StatsRepo {
                 getStatsFromTimeSpan(hashtagHandler),
                 "${hashtagHandler.hashtag}",
                 startDate ?: EPOCH,
-                endDate ?: now()
+                endDate ?: now().truncatedTo(ChronoUnit.SECONDS)
             ).mapToMap().single()
         } + ("hashtag" to hashtagHandler.hashtag)
     }
@@ -152,7 +153,7 @@ class StatsRepo {
     fun getStatsForTimeSpanInterval(
         hashtagHandler: HashtagHandler,
         startDate: Instant? = EPOCH,
-        endDate: Instant? = now(),
+        endDate: Instant? = now().truncatedTo(ChronoUnit.SECONDS),
         interval: String
     ): List<Map<String, Any>> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
@@ -200,7 +201,7 @@ class StatsRepo {
     fun getStatsForTimeSpanCountry(
         hashtagHandler: HashtagHandler,
         startDate: Instant? = EPOCH,
-        endDate: Instant? = now()
+        endDate: Instant? = now().truncatedTo(ChronoUnit.SECONDS)
     ): List<Map<String, Any>> {
         val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
@@ -223,7 +224,7 @@ class StatsRepo {
      */
     fun getMostUsedHashtags(
         startDate: Instant? = EPOCH,
-        endDate: Instant? = now(),
+        endDate: Instant? = now().truncatedTo(ChronoUnit.SECONDS),
         limit: Int? = 10
     ): List<Map<String, Any>> {
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
