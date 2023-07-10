@@ -50,7 +50,7 @@ class StatsRepoIntegrationTests {
         "users" to 1,
         "roads" to 0.14,
         "buildings" to 1,
-        "edits" to 1,
+        "edits" to 0,
         "latest" to "2017-12-19T00:52:03",
         "hashtag" to "&uganda"
     )
