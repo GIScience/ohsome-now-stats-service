@@ -90,7 +90,7 @@ class StatsRepo {
         from stats
         where
             user_id = ?
-            and startsWith(hashtag, '#hotosm-project-')
+            and startsWith(hashtag, 'hotosm-project-')
         group by user_id
 
     """.trimIndent()
@@ -133,7 +133,7 @@ class StatsRepo {
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
             it.select(
                 getStatsFromTimeSpan(hashtagHandler),
-                "#${hashtagHandler.hashtag}",
+                "${hashtagHandler.hashtag}",
                 startDate ?: EPOCH,
                 endDate ?: now()
             ).mapToMap().single()
@@ -163,7 +163,7 @@ class StatsRepo {
                 getGroupbyInterval(interval),
                 getGroupbyInterval(interval),
                 getGroupbyInterval(interval),
-                "#${hashtagHandler.hashtag}",
+                "${hashtagHandler.hashtag}",
                 startDate,
                 endDate
             ).mapToMap().list()
@@ -205,7 +205,7 @@ class StatsRepo {
         val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
                 getStatsFromTimeSpanCountry(hashtagHandler),
-                "#${hashtagHandler.hashtag}",
+                "${hashtagHandler.hashtag}",
                 startDate,
                 endDate
             ).mapToMap().list()
