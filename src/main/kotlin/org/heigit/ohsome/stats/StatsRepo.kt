@@ -134,9 +134,9 @@ class StatsRepo {
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
             it.select(
                 getStatsFromTimeSpan(hashtagHandler),
-                "${hashtagHandler.hashtag}",
+                hashtagHandler.hashtag,
                 startDate ?: EPOCH,
-                endDate ?: now().truncatedTo(ChronoUnit.SECONDS)
+                endDate ?: now()
             ).mapToMap().single()
         } + ("hashtag" to hashtagHandler.hashtag)
     }
@@ -152,8 +152,8 @@ class StatsRepo {
      */
     fun getStatsForTimeSpanInterval(
         hashtagHandler: HashtagHandler,
-        startDate: Instant? = EPOCH,
-        endDate: Instant? = now(),
+        startDate: Instant?,
+        endDate: Instant?,
         interval: String
     ): List<Map<String, Any>> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
@@ -164,9 +164,9 @@ class StatsRepo {
                 getGroupbyInterval(interval),
                 getGroupbyInterval(interval),
                 getGroupbyInterval(interval),
-                "${hashtagHandler.hashtag}",
-                startDate,
-                endDate
+                hashtagHandler.hashtag,
+                startDate ?: EPOCH,
+                endDate ?: now()
             ).mapToMap().list()
         }
     }
@@ -201,14 +201,14 @@ class StatsRepo {
     fun getStatsForTimeSpanCountry(
         hashtagHandler: HashtagHandler,
         startDate: Instant? = EPOCH,
-        endDate: Instant? = now().truncatedTo(ChronoUnit.SECONDS)
+        endDate: Instant? = now()
     ): List<Map<String, Any>> {
         val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
                 getStatsFromTimeSpanCountry(hashtagHandler),
-                "${hashtagHandler.hashtag}",
-                startDate,
-                endDate
+                hashtagHandler.hashtag,
+                startDate ?: EPOCH,
+                endDate ?: now()
             ).mapToMap().list()
         }
         return result
