@@ -52,8 +52,8 @@ class StatsRepo {
         FROM "stats"    
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)  
-            AND changeset_timestamp > ? 
-            AND changeset_timestamp < ?
+            AND changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
+            AND changeset_timestamp < parseDateTimeBestEffortOrNull(?)
         GROUP BY 
             startdate
     """.trimIndent()
@@ -101,7 +101,7 @@ class StatsRepo {
             hashtag, COUNT(DISTINCT user_id) as number_of_users
         FROM "stats"
         WHERE
-            changeset_timestamp > ? and changeset_timestamp < ?
+            changeset_timestamp > parseDateTimeBestEffortOrNull(?) and changeset_timestamp < parseDateTimeBestEffortOrNull(?)
         GROUP BY
             hashtag
         ORDER BY

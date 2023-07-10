@@ -135,7 +135,7 @@ class StatsController {
 
     @Operation(summary = "Returns aggregated HOT-TM-project statistics for a specific user.")
     @GetMapping("/stats/HotTMUser")
-    fun statsHotTMUserStats(
+    fun statsHotTMUser(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "OSM user id")
         @RequestParam(name = "userId")
@@ -148,7 +148,7 @@ class StatsController {
         response["building_count"] = Random.nextInt(1, 100)
         response["road_length"] = Random.nextDouble(1.0, 1000.0)
         response["object_edits"] = Random.nextInt(100, 2000)
-        
+
         return response
     }
 

@@ -14,6 +14,8 @@ import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Instant
+import java.time.Instant.EPOCH
+import java.time.Instant.now
 import java.time.LocalDateTime
 
 
@@ -138,6 +140,21 @@ class StatsRepoIntegrationTests {
         assertEquals(7, result[0].size)
         assertEquals("2021-12-01T00:00", result[0]["startdate"].toString())
     }
+
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForTimeSpanInterval returns all data when EPOCH is supplied as startdate`() {
+        val startDate = EPOCH
+        val endDate = now()
+        val hashtagHandler = HashtagHandler("&group")
+        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
+        println(result)
+        assertEquals(1, result.size)
+        assertEquals(7, result[0].size)
+        assertEquals("2021-12-01T00:00", result[0]["startdate"].toString())
+    }
+
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
