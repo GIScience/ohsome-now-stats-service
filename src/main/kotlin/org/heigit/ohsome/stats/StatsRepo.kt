@@ -141,7 +141,7 @@ class StatsRepo {
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
             it.select(
                 getStatsFromTimeSpan(hashtagHandler, noCache),
-                "#${hashtagHandler.hashtag}",
+                "${hashtagHandler.hashtag}",
                 startDate ?: EPOCH,
                 endDate ?: now()
             ).mapToMap().single()
@@ -173,7 +173,7 @@ class StatsRepo {
                 getGroupbyInterval(interval),
                 getGroupbyInterval(interval),
                 getGroupbyInterval(interval),
-                "#${hashtagHandler.hashtag}",
+                "${hashtagHandler.hashtag}",
                 startDate,
                 endDate
             ).mapToMap().list()
@@ -217,7 +217,7 @@ class StatsRepo {
         val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
                 getStatsFromTimeSpanCountry(hashtagHandler, noCache),
-                "#${hashtagHandler.hashtag}",
+                "${hashtagHandler.hashtag}",
                 startDate,
                 endDate
             ).mapToMap().list()
