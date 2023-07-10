@@ -28,7 +28,7 @@ class StatsRepo {
             count(distinct user_id) as users,
             sum(road_length)/1000 as roads,
             count(building_area) as buildings,
-            count(*) as edits,
+            count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest
         FROM "stats"
         WHERE
@@ -46,12 +46,12 @@ class StatsRepo {
             count(distinct user_id) as users,
             sum(road_length)/1000 as roads,
             count(building_area) as buildings,
-            count(*) as edits,
+            count(map_feature_edit) as edits,
             toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime as startdate,
             toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime + INTERVAL ? as enddate
         FROM "stats"    
         WHERE
-            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)  
+            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
             AND changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
             AND changeset_timestamp < parseDateTimeBestEffortOrNull(?)
         GROUP BY 
@@ -67,7 +67,7 @@ class StatsRepo {
             count(distinct user_id) as users,
             sum(road_length) as roads,
             count(building_area) as buildings,
-            count(*) as edits,
+            count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest,
             country_iso_a3 as country
         FROM "stats"
@@ -85,8 +85,8 @@ class StatsRepo {
         select
             count(building_area) as building_count,
             sum(road_length) as road_length,
-            count(*) as object_edits,
-            user_id 
+            count(map_feature_edit) as edits,
+            user_id
         from stats
         where
             user_id = ?
