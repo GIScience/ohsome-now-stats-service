@@ -86,7 +86,8 @@ class StatsRepo {
             count(building_area) as building_count,
             sum(road_length) as road_length,
             count(*) as object_edits,
-            user_id from stats
+            user_id 
+        from stats
         where
             user_id = ?
             and startsWith(hashtag, '#hotosm-project-')
@@ -177,10 +178,10 @@ class StatsRepo {
      */
     fun getStatsForUserIdForAllHotTMProjects(
         user_id: String
-    ): Map<String, Any> {
+    ): MutableMap<String, Any> {
         logger.info("Getting HotOSM stats for user: ${user_id}")
 
-        return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
+        return create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
             it.select(
                 statsForUserIdForHotOSMProject,
                 user_id

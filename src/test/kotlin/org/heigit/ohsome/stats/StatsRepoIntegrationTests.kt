@@ -156,7 +156,7 @@ class StatsRepoIntegrationTests {
     fun `getStatsForUserIdForAllHotTMProjects returns stats for only one userid`() {
         val result = this.repo.getStatsForUserIdForAllHotTMProjects("2186388")
         println(result)
-        assertTrue(result is Map)
+        assertTrue(result is MutableMap<String, *>)
         assertEquals(4, result.size)
     }
 

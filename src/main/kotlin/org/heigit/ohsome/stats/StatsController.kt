@@ -3,6 +3,7 @@ package org.heigit.ohsome.stats
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
+import org.apache.commons.lang3.math.NumberUtils.toDouble
 import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.heigit.ohsome.stats.utils.buildOhsomeFormat
 import org.heigit.ohsome.stats.utils.echoRequestParameters
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.HandlerMapping
 import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
+import kotlin.random.Random
 
 import kotlin.system.measureTimeMillis
 
@@ -129,6 +131,25 @@ class StatsController {
             response = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
         }
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
+    }
+
+    @Operation(summary = "Returns aggregated HOT-TM-project statistics for a specific user.")
+    @GetMapping("/stats/HotTMUser")
+    fun statsHotTMUserStats(
+        httpServletRequest: HttpServletRequest,
+        @Parameter(description = "OSM user id")
+        @RequestParam(name = "userId")
+        userId: String
+    ): Map<String, Any> {
+        lateinit var response: MutableMap<String, Any>
+        val executionTime = measureTimeMillis {
+            response = repo.getStatsForUserIdForAllHotTMProjects(userId)
+        }
+        response["building_count"] = Random.nextInt(1, 100)
+        response["road_length"] = Random.nextDouble(1.0, 1000.0)
+        response["object_edits"] = Random.nextInt(100, 2000)
+        
+        return response
     }
 
     @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod.")
