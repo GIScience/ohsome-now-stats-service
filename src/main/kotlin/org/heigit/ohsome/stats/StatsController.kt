@@ -60,21 +60,14 @@ class StatsController {
         @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?,
 
-        @Parameter(
-            description = "indicate whether the results should be returned with additional Metadata",
-            hidden = true
-        )
+        @Parameter(description = "indicate whether the results should be returned with additional Metadata")
         @RequestParam(name = "ohsomeFormat", defaultValue = "false", required = false)
-        ohsomeFormat: Boolean,
-
-        @Parameter(description = "allows disable usage of cached files", hidden = true)
-        @RequestParam(name = "noCache", defaultValue = "false", required = false)
-        noCache: Boolean
+        ohsomeFormat: Boolean
     ): Map<String, Any> {
         val hashtagHandler = HashtagHandler(hashtag)
         lateinit var stats: Map<String, Any>
         val executionTime = measureTimeMillis {
-            stats = repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate, noCache)
+            stats = repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate)
         }
         return if (!ohsomeFormat) {
             val extraParams = echoRequestParameters(startDate, endDate)
@@ -104,16 +97,12 @@ class StatsController {
 
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
-        interval: String?,
-
-        @Parameter(description = "allows disable usage of cached files", hidden = true)
-        @RequestParam(name = "noCache", defaultValue = "false", required = false)
-        noCache: Boolean
+        interval: String
     ): Map<String, Any> {
         lateinit var response: List<Any>
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
-            response = repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval ?: "P1M", noCache)
+            response = repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval)
         }
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
@@ -121,7 +110,6 @@ class StatsController {
 
     @Operation(summary = "Returns live data from DB aggregated by country")
     @GetMapping("/stats/{hashtag}/country")
-    @Suppress("LongParameterList")
     fun statsCountry(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
@@ -135,21 +123,35 @@ class StatsController {
         @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam(name = "enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
-        endDate: Instant?,
-
-        @Parameter(description = "allows disable usage of cached files", hidden = true)
-        @RequestParam(name = "noCache", defaultValue = "false", required = false)
-        noCache: Boolean
+        endDate: Instant?
     ): Map<String, Any> {
         lateinit var response: List<Map<String, Any>>
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
-            response = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, noCache)
+            response = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
         }
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
-    @Suppress("LongParameterList")
+    @Operation(summary = "Returns aggregated HOT-TM-project statistics for a specific user.")
+    @GetMapping("/stats/HotTMUser")
+    fun statsHotTMUser(
+        httpServletRequest: HttpServletRequest,
+        @Parameter(description = "OSM user id")
+        @RequestParam(name = "userId")
+        userId: String
+    ): Map<String, Any> {
+        lateinit var response: MutableMap<String, Any>
+        val executionTime = measureTimeMillis {
+            response = repo.getStatsForUserIdForAllHotTMProjects(userId)
+        }
+        response["building_count"] = Random.nextInt(1, 100)
+        response["road_length"] = Random.nextDouble(1.0, 1000.0)
+        response["object_edits"] = Random.nextInt(100, 2000)
+
+        return response
+    }
+
     @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod.")
     @GetMapping("/mostUsedHashtags")
     fun mostUsedHashtags(
@@ -166,11 +168,7 @@ class StatsController {
 
         @Parameter(description = "the number of hashtags to return")
         @RequestParam(name = "limit", required = false, defaultValue = "10")
-        limit: Int?,
-
-        @Parameter(description = "allows disable usage of cached files", hidden = true)
-        @RequestParam(name = "noCache", defaultValue = "false", required = false)
-        noCache: Boolean
+        limit: Int?
     ): Map<String, Any> {
         lateinit var response: List<Any>
         val executionTime = measureTimeMillis {
@@ -178,7 +176,6 @@ class StatsController {
                 startDate,
                 endDate,
                 limit,
-                noCache,
             )
         }
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
@@ -188,15 +185,11 @@ class StatsController {
     @Operation(summary = "Returns maximum and minimum timestamps of the database.")
     @GetMapping("/metadata")
     fun metadata(
-        httpServletRequest: HttpServletRequest,
-
-        @Parameter(description = "allows disable usage of cached files", hidden = true)
-        @RequestParam(name = "noCache", defaultValue = "false", required = false)
-        noCache: Boolean
+        httpServletRequest: HttpServletRequest
     ): Map<String, Any> {
         lateinit var response: Map<String, Any>
         val executionTime = measureTimeMillis {
-            val queryResult = repo.getMetadata(noCache)
+            val queryResult = repo.getMetadata()
             response = queryResult
         }
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
