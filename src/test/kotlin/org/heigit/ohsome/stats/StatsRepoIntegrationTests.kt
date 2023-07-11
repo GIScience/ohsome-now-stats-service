@@ -14,10 +14,7 @@ import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Instant
-import java.time.Instant.EPOCH
-import java.time.Instant.now
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 
 
 @SpringBootTest(webEnvironment = NONE)
@@ -48,8 +45,8 @@ class StatsRepoIntegrationTests {
     val expected = mapOf(
         "changesets" to 1,
         "users" to 1,
-        "roads" to 0.14,
-        "buildings" to 1,
+        "roads" to -0.009,
+        "buildings" to 0,
         "edits" to 0,
         "latest" to "2017-12-19T00:52:03",
         "hashtag" to "&uganda"
@@ -138,7 +135,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
         println(result)
         assertEquals(1, result.size)
-        assertEquals(7, result[0].size)
+        assertEquals(6, result[0].size)
         assertEquals("2021-12-01T00:00", result[0]["startdate"].toString())
     }
 
@@ -152,7 +149,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
         println(result)
         assertEquals(1, result.size)
-        assertEquals(7, result[0].size)
+        assertEquals(6, result[0].size)
         assertEquals("2021-12-01T00:00", result[0]["startdate"].toString())
     }
 
@@ -166,7 +163,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
         println(result)
         assertTrue(result is List)
-        assertEquals(7, result[0].size)
+        assertEquals(6, result[0].size)
     }
 
     @Test

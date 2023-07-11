@@ -27,8 +27,8 @@ class StatsRepo {
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
-            sum(road_length)/1000 as roads,
-            count(building_area) as buildings,
+            sum(road_length_delta)/1000 as roads,
+            count(building_edit) as buildings,
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest
         FROM "stats"
@@ -43,10 +43,9 @@ class StatsRepo {
     //language=sql
     private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
        SELECT 
-            count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
-            sum(road_length)/1000 as roads,
-            count(building_area) as buildings,
+            sum(road_length_delta)/1000 as roads,
+            count(building_edit) as buildings,
             count(map_feature_edit) as edits,
             toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime as startdate,
             (toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime + INTERVAL ?) as enddate
@@ -64,10 +63,9 @@ class StatsRepo {
     //language=sql
     private fun getStatsFromTimeSpanCountry(hashtagHandler: HashtagHandler) = """
         SELECT
-            count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
-            sum(road_length) as roads,
-            count(building_area) as buildings,
+            sum(road_length_delta)/1000 as roads,
+            count(building_edit) as buildings,
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest,
             country_iso_a3 as country
@@ -84,8 +82,8 @@ class StatsRepo {
     //language=sql
     private val statsForUserIdForHotOSMProject = """
         select
-            count(building_area) as building_count,
-            sum(road_length) as road_length,
+            count(building_edit) as building_count,
+            sum(road_length_delta)/1000 as road_length,
             count(map_feature_edit) as edits,
             user_id
         from stats
