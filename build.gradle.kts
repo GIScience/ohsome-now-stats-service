@@ -8,6 +8,7 @@ plugins {
 
     id("io.gitlab.arturbosch.detekt").version("1.21.0")
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
+    id("io.gatling.gradle") version "3.9.5.1"
 }
 
 group = "org.heigit.ohsome"
@@ -15,8 +16,9 @@ version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
+
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -70,3 +72,5 @@ kover {
     }
 
 }
+
+
