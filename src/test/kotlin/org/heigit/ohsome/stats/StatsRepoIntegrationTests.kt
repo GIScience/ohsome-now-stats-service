@@ -14,7 +14,10 @@ import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Instant
+import java.time.Instant.EPOCH
+import java.time.Instant.now
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 
 @SpringBootTest(webEnvironment = NONE)
@@ -45,9 +48,9 @@ class StatsRepoIntegrationTests {
     val expected = mapOf(
         "changesets" to 1,
         "users" to 1,
-        "roads" to -0.009,
-        "buildings" to 0,
-        "edits" to 1,
+        "roads" to 0.14,
+        "buildings" to 1,
+        "edits" to 0,
         "latest" to "2017-12-19T00:52:03",
         "hashtag" to "&uganda"
     )
@@ -112,10 +115,7 @@ class StatsRepoIntegrationTests {
         val hashtagHandler = HashtagHandler("&group")
         val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null)
 
-        println(result)
-        println(resultWildCard)
-
-        assertTrue(result["edits"].toString().toInt() < resultWildCard["edits"].toString().toInt())
+        assertTrue(result["changesets"].toString().toInt() < resultWildCard["changesets"].toString().toInt())
     }
 
     @Test
@@ -125,22 +125,37 @@ class StatsRepoIntegrationTests {
         val hashtagHandlerWildcard = HashtagHandler("*")
         val resultWildCard = this.repo.getStatsForTimeSpan(hashtagHandlerWildcard, null, null)
 
-        assertEquals(28, resultWildCard["edits"].toString().toInt())
+        assertEquals(6, resultWildCard["changesets"].toString().toInt())
     }
 
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
-    fun `getStatsForTimeSpanInterval returns partial data in time span for start and  end date with hashtag aggregated by month`() {
+    fun `getStatsForTimeSpanInterval returns partial data in time span for start and end date with hashtag aggregated by month`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&group")
         val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
         println(result)
         assertEquals(1, result.size)
-        assertEquals(6, result[0].size)
+        assertEquals(7, result[0].size)
         assertEquals("2021-12-01T00:00", result[0]["startdate"].toString())
     }
+
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForTimeSpanInterval returns all data when nothing is supplied as startdate`() {
+        val startDate = null
+        val endDate = null
+        val hashtagHandler = HashtagHandler("&group")
+        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
+        println(result)
+        assertEquals(1, result.size)
+        assertEquals(7, result[0].size)
+        assertEquals("2021-12-01T00:00", result[0]["startdate"].toString())
+    }
+
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
@@ -151,7 +166,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
         println(result)
         assertTrue(result is List)
-        assertEquals(6, result[0].size)
+        assertEquals(7, result[0].size)
     }
 
     @Test
@@ -159,7 +174,7 @@ class StatsRepoIntegrationTests {
     fun `getStatsForUserIdForAllHotTMProjects returns stats for only one userid`() {
         val result = this.repo.getStatsForUserIdForAllHotTMProjects("2186388")
         println(result)
-        assertTrue(result is Map)
+        assertTrue(result is MutableMap<String, *>)
         assertEquals(4, result.size)
     }
 

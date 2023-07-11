@@ -3,6 +3,7 @@ package org.heigit.ohsome.stats.utils
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.web.servlet.HandlerMapping
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 
 fun makeUrl(request: HttpServletRequest): String {
@@ -33,7 +34,7 @@ private fun buildQueryInfoTimespan(
 ): Map<String, Any?> {
     val timespan = mapOf(
         "startDate" to (startDate ?: Instant.EPOCH.toString()),
-        "endDate" to (endDate ?: Instant.now().toString()),
+        "endDate" to (endDate ?: Instant.now().truncatedTo(ChronoUnit.SECONDS).toString()),
         "interval" to interval
     ).filterValues { it != null }
 

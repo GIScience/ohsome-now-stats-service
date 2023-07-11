@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
+import java.time.temporal.ChronoUnit
 import javax.sql.DataSource
 
 @Component
@@ -22,105 +23,101 @@ class StatsRepo {
     private val logger: Logger = LoggerFactory.getLogger(StatsRepo::class.java)
 
     //language=sql
-    private fun getStatsFromTimeSpan(hashtagHandler: HashtagHandler, noCache: Boolean) = """
+    private fun getStatsFromTimeSpan(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
-            sum(road_length_delta)/1000 as roads,
-            sum(ifNull(building_edit,0)) as buildings,
-            count(*) as edits,
+            sum(road_length)/1000 as roads,
+            count(building_area) as buildings,
+            count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest
         FROM "stats"
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?) 
-            and changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
-            and changeset_timestamp < parseDateTimeBestEffortOrNull(?);
-            ${if (noCache == true) "settings min_bytes_to_use_direct_io=1" else ""}
-
+            and changeset_timestamp > parseDateTime64BestEffort(?) 
+            and changeset_timestamp < parseDateTime64BestEffort(?);
         """.trimIndent()
+
 
     @Suppress("LongMethod")
     //language=sql
-    private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler, noCache: Boolean) = """
-        SELECT 
+    private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
+       SELECT 
+            count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
-            sum(road_length_delta)/1000 as roads,
-            sum(ifNull(building_edit,0)) as buildings,
-            count(*) as edits,
+            sum(road_length)/1000 as roads,
+            count(building_area) as buildings,
+            count(map_feature_edit) as edits,
             toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime as startdate,
-            toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime + INTERVAL ? as enddate
-        FROM "stats"
+            (toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime + INTERVAL ?) as enddate
+        FROM "stats"    
         WHERE
-            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)  
-            AND changeset_timestamp > ? 
-            AND changeset_timestamp < ?
+            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
+            AND changeset_timestamp > parseDateTime64BestEffort(?) 
+            AND changeset_timestamp < parseDateTime64BestEffort(?)
         GROUP BY 
-        startdate 
-        ${if (noCache == true) "settings min_bytes_to_use_direct_io=1" else ""}
-        """.trimIndent()
+            startdate
+    """.trimIndent()
 
 
     @Suppress("LongMethod")
     //language=sql
-    private fun getStatsFromTimeSpanCountry(hashtagHandler: HashtagHandler, noCache: Boolean) = """
+    private fun getStatsFromTimeSpanCountry(hashtagHandler: HashtagHandler) = """
         SELECT
+            count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
-            sum(road_length_delta)/1000 as roads,
-            sum(ifNull(building_edit,0) ) as buildings,
-            count(*) as edits,
+            sum(road_length) as roads,
+            count(building_area) as buildings,
+            count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest,
             country_iso_a3 as country
         FROM "stats"
         ARRAY JOIN country_iso_a3
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
-            and changeset_timestamp > parseDateTimeBestEffortOrNull(?) 
-            and changeset_timestamp < parseDateTimeBestEffortOrNull(?)
+            and changeset_timestamp > parseDateTime64BestEffort(?) 
+            and changeset_timestamp < parseDateTime64BestEffort(?)
         GROUP BY
             country
-        ${if (noCache == true) "settings min_bytes_to_use_direct_io=1" else ""}
         """.trimIndent()
 
     //language=sql
-    private fun statsForUserIdForHotOSMProject(noCache: Boolean) = """
-    SELECT
-        sum(ifNull(building_edit,0)) as building_count,
-        sum(road_length_delta)/1000 as road_length,
-        count(*) as object_edits,
-        user_id
-    FROM stats
-    WHERE
-        user_id = ?
-        AND startsWith(hashtag, '#hotosm-project-')
-    GROUP BY user_id
-    ${if (noCache == true) "settings min_bytes_to_use_direct_io=1" else ""}
-
-""".trimIndent()
-
-    //language=sql
-    private fun mostUsedHashtags(noCache: Boolean) = """
-        SELECT 
-            hashtag, COUNT(DISTINCT user_id) as number_of_users
-        FROM stats
-        WHERE
-            changeset_timestamp > ? and changeset_timestamp < ?
-        GROUP BY hashtag
-        ORDER BY number_of_users DESC
-        LIMIT ?
-        ${if (noCache == true) "settings min_bytes_to_use_direct_io=1" else ""}
+    private val statsForUserIdForHotOSMProject = """
+        select
+            count(building_area) as building_count,
+            sum(road_length) as road_length,
+            count(map_feature_edit) as edits,
+            user_id
+        from stats
+        where
+            user_id = ?
+            and startsWith(hashtag, 'hotosm-project-')
+        group by user_id
 
     """.trimIndent()
 
     //language=sql
-    private fun metadata(noCache: Boolean) = """
+    private val mostUsedHashtags = """
+        SELECT 
+            hashtag, COUNT(DISTINCT user_id) as number_of_users
+        FROM "stats"
+        WHERE
+            changeset_timestamp > parseDateTime64BestEffort(?) and changeset_timestamp < parseDateTime64BestEffort(?)
+        GROUP BY
+            hashtag
+        ORDER BY
+            number_of_users DESC
+        LIMIT ?
+    """.trimIndent()
+
+    //language=sql
+    private val metadata = """
         SELECT 
             max(changeset_timestamp) as max_timestamp,
             min(changeset_timestamp) as min_timestamp
-        FROM stats
+        FROM "stats"
         WHERE changeset_timestamp > now() - toIntervalMonth(1) 
-        OR changeset_timestamp < parseDateTimeBestEffortOrNull('2009-04-23T00:00:00.000000Z')
-        ${if (noCache == true) "settings min_bytes_to_direct_io=1" else ""}
-
+        OR changeset_timestamp < parseDateTime64BestEffort('2009-04-23T00:00:00.000000Z')
     """.trimIndent()
 
     /**
@@ -131,18 +128,13 @@ class StatsRepo {
      * @param endDate The end date of the time span.
      * @return A map containing the statistics.
      */
-    fun getStatsForTimeSpan(
-        hashtagHandler: HashtagHandler,
-        startDate: Instant?,
-        endDate: Instant?,
-        noCache: Boolean = false
-    ): Map<String, Any> {
+    fun getStatsForTimeSpan(hashtagHandler: HashtagHandler, startDate: Instant?, endDate: Instant?): Map<String, Any> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
             it.select(
-                getStatsFromTimeSpan(hashtagHandler, noCache),
-                "#${hashtagHandler.hashtag}",
+                getStatsFromTimeSpan(hashtagHandler),
+                hashtagHandler.hashtag,
                 startDate ?: EPOCH,
                 endDate ?: now()
             ).mapToMap().single()
@@ -158,25 +150,23 @@ class StatsRepo {
      * @param interval The interval for grouping the statistics.
      * @return A list of maps containing the statistics for each interval.
      */
-    @Suppress("LongParameterList")
     fun getStatsForTimeSpanInterval(
         hashtagHandler: HashtagHandler,
-        startDate: Instant? = EPOCH,
-        endDate: Instant? = now(),
-        interval: String,
-        noCache: Boolean = false
+        startDate: Instant?,
+        endDate: Instant?,
+        interval: String
     ): List<Map<String, Any>> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
 
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-                getStatsFromTimeSpanInterval(hashtagHandler, noCache),
+                getStatsFromTimeSpanInterval(hashtagHandler),
                 getGroupbyInterval(interval),
                 getGroupbyInterval(interval),
                 getGroupbyInterval(interval),
-                "#${hashtagHandler.hashtag}",
-                startDate,
-                endDate
+                hashtagHandler.hashtag,
+                startDate ?: EPOCH,
+                endDate ?: now()
             ).mapToMap().list()
         }
     }
@@ -188,14 +178,13 @@ class StatsRepo {
      * @return A list of maps containing the statistics for all hotTM projects.
      */
     fun getStatsForUserIdForAllHotTMProjects(
-        user_id: String,
-        noCache: Boolean = false
-    ): Map<String, Any> {
+        user_id: String
+    ): MutableMap<String, Any> {
         logger.info("Getting HotOSM stats for user: ${user_id}")
 
-        return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
+        return create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
             it.select(
-                statsForUserIdForHotOSMProject(noCache),
+                statsForUserIdForHotOSMProject,
                 user_id
             ).mapToMap().single()
         }
@@ -212,15 +201,14 @@ class StatsRepo {
     fun getStatsForTimeSpanCountry(
         hashtagHandler: HashtagHandler,
         startDate: Instant? = EPOCH,
-        endDate: Instant? = now(),
-        noCache: Boolean = false
+        endDate: Instant? = now()
     ): List<Map<String, Any>> {
         val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-                getStatsFromTimeSpanCountry(hashtagHandler, noCache),
-                "#${hashtagHandler.hashtag}",
-                startDate,
-                endDate
+                getStatsFromTimeSpanCountry(hashtagHandler),
+                hashtagHandler.hashtag,
+                startDate ?: EPOCH,
+                endDate ?: now()
             ).mapToMap().list()
         }
         return result
@@ -236,14 +224,13 @@ class StatsRepo {
      */
     fun getMostUsedHashtags(
         startDate: Instant? = EPOCH,
-        endDate: Instant? = now(),
-        limit: Int? = 10,
-        noCache: Boolean = false
+        endDate: Instant? = now().truncatedTo(ChronoUnit.SECONDS),
+        limit: Int? = 10
     ): List<Map<String, Any>> {
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-                mostUsedHashtags(noCache),
+                mostUsedHashtags,
                 startDate,
                 endDate,
                 limit
@@ -257,12 +244,13 @@ class StatsRepo {
      * @return  A map containing the two keys.
      */
     fun getMetadata(
-        noCache: Boolean = false
     ): Map<String, Any> {
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
             it.select(
-                metadata(noCache)
+                metadata
             ).mapToMap().single()
         }
     }
+
+
 }
