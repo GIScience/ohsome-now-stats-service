@@ -42,22 +42,26 @@ class StatsRepo {
     @Suppress("LongMethod")
     //language=sql
     private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
-       SELECT 
+        SELECT
             count(distinct user_id) as users,
             sum(road_length_delta)/1000 as roads,
             count(building_edit) as buildings,
             count(map_feature_edit) as edits,
-            toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime as startdate,
-            (toStartOfInterval(changeset_timestamp, INTERVAL ?)::DateTime + INTERVAL ?) as enddate
-        FROM "stats"    
+            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
+            (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
+        FROM "stats"
         WHERE
-            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
-            AND changeset_timestamp > parseDateTime64BestEffort(?) 
-            AND changeset_timestamp < parseDateTime64BestEffort(?)
-        GROUP BY 
+            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, :hashtag)
+            AND changeset_timestamp > parseDateTime64BestEffort(:startdate)
+            AND changeset_timestamp < parseDateTime64BestEffort(:enddate)
+        GROUP BY
             startdate
+        ORDER BY startdate ASC
+        WITH FILL
+            FROM toStartOfInterval(parseDateTime64BestEffort(:startdate), INTERVAL :interval)::DateTime
+            TO toStartOfInterval(parseDateTime64BestEffort(:enddate), INTERVAL :interval)::DateTime
+        STEP INTERVAL :interval Interpolate (enddate as (startdate + INTERVAL :interval + INTERVAL :interval))
     """.trimIndent()
-
 
     @Suppress("LongMethod")
     //language=sql
@@ -159,14 +163,14 @@ class StatsRepo {
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
                 getStatsFromTimeSpanInterval(hashtagHandler),
-                getGroupbyInterval(interval),
-                getGroupbyInterval(interval),
-                getGroupbyInterval(interval),
-                hashtagHandler.hashtag,
-                startDate ?: EPOCH,
-                endDate ?: now()
-            ).mapToMap().list()
+            ).bind("interval", getGroupbyInterval(interval))
+                .bind("startdate", startDate ?: EPOCH)
+                .bind("enddate", endDate ?: now())
+                .bind("hashtag", hashtagHandler.hashtag)
+                .mapToMap().list()
         }
+
+
     }
 
     /**

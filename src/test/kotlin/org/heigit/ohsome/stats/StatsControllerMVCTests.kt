@@ -73,9 +73,8 @@ class StatsControllerMVCTests {
                 any(HashtagHandler::class.java),
                 any(Instant::class.java),
                 any(Instant::class.java),
-                anyString(),
-
-                )
+                anyString()
+            )
         )
             .thenReturn(listOf(mapOf("hashtag" to hashtag)))
 

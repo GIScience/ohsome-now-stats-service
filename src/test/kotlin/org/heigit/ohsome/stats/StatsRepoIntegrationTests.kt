@@ -122,7 +122,7 @@ class StatsRepoIntegrationTests {
         val hashtagHandlerWildcard = HashtagHandler("*")
         val resultWildCard = this.repo.getStatsForTimeSpan(hashtagHandlerWildcard, null, null)
 
-        assertEquals(6, resultWildCard["changesets"].toString().toInt())
+        assertEquals(7, resultWildCard["changesets"].toString().toInt())
     }
 
 
@@ -134,9 +134,22 @@ class StatsRepoIntegrationTests {
         val hashtagHandler = HashtagHandler("&group")
         val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
         println(result)
-        assertEquals(1, result.size)
+        assertEquals(84, result.size)
         assertEquals(6, result[0].size)
-        assertEquals("2021-12-01T00:00", result[0]["startdate"].toString())
+        assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
+    }
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForTimeSpanInterval fills data between to dates with zeros`() {
+        val startDate = Instant.ofEpochSecond(1503644723)
+        val endDate = Instant.ofEpochSecond(1640486233)
+        val hashtagHandler = HashtagHandler("&gid")
+        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
+        println(result)
+        assertEquals(52, result.size)
+        assertEquals(6, result[0].size)
+        assertEquals("2017-08-01T00:00", result[0]["startdate"].toString())
     }
 
 
@@ -144,13 +157,13 @@ class StatsRepoIntegrationTests {
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpanInterval returns all data when nothing is supplied as startdate`() {
         val startDate = null
-        val endDate = null
+        val endDate = Instant.ofEpochSecond(1639054888)
         val hashtagHandler = HashtagHandler("&group")
         val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
         println(result)
-        assertEquals(1, result.size)
+        assertEquals(623, result.size)
         assertEquals(6, result[0].size)
-        assertEquals("2021-12-01T00:00", result[0]["startdate"].toString())
+        assertEquals("1970-01-01T00:00", result[0]["startdate"].toString())
     }
 
 
