@@ -2,19 +2,25 @@ package org.heigit.ohsome.stats
 
 import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Instant
 
-
-@WebMvcTest(StatsController::class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class StatsControllerMVCTests {
 
     private val hashtag = "&uganda"
@@ -26,6 +32,9 @@ class StatsControllerMVCTests {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var appProperties: AppProperties
 
 
     //language=JSON
@@ -141,12 +150,45 @@ class StatsControllerMVCTests {
             )
         ).thenReturn(mutableMapOf("building_count" to 1))
 
-        val GET = get("/stats/HotTMUser")
+        val GET = get("/HotTMUser")
             .queryParam("userId", "12312")
+            .header("token", appProperties.token)
+
 
         this.mockMvc.perform(GET)
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
+    }
+
+    @Test
+    fun `statsHotTMUserStats returns forbidden without token`() {
+        `when`(
+            repo.getStatsForUserIdForAllHotTMProjects(
+                anyString(),
+            )
+        ).thenReturn(mutableMapOf("building_count" to 1))
+
+        val GET = get("/HotTMUser")
+            .queryParam("userId", "12312")
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `statsHotTMUserStats returns forbidden with wrong token`() {
+        `when`(
+            repo.getStatsForUserIdForAllHotTMProjects(
+                anyString(),
+            )
+        ).thenReturn(mutableMapOf("building_count" to 1))
+
+        val GET = get("/HotTMUser")
+            .queryParam("userId", "12312")
+            .header("token", "wrongtoken")
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isForbidden)
     }
 
     @Test

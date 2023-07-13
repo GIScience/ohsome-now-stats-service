@@ -1,5 +1,6 @@
 package org.heigit.ohsome.stats
 
+import com.clickhouse.client.internal.google.rpc.BadRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
@@ -11,7 +12,9 @@ import org.heigit.ohsome.stats.utils.makeUrl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.HandlerMapping
 import java.time.Instant
 import java.time.Instant.EPOCH
@@ -28,6 +31,8 @@ class StatsController {
     @Autowired
     lateinit var repo: StatsRepo
 
+    @Autowired
+    lateinit var appProperties: AppProperties
 
     @Operation(summary = "Returns a static snapshot of OSM statistics (for now)")
     @GetMapping("/stats_static")
@@ -134,13 +139,19 @@ class StatsController {
     }
 
     @Operation(summary = "Returns aggregated HOT-TM-project statistics for a specific user.")
-    @GetMapping("/stats/HotTMUser")
+    @GetMapping("/HotTMUser")
     fun statsHotTMUser(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "OSM user id")
         @RequestParam(name = "userId")
-        userId: String
+        userId: String,
+        @RequestHeader(value = "token", required = false)
+        token: String?
     ): Map<String, Any> {
+        if (token == null || token != appProperties.token) {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
         lateinit var response: MutableMap<String, Any>
         val executionTime = measureTimeMillis {
             response = repo.getStatsForUserIdForAllHotTMProjects(userId)
