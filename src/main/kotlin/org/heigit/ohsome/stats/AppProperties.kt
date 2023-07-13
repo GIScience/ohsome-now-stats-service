@@ -5,6 +5,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class AppProperties {
-    @Value("\${token}")
+    @Value("\${ohsome.contribution.stats.service.token}")
     lateinit var token: String
 }

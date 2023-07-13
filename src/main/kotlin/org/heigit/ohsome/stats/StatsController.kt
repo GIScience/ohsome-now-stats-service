@@ -1,25 +1,16 @@
 package org.heigit.ohsome.stats
 
-import com.clickhouse.client.internal.google.rpc.BadRequest
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import org.apache.commons.lang3.math.NumberUtils.toDouble
 import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.heigit.ohsome.stats.utils.buildOhsomeFormat
 import org.heigit.ohsome.stats.utils.echoRequestParameters
-import org.heigit.ohsome.stats.utils.makeUrl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
-import org.springframework.web.servlet.HandlerMapping
 import java.time.Instant
-import java.time.Instant.EPOCH
-import java.time.Instant.now
-import kotlin.random.Random
 
 import kotlin.system.measureTimeMillis
 
@@ -30,9 +21,6 @@ class StatsController {
 
     @Autowired
     lateinit var repo: StatsRepo
-
-    @Autowired
-    lateinit var appProperties: AppProperties
 
     @Operation(summary = "Returns a static snapshot of OSM statistics (for now)")
     @GetMapping("/stats_static")
@@ -138,30 +126,6 @@ class StatsController {
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
-    @Operation(summary = "Returns aggregated HOT-TM-project statistics for a specific user.")
-    @GetMapping("/HotTMUser")
-    fun statsHotTMUser(
-        httpServletRequest: HttpServletRequest,
-        @Parameter(description = "OSM user id")
-        @RequestParam(name = "userId")
-        userId: String,
-        @RequestHeader(value = "token", required = false)
-        token: String?
-    ): Map<String, Any> {
-        if (token == null || token != appProperties.token) {
-            throw ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
-
-        lateinit var response: MutableMap<String, Any>
-        val executionTime = measureTimeMillis {
-            response = repo.getStatsForUserIdForAllHotTMProjects(userId)
-        }
-        response["building_count"] = Random.nextInt(1, 100)
-        response["road_length"] = Random.nextDouble(1.0, 1000.0)
-        response["object_edits"] = Random.nextInt(100, 2000)
-
-        return response
-    }
 
     @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod.")
     @GetMapping("/mostUsedHashtags")

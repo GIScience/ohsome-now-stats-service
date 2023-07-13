@@ -19,8 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Instant
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(StatsController::class)
 class StatsControllerMVCTests {
 
     private val hashtag = "&uganda"
@@ -32,9 +31,6 @@ class StatsControllerMVCTests {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    lateinit var appProperties: AppProperties
 
 
     //language=JSON
@@ -142,54 +138,6 @@ class StatsControllerMVCTests {
             .andExpect(jsonPath("$.result").value(mapOf("country" to "xyz")))
     }
 
-    @Test
-    fun `statsHotTMUserStats returns stats for one user only`() {
-        `when`(
-            repo.getStatsForUserIdForAllHotTMProjects(
-                anyString(),
-            )
-        ).thenReturn(mutableMapOf("building_count" to 1))
-
-        val GET = get("/HotTMUser")
-            .queryParam("userId", "12312")
-            .header("token", appProperties.token)
-
-
-        this.mockMvc.perform(GET)
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-    }
-
-    @Test
-    fun `statsHotTMUserStats returns forbidden without token`() {
-        `when`(
-            repo.getStatsForUserIdForAllHotTMProjects(
-                anyString(),
-            )
-        ).thenReturn(mutableMapOf("building_count" to 1))
-
-        val GET = get("/HotTMUser")
-            .queryParam("userId", "12312")
-
-        this.mockMvc.perform(GET)
-            .andExpect(status().isForbidden)
-    }
-
-    @Test
-    fun `statsHotTMUserStats returns forbidden with wrong token`() {
-        `when`(
-            repo.getStatsForUserIdForAllHotTMProjects(
-                anyString(),
-            )
-        ).thenReturn(mutableMapOf("building_count" to 1))
-
-        val GET = get("/HotTMUser")
-            .queryParam("userId", "12312")
-            .header("token", "wrongtoken")
-
-        this.mockMvc.perform(GET)
-            .andExpect(status().isForbidden)
-    }
 
     @Test
     fun `metadata should return max_timestamp and min_timestamp`() {
