@@ -14,7 +14,7 @@ build/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-
+/application.properties
 
 #local secret file
 /src/main/resources/secrets.properties
