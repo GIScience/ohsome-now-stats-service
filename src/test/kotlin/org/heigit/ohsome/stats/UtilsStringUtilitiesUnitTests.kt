@@ -3,10 +3,10 @@ package org.heigit.ohsome.stats
 import org.assertj.core.api.Assertions.assertThat
 import org.heigit.ohsome.stats.utils.getGroupbyInterval
 import org.junit.jupiter.api.Test
-
+import org.springframework.boot.test.context.SpringBootTest
 
 class UtilsStringUtilitiesUnitTests {
-    
+
     @Test
     fun `translate ISO Period 'P1W' to Clickhouse interval '1 Week'`() {
         val result = getGroupbyInterval("P1W")

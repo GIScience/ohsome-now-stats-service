@@ -71,6 +71,34 @@ class StatsControllerMVCTests {
             .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/&uganda?ohsomeFormat=true"))
     }
 
+
+    @Test
+    fun `stats can be served with multiple hashtags`() {
+        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
+            .thenReturn(mapOf("hashtag" to hashtag))
+
+        this.mockMvc
+            .perform(get("/stats/$hashtag,hotosm*"))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.$hashtag.hashtag").value(hashtag))
+    }
+
+    @Test
+    fun `stats can be served with multiple hashtags and with ohsomeFormat`() {
+        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
+            .thenReturn(mapOf("hashtag" to hashtag))
+
+        this.mockMvc
+            .perform(get("/stats/$hashtag,hotosm*?ohsomeFormat=true"))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.result.$hashtag.hashtag").value(hashtag))
+            .andExpect(jsonPath("$.query.timespan.endDate").exists())
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/&uganda,hotosm*?ohsomeFormat=true"))
+    }
+
+
     @Test
     fun `stats per interval can be served with explicit start and end dates`() {
         `when`(

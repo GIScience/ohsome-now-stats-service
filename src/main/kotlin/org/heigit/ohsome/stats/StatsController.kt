@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.heigit.ohsome.stats.utils.buildOhsomeFormat
+import org.heigit.ohsome.stats.utils.checkIfOnlyOneResult
 import org.heigit.ohsome.stats.utils.echoRequestParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
@@ -36,12 +37,12 @@ class StatsController {
 
     @Suppress("LongParameterList")
     @Operation(summary = "Returns live data from DB")
-    @GetMapping("/stats/{hashtag}")
+    @GetMapping("/stats/{hashtags}")
     fun stats(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
-        hashtag: String,
+        hashtags: Array<String>,
 
         @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam("startdate", required = false)
@@ -57,16 +58,20 @@ class StatsController {
         @RequestParam(name = "ohsomeFormat", defaultValue = "false", required = false)
         ohsomeFormat: Boolean
     ): Map<String, Any> {
-        val hashtagHandler = HashtagHandler(hashtag)
-        lateinit var stats: Map<String, Any>
+        println(hashtags)
+        val results = mutableMapOf<String, Map<String, Any>>()
         val executionTime = measureTimeMillis {
-            stats = repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate)
+            hashtags.forEach { hashtag ->
+                results[hashtag] = repo.getStatsForTimeSpan(HashtagHandler(hashtag), startDate, endDate)
+            }
         }
+        val finalResults = checkIfOnlyOneResult(results)
+
         return if (!ohsomeFormat) {
             val extraParams = echoRequestParameters(startDate, endDate)
-            stats + extraParams
+            finalResults + extraParams
         } else {
-            buildOhsomeFormat(stats, executionTime, httpServletRequest)
+            buildOhsomeFormat(finalResults, executionTime, httpServletRequest)
         }
     }
 

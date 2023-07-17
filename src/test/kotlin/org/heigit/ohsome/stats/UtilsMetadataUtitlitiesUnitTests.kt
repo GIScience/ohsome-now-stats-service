@@ -1,11 +1,14 @@
 package org.heigit.ohsome.stats
 
+import junit.framework.TestCase.assertTrue
 import org.assertj.core.api.Assertions.assertThat
+import org.heigit.ohsome.stats.utils.checkIfOnlyOneResult
 import org.heigit.ohsome.stats.utils.echoRequestParameters
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.boot.test.context.SpringBootTest
 import java.time.Instant.now
 import java.util.Map.entry
-
 
 class UtilsMetadataUtitlitiesUnitTests {
 
@@ -35,6 +38,24 @@ class UtilsMetadataUtitlitiesUnitTests {
 
         val result = echoRequestParameters(startDate = offsetDateTime, endDate = offsetDateTime)
         assertThat(result).containsExactly(entry("startdate", offsetDateTime), entry("enddate", offsetDateTime))
+    }
+
+    @Test
+    fun `result with size equals one unnested`() {
+        val result = mutableMapOf<String, Map<String, Any>>()
+        result["missingmaps"] = mapOf("hashtag" to "missingmaps", "mockstats" to 1)
+        val resultAfterFunction = checkIfOnlyOneResult(result)
+        Assertions.assertTrue(result.size < resultAfterFunction.size)
+    }
+
+    @Test
+    fun `result with size bigger one stays the same`() {
+        val result = mutableMapOf<String, Map<String, Any>>()
+        result["missingmaps"] = mapOf("hashtag" to "missingmaps", "mockstats" to 1)
+        result["hotosm*"] = mapOf("hashtag" to "hotosm*", "mockstats" to 2)
+        result["someotherhashtag"] = mapOf("hashtag" to "someotherhashtag", "mockstats" to 3)
+        val resultAfterFunction = checkIfOnlyOneResult(result)
+        Assertions.assertTrue(result.size == resultAfterFunction.size)
     }
 
 

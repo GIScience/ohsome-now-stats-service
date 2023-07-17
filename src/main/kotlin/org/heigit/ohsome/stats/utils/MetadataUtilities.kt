@@ -79,3 +79,17 @@ fun buildOhsomeFormat(stats: Any, executionTime: Long, httpServletRequest: HttpS
         )
     )
 }
+
+/**
+ * If only one results was provided, unnest it behind from its hashtag.
+ *
+ * @param results results for 1 to X hashtags
+ * @return results, potentially unnested
+ */
+fun checkIfOnlyOneResult(results: MutableMap<String, Map<String, Any>>): Map<String, Any> {
+    return if (results.size == 1) {
+        results.values.iterator().next()
+    } else {
+        results
+    }
+}

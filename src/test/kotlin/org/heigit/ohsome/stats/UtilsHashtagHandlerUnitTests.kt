@@ -3,7 +3,7 @@ package org.heigit.ohsome.stats
 import org.junit.jupiter.api.Assertions.*
 import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Test
-
+import org.springframework.boot.test.context.SpringBootTest
 
 class UtilsHashtagHandlerUnitTests {
 
