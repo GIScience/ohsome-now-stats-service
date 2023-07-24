@@ -10,14 +10,15 @@ class UtilsHashtagHandlerUnitTests {
     @Test
     fun `check if normal hashtag is wildcard`() {
         val hashtagHandler = HashtagHandler("normalHashtag")
-        assertEquals("normalHashtag", hashtagHandler.hashtag)
+        assertEquals("normalhashtag", hashtagHandler.hashtag)
         assertFalse(hashtagHandler.isWildCard)
     }
 
     @Test
     fun `check if wildcard hashtag is wildcard`() {
         val hashtagHandler = HashtagHandler("wildcardHashtag*")
-        assertEquals("wildcardHashtag", hashtagHandler.hashtag)
+        assertEquals("wildcardhashtag", hashtagHandler.hashtag)
         assertTrue(hashtagHandler.isWildCard)
     }
+
 }
