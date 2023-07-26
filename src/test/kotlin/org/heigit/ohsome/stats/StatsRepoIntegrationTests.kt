@@ -188,6 +188,18 @@ class StatsRepoIntegrationTests {
         assertEquals(4, result.size)
     }
 
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForUserIdForAllHotTMProjects returns zeros for unavailable user id`() {
+        val result = this.repo.getStatsForUserIdForAllHotTMProjects("2186381")
+        println(result)
+        assertTrue(result is MutableMap<String, *>)
+        assertEquals("2186381", result["user_id"])
+        assertEquals(0, result["edits"])
+        assertEquals(0, result["building_count"])
+        assertEquals(0, result["road_length"])
+    }
+
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])

@@ -11,6 +11,7 @@ import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit
+import java.util.NoSuchElementException
 import javax.sql.DataSource
 
 @Component
@@ -87,7 +88,7 @@ class StatsRepo {
     private val statsForUserIdForHotOSMProject = """
         select
             count(building_edit) as building_count,
-            sum(road_length_delta)/1000 as road_length,
+            sum(road_length_delta) /1000 as road_length,
             count(map_feature_edit) as edits,
             user_id
         from stats
@@ -183,12 +184,15 @@ class StatsRepo {
         user_id: String
     ): MutableMap<String, Any> {
         logger.info("Getting HotOSM stats for user: ${user_id}")
-
-        return create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
-            it.select(
-                statsForUserIdForHotOSMProject,
-                user_id
-            ).mapToMap().single()
+        return try {
+            create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
+                it.select(
+                    statsForUserIdForHotOSMProject,
+                    user_id
+                ).mapToMap().single()
+            }
+        } catch (e: NoSuchElementException) {
+            mutableMapOf("user_id" to user_id, "building_count" to 0, "road_length" to 0, "edits" to 0)
         }
     }
 
