@@ -90,6 +90,7 @@ class StatsRepo {
             ifNull(sum(building_edit), 0) as buildings_added,
             ifNull(sum(road_length_delta) /1000, 0) as road_km_added,
             count(map_feature_edit) as edits,
+            count(distinct changeset_id) as changeset_count,
             user_id
         from stats
         where
