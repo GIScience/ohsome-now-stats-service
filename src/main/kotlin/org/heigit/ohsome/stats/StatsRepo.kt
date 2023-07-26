@@ -28,8 +28,8 @@ class StatsRepo {
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
-            sum(road_length_delta)/1000 as roads,
-            count(building_edit) as buildings,
+            ifNull(sum(road_length_delta)/1000, 0) as roads,
+            ifNull(sum(building_edit), 0) as buildings,
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest
         FROM "stats"
@@ -45,8 +45,8 @@ class StatsRepo {
     private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct user_id) as users,
-            sum(road_length_delta)/1000 as roads,
-            count(building_edit) as buildings,
+            ifNull(sum(road_length_delta)/1000, 0) as roads,
+            ifNull(sum(building_edit), 0) as buildings,
             count(map_feature_edit) as edits,
             toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
             (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
@@ -69,8 +69,8 @@ class StatsRepo {
     private fun getStatsFromTimeSpanCountry(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct user_id) as users,
-            sum(road_length_delta)/1000 as roads,
-            count(building_edit) as buildings,
+            ifNull(sum(road_length_delta)/1000, 0) as roads,
+            ifNull(sum(building_edit), 0) as buildings,
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest,
             country_iso_a3 as country
@@ -87,8 +87,8 @@ class StatsRepo {
     //language=sql
     private val statsForUserIdForHotOSMProject = """
         select
-            count(building_edit) as building_count,
-            sum(road_length_delta) /1000 as road_length,
+            ifNull(sum(building_edit), 0) as buildings_added,
+            ifNull(sum(road_length_delta) /1000, 0) as road_km_added,
             count(map_feature_edit) as edits,
             user_id
         from stats
