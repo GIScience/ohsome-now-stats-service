@@ -1,10 +1,7 @@
-ALTER TABLE stats ADD PROJECTION user_id_projection (
+ALTER TABLE stats ADD PROJECTION timestamp_projection (
     SELECT
-        changeset_timestamp,
-        hashtag,
-        user_id
+        changeset_timestamp
     ORDER BY
-        toYYYYMMDD(changeset_timestamp),
-        hashtag,
+        changeset_timestamp
 )
 ;
