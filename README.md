@@ -1,9 +1,9 @@
-# ohsome-contributions-stats-service
+# ohsome-now-stats-service
 
 ## Purpose
 
 * REST service providing endpoints for OSM contribution statistics
-* Backend for [Contribution Stats Dashboard](https://github.com/GIScience/ohsome-contributions-stats-frontend) (final name may differ) which will be available for quick stats on hashtag usage and related topics allowing groups and organisations to track their activity and progress.
+* Backend for [ohsomeNow stats Dashboard](https://github.com/GIScience/ohsome-now-stats-frontend) (final name may differ) which will be available for quick stats on hashtag usage and related topics allowing groups and organisations to track their activity and progress.
 * Several endpoints will be (exclusively) provided for usage on the [HOT Tasking Manager](https://tasks.hotosm.org/) and will replace the old osm-stats api.
 
 

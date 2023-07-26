@@ -1,5 +1,5 @@
 version: "3"
-name: "ohsome-cs-service"
+name: "ohsome-now-stats-service"
 services:
   api-service:
     build:
