@@ -11,7 +11,7 @@ plugins {
     id("io.gatling.gradle") version "3.9.5.1"
 }
 
-group = "org.heigit.ohsome"
+group = "org.heigit.ohsome.now.stats"
 version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
