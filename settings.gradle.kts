@@ -1,1 +1,1 @@
-rootProject.name = "ohsome-contributions-stats-service"
+rootProject.name = "ohsome-now-stats-service"
