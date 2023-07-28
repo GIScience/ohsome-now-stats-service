@@ -1,12 +1,10 @@
-package org.heigit.ohsome.stats
+package org.heigit.ohsome.now.stats
 
-import junit.framework.TestCase.assertTrue
 import org.assertj.core.api.Assertions.assertThat
-import org.heigit.ohsome.stats.utils.checkIfOnlyOneResult
-import org.heigit.ohsome.stats.utils.echoRequestParameters
+import org.heigit.ohsome.now.stats.utils.checkIfOnlyOneResult
+import org.heigit.ohsome.now.stats.utils.echoRequestParameters
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 import java.time.Instant.now
 import java.util.Map.entry
 

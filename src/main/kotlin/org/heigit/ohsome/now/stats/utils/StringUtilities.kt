@@ -1,6 +1,4 @@
-package org.heigit.ohsome.stats.utils
-
-import jakarta.servlet.http.HttpServletRequest
+package org.heigit.ohsome.now.stats.utils
 
 
 /**

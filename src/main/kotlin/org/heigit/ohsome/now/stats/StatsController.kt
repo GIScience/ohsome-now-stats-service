@@ -1,12 +1,12 @@
-package org.heigit.ohsome.stats
+package org.heigit.ohsome.now.stats
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import org.heigit.ohsome.stats.utils.HashtagHandler
-import org.heigit.ohsome.stats.utils.buildOhsomeFormat
-import org.heigit.ohsome.stats.utils.checkIfOnlyOneResult
-import org.heigit.ohsome.stats.utils.echoRequestParameters
+import org.heigit.ohsome.now.stats.utils.HashtagHandler
+import org.heigit.ohsome.now.stats.utils.buildOhsomeFormat
+import org.heigit.ohsome.now.stats.utils.checkIfOnlyOneResult
+import org.heigit.ohsome.now.stats.utils.echoRequestParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO

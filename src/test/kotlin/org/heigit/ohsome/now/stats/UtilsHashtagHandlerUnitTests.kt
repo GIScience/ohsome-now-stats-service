@@ -1,9 +1,8 @@
-package org.heigit.ohsome.stats
+package org.heigit.ohsome.now.stats
 
+import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.*
-import org.heigit.ohsome.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 
 class UtilsHashtagHandlerUnitTests {
 

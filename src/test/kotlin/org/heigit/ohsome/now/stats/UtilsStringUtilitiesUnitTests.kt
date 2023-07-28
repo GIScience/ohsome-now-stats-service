@@ -1,9 +1,8 @@
-package org.heigit.ohsome.stats
+package org.heigit.ohsome.now.stats
 
 import org.assertj.core.api.Assertions.assertThat
-import org.heigit.ohsome.stats.utils.getGroupbyInterval
+import org.heigit.ohsome.now.stats.utils.getGroupbyInterval
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 
 class UtilsStringUtilitiesUnitTests {
 

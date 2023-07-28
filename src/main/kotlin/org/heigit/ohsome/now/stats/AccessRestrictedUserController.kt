@@ -1,4 +1,4 @@
-package org.heigit.ohsome.stats
+package org.heigit.ohsome.now.stats
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter

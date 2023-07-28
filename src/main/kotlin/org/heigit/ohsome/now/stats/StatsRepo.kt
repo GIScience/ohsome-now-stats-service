@@ -1,7 +1,7 @@
-package org.heigit.ohsome.stats
+package org.heigit.ohsome.now.stats
 
-import org.heigit.ohsome.stats.utils.HashtagHandler
-import org.heigit.ohsome.stats.utils.getGroupbyInterval
+import org.heigit.ohsome.now.stats.utils.HashtagHandler
+import org.heigit.ohsome.now.stats.utils.getGroupbyInterval
 import org.jdbi.v3.core.Jdbi.create
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,7 +11,6 @@ import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit
-import java.util.NoSuchElementException
 import javax.sql.DataSource
 
 @Component

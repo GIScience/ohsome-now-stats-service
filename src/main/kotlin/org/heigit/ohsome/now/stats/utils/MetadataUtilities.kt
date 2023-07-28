@@ -1,4 +1,4 @@
-package org.heigit.ohsome.stats.utils
+package org.heigit.ohsome.now.stats.utils
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.web.servlet.HandlerMapping

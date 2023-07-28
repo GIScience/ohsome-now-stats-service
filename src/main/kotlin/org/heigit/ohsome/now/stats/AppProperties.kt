@@ -1,4 +1,4 @@
-package org.heigit.ohsome.stats
+package org.heigit.ohsome.now.stats
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component

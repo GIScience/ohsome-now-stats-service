@@ -1,6 +1,6 @@
-package org.heigit.ohsome.stats
+package org.heigit.ohsome.now.stats
 
-import org.heigit.ohsome.stats.utils.HashtagHandler
+import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
