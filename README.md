@@ -1,6 +1,5 @@
 # ohsome-now-stats-service
-[![LICENSE](https://img.shields.io/github/license/GIScience/ohsome-now-stats-service
-)](LICENSE)
+[![LICENSE](https://img.shields.io/github/license/GIScience/ohsome-now-stats-service)](LICENSE)
 
 The **ohsomeNow stats API** offers a REST service to retrieve up-to-date and global scale overview statistics on mapping activity in OpenStreetMap (OSM).
 
