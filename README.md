@@ -1,16 +1,23 @@
 # ohsome-now-stats-service
 
-## Purpose
+The **ohsomeNow stats API** offers a REST service to retrieve up-to-date and global scale overview statistics on mapping activity in OpenStreetMap (OSM).
 
-* REST service providing endpoints for OSM contribution statistics
-* Backend for [ohsomeNow stats Dashboard](https://github.com/GIScience/ohsome-now-stats-frontend) (final name may differ) which will be available for quick stats on hashtag usage and related topics allowing groups and organisations to track their activity and progress.
-* Several endpoints will be (exclusively) provided for usage on the [HOT Tasking Manager](https://tasks.hotosm.org/) and will replace the old osm-stats api.
+The ohsomeNow stats API builds upon a ClickHouse DB which contains all OSM edits for which a changeset hashtag has been used. The REST service allows you to get insights into the number of contributors, total map edits, added buildings and added road length for a given time range and OSM changesets hashtag filter. You can use the REST service to report mapping statistics for any time range starting from 2009-04-21 when the OSM-API version 0.6 introduced changesets.
 
+Check out the [API documentation]() get in contact with us in case you are planning to embed the API in your services or websites. 
 
-## Based on
-* Clickhouse DB containing all OSM edits
+The core features are:
+* **Overview Statistics**: The `stats` endpoint provides mapping activity statistics summarized into a single line for a single or multiple OSM changeset hashtags.
+* **Trending Hashtags**: Get a list of the `mostUsedHashtags` in your chosen time-interval. The list is sorted by the number of distinct OSM contributors per hashtag.
+* **Country Stats**: Use the `/stats/{hashtag}/country` endpoint to get insights into contributors and edits per OSM changeset hashtags for all countries. 
+* **Timeline**: Get insights about the dynamics in mapping activity over time with the `/stats/{hashtag}/interval` endpoint.
 
+Features for HOT Tasking Manager statistics:
+* **User Statistics**: Access to statistics for individual users is restricted to OSM contributors who are logged in the HOT Tasking Manager. These statistics only consider mapping activity for related changeset hashtags (filter: `hotosm-project-*`). 
 
+For details about the ohsomeNow stats website check [GIScience/ohsome-now-stats-frontend](https://github.com/GIScience/ohsome-now-stats-frontend).
+
+# For Developers
 ## Technology
 
 * JVM: Java 17
