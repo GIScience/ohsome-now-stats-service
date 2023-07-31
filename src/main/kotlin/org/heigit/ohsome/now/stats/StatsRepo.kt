@@ -34,8 +34,8 @@ class StatsRepo {
         FROM "stats"
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?) 
-            and changeset_timestamp > parseDateTime64BestEffort(?) 
-            and changeset_timestamp < parseDateTime64BestEffort(?);
+            and changeset_timestamp > parseDateTimeBestEffort(?) 
+            and changeset_timestamp < parseDateTimeBestEffort(?);
         """.trimIndent()
 
 
@@ -52,14 +52,14 @@ class StatsRepo {
         FROM "stats"
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, :hashtag)
-            AND changeset_timestamp > parseDateTime64BestEffort(:startdate)
-            AND changeset_timestamp < parseDateTime64BestEffort(:enddate)
+            AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
+            AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
         GROUP BY
             startdate
         ORDER BY startdate ASC
         WITH FILL
-            FROM toStartOfInterval(parseDateTime64BestEffort(:startdate), INTERVAL :interval)::DateTime
-            TO toStartOfInterval(parseDateTime64BestEffort(:enddate), INTERVAL :interval)::DateTime
+            FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
+            TO toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime
         STEP INTERVAL :interval Interpolate (enddate as (startdate + INTERVAL :interval + INTERVAL :interval))
     """.trimIndent()
 
@@ -77,8 +77,8 @@ class StatsRepo {
         ARRAY JOIN country_iso_a3
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
-            and changeset_timestamp > parseDateTime64BestEffort(?) 
-            and changeset_timestamp < parseDateTime64BestEffort(?)
+            and changeset_timestamp > parseDateTimeBestEffort(?) 
+            and changeset_timestamp < parseDateTimeBestEffort(?)
         GROUP BY
             country
         """.trimIndent()
@@ -105,7 +105,7 @@ class StatsRepo {
             hashtag, COUNT(DISTINCT user_id) as number_of_users
         FROM "stats"
         WHERE
-            changeset_timestamp > parseDateTime64BestEffort(?) and changeset_timestamp < parseDateTime64BestEffort(?)
+            changeset_timestamp > parseDateTimeBestEffort(?) and changeset_timestamp < parseDateTimeBestEffort(?)
         GROUP BY
             hashtag
         ORDER BY
@@ -120,7 +120,7 @@ class StatsRepo {
             min(changeset_timestamp) as min_timestamp
         FROM "stats"
         WHERE changeset_timestamp > now() - toIntervalMonth(1) 
-        OR changeset_timestamp < parseDateTime64BestEffort('2009-04-23T00:00:00.000000Z')
+        OR changeset_timestamp < parseDateTimeBestEffort('2009-04-23T00:00:00.000000Z')
     """.trimIndent()
 
     /**
