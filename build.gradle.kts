@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "org.heigit.ohsome.now.stats"
-version = "0.0.1"
+version = "0.0.3-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
