@@ -94,6 +94,7 @@ pipeline {
       }
       steps {
         script {
+          echo "This step doesn't work properly at the moment. Please deploy manually."
           server = Artifactory.server 'HeiGIT Repo'
           rtGradle = Artifactory.newMavenBuild()
 
