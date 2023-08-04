@@ -25,20 +25,7 @@ class StatsControllerMVCTests {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
-
-
-    //language=JSON
-    private val expectedStatic = """{
-          "changesets": 65009011,
-          "users": 3003842,
-          "roads": 45964973.0494135,
-          "buildings": 844294167,
-          "edits": 1095091515,
-          "latest": "2023-03-20T10:55:38.000Z",
-          "hashtag": "*"
-      }"""
-
-
+    
     @Test
     fun `stats can be served without date restriction`() {
         `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
@@ -120,16 +107,6 @@ class StatsControllerMVCTests {
                 jsonPath("$.metadata.requestUrl")
                     .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M")
             )
-    }
-
-    @Test
-    fun `stats_static should return a static map of stats values`() {
-
-        this.mockMvc
-            .perform(get("/stats_static"))
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(content().json(expectedStatic, false))
     }
 
     @Test

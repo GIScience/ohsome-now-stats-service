@@ -23,18 +23,6 @@ class StatsController {
     @Autowired
     lateinit var repo: StatsRepo
 
-    @Operation(summary = "Returns a static snapshot of OSM statistics (for now)")
-    @GetMapping("/stats_static")
-    fun statsStatic(): Map<String, Any> = mapOf(
-        "changesets" to 65009011,
-        "users" to 3003842,
-        "roads" to 45964973.0494135,
-        "buildings" to 844294167,
-        "edits" to 1095091515,
-        "latest" to "2023-03-20T10:55:38.000Z",
-        "hashtag" to "*"
-    )
-
     @Suppress("LongParameterList")
     @Operation(summary = "Returns live data from DB")
     @GetMapping("/stats/{hashtags}")
