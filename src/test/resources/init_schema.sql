@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS stats
 (
-    `deduplication_token` String,
     `changeset_id` Int64,
     `changeset_timestamp` DateTime,
     `hashtag` String,
+    `editor` String,
     `user_id` Int32,
     `osm_id` String,
 
