@@ -24,7 +24,7 @@ class AccessRestrictedUserController {
 
 
     @Operation(summary = "Returns aggregated HOT-TM-project statistics for a specific user.")
-    @GetMapping("/HotTMUser")
+    @GetMapping("/hot-tm-user")
     fun statsHotTMUser(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "OSM user id")

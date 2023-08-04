@@ -25,7 +25,7 @@ class StatsControllerMVCTests {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
-    
+
     @Test
     fun `stats can be served without date restriction`() {
         `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
@@ -135,6 +135,29 @@ class StatsControllerMVCTests {
                     .value("/stats/&uganda/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z")
             )
             .andExpect(jsonPath("$.result").value(mapOf("country" to "xyz")))
+    }
+
+
+    @Test
+    fun `most-used-hashtags should return list of hashtags`() {
+        `when`(
+            repo.getMostUsedHashtags(
+                any(Instant::class.java),
+                any(Instant::class.java),
+                anyInt()
+            )
+
+        ).thenReturn(listOf(mapOf("testtag" to 123)))
+
+        val GET = get("/most-used-hashtags")
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.result.[0].testtag").value(123))
     }
 
 

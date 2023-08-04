@@ -35,7 +35,7 @@ class AccessRestrictedUserControllerMVCTests {
             )
         ).thenReturn(mutableMapOf("building_count" to 1))
 
-        val GET = get("/HotTMUser")
+        val GET = get("/hot-tm-user")
             .queryParam("userId", "12312")
             .header("Authorization", "Basic ${appProperties.token}")
 
@@ -53,7 +53,7 @@ class AccessRestrictedUserControllerMVCTests {
             )
         ).thenReturn(mutableMapOf("building_count" to 1))
 
-        val GET = get("/HotTMUser")
+        val GET = get("/hot-tm-user")
             .queryParam("userId", "12312")
 
         this.mockMvc.perform(GET)
@@ -68,7 +68,7 @@ class AccessRestrictedUserControllerMVCTests {
             )
         ).thenReturn(mutableMapOf("building_count" to 1))
 
-        val GET = get("/HotTMUser")
+        val GET = get("/hot-tm-user")
             .queryParam("userId", "12312")
             .header("Authorization", "Basic badToken")
 

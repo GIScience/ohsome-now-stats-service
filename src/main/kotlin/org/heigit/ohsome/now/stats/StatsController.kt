@@ -121,7 +121,7 @@ class StatsController {
 
 
     @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod.")
-    @GetMapping("/mostUsedHashtags")
+    @GetMapping("/most-used-hashtags")
     fun mostUsedHashtags(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "the start date for the query in ISO format (e.g. 2014-01-01T00:00:00Z). Default: start of data")
