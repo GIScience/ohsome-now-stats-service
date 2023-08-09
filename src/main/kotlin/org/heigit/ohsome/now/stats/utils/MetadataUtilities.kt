@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit
 
 
 fun makeUrl(request: HttpServletRequest): String {
-    return request.requestURI.toString() + "?" + request.queryString
+    return request.requestURI.toString() + "?" + (request.queryString ?: "")
 }
 
 
