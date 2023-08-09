@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.stats
 
+import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -194,10 +195,11 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForUserIdForAllHotTMProjects("2186381")
         println(result)
         assertTrue(result is MutableMap<String, *>)
-        assertEquals("2186381", result["user_id"])
-        assertEquals(0, result["edits"])
-        assertEquals(0, result["building_count"])
-        assertEquals(0, result["road_length"])
+        assertEquals(2186381, result["user_id"])
+        assertEquals(UnsignedLong.valueOf(0), result["edits"])
+        assertEquals(0L, result["buildings_added"])
+        assertEquals(0.0, result["road_km_added"])
+        assertEquals(UnsignedLong.valueOf(0), result["changeset_count"])
     }
 
 
@@ -215,6 +217,14 @@ class StatsRepoIntegrationTests {
         assertTrue(result.size == 7)
     }
 
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getMostUsedHashtags returns empty list when out of time bounds`() {
+        val startDate = Instant.ofEpochSecond(1020991470)
+        val endDate = Instant.ofEpochSecond(1019054890)
+        val result = this.repo.getMostUsedHashtags(startDate, endDate, 10)
+        println(result)
+    }
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])

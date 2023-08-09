@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.stats
 
+import com.clickhouse.data.value.UnsignedLong
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
@@ -33,7 +34,15 @@ class AccessRestrictedUserControllerMVCTests {
             repo.getStatsForUserIdForAllHotTMProjects(
                 anyString(),
             )
-        ).thenReturn(mutableMapOf("building_count" to 1))
+        ).thenReturn(
+            mutableMapOf(
+                "buildings_added" to 1L,
+                "road_km_added" to 234.12,
+                "edits" to UnsignedLong.valueOf(34L),
+                "changeset_count" to UnsignedLong.valueOf(2L),
+                "user_id" to 4324
+            )
+        )
 
         val GET = get("/hot-tm-user")
             .queryParam("userId", "12312")

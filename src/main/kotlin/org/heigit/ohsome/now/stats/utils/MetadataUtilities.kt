@@ -15,8 +15,7 @@ private fun buildMetadata(executionTime: Long, httpServletRequest: HttpServletRe
     return mapOf(
         "executionTime" to executionTime,
         "requestUrl" to makeUrl(httpServletRequest),
-        "apiVersion" to "tbd"
-
+        "apiVersion" to "0.1"
     )
 }
 

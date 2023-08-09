@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.stats
 
+import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.heigit.ohsome.now.stats.utils.getGroupbyInterval
 import org.jdbi.v3.core.Jdbi.create
@@ -170,8 +171,6 @@ class StatsRepo {
                 .bind("hashtag", hashtagHandler.hashtag)
                 .mapToMap().list()
         }
-
-
     }
 
     /**
@@ -192,7 +191,13 @@ class StatsRepo {
                 ).mapToMap().single()
             }
         } catch (e: NoSuchElementException) {
-            mutableMapOf("user_id" to user_id, "building_count" to 0, "road_length" to 0, "edits" to 0)
+            mutableMapOf(
+                "user_id" to user_id.toInt(),
+                "buildings_added" to 0L,
+                "road_km_added" to 0.toDouble(),
+                "edits" to UnsignedLong.valueOf(0),
+                "changeset_count" to UnsignedLong.valueOf(0)
+            )
         }
     }
 
@@ -257,6 +262,4 @@ class StatsRepo {
             ).mapToMap().single()
         }
     }
-
-
 }

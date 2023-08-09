@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.stats
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Info
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
@@ -13,7 +14,6 @@ import org.springframework.boot.runApplication
         version = "v1"
     )
 )
-
 @SpringBootApplication
 class Application
 

@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.stats
 
+import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -90,8 +91,17 @@ class StatsControllerMVCTests {
                 anyString()
             )
         )
-            .thenReturn(listOf(mapOf("hashtag" to hashtag)))
-
+            .thenReturn(
+                listOf(
+                    mapOf(
+                        "users" to UnsignedLong.valueOf(1001L),
+                        "roads" to 43534.5,
+                        "buildings" to 123L,
+                        "edits" to UnsignedLong.valueOf(213124L),
+                        "latest" to "20.05.2053"
+                    )
+                )
+            )
         val GET = get("/stats/$hashtag/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
@@ -118,7 +128,18 @@ class StatsControllerMVCTests {
                 any(Instant::class.java),
             )
         )
-            .thenReturn(listOf(mapOf("country" to "xyz")))
+            .thenReturn(
+                listOf(
+                    mapOf(
+                        "country" to "xyz",
+                        "users" to UnsignedLong.valueOf(1001L),
+                        "roads" to 43534.5,
+                        "buildings" to 123L,
+                        "edits" to UnsignedLong.valueOf(213124L),
+                        "latest" to "20.05.2053"
+                    )
+                )
+            )
 
         val GET = get("/stats/$hashtag/country")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
@@ -134,7 +155,11 @@ class StatsControllerMVCTests {
                 jsonPath("$.metadata.requestUrl")
                     .value("/stats/&uganda/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z")
             )
-            .andExpect(jsonPath("$.result").value(mapOf("country" to "xyz")))
+            .andExpect(
+                jsonPath("$.query.hashtag")
+                    .value("&uganda")
+            )
+            .andExpect(jsonPath("$.result.[0].country").value("xyz"))
     }
 
 
@@ -147,7 +172,7 @@ class StatsControllerMVCTests {
                 anyInt()
             )
 
-        ).thenReturn(listOf(mapOf("testtag" to 123)))
+        ).thenReturn(listOf(mapOf("hashtag" to "testtag", "number_of_users" to UnsignedLong.valueOf(242))))
 
         val GET = get("/most-used-hashtags")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
@@ -157,7 +182,29 @@ class StatsControllerMVCTests {
             .perform(GET)
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.result.[0].testtag").value(123))
+            .andExpect(jsonPath("$.result.[0].number_of_users").value(242))
+    }
+
+
+    @Test
+    fun `most-used-hashtags does not throw an error for out of timeline`() {
+        `when`(
+            repo.getMostUsedHashtags(
+                any(Instant::class.java),
+                any(Instant::class.java),
+                anyInt()
+            )
+
+        ).thenReturn(listOf())
+
+        val GET = get("/most-used-hashtags")
+            .queryParam("startdate", "2004-10-01T04:00:00Z")
+            .queryParam("enddate", "2005-10-01T04:00:00Z")
+
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
     }
 
 

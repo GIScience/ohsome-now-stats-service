@@ -2,7 +2,11 @@ package org.heigit.ohsome.now.stats
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
+import org.heigit.ohsome.now.stats.models.*
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.heigit.ohsome.now.stats.utils.buildOhsomeFormat
 import org.heigit.ohsome.now.stats.utils.checkIfOnlyOneResult
@@ -24,8 +28,10 @@ class StatsController {
     lateinit var repo: StatsRepo
 
     @Suppress("LongParameterList")
-    @Operation(summary = "Returns live data from DB")
-    @GetMapping("/stats/{hashtags}")
+    @Operation(
+        summary = "Returns live data from DB",
+    )
+    @GetMapping("/stats/{hashtags}", produces = ["application/json"])
     fun stats(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
@@ -46,7 +52,6 @@ class StatsController {
         @RequestParam(name = "ohsomeFormat", defaultValue = "false", required = false)
         ohsomeFormat: Boolean
     ): Map<String, Any> {
-        println(hashtags)
         val results = mutableMapOf<String, Map<String, Any>>()
         val executionTime = measureTimeMillis {
             hashtags.forEach { hashtag ->
@@ -64,7 +69,7 @@ class StatsController {
     }
 
     @Operation(summary = "Returns live data from DB aggregated by month")
-    @GetMapping("/stats/{hashtag}/interval")
+    @GetMapping("/stats/{hashtag}/interval", produces = ["application/json"])
     @Suppress("LongParameterList")
     fun statsInterval(
         httpServletRequest: HttpServletRequest,
@@ -84,18 +89,21 @@ class StatsController {
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
         interval: String
-    ): Map<String, Any> {
-        lateinit var response: List<Any>
+    ): OhsomeFormat<List<StatsResult>> {
+        lateinit var response: List<StatsResult>
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
-            response = repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval)
+            response =
+                buildIntervalStatsResult(repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval))
         }
-        return buildOhsomeFormat(response, executionTime, httpServletRequest)
+        return build_ohsome_format(response, executionTime, httpServletRequest)
     }
 
 
-    @Operation(summary = "Returns live data from DB aggregated by country")
-    @GetMapping("/stats/{hashtag}/country")
+    @Operation(
+        summary = "Returns live data from DB aggregated by country",
+    )
+    @GetMapping("/stats/{hashtag}/country", produces = ["application/json"])
     fun statsCountry(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
@@ -110,18 +118,18 @@ class StatsController {
         @RequestParam(name = "enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?
-    ): Map<String, Any> {
-        lateinit var response: List<Map<String, Any>>
+    ): OhsomeFormat<List<CountryStatsResult>> {
+        lateinit var response: List<CountryStatsResult>
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
-            response = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
+            response = buildCountryStatsResult(repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate))
         }
-        return buildOhsomeFormat(response, executionTime, httpServletRequest)
+        return build_ohsome_format(response, executionTime, httpServletRequest)
     }
 
 
     @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod.")
-    @GetMapping("/most-used-hashtags")
+    @GetMapping("/most-used-hashtags", produces = ["application/json"])
     fun mostUsedHashtags(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "the start date for the query in ISO format (e.g. 2014-01-01T00:00:00Z). Default: start of data")
@@ -137,29 +145,31 @@ class StatsController {
         @Parameter(description = "the number of hashtags to return")
         @RequestParam(name = "limit", required = false, defaultValue = "10")
         limit: Int?
-    ): Map<String, Any> {
-        lateinit var response: List<Any>
+    ): OhsomeFormat<List<HashtagResult>> {
+        lateinit var response: List<HashtagResult>
         val executionTime = measureTimeMillis {
-            response = repo.getMostUsedHashtags(
-                startDate,
-                endDate,
-                limit,
+            response = buildHashtagResult(
+                repo.getMostUsedHashtags(
+                    startDate,
+                    endDate,
+                    limit,
+                )
             )
         }
-        return buildOhsomeFormat(response, executionTime, httpServletRequest)
+        return build_ohsome_format(response, executionTime, httpServletRequest)
     }
 
 
     @Operation(summary = "Returns maximum and minimum timestamps of the database.")
-    @GetMapping("/metadata")
+    @GetMapping("/metadata", produces = ["application/json"])
     fun metadata(
         httpServletRequest: HttpServletRequest
-    ): Map<String, Any> {
-        lateinit var response: Map<String, Any>
+    ): OhsomeFormat<MetadataResult> {
+        lateinit var response: MetadataResult
         val executionTime = measureTimeMillis {
             val queryResult = repo.getMetadata()
-            response = queryResult
+            response = buildMetadataResult(queryResult)
         }
-        return buildOhsomeFormat(response, executionTime, httpServletRequest)
+        return build_ohsome_format(response, executionTime, httpServletRequest)
     }
 }
