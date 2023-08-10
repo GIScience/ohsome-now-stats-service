@@ -44,6 +44,7 @@ class StatsRepo {
     //language=sql
     private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
         SELECT
+            count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
             ifNull(sum(road_length_delta)/1000, 0) as roads,
             ifNull(sum(building_edit), 0) as buildings,
@@ -68,6 +69,7 @@ class StatsRepo {
     //language=sql
     private fun getStatsFromTimeSpanCountry(hashtagHandler: HashtagHandler) = """
         SELECT
+            count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
             ifNull(sum(road_length_delta)/1000, 0) as roads,
             ifNull(sum(building_edit), 0) as buildings,
@@ -179,6 +181,7 @@ class StatsRepo {
      * @param user_id the osm userid which should be queried.
      * @return A list of maps containing the statistics for all hotTM projects.
      */
+    @Suppress("LongMethod")
     fun getStatsForUserIdForAllHotTMProjects(
         user_id: String
     ): MutableMap<String, Any> {

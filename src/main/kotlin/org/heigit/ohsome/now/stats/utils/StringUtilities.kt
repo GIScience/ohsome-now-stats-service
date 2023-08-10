@@ -9,10 +9,9 @@ package org.heigit.ohsome.now.stats.utils
  *         If the interval is not in the expected format, an empty string is returned.
  */
 fun getGroupbyInterval(interval: String): String {
-    if ("T" in interval) return interval.replaceTime()
-    else return interval.replaceDate()
+    return if ("T" in interval) interval.replaceTime()
+    else interval.replaceDate()
 }
-
 
 fun String.replaceDate() = this
     // Remove the start of the ISO string

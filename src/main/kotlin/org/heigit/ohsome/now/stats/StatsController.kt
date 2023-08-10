@@ -2,15 +2,9 @@ package org.heigit.ohsome.now.stats
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.stats.models.*
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
-import org.heigit.ohsome.now.stats.utils.buildOhsomeFormat
-import org.heigit.ohsome.now.stats.utils.checkIfOnlyOneResult
-import org.heigit.ohsome.now.stats.utils.echoRequestParameters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
@@ -27,16 +21,16 @@ class StatsController {
     @Autowired
     lateinit var repo: StatsRepo
 
-    @Suppress("LongParameterList")
+
     @Operation(
-        summary = "Returns live data from DB",
+        summary = "Returns live summary statistics for one hashtag",
     )
-    @GetMapping("/stats/{hashtags}", produces = ["application/json"])
+    @GetMapping("/stats/{hashtag}", produces = ["application/json"])
     fun stats(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
-        hashtags: Array<String>,
+        hashtag: String,
 
         @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam("startdate", required = false)
@@ -47,28 +41,47 @@ class StatsController {
         @RequestParam("enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?,
-
-        @Parameter(description = "indicate whether the results should be returned with additional Metadata")
-        @RequestParam(name = "ohsomeFormat", defaultValue = "false", required = false)
-        ohsomeFormat: Boolean
-    ): Map<String, Any> {
-        val results = mutableMapOf<String, Map<String, Any>>()
+    ): OhsomeFormat<StatsResult> {
+        val result: StatsResult
         val executionTime = measureTimeMillis {
-            hashtags.forEach { hashtag ->
-                results[hashtag] = repo.getStatsForTimeSpan(HashtagHandler(hashtag), startDate, endDate)
-            }
+            result = buildStatsResult(repo.getStatsForTimeSpan(HashtagHandler(hashtag), startDate, endDate))
         }
-        val finalResults = checkIfOnlyOneResult(results)
-
-        return if (!ohsomeFormat) {
-            val extraParams = echoRequestParameters(startDate, endDate)
-            finalResults + extraParams
-        } else {
-            buildOhsomeFormat(finalResults, executionTime, httpServletRequest)
-        }
+        return build_ohsome_format(result, executionTime, httpServletRequest)
     }
 
-    @Operation(summary = "Returns live data from DB aggregated by month")
+
+    @Operation(
+        summary = "Returns live summary statistics for multiple hashtags",
+    )
+    @GetMapping("/stats/hashtags/{hashtag}", produces = ["application/json"])
+    fun statsHashtags(
+        httpServletRequest: HttpServletRequest,
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @PathVariable
+        hashtag: Array<String>,
+
+        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam("startdate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        startDate: Instant?,
+
+        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam("enddate", required = false)
+        @DateTimeFormat(iso = ISO.DATE_TIME)
+        endDate: Instant?
+    ): OhsomeFormat<Map<String, StatsResult>> {
+        val results = mutableMapOf<String, StatsResult>()
+        val executionTime = measureTimeMillis {
+            hashtag.forEach { singleHashtag ->
+                results[singleHashtag] =
+                    buildStatsResult(repo.getStatsForTimeSpan(HashtagHandler(singleHashtag), startDate, endDate))
+            }
+        }
+
+        return build_ohsome_format(results, executionTime, httpServletRequest)
+    }
+
+    @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval")
     @GetMapping("/stats/{hashtag}/interval", produces = ["application/json"])
     @Suppress("LongParameterList")
     fun statsInterval(
@@ -101,7 +114,7 @@ class StatsController {
 
 
     @Operation(
-        summary = "Returns live data from DB aggregated by country",
+        summary = "Returns live summary statistics for one hashtag grouped by country"
     )
     @GetMapping("/stats/{hashtag}/country", produces = ["application/json"])
     fun statsCountry(
@@ -128,7 +141,7 @@ class StatsController {
     }
 
 
-    @Operation(summary = "Returns the most used Hashtag by user count in a given Timeperiod.")
+    @Operation(summary = "Returns the most used Hashtag by user count in a given timeperiod")
     @GetMapping("/most-used-hashtags", produces = ["application/json"])
     fun mostUsedHashtags(
         httpServletRequest: HttpServletRequest,
@@ -160,7 +173,7 @@ class StatsController {
     }
 
 
-    @Operation(summary = "Returns maximum and minimum timestamps of the database.")
+    @Operation(summary = "Returns maximum and minimum timestamps of the database")
     @GetMapping("/metadata", produces = ["application/json"])
     fun metadata(
         httpServletRequest: HttpServletRequest

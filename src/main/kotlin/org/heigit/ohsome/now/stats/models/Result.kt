@@ -3,12 +3,14 @@ package org.heigit.ohsome.now.stats.models
 import com.clickhouse.data.value.UnsignedLong
 
 fun buildStatsResult(result: Map<String, Any>) = StatsResult(
+    (result["changesets"] as UnsignedLong).toLong(),
     (result["users"] as UnsignedLong).toLong(),
     result["roads"] as Double,
     result["buildings"] as Long,
     (result["edits"] as UnsignedLong).toLong(),
     result["latest"].toString(),
 )
+
 
 fun buildIntervalStatsResult(result: List<Map<String, Any>>): List<StatsResult> {
     val output = mutableListOf<StatsResult>()
@@ -22,11 +24,13 @@ fun buildIntervalStatsResult(result: List<Map<String, Any>>): List<StatsResult> 
     return output
 }
 
+@Suppress("LongMethod")
 fun buildCountryStatsResult(result: List<Map<String, Any>>): List<CountryStatsResult> {
     val output = mutableListOf<CountryStatsResult>()
     result.forEach {
         output.add(
             CountryStatsResult(
+                (it["changesets"] as UnsignedLong).toLong(),
                 (it["users"] as UnsignedLong).toLong(),
                 it["roads"] as Double,
                 it["buildings"] as Long,
@@ -39,8 +43,9 @@ fun buildCountryStatsResult(result: List<Map<String, Any>>): List<CountryStatsRe
     return output
 }
 
-
+@Suppress("LongParameterList")
 open class StatsResult(
+    open val changesets: Long,
     open val users: Long,
     open val roads: Double,
     open val buildings: Long,
@@ -48,14 +53,16 @@ open class StatsResult(
     open val latest: String
 )
 
+@Suppress("LongParameterList")
 class CountryStatsResult(
+    changesets: Long,
     users: Long,
     roads: Double,
     buildings: Long,
     edits: Long,
     latest: String,
     val country: String
-) : StatsResult(users, roads, buildings, edits, latest)
+) : StatsResult(changesets, users, roads, buildings, edits, latest)
 
 
 fun buildHashtagResult(result: List<Map<String, Any>>): List<HashtagResult> {

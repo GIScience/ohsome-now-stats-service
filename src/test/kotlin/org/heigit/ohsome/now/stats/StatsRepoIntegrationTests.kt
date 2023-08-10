@@ -136,7 +136,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
         println(result)
         assertEquals(84, result.size)
-        assertEquals(6, result[0].size)
+        assertEquals(7, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
     }
 
@@ -149,7 +149,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
         println(result)
         assertEquals(52, result.size)
-        assertEquals(6, result[0].size)
+        assertEquals(7, result[0].size)
         assertEquals("2017-08-01T00:00", result[0]["startdate"].toString())
     }
 
@@ -163,7 +163,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
         println(result)
         assertEquals(623, result.size)
-        assertEquals(6, result[0].size)
+        assertEquals(7, result[0].size)
         assertEquals("1970-01-01T00:00", result[0]["startdate"].toString())
     }
 
@@ -177,7 +177,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
         println(result)
         assertTrue(result is List)
-        assertEquals(6, result[0].size)
+        assertEquals(7, result[0].size)
     }
 
     @Test

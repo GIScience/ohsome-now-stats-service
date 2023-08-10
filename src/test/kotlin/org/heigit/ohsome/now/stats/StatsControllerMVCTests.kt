@@ -27,57 +27,44 @@ class StatsControllerMVCTests {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
+
+    private var exampleStats = mapOf(
+        "users" to UnsignedLong.valueOf(1001L),
+        "roads" to 43534.5,
+        "buildings" to 123L,
+        "edits" to UnsignedLong.valueOf(213124L),
+        "latest" to "20.05.2053",
+        "changesets" to UnsignedLong.valueOf(2)
+    )
+
+
     @Test
-    fun `stats can be served without date restriction`() {
+    fun `stats can be served without explicit timespans`() {
         `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
-            .thenReturn(mapOf("hashtag" to hashtag))
+            .thenReturn(exampleStats)
 
         this.mockMvc
             .perform(get("/stats/$hashtag"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.hashtag").value(hashtag))
-    }
-
-    @Test
-    fun `stats with ohsomeFormat returns result object with ohsome formated metadata`() {
-        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
-            .thenReturn(mapOf("hashtag" to hashtag))
-
-        this.mockMvc
-            .perform(get("/stats/$hashtag?ohsomeFormat=true"))
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.result.hashtag").value(hashtag))
+            .andExpect(jsonPath("$.result.buildings").value(123))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
-            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/&uganda?ohsomeFormat=true"))
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/&uganda"))
     }
 
 
     @Test
-    fun `stats can be served with multiple hashtags`() {
+    fun `stats_hashtags can be served with multiple hashtags`() {
         `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
-            .thenReturn(mapOf("hashtag" to hashtag))
+            .thenReturn(exampleStats)
 
         this.mockMvc
-            .perform(get("/stats/$hashtag,hotosm*"))
+            .perform(get("/stats/hashtags/$hashtag,hotosm*"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.$hashtag.hashtag").value(hashtag))
-    }
-
-    @Test
-    fun `stats can be served with multiple hashtags and with ohsomeFormat`() {
-        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
-            .thenReturn(mapOf("hashtag" to hashtag))
-
-        this.mockMvc
-            .perform(get("/stats/$hashtag,hotosm*?ohsomeFormat=true"))
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.result.$hashtag.hashtag").value(hashtag))
+            .andExpect(jsonPath("$.result.$hashtag.roads").value(43534.5))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
-            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/&uganda,hotosm*?ohsomeFormat=true"))
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/hashtags/$hashtag,hotosm*"))
     }
 
 
@@ -93,13 +80,7 @@ class StatsControllerMVCTests {
         )
             .thenReturn(
                 listOf(
-                    mapOf(
-                        "users" to UnsignedLong.valueOf(1001L),
-                        "roads" to 43534.5,
-                        "buildings" to 123L,
-                        "edits" to UnsignedLong.valueOf(213124L),
-                        "latest" to "20.05.2053"
-                    )
+                    exampleStats
                 )
             )
         val GET = get("/stats/$hashtag/interval")
@@ -130,14 +111,7 @@ class StatsControllerMVCTests {
         )
             .thenReturn(
                 listOf(
-                    mapOf(
-                        "country" to "xyz",
-                        "users" to UnsignedLong.valueOf(1001L),
-                        "roads" to 43534.5,
-                        "buildings" to 123L,
-                        "edits" to UnsignedLong.valueOf(213124L),
-                        "latest" to "20.05.2053"
-                    )
+                    exampleStats + mapOf("country" to "xyz")
                 )
             )
 
