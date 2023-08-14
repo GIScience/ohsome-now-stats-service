@@ -115,6 +115,15 @@ pipeline {
         }
       }
     }
+
+    stage('Wrapping Up') {
+
+      steps {
+        encourage()
+        status_change()
+      }
+    }
+    
   }
 
 }
