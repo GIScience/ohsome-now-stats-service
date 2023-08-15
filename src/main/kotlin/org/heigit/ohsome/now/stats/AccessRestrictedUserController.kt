@@ -3,8 +3,8 @@ package org.heigit.ohsome.now.stats
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import org.heigit.ohsome.now.stats.models.UserResult
-import org.heigit.ohsome.now.stats.models.buildUserResult
+import org.heigit.ohsome.now.stats.models.*
+import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -34,17 +34,22 @@ class AccessRestrictedUserController {
         userId: String,
         @RequestHeader(value = "Authorization", required = false)
         authorization: String?
-    ): UserResult {
-        println(appProperties.token)
+    ): OhsomeFormat<UserResult> {
         if (authorization == null || authorization != "Basic ${appProperties.token}") {
             throw ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        val response = repo.getStatsForUserIdForAllHotTMProjects(userId)
+        lateinit var response: MutableMap<String, Any>
+
+        val executionTime = measureTimeMillis {
+            response = repo.getStatsForUserIdForAllHotTMProjects(userId)
+        }
+
         response["building_count"] = Random.nextInt(1, 100)
         response["road_length"] = Random.nextDouble(1.0, 1000.0)
         response["object_edits"] = Random.nextInt(100, 2000)
-        return buildUserResult(response)
+
+        return build_ohsome_format(buildUserResult(response), executionTime, httpServletRequest)
     }
 
 }

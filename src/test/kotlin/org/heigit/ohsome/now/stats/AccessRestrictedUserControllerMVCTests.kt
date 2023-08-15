@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -52,6 +53,7 @@ class AccessRestrictedUserControllerMVCTests {
         this.mockMvc.perform(GET)
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.result.buildings").value(1))
     }
 
     @Test
