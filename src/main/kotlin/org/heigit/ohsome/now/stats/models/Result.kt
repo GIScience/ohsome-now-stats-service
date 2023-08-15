@@ -11,7 +11,7 @@ fun buildStatsResult(result: Map<String, Any>) = StatsResult(
     result["latest"].toString(),
 )
 
-
+@Suppress("LongMethod")
 fun buildIntervalStatsResult(result: List<Map<String, Any>>): List<StatsIntervalResult> {
     val output = mutableListOf<StatsIntervalResult>()
     result.forEach {
@@ -59,7 +59,7 @@ open class StatsResult(
     open val latest: String
 )
 
-
+@Suppress("LongParameterList")
 open class StatsIntervalResult(
     open val changesets: Long,
     open val users: Long,
