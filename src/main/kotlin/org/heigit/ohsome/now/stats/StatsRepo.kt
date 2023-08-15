@@ -89,10 +89,10 @@ class StatsRepo {
     //language=sql
     private val statsForUserIdForHotOSMProject = """
         select
-            ifNull(sum(building_edit), 0) as buildings_added,
-            ifNull(sum(road_length_delta) /1000, 0) as road_km_added,
+            ifNull(sum(building_edit), 0) as buildings,
+            ifNull(sum(road_length_delta) /1000, 0) as roads,
             count(map_feature_edit) as edits,
-            count(distinct changeset_id) as changeset_count,
+            count(distinct changeset_id) as changesets,
             user_id
         from stats
         where
@@ -196,10 +196,10 @@ class StatsRepo {
         } catch (e: NoSuchElementException) {
             mutableMapOf(
                 "user_id" to user_id.toInt(),
-                "buildings_added" to 0L,
-                "road_km_added" to 0.toDouble(),
+                "buildings" to 0L,
+                "roads" to 0.toDouble(),
                 "edits" to UnsignedLong.valueOf(0),
-                "changeset_count" to UnsignedLong.valueOf(0)
+                "changesets" to UnsignedLong.valueOf(0)
             )
         }
     }

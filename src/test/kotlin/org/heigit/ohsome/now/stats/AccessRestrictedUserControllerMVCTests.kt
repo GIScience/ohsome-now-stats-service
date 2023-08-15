@@ -36,10 +36,10 @@ class AccessRestrictedUserControllerMVCTests {
             )
         ).thenReturn(
             mutableMapOf(
-                "buildings_added" to 1L,
-                "road_km_added" to 234.12,
+                "buildings" to 1L,
+                "roads" to 234.12,
                 "edits" to UnsignedLong.valueOf(34L),
-                "changeset_count" to UnsignedLong.valueOf(2L),
+                "changesets" to UnsignedLong.valueOf(2L),
                 "user_id" to 4324
             )
         )

@@ -95,17 +95,17 @@ data class MetadataResult(
 
 fun buildUserResult(result: Map<String, Any>) =
     UserResult(
-        result["buildings_added"] as Long,
-        result["road_km_added"] as Double,
+        result["buildings"] as Long,
+        result["roads"] as Double,
         (result["edits"] as UnsignedLong).toLong(),
-        (result["changeset_count"] as UnsignedLong).toLong(),
+        (result["changesets"] as UnsignedLong).toLong(),
         result["user_id"] as Int
     )
 
 data class UserResult(
-    val buildings_added: Long,
-    val road_km_added: Double,
+    val buildings: Long,
+    val roads: Double,
     val edits: Long,
-    val changeset_count: Long,
+    val changesets: Long,
     val userId: Int
 )
