@@ -102,8 +102,8 @@ class StatsController {
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
         interval: String
-    ): OhsomeFormat<List<StatsResult>> {
-        lateinit var response: List<StatsResult>
+    ): OhsomeFormat<List<StatsIntervalResult>> {
+        lateinit var response: List<StatsIntervalResult>
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
             response =

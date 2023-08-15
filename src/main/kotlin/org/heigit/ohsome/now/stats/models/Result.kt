@@ -12,12 +12,18 @@ fun buildStatsResult(result: Map<String, Any>) = StatsResult(
 )
 
 
-fun buildIntervalStatsResult(result: List<Map<String, Any>>): List<StatsResult> {
-    val output = mutableListOf<StatsResult>()
+fun buildIntervalStatsResult(result: List<Map<String, Any>>): List<StatsIntervalResult> {
+    val output = mutableListOf<StatsIntervalResult>()
     result.forEach {
         output.add(
-            buildStatsResult(
-                it
+            StatsIntervalResult(
+                (it["changesets"] as UnsignedLong).toLong(),
+                (it["users"] as UnsignedLong).toLong(),
+                it["roads"] as Double,
+                it["buildings"] as Long,
+                (it["edits"] as UnsignedLong).toLong(),
+                it["startdate"].toString(),
+                it["enddate"].toString(),
             )
         )
     }
@@ -51,6 +57,17 @@ open class StatsResult(
     open val buildings: Long,
     open val edits: Long,
     open val latest: String
+)
+
+
+open class StatsIntervalResult(
+    open val changesets: Long,
+    open val users: Long,
+    open val roads: Double,
+    open val buildings: Long,
+    open val edits: Long,
+    open val startDate: String,
+    open val endDate: String
 )
 
 @Suppress("LongParameterList")
