@@ -9,6 +9,9 @@ plugins {
     id("io.gitlab.arturbosch.detekt").version("1.21.0")
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
     id("io.gatling.gradle") version "3.9.5.1"
+
+    id("net.researchgate.release") version "3.0.2"
+
 }
 
 group = "org.heigit.ohsome.now.stats"
