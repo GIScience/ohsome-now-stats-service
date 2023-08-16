@@ -44,11 +44,7 @@ class AccessRestrictedUserController {
         val executionTime = measureTimeMillis {
             response = repo.getStatsForUserIdForAllHotTMProjects(userId)
         }
-
-        response["building_count"] = Random.nextInt(1, 100)
-        response["road_length"] = Random.nextDouble(1.0, 1000.0)
-        response["object_edits"] = Random.nextInt(100, 2000)
-
+        
         return build_ohsome_format(buildUserResult(response), executionTime, httpServletRequest)
     }
 

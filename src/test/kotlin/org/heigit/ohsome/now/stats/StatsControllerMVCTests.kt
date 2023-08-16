@@ -37,6 +37,16 @@ class StatsControllerMVCTests {
         "changesets" to UnsignedLong.valueOf(2)
     )
 
+    private var exampleIntervalStats = mapOf(
+        "users" to UnsignedLong.valueOf(1001L),
+        "roads" to 43534.5,
+        "buildings" to 123L,
+        "edits" to UnsignedLong.valueOf(213124L),
+        "startDate" to "20.05.2053",
+        "endDate" to "20.05.2067",
+        "changesets" to UnsignedLong.valueOf(2)
+    )
+
 
     @Test
     fun `stats can be served without explicit timespans`() {
@@ -80,7 +90,7 @@ class StatsControllerMVCTests {
         )
             .thenReturn(
                 listOf(
-                    exampleStats
+                    exampleIntervalStats
                 )
             )
         val GET = get("/stats/$hashtag/interval")
@@ -101,7 +111,7 @@ class StatsControllerMVCTests {
     }
 
     @Test
-    fun `stats per interval and country can be served with explicit start and end date`() {
+    fun `stats per country can be served with explicit start and end date`() {
         `when`(
             repo.getStatsForTimeSpanCountry(
                 any(HashtagHandler::class.java),
