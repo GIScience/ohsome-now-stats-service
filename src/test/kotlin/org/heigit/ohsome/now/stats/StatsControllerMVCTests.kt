@@ -111,6 +111,30 @@ class StatsControllerMVCTests {
     }
 
     @Test
+    fun `stats per interval throws error for invalid interval string`() {
+
+        val GET = get("/stats/$hashtag/interval")
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+            .queryParam("interval", "ErrorString")
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `stats per interval throws error for interval under one Minute`() {
+
+        val GET = get("/stats/$hashtag/interval")
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+            .queryParam("interval", "PT1S")
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun `stats per country can be served with explicit start and end date`() {
         `when`(
             repo.getStatsForTimeSpanCountry(

@@ -5,13 +5,16 @@ import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.stats.models.*
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
+import org.heigit.ohsome.now.stats.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
 import kotlin.system.measureTimeMillis
+import kotlin.time.Duration
 
 @Suppress("largeClass")
 @CrossOrigin
@@ -103,6 +106,7 @@ class StatsController {
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
         interval: String
     ): OhsomeFormat<List<StatsIntervalResult>> {
+        validateIntervalString(interval)
         lateinit var response: List<StatsIntervalResult>
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {

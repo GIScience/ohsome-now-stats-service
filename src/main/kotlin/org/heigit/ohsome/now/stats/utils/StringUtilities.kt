@@ -1,5 +1,9 @@
 package org.heigit.ohsome.now.stats.utils
 
+import org.heigit.ohsome.now.stats.ISO8601TooSmallException
+import org.heigit.ohsome.now.stats.UnparsableISO8601StringException
+import kotlin.time.Duration
+
 
 /**
  * Translates a custom ISO 8601 interval to the corresponding ClickHouse query for aggregator and grouper.
@@ -28,3 +32,21 @@ fun String.replaceTime() = this
     // Adjust the time section
     .replace("H", " HOUR")
     .replace("M", " MINUTE")
+
+
+fun validateIntervalString(interval: String) {
+    checkIfStringIsParsable(interval)
+    checkIfDurationIsBiggerThanOneMinute(interval)
+}
+
+fun checkIfStringIsParsable(interval: String) {
+    if (!interval.matches(Regex("^P(?!\$)(\\d+Y)?(\\d+M)?(\\d+W)?(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+S)?)?\$"))) {
+        throw UnparsableISO8601StringException()
+    }
+}
+
+fun checkIfDurationIsBiggerThanOneMinute(interval: String) {
+    if (interval.startsWith("PT") && Duration.parseIsoString(interval) < Duration.parseIsoString("PT1M")) {
+        throw ISO8601TooSmallException()
+    }
+}
