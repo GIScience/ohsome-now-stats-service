@@ -1,4 +1,4 @@
-//import net.researchgate.release.ReleaseExtension
+import net.researchgate.release.ReleaseExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
@@ -14,7 +14,7 @@ plugins {
 
 
     // manages releases, i.e. maven version number and git tags (not artifact publication)
-//    id("net.researchgate.release") version "3.0.2"
+    id("net.researchgate.release") version "3.0.2"
 
     // manages publication of snapshot and release artifacts to respective maven repos (not release management)
     `maven-publish`
@@ -95,15 +95,16 @@ publishing {
     }
 }
 
-//configure<ReleaseExtension> {
-//    ignoredSnapshotDependencies.set(listOf("net.researchgate:gradle-release"))
-//
-//    failOnUnversionedFiles.set(false)
-//    failOnUpdateNeeded.set(false)
-//    failOnCommitNeeded.set(false)
-//    failOnPublishNeeded.set(false)
-//
-//}
+
+configure<ReleaseExtension> {
+
+    failOnUnversionedFiles.set(false)
+    failOnUpdateNeeded.set(false)
+    failOnCommitNeeded.set(false)
+    failOnPublishNeeded.set(false)
+
+}
+
 
 kover {
 
