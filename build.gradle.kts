@@ -1,4 +1,6 @@
+//import net.researchgate.release.ReleaseExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 
 plugins {
     id("org.springframework.boot") version "3.0.5"
@@ -6,16 +8,20 @@ plugins {
     kotlin("jvm") version "1.8.10"
     kotlin("plugin.spring") version "1.8.10"
 
-    id("io.gitlab.arturbosch.detekt").version("1.21.0")
+    id("io.gitlab.arturbosch.detekt") version "1.21.0"
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
     id("io.gatling.gradle") version "3.9.5.1"
 
-    id("net.researchgate.release") version "3.0.2"
+
+    // manages releases, i.e. maven version number and git tags (not artifact publication)
+//    id("net.researchgate.release") version "3.0.2"
+
+    // manages publication of snapshot and release artifacts to respective maven repos (not release management)
+    `maven-publish`
 
 }
 
 group = "org.heigit.ohsome.now.stats"
-version = "0.0.3-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -57,6 +63,47 @@ tasks.named<Jar>("jar") {
     enabled = false
 }
 
+
+publishing {
+    publications {
+        create<MavenPublication>("bootJava") {
+            artifact(tasks.named("bootJar"))
+        }
+    }
+
+    repositories {
+        maven {
+            name = "artifactory-maven"
+
+            val releasesRepoUrl = "https://repo.heigit.org/artifactory/libs-release-local"
+            val snapshotsRepoUrl = "https://repo.heigit.org/artifactory/libs-snapshot-local"
+            url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+
+
+            //credentials from personal global gradle properties (`.gradle/gradle.properties`) or from environment variables
+            credentials {
+                username = project.findProperty("artifactory.username")
+                    ?.toString()
+                    ?: System.getenv("ARTIFACTORY_USERNAME")
+
+                password = project.findProperty("artifactory.password")
+                    ?.toString()
+                    ?: System.getenv("ARTIFACTORY_PASSWORD")
+
+            }
+        }
+    }
+}
+
+//configure<ReleaseExtension> {
+//    ignoredSnapshotDependencies.set(listOf("net.researchgate:gradle-release"))
+//
+//    failOnUnversionedFiles.set(false)
+//    failOnUpdateNeeded.set(false)
+//    failOnCommitNeeded.set(false)
+//    failOnPublishNeeded.set(false)
+//
+//}
 
 kover {
 
