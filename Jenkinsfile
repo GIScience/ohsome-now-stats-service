@@ -104,7 +104,6 @@ pipeline {
       }
 
 
-      }
       post {
         failure {
           rocket_snapshotdeployfail()
@@ -112,3 +111,4 @@ pipeline {
       }
     }
   }
+}
