@@ -7,8 +7,8 @@ pipeline {
 
 
   environment {
-    // this variable defines which branches will be deployed as snapshots
-    SNAPSHOT_BRANCH_REGEX = /(^main$)/
+    // this variable defines which branches will be deployed
+    BRANCH_REGEX = /(^main$)/
   }
 
   stages {
@@ -89,24 +89,15 @@ pipeline {
     stage ('Deploy to Artifactory') {
       when {
         expression {
-          return env.BRANCH_NAME ==~ SNAPSHOT_BRANCH_REGEX && VERSION ==~ /.*-SNAPSHOT$/
+          return env.BRANCH_NAME ==~ BRANCH_REGEX
         }
       }
       steps {
         script {
-          echo "This step doesn't work properly at the moment. Please deploy manually."
-          server = Artifactory.server 'HeiGIT Repo'
-          rtGradle = Artifactory.newMavenBuild()
 
           rtGradle.tool = 'Gradle 7'
-          rtGradle.resolver server: server, repo: 'main'
-          rtGradle.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-          rtGradle.deployer.deployArtifacts = false
+          rtGradle.run tasks: 'publish'
 
-          buildInfo = rtGradle.run tasks: 'clean bootJar'
-
-          rtGradle.deployer.deployArtifacts buildInfo
-          server.publishBuildInfo buildInfo
         }
       }
       post {
