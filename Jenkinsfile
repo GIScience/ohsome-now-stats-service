@@ -9,6 +9,8 @@ pipeline {
     environment {
     // this variable defines which branches will be deployed
     SNAPSHOT_BRANCH_REGEX = /(^main$)/
+    RELEASE_REGEX = /^([0-9]+(\.[0-9]+)*)(-(RC|beta-|alpha-)[0-9]+)?$/
+
   }
 
   stages {
@@ -86,12 +88,39 @@ pipeline {
       }
     }
 
-    stage ('Deploy to Artifactory') {
+  stage ('Deploy Snapshot to Artifactory') {
       when {
         expression {
           return env.BRANCH_NAME ==~ SNAPSHOT_BRANCH_REGEX && VERSION ==~ /.*-SNAPSHOT$/
         }
       }
+      steps {
+
+        withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
+
+            script {
+              rtGradle.tool = 'Gradle 7'
+              rtGradle.run tasks: 'publish'
+            }
+
+        }
+      }
+
+      post {
+        failure {
+          rocket_snapshotdeployfail()
+        }
+      }
+    }
+
+  stage ('Deploy Release to Artifactory') {
+
+      when {
+        expression {
+          return VERSION ==~ RELEASE_REGEX && env.TAG_NAME ==~ RELEASE_REGEX
+        }
+      }
+
       steps {
 
         withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
