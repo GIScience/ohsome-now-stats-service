@@ -8,7 +8,7 @@ pipeline {
 
     environment {
     // this variable defines which branches will be deployed
-    BRANCH_REGEX = /(^main$)/
+    SNAPSHOT_BRANCH_REGEX = /(^main$)/
   }
 
   stages {
@@ -89,7 +89,7 @@ pipeline {
     stage ('Deploy to Artifactory') {
       when {
         expression {
-          return env.BRANCH_NAME ==~ BRANCH_REGEX
+          return env.BRANCH_NAME ==~ SNAPSHOT_BRANCH_REGEX && VERSION ==~ /.*-SNAPSHOT$/
         }
       }
       steps {
