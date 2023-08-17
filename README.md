@@ -37,7 +37,7 @@ For details about the ohsomeNow stats website check [GIScience/ohsome-now-stats-
 * Code Coverage: Kover
     * test coverage > 80%
 
-### Running the service
+## Running the service
 
 The service can be run directly on the OS or within a docker image
 
@@ -83,6 +83,46 @@ docker compose up -d clickhouse-database
 This relies on the  [Dockerfile](./Dockerfile),  in this repository.
 
 **Note:** The database credentials will be injected into the dockerized app via environment variables (soon). The Docker database setup currently relies on an empty password set in `secrets.properties` (see above).
+
+## Release and artifact publication
+
+These steps are achieved by the following 2 plugins:
+
+* release plugin: https://plugins.gradle.org/plugin/net.researchgate.release
+* maven-publish plugin: https://docs.gradle.org/current/userguide/publishing_maven.html
+
+### Release plugin
+
+This plugin is used to:
+
+* check for a clean workspace and assure that the local and remote git repos are in sync
+* read current (snapshot) version from link:./gradle.properties[]
+* create a git tag for this version (by removing the `-SNAPSHOT` postfix)
+* set the next (snapshot) version in link:./gradle.properties[]
+
+The plugin is run locally via the command line:
+
+`./gradlew release`
+
+The version scheme defaults can be overridden interactively if neccessary.
+
+### Maven-publish plugin
+
+This plugin publishes all *non-snapshot* artifacts to the Artifactory maven repo.
+
+Please note:
+
+* This plugin is not intended to be started locally, but runs in the CI server if a non-snapshot version is detected.
+* Only non-snapshot versions are published, as this is a deployable service and not a library.
+  (A snapshot publication could technically be enforced by running the publication plugin manually.)
+
+
+
+
+
+
+
+
 
 
 
