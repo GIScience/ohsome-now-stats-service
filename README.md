@@ -96,9 +96,9 @@ These steps are achieved by the following 2 plugins:
 This plugin is used to:
 
 * check for a clean workspace and assure that the local and remote git repos are in sync
-* read current (snapshot) version from link:./gradle.properties[]
+* read current (snapshot) version from [./gradle.properties](./gradle.properties)
 * create a git tag for this version (by removing the `-SNAPSHOT` postfix)
-* set the next (snapshot) version in link:./gradle.properties[]
+* set the next (snapshot) version in [./gradle.properties](./gradle.properties)
 
 The plugin is run locally via the command line:
 
@@ -108,13 +108,11 @@ The version scheme defaults can be overridden interactively if neccessary.
 
 ### Maven-publish plugin
 
-This plugin publishes all *non-snapshot* artifacts to the Artifactory maven repo.
+This plugin publishes all *release* and *snapshot* artifacts to the respective Artifactory maven repos.
 
 Please note:
 
-* This plugin is not intended to be started locally, but runs in the CI server if a non-snapshot version is detected.
-* Only non-snapshot versions are published, as this is a deployable service and not a library.
-  (A snapshot publication could technically be enforced by running the publication plugin manually.)
+* This plugin is not intended to be started locally, but runs in the CI server. 
 
 
 
