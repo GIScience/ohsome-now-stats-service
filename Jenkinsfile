@@ -94,15 +94,15 @@ pipeline {
       }
       steps {
 
-        withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')])
+        withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
 
             script {
               rtGradle.tool = 'Gradle 7'
               rtGradle.run tasks: 'publish'
             }
 
+        }
       }
-
 
       post {
         failure {
