@@ -6,7 +6,7 @@ pipeline {
   }
 
 
-  environment {
+    environment {
     // this variable defines which branches will be deployed
     BRANCH_REGEX = /(^main$)/
   }
@@ -93,12 +93,17 @@ pipeline {
         }
       }
       steps {
-        script {
 
-          rtGradle.tool = 'Gradle 7'
-          rtGradle.run tasks: 'publish'
+        withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')])
 
-        }
+            script {
+              rtGradle.tool = 'Gradle 7'
+              rtGradle.run tasks: 'publish'
+            }
+
+      }
+
+
       }
       post {
         failure {
@@ -107,5 +112,3 @@ pipeline {
       }
     }
   }
-
-}
