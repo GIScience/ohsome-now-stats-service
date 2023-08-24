@@ -11,10 +11,25 @@ fun buildStatsResult(result: Map<String, Any>) = StatsResult(
     result["latest"].toString(),
 )
 
+fun buildMultipleStatsResult(result: List<Map<String, Any>>): Map<String, StatsResult> {
+    val output = mutableMapOf<String, StatsResult>()
+    result.forEach {
+        output[it["hashtag"].toString()] = StatsResult(
+            (it["changesets"] as UnsignedLong).toLong(),
+            (it["users"] as UnsignedLong).toLong(),
+            it["roads"] as Double,
+            it["buildings"] as Long,
+            (it["edits"] as UnsignedLong).toLong(),
+            it["latest"].toString(),
+        )
+    }
+    return output
+}
+
 @Suppress("LongMethod")
 fun buildIntervalStatsResult(result: List<Map<String, Any>>): List<StatsIntervalResult> {
     val output = mutableListOf<StatsIntervalResult>()
-    result.forEach {
+    result.forEach { it ->
         output.add(
             StatsIntervalResult(
                 (it["changesets"] as UnsignedLong).toLong(),

@@ -52,16 +52,16 @@ class StatsController {
         return build_ohsome_format(result, executionTime, httpServletRequest)
     }
 
-
+    @Suppress("LongMethod")
     @Operation(
         summary = "Returns live summary statistics for multiple hashtags",
     )
-    @GetMapping("/stats/hashtags/{hashtag}", produces = ["application/json"])
+    @GetMapping("/stats/hashtags/{hashtags}", produces = ["application/json"])
     fun statsHashtags(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
-        hashtag: Array<String>,
+        hashtags: Array<String>,
 
         @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam("startdate", required = false)
@@ -75,12 +75,18 @@ class StatsController {
     ): OhsomeFormat<Map<String, StatsResult>> {
         val results = mutableMapOf<String, StatsResult>()
         val executionTime = measureTimeMillis {
-            hashtag.forEach { singleHashtag ->
-                results[singleHashtag] =
-                    buildStatsResult(repo.getStatsForTimeSpan(HashtagHandler(singleHashtag), startDate, endDate))
+            for (hashtag in hashtags) {
+                results.putAll(
+                    buildMultipleStatsResult(
+                        repo.getStatsForTimeSpanAggregate(
+                            HashtagHandler(hashtag),
+                            startDate,
+                            endDate
+                        )
+                    )
+                )
             }
         }
-
         return build_ohsome_format(results, executionTime, httpServletRequest)
     }
 

@@ -14,6 +14,7 @@ import java.time.Instant.now
 import java.time.temporal.ChronoUnit
 import javax.sql.DataSource
 
+@Suppress("LargeClass")
 @Component
 class StatsRepo {
     //please add valuable docs here
@@ -36,9 +37,25 @@ class StatsRepo {
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?) 
             and changeset_timestamp > parseDateTimeBestEffort(?) 
-            and changeset_timestamp < parseDateTimeBestEffort(?);
+            and changeset_timestamp < parseDateTimeBestEffort(?)
         """.trimIndent()
 
+    private fun getStatsFromTimeSpanAggregate(hashtagHandler: HashtagHandler) = """
+        SELECT
+            count(distinct changeset_id) as changesets,
+            count(distinct user_id) as users,
+            ifNull(sum(road_length_delta)/1000, 0) as roads,
+            ifNull(sum(building_edit), 0) as buildings,
+            count(map_feature_edit) as edits,
+            max(changeset_timestamp) as latest,
+            hashtag
+        FROM "stats"
+        WHERE
+            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?) 
+            and changeset_timestamp > parseDateTimeBestEffort(?) 
+            and changeset_timestamp < parseDateTimeBestEffort(?)
+        GROUP BY hashtag;
+        """.trimIndent()
 
     @Suppress("LongMethod")
     //language=sql
@@ -126,6 +143,7 @@ class StatsRepo {
         OR changeset_timestamp < parseDateTimeBestEffort('2009-04-23T00:00:00.000000Z')
     """.trimIndent()
 
+
     /**
      * Retrieves statistics for a specific hashtag within a time span.
      *
@@ -134,7 +152,11 @@ class StatsRepo {
      * @param endDate The end date of the time span.
      * @return A map containing the statistics.
      */
-    fun getStatsForTimeSpan(hashtagHandler: HashtagHandler, startDate: Instant?, endDate: Instant?): Map<String, Any> {
+    fun getStatsForTimeSpan(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant?,
+        endDate: Instant?,
+    ): Map<String, Any> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
@@ -146,6 +168,32 @@ class StatsRepo {
             ).mapToMap().single()
         } + ("hashtag" to hashtagHandler.hashtag)
     }
+
+    /**
+     * Retrieves statistics for a specific hashtag within a time span.
+     *
+     * @param hashtagHandler Contains the hashtag to retrieve statistics for.
+     * @param startDate The start date of the time span.
+     * @param endDate The end date of the time span.
+     * @return A map containing the statistics.
+     */
+    fun getStatsForTimeSpanAggregate(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant?,
+        endDate: Instant?
+    ): List<Map<String, Any>> {
+        logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
+
+        return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
+            it.select(
+                getStatsFromTimeSpanAggregate(hashtagHandler),
+                hashtagHandler.hashtag,
+                startDate ?: EPOCH,
+                endDate ?: now()
+            ).mapToMap().list()
+        }
+    }
+
 
     /**
      * Retrieves statistics for a specific hashtag within a time span and interval.

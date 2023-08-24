@@ -118,6 +118,33 @@ class StatsRepoIntegrationTests {
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForTimeSpanAggregate returns disaggregated data with wildcard`() {
+        val hashtagHandlerWildcard = HashtagHandler("&group*")
+        val resultsWildCard = this.repo.getStatsForTimeSpanAggregate(hashtagHandlerWildcard, null, null)
+
+        assertEquals(2, resultsWildCard.size)
+
+        val hashtags = mutableListOf<String>()
+        resultsWildCard.onEach { hashtags.add(it["hashtag"].toString()) }
+        assertIterableEquals(listOf("&groupExtra", "&group").sorted(), hashtags.sorted())
+    }
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForTimeSpanAggregate returns data in list without wildcard`() {
+        val hashtagHandlerWildcard = HashtagHandler("&group")
+        val resultsWildCard = this.repo.getStatsForTimeSpanAggregate(hashtagHandlerWildcard, null, null)
+
+        assertEquals(1, resultsWildCard.size)
+
+        val hashtags = mutableListOf<String>()
+        resultsWildCard.onEach { hashtags.add(it["hashtag"].toString()) }
+        assertIterableEquals(listOf("&group").sorted(), hashtags.sorted())
+    }
+
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns all data on everything with only wildcard character`() {
         // wasn't sure about the sql behavior of startWith(""), but it seems that it selects everything like expected
         val hashtagHandlerWildcard = HashtagHandler("*")

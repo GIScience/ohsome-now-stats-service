@@ -34,8 +34,10 @@ class StatsControllerMVCTests {
         "buildings" to 123L,
         "edits" to UnsignedLong.valueOf(213124L),
         "latest" to "20.05.2053",
-        "changesets" to UnsignedLong.valueOf(2)
+        "changesets" to UnsignedLong.valueOf(2),
     )
+
+    private var exampleMultipleStats = exampleStats + mapOf("hashtag" to hashtag)
 
     private var exampleIntervalStats = mapOf(
         "users" to UnsignedLong.valueOf(1001L),
@@ -65,8 +67,8 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats_hashtags can be served with multiple hashtags`() {
-        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
-            .thenReturn(exampleStats)
+        `when`(repo.getStatsForTimeSpanAggregate(any(HashtagHandler::class.java), any(), any()))
+            .thenReturn(listOf(exampleMultipleStats))
 
         this.mockMvc
             .perform(get("/stats/hashtags/$hashtag,hotosm*"))
