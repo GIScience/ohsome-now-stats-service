@@ -54,7 +54,7 @@ class StatsController {
 
     @Suppress("LongMethod")
     @Operation(
-        summary = "Returns live summary statistics for multiple hashtags",
+        summary = "Returns live summary statistics for multiple hashtags. Wildcard-hashtags are disaggregated.",
     )
     @GetMapping("/stats/hashtags/{hashtags}", produces = ["application/json"])
     fun statsHashtags(
