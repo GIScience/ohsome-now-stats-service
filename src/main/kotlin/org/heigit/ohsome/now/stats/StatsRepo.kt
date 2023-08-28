@@ -79,7 +79,7 @@ class StatsRepo {
         WITH FILL
             FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
             TO toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime
-        STEP INTERVAL :interval Interpolate (enddate as (startdate + INTERVAL :interval + INTERVAL :interval))
+        STEP INTERVAL :interval Interpolate (enddate as ((startdate + INTERVAL :interval) + INTERVAL :interval))
     """.trimIndent()
 
     @Suppress("LongMethod")
