@@ -83,8 +83,8 @@ class StatsRepo {
         enddate as (
             if (
                 startdate != parseDateTimeBestEffort('1970-01-01 00:00:00'), -- condition
-                startdate + INTERVAL :interval + INTERVAL :interval, 			 -- then
-                toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval -- else
+                ((startdate + INTERVAL :interval) + INTERVAL :interval), 			 -- then
+                (toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval) -- else
             )
 	    )
     )""".trimIndent()
