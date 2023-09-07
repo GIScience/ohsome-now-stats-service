@@ -4,6 +4,9 @@ pipeline {
   agent {
     label 'worker'
   }
+  tools {
+    gradle 'Gradle 7'
+  }
 
   environment {
     // this variable defines which branches will be deployed
@@ -25,15 +28,7 @@ pipeline {
           echo env.BUILD_NUMBER
           echo env.TAG_NAME
 
-          server = Artifactory.server 'HeiGIT Repo'
-          rtGradle = Artifactory.newGradleBuild()
-
-          rtGradle.tool = 'Gradle 7'
-          rtGradle.resolver server: server, repo: 'main'
-          rtGradle.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-          rtGradle.deployer.deployArtifacts = false
-
-          rtGradle.run tasks: 'detekt'
+          sh 'gradle detekt'
         }
       }
       post {
@@ -46,15 +41,7 @@ pipeline {
     stage ('Build fat jar') {
       steps {
         script {
-          server = Artifactory.server 'HeiGIT Repo'
-          rtGradle = Artifactory.newGradleBuild()
-
-          rtGradle.tool = 'Gradle 7'
-          rtGradle.resolver server: server, repo: 'main'
-          rtGradle.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-          rtGradle.deployer.deployArtifacts = false
-
-          rtGradle.run tasks: 'bootJar'
+          sh 'gradle bootJar'
         }
       }
       post {
@@ -67,15 +54,7 @@ pipeline {
     stage ('Test') {
       steps {
         script {
-          server = Artifactory.server 'HeiGIT Repo'
-          rtGradle = Artifactory.newGradleBuild()
-
-          rtGradle.tool = 'Gradle 7'
-          rtGradle.resolver server: server, repo: 'main'
-          rtGradle.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-          rtGradle.deployer.deployArtifacts = false
-
-          rtGradle.run tasks: 'clean test'
+          sh 'gradle clean test'
         }
       }
       post {
@@ -94,8 +73,7 @@ pipeline {
       steps {
         withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
           script {
-            rtGradle.tool = 'Gradle 7'
-            rtGradle.run tasks: 'publish'
+            sh 'gradle publish'
           }
         }
       }
@@ -115,8 +93,7 @@ pipeline {
       steps {
         withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
           script {
-            rtGradle.tool = 'Gradle 7'
-            rtGradle.run tasks: 'publish'
+            sh 'gradle publish'
           }
         }
       }
