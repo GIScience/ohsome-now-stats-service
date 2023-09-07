@@ -1,5 +1,6 @@
 import net.researchgate.release.ReleaseExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URI
 
 
 plugins {
@@ -73,24 +74,10 @@ publishing {
 
     repositories {
         maven {
-            name = "artifactory-maven"
+            name = "heigitNexus"
+            url = URI(project.findProperty("repositoryUrl").toString())
 
-            val releasesRepoUrl = "https://repo.heigit.org/artifactory/libs-release-local"
-            val snapshotsRepoUrl = "https://repo.heigit.org/artifactory/libs-snapshot-local"
-            url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
-
-
-            //credentials from personal global gradle properties (`.gradle/gradle.properties`) or from environment variables
-            credentials {
-                username = project.findProperty("artifactory.username")
-                    ?.toString()
-                    ?: System.getenv("ARTIFACTORY_USERNAME")
-
-                password = project.findProperty("artifactory.password")
-                    ?.toString()
-                    ?: System.getenv("ARTIFACTORY_PASSWORD")
-
-            }
+            credentials(PasswordCredentials::class)
         }
     }
 }

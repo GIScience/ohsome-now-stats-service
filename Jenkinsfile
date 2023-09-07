@@ -64,15 +64,16 @@ pipeline {
       }
     }
 
-    stage ('Deploy Snapshot to Artifactory') {
+    stage ('Deploy Snapshot') {
       when {
         expression {
           return env.BRANCH_NAME ==~ SNAPSHOT_BRANCH_REGEX && VERSION ==~ /.*-SNAPSHOT$/
         }
       }
       steps {
-        withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
+        withCredentials([usernamePassword(credentialsId: 'HeiGIT-Nexus', passwordVariable: 'ORG_GRADLE_PROJECT_heigitNexusPassword', usernameVariable: 'ORG_GRADLE_PROJECT_heigitNexusUsername')]) {
           script {
+            env.ORG_GRADLE_PROJECT_repositoryUrl = "https://repo.heigit.org/repository/maven-snapshots/"
             sh 'gradle publish'
           }
         }
@@ -84,15 +85,16 @@ pipeline {
       }
     }
 
-    stage ('Deploy Release to Artifactory') {
+    stage ('Deploy Release') {
       when {
         expression {
           return VERSION ==~ RELEASE_REGEX && env.TAG_NAME ==~ RELEASE_REGEX
         }
       }
       steps {
-        withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
+        withCredentials([usernamePassword(credentialsId: 'HeiGIT-Nexus', passwordVariable: 'ORG_GRADLE_PROJECT_heigitNexusPassword', usernameVariable: 'ORG_GRADLE_PROJECT_heigitNexusUsername')]) {
           script {
+            env.ORG_GRADLE_PROJECT_repositoryUrl = "https://repo.heigit.org/repository/maven-releases/"
             sh 'gradle publish'
           }
         }
