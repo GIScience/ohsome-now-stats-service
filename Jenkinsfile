@@ -94,7 +94,7 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'HeiGIT-Nexus', passwordVariable: 'ORG_GRADLE_PROJECT_heigitNexusPassword', usernameVariable: 'ORG_GRADLE_PROJECT_heigitNexusUsername')]) {
           script {
             env.ORG_GRADLE_PROJECT_repositoryUrl = "https://repo.heigit.org/repository/maven-snapshots/"
-            sh 'gradle publish'
+            sh 'gradle clean publish'
           }
         }
       }
@@ -115,7 +115,7 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'HeiGIT-Nexus', passwordVariable: 'ORG_GRADLE_PROJECT_heigitNexusPassword', usernameVariable: 'ORG_GRADLE_PROJECT_heigitNexusUsername')]) {
           script {
             env.ORG_GRADLE_PROJECT_repositoryUrl = "https://repo.heigit.org/repository/maven-releases/"
-            sh 'gradle publish'
+            sh 'gradle clean publish'
           }
         }
       }
