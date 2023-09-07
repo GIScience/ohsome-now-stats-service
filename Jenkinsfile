@@ -5,14 +5,12 @@ pipeline {
     label 'worker'
   }
 
-  tools {
-    maven 'Maven 3'
-  }
 
-  environment {
+    environment {
     // this variable defines which branches will be deployed
     SNAPSHOT_BRANCH_REGEX = /(^main$)/
     RELEASE_REGEX = /^([0-9]+(\.[0-9]+)*)(-(RC|beta-|alpha-)[0-9]+)?$/
+
   }
 
   stages {
@@ -90,15 +88,24 @@ pipeline {
       }
     }
 
-    stage ('Deploy Snapshot') {
+  stage ('Deploy Snapshot to Artifactory') {
       when {
         expression {
           return env.BRANCH_NAME ==~ SNAPSHOT_BRANCH_REGEX && VERSION ==~ /.*-SNAPSHOT$/
         }
       }
       steps {
-        deploy_snapshot('clean package spring-boot:repackage deploy -P git')
+
+        withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
+
+            script {
+              rtGradle.tool = 'Gradle 7'
+              rtGradle.run tasks: 'publish'
+            }
+
+        }
       }
+
       post {
         failure {
           rocket_snapshotdeployfail()
@@ -106,28 +113,31 @@ pipeline {
       }
     }
 
-    stage ('Deploy Release') {
+  stage ('Deploy Release to Artifactory') {
+
       when {
         expression {
           return VERSION ==~ RELEASE_REGEX && env.TAG_NAME ==~ RELEASE_REGEX
         }
       }
+
       steps {
-        deploy_release('clean package spring-boot:repackage deploy -P git')
+
+        withCredentials([usernamePassword(credentialsId: 'HeiGIT-Repo', passwordVariable: 'ARTIFACTORY_PASSWORD', usernameVariable: 'ARTIFACTORY_USERNAME')]) {
+
+            script {
+              rtGradle.tool = 'Gradle 7'
+              rtGradle.run tasks: 'publish'
+            }
+
+        }
       }
+
       post {
         failure {
-           rocket_releasedeployfail()
+          rocket_snapshotdeployfail()
         }
       }
     }
-
-    stage('Wrapping Up') {
-      steps {
-        encourage()
-        status_change()
-      }
-    }
-
   }
 }
