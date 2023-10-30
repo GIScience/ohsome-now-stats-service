@@ -8,42 +8,32 @@ class CountryHandlerTests {
 
 
     @Test
-    fun `a null array of countries yields emtpy SQL string`() {
+    fun `a null list of countries yields emtpy SQL string`() {
 
         val countryHandler = CountryHandler(null)
 
         assertThat(countryHandler.optionalFilterSQL)
             .isBlank()
-
-        assertThat(countryHandler.isUsed)
-            .isFalse()
     }
 
 
     @Test
-    fun `an empty array of countries yields emtpy SQL string`() {
+    fun `an empty list of countries yields emtpy SQL string`() {
 
-        val countryHandler = CountryHandler(emptyArray())
+        val countryHandler = CountryHandler(emptyList())
 
         assertThat(countryHandler.optionalFilterSQL)
             .isBlank()
-
-        assertThat(countryHandler.isUsed)
-            .isFalse()
     }
 
-//TODO: isUsed()?
 
     @Test
-    fun `an array with 1 country yields a parameterized SQL string`() {
+    fun `a list with 1 country yields a parameterized SQL string`() {
 
-        val countryHandler = CountryHandler(arrayOf("UGA"))
+        val countryHandler = CountryHandler(listOf("UGA"))
 
         assertThat(countryHandler.optionalFilterSQL)
-            .isEqualTo("AND hasAny(country_iso_a3 ,['UGA'])")
-
-        assertThat(countryHandler.isUsed)
-            .isTrue()
+            .isEqualTo("AND hasAny(country_iso_a3, ['UGA'])")
     }
 
 

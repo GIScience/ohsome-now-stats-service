@@ -46,7 +46,7 @@ class StatsController {
 
         @Parameter(description = "A comma separated list of countries, can also only be one country")
         @RequestParam("countries", required = false)
-        countries: Array<String>?,
+        countries: List<String>?,
     ): OhsomeFormat<StatsResult> {
         val result: StatsResult
         val executionTime = measureTimeMillis {
