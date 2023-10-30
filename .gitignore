@@ -20,3 +20,4 @@ lib/
 
 #local secret file
 /src/main/resources/secrets.properties
+/src/main/resources/application-local.properties

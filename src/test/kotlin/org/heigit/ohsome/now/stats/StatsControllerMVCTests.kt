@@ -1,6 +1,7 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
+import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -52,7 +53,7 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats can be served without explicit timespans`() {
-        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any()))
+        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any(), any(CountryHandler::class.java)))
             .thenReturn(exampleStats)
 
         this.mockMvc

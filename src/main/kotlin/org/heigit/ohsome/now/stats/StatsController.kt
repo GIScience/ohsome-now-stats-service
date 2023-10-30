@@ -4,17 +4,16 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.stats.models.*
+import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.heigit.ohsome.now.stats.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
 import kotlin.system.measureTimeMillis
-import kotlin.time.Duration
 
 @Suppress("largeClass")
 @CrossOrigin
@@ -24,7 +23,7 @@ class StatsController {
     @Autowired
     lateinit var repo: StatsRepo
 
-
+    @Suppress("LongParameterList")
     @Operation(
         summary = "Returns live summary statistics for one hashtag",
     )
@@ -44,10 +43,21 @@ class StatsController {
         @RequestParam("enddate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?,
+
+        @Parameter(description = "A comma separated list of countries, can also only be one country")
+        @RequestParam("countries", required = false)
+        countries: Array<String>?,
     ): OhsomeFormat<StatsResult> {
         val result: StatsResult
         val executionTime = measureTimeMillis {
-            result = buildStatsResult(repo.getStatsForTimeSpan(HashtagHandler(hashtag), startDate, endDate))
+            result = buildStatsResult(
+                repo.getStatsForTimeSpan(
+                    HashtagHandler(hashtag),
+                    startDate,
+                    endDate,
+                    CountryHandler(countries)
+                )
+            )
         }
         return build_ohsome_format(result, executionTime, httpServletRequest)
     }

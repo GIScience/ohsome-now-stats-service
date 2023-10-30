@@ -1,6 +1,7 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
+import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.heigit.ohsome.now.stats.utils.getGroupbyInterval
 import org.jdbi.v3.core.Jdbi.create
@@ -25,7 +26,7 @@ class StatsRepo {
     private val logger: Logger = LoggerFactory.getLogger(StatsRepo::class.java)
 
     //language=sql
-    private fun getStatsFromTimeSpan(hashtagHandler: HashtagHandler) = """
+    private fun getStatsFromTimeSpan(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
@@ -36,8 +37,9 @@ class StatsRepo {
         FROM "stats"
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?) 
-            and changeset_timestamp > parseDateTimeBestEffort(?) 
+            and changeset_timestamp > parseDateTimeBestEffort(?)
             and changeset_timestamp < parseDateTimeBestEffort(?)
+            ${countryHandler.optionalFilterSQL}
         """.trimIndent()
 
     private fun getStatsFromTimeSpanAggregate(hashtagHandler: HashtagHandler) = """
@@ -87,7 +89,8 @@ class StatsRepo {
                 (toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval) -- else
             )
 	    )
-    )""".trimIndent()
+    )
+    """.trimIndent()
 
     @Suppress("LongMethod")
     //language=sql
@@ -104,7 +107,7 @@ class StatsRepo {
         ARRAY JOIN country_iso_a3
         WHERE
             ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
-            and changeset_timestamp > parseDateTimeBestEffort(?) 
+            and changeset_timestamp > parseDateTimeBestEffort(?)
             and changeset_timestamp < parseDateTimeBestEffort(?)
         GROUP BY
             country
@@ -163,12 +166,13 @@ class StatsRepo {
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?,
+        countryHandler: CountryHandler
     ): Map<String, Any> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
             it.select(
-                getStatsFromTimeSpan(hashtagHandler),
+                getStatsFromTimeSpan(hashtagHandler, countryHandler),
                 hashtagHandler.hashtag,
                 startDate ?: EPOCH,
                 endDate ?: now()
@@ -282,6 +286,7 @@ class StatsRepo {
         }
         return result
     }
+
 
     /**
      * Retrieves the most used Hashtags in the selected Timeperiod.
