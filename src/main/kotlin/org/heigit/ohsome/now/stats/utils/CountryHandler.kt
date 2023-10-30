@@ -7,7 +7,10 @@ class CountryHandler(var countries: Array<String>?) {
     init {
         isUsed = !countries.isNullOrEmpty() // notice the !
         if (isUsed) {
-            optionalFilterSQL = "AND hasAny(country_iso_a3 ,${countries})"
+            val countries = countries
+                ?.toList()
+                ?.map { "'$it'" }
+            optionalFilterSQL = "AND hasAny(country_iso_a3 ,$countries)"
         }
     }
 }
