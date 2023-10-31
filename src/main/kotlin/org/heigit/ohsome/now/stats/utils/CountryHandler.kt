@@ -1,6 +1,6 @@
 package org.heigit.ohsome.now.stats.utils
 
-class CountryHandler(countries: List<String>?) {
+data class CountryHandler(val countries: List<String>?) {
     val optionalFilterSQL: String
 
     init {

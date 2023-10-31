@@ -68,7 +68,14 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats can be served without explicit timespans and a country filter`() {
-        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any(), any(CountryHandler::class.java)))
+        `when`(
+            repo.getStatsForTimeSpan(
+                HashtagHandler("*"),
+                null,
+                null,
+                CountryHandler(listOf("UGA", "DE"))
+            )
+        )
             .thenReturn(exampleStats)
 
         this.mockMvc
