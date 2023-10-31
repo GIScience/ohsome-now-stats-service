@@ -58,7 +58,7 @@ class StatsRepoIntegrationTests {
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
         val hashtagHandler = HashtagHandler("&uganda")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, CountryHandler(null))
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, CountryHandler(emptyList()))
         assertEquals(7, result.size)
         println(result)
         assertEquals(expected.toString(), result.toString())
@@ -71,7 +71,10 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, CountryHandler(listOf("HUN", "BEL")))
         assertEquals(7, result.size)
         println(result)
-        assertEquals("{changesets=4, users=2, roads=0.72, buildings=0, edits=9, latest=2021-12-09T13:01:28, hashtag=}", result.toString())
+        assertEquals(
+            "{changesets=4, users=2, roads=0.72, buildings=0, edits=9, latest=2021-12-09T13:01:28, hashtag=}",
+            result.toString()
+        )
     }
 
 
@@ -82,7 +85,7 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1457186430)
         println(startDate)
         val hashtagHandler = HashtagHandler("&")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate, CountryHandler(null))
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate, CountryHandler(emptyList()))
         println(result)
 
         assertEquals(7, result.size)
@@ -95,7 +98,7 @@ class StatsRepoIntegrationTests {
     fun `getStatsForTimeSpan returns partial data in time span for start date only`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val hashtagHandler = HashtagHandler("&group")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, startDate, null, CountryHandler(null))
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, startDate, null, CountryHandler(emptyList()))
         println(result)
 
         assertEquals(7, result.size)
@@ -108,7 +111,7 @@ class StatsRepoIntegrationTests {
     fun `getStatsForTimeSpan returns partial data in time span for end date only`() {
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&group")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, endDate, CountryHandler(null))
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, endDate, CountryHandler(emptyList()))
         println(result)
 
         assertEquals(7, result.size)
@@ -120,10 +123,11 @@ class StatsRepoIntegrationTests {
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns combined data of multiple hashtags with wildcard`() {
         val hashtagHandlerWildcard = HashtagHandler("&group*")
-        val resultWildCard = this.repo.getStatsForTimeSpan(hashtagHandlerWildcard, null, null, CountryHandler(null))
+        val resultWildCard =
+            this.repo.getStatsForTimeSpan(hashtagHandlerWildcard, null, null, CountryHandler(emptyList()))
 
         val hashtagHandler = HashtagHandler("&group")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, CountryHandler(null))
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, CountryHandler(emptyList()))
 
         assertTrue(result["changesets"].toString().toInt() < resultWildCard["changesets"].toString().toInt())
     }
@@ -162,7 +166,7 @@ class StatsRepoIntegrationTests {
         val hashtagHandlerWildcard = HashtagHandler("*")
         val resultWildCard = this.repo.getStatsForTimeSpan(
             hashtagHandlerWildcard, null, null, CountryHandler(
-                null
+                emptyList()
             )
         )
 

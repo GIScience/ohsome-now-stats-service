@@ -8,16 +8,6 @@ class CountryHandlerTests {
 
 
     @Test
-    fun `a null list of countries yields empty SQL string`() {
-
-        val countryHandler = CountryHandler(null)
-
-        assertThat(countryHandler.optionalFilterSQL)
-            .isBlank()
-    }
-
-
-    @Test
     fun `an empty list of countries yields empty SQL string`() {
 
         val countryHandler = CountryHandler(emptyList())
