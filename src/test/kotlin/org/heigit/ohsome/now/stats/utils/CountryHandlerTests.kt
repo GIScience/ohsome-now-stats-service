@@ -37,4 +37,14 @@ class CountryHandlerTests {
     }
 
 
+    @Test
+    fun `a list with 2 countries yields a parameterized SQL string`() {
+
+        val countryHandler = CountryHandler(listOf("UGA", "HUN"))
+
+        assertThat(countryHandler.optionalFilterSQL)
+            .isEqualTo("AND hasAny(country_iso_a3, ['UGA', 'HUN'])")
+    }
+
+
 }
