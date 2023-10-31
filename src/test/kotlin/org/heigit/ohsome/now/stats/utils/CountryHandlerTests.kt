@@ -8,7 +8,7 @@ class CountryHandlerTests {
 
 
     @Test
-    fun `a null list of countries yields emtpy SQL string`() {
+    fun `a null list of countries yields empty SQL string`() {
 
         val countryHandler = CountryHandler(null)
 
@@ -18,7 +18,7 @@ class CountryHandlerTests {
 
 
     @Test
-    fun `an empty list of countries yields emtpy SQL string`() {
+    fun `an empty list of countries yields empty SQL string`() {
 
         val countryHandler = CountryHandler(emptyList())
 
