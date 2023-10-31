@@ -67,6 +67,23 @@ class StatsControllerMVCTests {
 
 
     @Test
+    fun `stats can be served without explicit timespans and a country filter`() {
+        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any(), any(CountryHandler::class.java)))
+            .thenReturn(exampleStats)
+
+        this.mockMvc
+            .perform(
+                get("/stats/*?countries=UGA,DE")
+            )
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.result.buildings").value(123))
+            .andExpect(jsonPath("$.query.timespan.endDate").exists())
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/*?countries=UGA,DE"))
+    }
+
+
+    @Test
     fun `stats_hashtags can be served with multiple hashtags`() {
         `when`(repo.getStatsForTimeSpanAggregate(any(HashtagHandler::class.java), any(), any()))
             .thenReturn(listOf(exampleMultipleStats))
