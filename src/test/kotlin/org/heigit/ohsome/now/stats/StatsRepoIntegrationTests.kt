@@ -56,13 +56,24 @@ class StatsRepoIntegrationTests {
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
-    fun `getStatsForTimeSpan should return all data when using no time span`() {
+    fun `getStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
         val hashtagHandler = HashtagHandler("&uganda")
         val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, CountryHandler(null))
         assertEquals(7, result.size)
         println(result)
         assertEquals(expected.toString(), result.toString())
     }
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForTimeSpan should return all data when using no time span and list of 2 countries`() {
+        val hashtagHandler = HashtagHandler("*")
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, CountryHandler(listOf("HUN", "BEL")))
+        assertEquals(7, result.size)
+        println(result)
+        assertEquals("{changesets=4, users=2, roads=0.72, buildings=0, edits=9, latest=2021-12-09T13:01:28, hashtag=}", result.toString())
+    }
+
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])

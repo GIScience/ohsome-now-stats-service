@@ -24,7 +24,7 @@ VALUES
   (110552980, toDateTime(1630486233), '&gid', 'IdEditor', 219908, 'node/154769328', NULL, 0, 0, NULL, 226, 0, 1, ['BEL']),
   (114743552, toDateTime(1639054888), '&group', 'IdEditor', 552187, 'way/281438526', NULL, 0, 0, NULL, 770, -492, -1, ['HUN']),
   (114743552, toDateTime(1639054888), '&group', 'IdEditor', 552187, 'node/759279192', -1, 0, 0, NULL, 1352, -54, -1, ['HUN']),
-  (114743552, toDateTime(1639054888), '&group', 'IdEditor', 552187, 'way/542187403', NULL, 0, 0, NULL, 1049, -175, -1, ['HUN']),
+  (114743552, toDateTime(1639054888), '&group', 'IdEditor', 552187, 'way/542187403', NULL, 0, 0, NULL, 1049, -175, -1, ['HUN', 'BEL']),
   (114743552, toDateTime(1639054888), '&group', 'IdEditor', 552187, 'node/824619875', 1, 0, 0, NULL, 1250, -128, 1, ['HUN']),
   (114743552, toDateTime(1639054888), '&group', 'IdEditor', 552187, 'way/935724631', NULL, 0, 0, NULL, 2430, -17, 1, ['HUN']),
   (114743552, toDateTime(1639054888), '&group', 'IdEditor', 552187, 'node/6017532492', -1, 0, 0, NULL, 1499, -290, -1, ['HUN']),
