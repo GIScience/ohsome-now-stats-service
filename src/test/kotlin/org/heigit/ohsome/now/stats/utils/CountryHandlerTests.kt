@@ -18,12 +18,22 @@ class CountryHandlerTests {
 
 
     @Test
-    fun `a list with 1 country yields a parameterized SQL string`() {
+    fun `a list with 1 non-empty country yields a parameterized SQL string`() {
 
         val countryHandler = CountryHandler(listOf("UGA"))
 
         assertThat(countryHandler.optionalFilterSQL)
             .isEqualTo("AND hasAny(country_iso_a3, ['UGA'])")
+    }
+
+
+    @Test
+    fun `a list with 1 empty country yields a parameterized SQL string`() {
+
+        val countryHandler = CountryHandler(listOf(""))
+
+        assertThat(countryHandler.optionalFilterSQL)
+            .isBlank()
     }
 
 
