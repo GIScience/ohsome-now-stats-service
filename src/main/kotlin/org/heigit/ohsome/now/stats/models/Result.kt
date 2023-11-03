@@ -12,9 +12,11 @@ fun Map<String, Any>.toStatsResult() = StatsResult(
     this["latest"].toString(),
 )
 
-fun buildMultipleStatsResult(result: List<Map<String, Any>>): Map<String, StatsResult> {
+
+//TODO: methode drüber nutzen?
+fun List<Map<String, Any>>.toMultipleStatsResult(): Map<String, StatsResult> {
     val output = mutableMapOf<String, StatsResult>()
-    result.forEach {
+    this.forEach {
         output[it["hashtag"].toString()] = StatsResult(
             (it["changesets"] as UnsignedLong).toLong(),
             (it["users"] as UnsignedLong).toLong(),

@@ -78,11 +78,17 @@ class StatsController {
         endDate: Instant?
     ): OhsomeFormat<Map<String, StatsResult>> {
 
+
+//        TODO: buildMultipleStatsResult in den service pushen
+//        TODO: buildMultipleStatsResult in den service pushen
+//        TODO: buildMultipleStatsResult in den service pushen
+//        TODO: buildMultipleStatsResult in den service pushen
+
         val results = mutableMapOf<String, StatsResult>()
         val executionTime = measureTimeMillis {
             for (hashtag in hashtags) {
                 results.putAll(
-                    buildMultipleStatsResult(getStatsForTimeSpanAggregate(hashtag, startDate, endDate))
+                    getStatsForTimeSpanAggregate(hashtag, startDate, endDate)
                 )
             }
         }

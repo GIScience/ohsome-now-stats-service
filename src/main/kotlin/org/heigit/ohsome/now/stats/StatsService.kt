@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.stats
 
+import org.heigit.ohsome.now.stats.models.toMultipleStatsResult
 import org.heigit.ohsome.now.stats.models.toStatsResult
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
@@ -20,8 +21,9 @@ class StatsService {
         .toStatsResult()
 
 
-    fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) =
-        this.repo.getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
+    fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
+        .getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
+        .toMultipleStatsResult()
 
 
     @Suppress("LongParameterList")
