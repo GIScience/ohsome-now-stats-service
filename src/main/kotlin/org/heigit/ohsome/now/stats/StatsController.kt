@@ -132,7 +132,9 @@ class StatsController {
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
             response =
-                buildIntervalStatsResult(repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval))
+                buildIntervalStatsResult(
+                    repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval, CountryHandler(countries!!))
+                )
         }
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }

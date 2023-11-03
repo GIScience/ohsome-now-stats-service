@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Instant
 
+
 @WebMvcTest(StatsController::class)
 class StatsControllerMVCTests {
 
@@ -52,9 +53,11 @@ class StatsControllerMVCTests {
     )
 
 
+    private fun anyCountryHandler() = any(CountryHandler::class.java)
+
     @Test
     fun `stats can be served without explicit timespans`() {
-        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any(), any(CountryHandler::class.java)))
+        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any(), anyCountryHandler()))
             .thenReturn(exampleStats)
 
         this.mockMvc
@@ -113,7 +116,8 @@ class StatsControllerMVCTests {
                 any(HashtagHandler::class.java),
                 any(Instant::class.java),
                 any(Instant::class.java),
-                anyString()
+                anyString(),
+                anyCountryHandler()
             )
         )
             .thenReturn(
@@ -153,7 +157,8 @@ class StatsControllerMVCTests {
                 any(HashtagHandler::class.java),
                 any(Instant::class.java),
                 any(Instant::class.java),
-                anyString()
+                anyString(),
+                anyCountryHandler()
             )
         )
             .thenReturn(

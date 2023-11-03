@@ -219,12 +219,14 @@ class StatsRepo {
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?,
-        interval: String
+        interval: String,
+        countryHandler: CountryHandler
     ): List<Map<String, Any>> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
 
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
+
                 getStatsFromTimeSpanInterval(hashtagHandler),
             ).bind("interval", getGroupbyInterval(interval))
                 .bind("startdate", startDate ?: EPOCH)

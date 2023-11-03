@@ -179,12 +179,13 @@ class StatsRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&group")
-        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
+        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
         println(result)
         assertEquals(84, result.size)
         assertEquals(7, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
     }
+
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
@@ -192,7 +193,7 @@ class StatsRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(1503644723)
         val endDate = Instant.ofEpochSecond(1640486233)
         val hashtagHandler = HashtagHandler("&gid")
-        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
+        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
         println(result)
         assertEquals(52, result.size)
         assertEquals(7, result[0].size)
@@ -206,7 +207,7 @@ class StatsRepoIntegrationTests {
         val startDate = null
         val endDate = Instant.ofEpochSecond(1639054888)
         val hashtagHandler = HashtagHandler("&group")
-        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M")
+        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
         println(result)
         assertEquals(623, result.size)
         assertEquals(7, result[0].size)
