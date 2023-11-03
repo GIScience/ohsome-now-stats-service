@@ -1,8 +1,6 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
-import org.heigit.ohsome.now.stats.utils.CountryHandler
-import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
@@ -24,7 +22,7 @@ class StatsControllerMVCTests {
 
 
     @MockBean
-    private lateinit var repo: StatsRepo
+    private lateinit var statsService: StatsService
 
 
     @Autowired
@@ -40,6 +38,7 @@ class StatsControllerMVCTests {
         "changesets" to UnsignedLong.valueOf(2),
     )
 
+
     private var exampleMultipleStats = exampleStats + mapOf("hashtag" to hashtag)
 
     private var exampleIntervalStats = mapOf(
@@ -53,11 +52,9 @@ class StatsControllerMVCTests {
     )
 
 
-    private fun anyCountryHandler() = any(CountryHandler::class.java)
-
     @Test
     fun `stats can be served without explicit timespans`() {
-        `when`(repo.getStatsForTimeSpan(any(HashtagHandler::class.java), any(), any(), anyCountryHandler()))
+        `when`(this.statsService.getStatsForTimeSpan(anyString(), any(), any(), anyList()))
             .thenReturn(exampleStats)
 
         this.mockMvc
@@ -72,14 +69,7 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats can be served without explicit timespans and a country filter`() {
-        `when`(
-            repo.getStatsForTimeSpan(
-                HashtagHandler("*"),
-                null,
-                null,
-                CountryHandler(listOf("UGA", "DE"))
-            )
-        )
+        `when`(this.statsService.getStatsForTimeSpan(anyString(), isNull(), isNull(), anyList()))
             .thenReturn(exampleStats)
 
         this.mockMvc
@@ -96,7 +86,7 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats_hashtags can be served with multiple hashtags`() {
-        `when`(repo.getStatsForTimeSpanAggregate(any(HashtagHandler::class.java), any(), any()))
+        `when`(this.statsService.getStatsForTimeSpanAggregate(anyString(), any(), any()))
             .thenReturn(listOf(exampleMultipleStats))
 
         this.mockMvc
@@ -111,20 +101,10 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats per interval can be served with explicit start and end dates and without countries`() {
-        `when`(
-            repo.getStatsForTimeSpanInterval(
-                any(HashtagHandler::class.java),
-                any(Instant::class.java),
-                any(Instant::class.java),
-                anyString(),
-                anyCountryHandler()
-            )
-        )
-            .thenReturn(
-                listOf(
-                    exampleIntervalStats
-                )
-            )
+
+        `when`(this.statsService.getStatsForTimeSpanInterval(anyString(), anyInstant(), anyInstant(), anyString(), anyList()))
+            .thenReturn(listOf(exampleIntervalStats))
+
         val GET = get("/stats/$hashtag/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
@@ -152,20 +132,10 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats per interval can be served with explicit start and end dates and with countries`() {
-        `when`(
-            repo.getStatsForTimeSpanInterval(
-                any(HashtagHandler::class.java),
-                any(Instant::class.java),
-                any(Instant::class.java),
-                anyString(),
-                anyCountryHandler()
-            )
-        )
-            .thenReturn(
-                listOf(
-                    exampleIntervalStats
-                )
-            )
+
+        `when`(this.statsService.getStatsForTimeSpanInterval(anyString(), anyInstant(), anyInstant(), anyString(), anyList()))
+            .thenReturn(listOf(exampleIntervalStats))
+
         val GET = get("/stats/$hashtag/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
@@ -204,6 +174,7 @@ class StatsControllerMVCTests {
             .andExpect(status().isBadRequest)
     }
 
+
     @Test
     fun `stats per interval throws error for interval under one Minute`() {
 
@@ -216,20 +187,12 @@ class StatsControllerMVCTests {
             .andExpect(status().isBadRequest)
     }
 
+
     @Test
     fun `stats per country can be served with explicit start and end date`() {
-        `when`(
-            repo.getStatsForTimeSpanCountry(
-                any(HashtagHandler::class.java),
-                any(Instant::class.java),
-                any(Instant::class.java),
-            )
-        )
-            .thenReturn(
-                listOf(
-                    exampleStats + mapOf("country" to "xyz")
-                )
-            )
+
+        `when`(this.statsService.getStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant()))
+            .thenReturn(listOf(exampleStats + mapOf("country" to "xyz")))
 
         val GET = get("/stats/$hashtag/country")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
@@ -255,14 +218,9 @@ class StatsControllerMVCTests {
 
     @Test
     fun `most-used-hashtags should return list of hashtags`() {
-        `when`(
-            repo.getMostUsedHashtags(
-                any(Instant::class.java),
-                any(Instant::class.java),
-                anyInt()
-            )
 
-        ).thenReturn(listOf(mapOf("hashtag" to "testtag", "number_of_users" to UnsignedLong.valueOf(242))))
+        `when`(this.statsService.getMostUsedHashtags(anyInstant(), anyInstant(), anyInt()))
+            .thenReturn(listOf(mapOf("hashtag" to "testtag", "number_of_users" to UnsignedLong.valueOf(242))))
 
         val GET = get("/most-used-hashtags")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
@@ -278,14 +236,9 @@ class StatsControllerMVCTests {
 
     @Test
     fun `most-used-hashtags does not throw an error for out of timeline`() {
-        `when`(
-            repo.getMostUsedHashtags(
-                any(Instant::class.java),
-                any(Instant::class.java),
-                anyInt()
-            )
 
-        ).thenReturn(listOf())
+        `when`(this.statsService.getMostUsedHashtags(anyInstant(), anyInstant(), anyInt()))
+            .thenReturn(listOf())
 
         val GET = get("/most-used-hashtags")
             .queryParam("startdate", "2004-10-01T04:00:00Z")
@@ -300,7 +253,8 @@ class StatsControllerMVCTests {
 
     @Test
     fun `metadata should return max_timestamp and min_timestamp`() {
-        `when`(repo.getMetadata())
+
+        `when`(this.statsService.getMetadata())
             .thenReturn(mapOf("max_timestamp" to "2021-12-09T13:01:28"))
 
         this.mockMvc
@@ -310,5 +264,9 @@ class StatsControllerMVCTests {
             .andExpect(jsonPath("$.result.max_timestamp").value("2021-12-09T13:01:28"))
     }
 
+
     private fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
+
+    private fun anyInstant() = any(Instant::class.java)
+
 }

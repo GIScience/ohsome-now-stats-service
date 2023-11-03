@@ -4,8 +4,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.stats.models.*
-import org.heigit.ohsome.now.stats.utils.CountryHandler
-import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.heigit.ohsome.now.stats.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
@@ -21,7 +19,7 @@ import kotlin.system.measureTimeMillis
 class StatsController {
 
     @Autowired
-    lateinit var repo: StatsRepo
+    lateinit var statsService: StatsService
 
 
     @Suppress("LongParameterList")
@@ -53,7 +51,7 @@ class StatsController {
 
         val result: StatsResult
         val executionTime = measureTimeMillis {
-            result = buildStatsResult(getStatsForTimeSpan(hashtag, startDate, endDate, countries))
+            result = buildStatsResult(getStatsForTimeSpan(hashtag, startDate, endDate, countries!!))
         }
 
         return buildOhsomeFormat(result, executionTime, httpServletRequest)
@@ -121,12 +119,13 @@ class StatsController {
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>?
     ): OhsomeFormat<List<StatsIntervalResult>> {
+
         validateIntervalString(interval)
         lateinit var response: List<StatsIntervalResult>
-        val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
-            response = buildIntervalStatsResult(getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval, countries))
+            response = buildIntervalStatsResult(getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!))
         }
+
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
@@ -152,9 +151,8 @@ class StatsController {
     ): OhsomeFormat<List<CountryStatsResult>> {
 
         lateinit var response: List<CountryStatsResult>
-        val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
-            response = buildCountryStatsResult(getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate))
+            response = buildCountryStatsResult(getStatsForTimeSpanCountry(hashtag, startDate, endDate))
         }
 
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
@@ -204,29 +202,26 @@ class StatsController {
     }
 
 
-    private fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>?) =
-        this.repo.getStatsForTimeSpan(HashtagHandler(hashtag), startDate, endDate, CountryHandler(countries!!))
+    private fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
+        this.statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries)
 
 
     private fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) =
-        this.repo.getStatsForTimeSpanAggregate(HashtagHandler(hashtag), startDate, endDate)
+        this.statsService.getStatsForTimeSpanAggregate(hashtag, startDate, endDate)
 
 
-    private fun getStatsForTimeSpanInterval(
-        hashtagHandler: HashtagHandler, startDate: Instant?, endDate: Instant?,
-        interval: String, countries: List<String>?
-    ) =
-        this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval, CountryHandler(countries!!))
+    private fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant?, endDate: Instant?, interval: String, countries: List<String>) =
+        this.statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries)
 
 
-    private fun getStatsForTimeSpanCountry(hashtagHandler: HashtagHandler, startDate: Instant?, endDate: Instant?) =
-        this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
+    private fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) =
+        this.statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate)
 
 
     private fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) =
-        this.repo.getMostUsedHashtags(startDate, endDate, limit)
+        this.statsService.getMostUsedHashtags(startDate, endDate, limit)
 
-    private fun getMetadata() = this.repo.getMetadata()
+    private fun getMetadata() = this.statsService.getMetadata()
 
 
 
