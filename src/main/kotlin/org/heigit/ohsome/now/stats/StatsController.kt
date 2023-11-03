@@ -192,7 +192,7 @@ class StatsController {
 
         lateinit var response: MetadataResult
         val executionTime = measureTimeMillis {
-            response = buildMetadataResult(getMetadata())
+            response = getMetadata()
         }
 
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
@@ -220,7 +220,9 @@ class StatsController {
         this.statsService.getMostUsedHashtags(startDate, endDate, limit)
 
 
-    private fun getMetadata() = this.statsService.getMetadata()
+    private fun getMetadata() = this.statsService
+        .getMetadata()
+        .buildMetadataResult()
 
 
 

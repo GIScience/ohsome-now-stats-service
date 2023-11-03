@@ -124,11 +124,12 @@ data class HashtagResult(
 )
 
 
-fun buildMetadataResult(result: Map<String, Any>): MetadataResult =
+fun Map<String, Any>.buildMetadataResult(): MetadataResult =
     MetadataResult(
-        result["max_timestamp"].toString(),
-        result["min_timestamp"].toString()
+        this["max_timestamp"].toString(),
+        this["min_timestamp"].toString()
     )
+
 
 data class MetadataResult(
     val max_timestamp: String,
