@@ -23,6 +23,7 @@ class StatsController {
     @Autowired
     lateinit var repo: StatsRepo
 
+
     @Suppress("LongParameterList")
     @Operation(
         summary = "Returns live summary statistics for one hashtag",
@@ -49,19 +50,15 @@ class StatsController {
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>?,
     ): OhsomeFormat<StatsResult> {
+
         val result: StatsResult
         val executionTime = measureTimeMillis {
-            result = buildStatsResult(
-                repo.getStatsForTimeSpan(
-                    HashtagHandler(hashtag),
-                    startDate,
-                    endDate,
-                    CountryHandler(countries!!)
-                )
-            )
+            result = buildStatsResult(getStatsForTimeSpan(hashtag, startDate, endDate, countries))
         }
+
         return buildOhsomeFormat(result, executionTime, httpServletRequest)
     }
+
 
     @Suppress("LongMethod")
     @Operation(
@@ -84,22 +81,19 @@ class StatsController {
         @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?
     ): OhsomeFormat<Map<String, StatsResult>> {
+
         val results = mutableMapOf<String, StatsResult>()
         val executionTime = measureTimeMillis {
             for (hashtag in hashtags) {
                 results.putAll(
-                    buildMultipleStatsResult(
-                        repo.getStatsForTimeSpanAggregate(
-                            HashtagHandler(hashtag),
-                            startDate,
-                            endDate
-                        )
-                    )
+                    buildMultipleStatsResult(getStatsForTimeSpanAggregate(hashtag, startDate, endDate))
                 )
             }
         }
+
         return buildOhsomeFormat(results, executionTime, httpServletRequest)
     }
+
 
     @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval")
     @GetMapping("/stats/{hashtag}/interval", produces = ["application/json"])
@@ -131,10 +125,7 @@ class StatsController {
         lateinit var response: List<StatsIntervalResult>
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
-            response =
-                buildIntervalStatsResult(
-                    repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval, CountryHandler(countries!!))
-                )
+            response = buildIntervalStatsResult(getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval, countries))
         }
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
@@ -159,11 +150,13 @@ class StatsController {
         @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?
     ): OhsomeFormat<List<CountryStatsResult>> {
+
         lateinit var response: List<CountryStatsResult>
         val hashtagHandler = HashtagHandler(hashtag)
         val executionTime = measureTimeMillis {
-            response = buildCountryStatsResult(repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate))
+            response = buildCountryStatsResult(getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate))
         }
+
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
@@ -186,16 +179,12 @@ class StatsController {
         @RequestParam(name = "limit", required = false, defaultValue = "10")
         limit: Int?
     ): OhsomeFormat<List<HashtagResult>> {
+
         lateinit var response: List<HashtagResult>
         val executionTime = measureTimeMillis {
-            response = buildHashtagResult(
-                repo.getMostUsedHashtags(
-                    startDate,
-                    endDate,
-                    limit,
-                )
-            )
+            response = buildHashtagResult(getMostUsedHashtags(startDate, endDate, limit))
         }
+
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
@@ -205,11 +194,40 @@ class StatsController {
     fun metadata(
         httpServletRequest: HttpServletRequest
     ): OhsomeFormat<MetadataResult> {
+
         lateinit var response: MetadataResult
         val executionTime = measureTimeMillis {
-            val queryResult = repo.getMetadata()
-            response = buildMetadataResult(queryResult)
+            response = buildMetadataResult(getMetadata())
         }
+
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
+
+
+    private fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>?) =
+        this.repo.getStatsForTimeSpan(HashtagHandler(hashtag), startDate, endDate, CountryHandler(countries!!))
+
+
+    private fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) =
+        this.repo.getStatsForTimeSpanAggregate(HashtagHandler(hashtag), startDate, endDate)
+
+
+    private fun getStatsForTimeSpanInterval(
+        hashtagHandler: HashtagHandler, startDate: Instant?, endDate: Instant?,
+        interval: String, countries: List<String>?
+    ) =
+        this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval, CountryHandler(countries!!))
+
+
+    private fun getStatsForTimeSpanCountry(hashtagHandler: HashtagHandler, startDate: Instant?, endDate: Instant?) =
+        this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
+
+
+    private fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) =
+        this.repo.getMostUsedHashtags(startDate, endDate, limit)
+
+    private fun getMetadata() = this.repo.getMetadata()
+
+
+
 }
