@@ -77,7 +77,6 @@ class StatsController {
     ): OhsomeFormat<Map<String, StatsResult>> {
 
         val results: Map<String, StatsResult>
-
         val executionTime = measureTimeMillis {
             results = getStatsForTimeSpanAggregate(hashtags, startDate, endDate)
         }
@@ -92,7 +91,8 @@ class StatsController {
     fun statsInterval(
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
-        @PathVariable hashtag: String,
+        @PathVariable
+        hashtag: String,
 
         @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam(name = "startdate", required = false)
