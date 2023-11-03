@@ -65,7 +65,7 @@ class StatsController {
         httpServletRequest: HttpServletRequest,
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
-        hashtags: Array<String>,
+        hashtags: List<String>,
 
         @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam("startdate", required = false)
@@ -78,12 +78,7 @@ class StatsController {
         endDate: Instant?
     ): OhsomeFormat<Map<String, StatsResult>> {
 
-
-//        TODO: buildMultipleStatsResult in den service pushen
-//        TODO: buildMultipleStatsResult in den service pushen
-//        TODO: buildMultipleStatsResult in den service pushen
-//        TODO: buildMultipleStatsResult in den service pushen
-
+        //TODO: move map creation to service
         val results = mutableMapOf<String, StatsResult>()
         val executionTime = measureTimeMillis {
             for (hashtag in hashtags) {
