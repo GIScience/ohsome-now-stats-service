@@ -189,7 +189,7 @@ class StatsRepoIntegrationTests {
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
-    fun `getStatsForTimeSpanInterval fills data between to dates with zeros`() {
+    fun `getStatsForTimeSpanInterval fills data between two dates with zeros`() {
         val startDate = Instant.ofEpochSecond(1503644723)
         val endDate = Instant.ofEpochSecond(1640486233)
         val hashtagHandler = HashtagHandler("&gid")
