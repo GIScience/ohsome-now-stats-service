@@ -114,7 +114,8 @@ class StatsController {
     ): OhsomeFormat<List<StatsIntervalResult>> {
 
         validateIntervalString(interval)
-        lateinit var response: List<StatsIntervalResult>
+
+        val response: List<StatsIntervalResult>
         val executionTime = measureTimeMillis {
             response = getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!)
         }
@@ -141,7 +142,7 @@ class StatsController {
         endDate: Instant?
     ): OhsomeFormat<List<CountryStatsResult>> {
 
-        lateinit var response: List<CountryStatsResult>
+        val response: List<CountryStatsResult>
         val executionTime = measureTimeMillis {
             response = getStatsForTimeSpanCountry(hashtag, startDate, endDate)
         }
@@ -169,7 +170,7 @@ class StatsController {
         limit: Int?
     ): OhsomeFormat<List<HashtagResult>> {
 
-        lateinit var response: List<HashtagResult>
+        val response: List<HashtagResult>
         val executionTime = measureTimeMillis {
             response = getMostUsedHashtags(startDate, endDate, limit)
         }
@@ -184,7 +185,7 @@ class StatsController {
         httpServletRequest: HttpServletRequest
     ): OhsomeFormat<MetadataResult> {
 
-        lateinit var response: MetadataResult
+        val response: MetadataResult
         val executionTime = measureTimeMillis {
             response = getMetadata()
         }
