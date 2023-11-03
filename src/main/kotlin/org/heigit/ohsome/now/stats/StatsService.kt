@@ -41,7 +41,9 @@ class StatsService {
         .buildHashtagResult()
 
 
-    fun getMetadata() = this.repo.getMetadata()
+    fun getMetadata() = this.repo
+        .getMetadata()
+        .buildMetadataResult()
 
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)
