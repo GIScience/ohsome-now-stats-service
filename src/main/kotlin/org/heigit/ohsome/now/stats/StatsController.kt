@@ -129,9 +129,7 @@ class StatsController {
     }
 
 
-    @Operation(
-        summary = "Returns live summary statistics for one hashtag grouped by country"
-    )
+    @Operation(summary = "Returns live summary statistics for one hashtag grouped by country")
     @GetMapping("/stats/{hashtag}/country", produces = ["application/json"])
     fun statsCountry(
         httpServletRequest: HttpServletRequest,
@@ -151,7 +149,7 @@ class StatsController {
 
         lateinit var response: List<CountryStatsResult>
         val executionTime = measureTimeMillis {
-            response = buildCountryStatsResult(getStatsForTimeSpanCountry(hashtag, startDate, endDate))
+            response = getStatsForTimeSpanCountry(hashtag, startDate, endDate)
         }
 
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
@@ -216,6 +214,7 @@ class StatsController {
 
     private fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) =
         this.statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate)
+            .buildCountryStatsResult()
 
 
     private fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) =

@@ -51,10 +51,11 @@ fun statsIntervalResult(data: Map<String, Any>) = StatsIntervalResult(
     data["enddate"].toString(),
 )
 
+//TODO: cleanup
 @Suppress("LongMethod")
-fun buildCountryStatsResult(result: List<Map<String, Any>>): List<CountryStatsResult> {
+fun List<Map<String, Any>>.buildCountryStatsResult(): List<CountryStatsResult> {
     val output = mutableListOf<CountryStatsResult>()
-    result.forEach {
+    this.forEach {
         output.add(
             CountryStatsResult(
                 (it["changesets"] as UnsignedLong).toLong(),
