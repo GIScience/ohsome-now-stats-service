@@ -23,9 +23,7 @@ class StatsController {
 
 
     @Suppress("LongParameterList")
-    @Operation(
-        summary = "Returns live summary statistics for one hashtag",
-    )
+    @Operation(summary = "Returns live summary statistics for one hashtag")
     @GetMapping("/stats/{hashtag}", produces = ["application/json"])
     fun stats(
         httpServletRequest: HttpServletRequest,
@@ -51,7 +49,7 @@ class StatsController {
 
         val result: StatsResult
         val executionTime = measureTimeMillis {
-            result = buildStatsResult(getStatsForTimeSpan(hashtag, startDate, endDate, countries!!))
+            result = getStatsForTimeSpan(hashtag, startDate, endDate, countries!!)
         }
 
         return buildOhsomeFormat(result, executionTime, httpServletRequest)
@@ -60,7 +58,7 @@ class StatsController {
 
     @Suppress("LongMethod")
     @Operation(
-        summary = "Returns live summary statistics for multiple hashtags. Wildcard-hashtags are disaggregated.",
+        summary = "Returns live summary statistics for multiple hashtags. Wildcard-hashtags are disaggregated."
     )
     @GetMapping("/stats/hashtags/{hashtags}", produces = ["application/json"])
     fun statsHashtags(

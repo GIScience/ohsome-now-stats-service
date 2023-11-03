@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.stats
 
+import org.heigit.ohsome.now.stats.models.toStatsResult
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,8 +15,9 @@ class StatsService {
     lateinit var repo: StatsRepo
 
 
-    fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
-        this.repo.getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
+    fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) = this.repo
+        .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
+        .toStatsResult()
 
 
     fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) =

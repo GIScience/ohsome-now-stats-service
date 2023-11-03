@@ -1,6 +1,7 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
+import org.heigit.ohsome.now.stats.models.toStatsResult
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
@@ -29,7 +30,7 @@ class StatsControllerMVCTests {
     private lateinit var mockMvc: MockMvc
 
 
-    private var exampleStats = mapOf(
+    private var exampleStatsData = mapOf(
         "users" to UnsignedLong.valueOf(1001L),
         "roads" to 43534.5,
         "buildings" to 123L,
@@ -38,8 +39,12 @@ class StatsControllerMVCTests {
         "changesets" to UnsignedLong.valueOf(2),
     )
 
+    private var exampleMultipleStatsData = exampleStatsData + mapOf("hashtag" to hashtag)
 
-    private var exampleMultipleStats = exampleStats + mapOf("hashtag" to hashtag)
+    private var exampleStats = exampleStatsData.toStatsResult()
+    private var exampleMultipleStats = exampleMultipleStatsData.toStatsResult()
+
+
 
     private var exampleIntervalStats = mapOf(
         "users" to UnsignedLong.valueOf(1001L),
@@ -87,7 +92,7 @@ class StatsControllerMVCTests {
     @Test
     fun `stats_hashtags can be served with multiple hashtags`() {
         `when`(this.statsService.getStatsForTimeSpanAggregate(anyString(), any(), any()))
-            .thenReturn(listOf(exampleMultipleStats))
+            .thenReturn(listOf(exampleMultipleStatsData))
 
         this.mockMvc
             .perform(get("/stats/hashtags/$hashtag,hotosm*"))
@@ -192,7 +197,7 @@ class StatsControllerMVCTests {
     fun `stats per country can be served with explicit start and end date`() {
 
         `when`(this.statsService.getStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant()))
-            .thenReturn(listOf(exampleStats + mapOf("country" to "xyz")))
+            .thenReturn(listOf(exampleStatsData + mapOf("country" to "xyz")))
 
         val GET = get("/stats/$hashtag/country")
             .queryParam("startdate", "2017-10-01T04:00:00Z")

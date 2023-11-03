@@ -2,13 +2,14 @@ package org.heigit.ohsome.now.stats.models
 
 import com.clickhouse.data.value.UnsignedLong
 
-fun buildStatsResult(result: Map<String, Any>) = StatsResult(
-    (result["changesets"] as UnsignedLong).toLong(),
-    (result["users"] as UnsignedLong).toLong(),
-    result["roads"] as Double,
-    result["buildings"] as Long,
-    (result["edits"] as UnsignedLong).toLong(),
-    result["latest"].toString(),
+
+fun Map<String, Any>.toStatsResult() = StatsResult(
+    (this["changesets"] as UnsignedLong).toLong(),
+    (this["users"] as UnsignedLong).toLong(),
+    this["roads"] as Double,
+    this["buildings"] as Long,
+    (this["edits"] as UnsignedLong).toLong(),
+    this["latest"].toString(),
 )
 
 fun buildMultipleStatsResult(result: List<Map<String, Any>>): Map<String, StatsResult> {
