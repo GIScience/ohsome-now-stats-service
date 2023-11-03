@@ -22,6 +22,7 @@ class StatsService {
         this.repo.getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
 
 
+    @Suppress("LongParameterList")
     fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant?, endDate: Instant?, interval: String, countries: List<String>) =
         this.repo.getStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries))
 

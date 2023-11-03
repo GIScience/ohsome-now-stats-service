@@ -13,7 +13,7 @@ import java.time.Instant
 
 import kotlin.system.measureTimeMillis
 
-@Suppress("largeClass")
+
 @CrossOrigin
 @RestController
 class StatsController {
@@ -210,6 +210,7 @@ class StatsController {
         this.statsService.getStatsForTimeSpanAggregate(hashtag, startDate, endDate)
 
 
+    @Suppress("LongParameterList")
     private fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant?, endDate: Instant?, interval: String, countries: List<String>) =
         this.statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries)
 

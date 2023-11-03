@@ -217,6 +217,7 @@ class StatsRepo {
      * @param interval The interval for grouping the statistics.
      * @return A list of maps containing the statistics for each interval.
      */
+    @Suppress("LongParameterList")
     fun getStatsForTimeSpanInterval(
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
