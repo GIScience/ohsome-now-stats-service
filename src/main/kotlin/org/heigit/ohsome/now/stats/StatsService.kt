@@ -15,19 +15,19 @@ class StatsService {
 
 
     fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
-        this.repo.getStatsForTimeSpan(HashtagHandler(hashtag), startDate, endDate, CountryHandler(countries))
+        this.repo.getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
 
 
     fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) =
-        this.repo.getStatsForTimeSpanAggregate(HashtagHandler(hashtag), startDate, endDate)
+        this.repo.getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
 
 
     fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant?, endDate: Instant?, interval: String, countries: List<String>) =
-        this.repo.getStatsForTimeSpanInterval(HashtagHandler(hashtag), startDate, endDate, interval, CountryHandler(countries))
+        this.repo.getStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries))
 
 
     fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) =
-        this.repo.getStatsForTimeSpanCountry(HashtagHandler(hashtag), startDate, endDate)
+        this.repo.getStatsForTimeSpanCountry(handler(hashtag), startDate, endDate)
 
 
     fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) =
@@ -36,5 +36,8 @@ class StatsService {
 
     fun getMetadata() = this.repo.getMetadata()
 
+
+    private fun handler(hashtag: String) = HashtagHandler(hashtag)
+    private fun handler(countries: List<String>) = CountryHandler(countries)
 
 }
