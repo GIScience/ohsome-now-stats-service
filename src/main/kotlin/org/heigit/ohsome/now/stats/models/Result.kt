@@ -103,9 +103,9 @@ class CountryStatsResult(
 ) : StatsResult(changesets, users, roads, buildings, edits, latest)
 
 
-fun buildHashtagResult(result: List<Map<String, Any>>): List<HashtagResult> {
+fun List<Map<String, Any>>.buildHashtagResult(): List<HashtagResult> {
     val output = mutableListOf<HashtagResult>()
-    result.forEach {
+    this.forEach {
         output.add(
             HashtagResult(
                 it["hashtag"].toString(),
