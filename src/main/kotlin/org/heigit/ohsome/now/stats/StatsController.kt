@@ -214,7 +214,6 @@ class StatsController {
 
     private fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) =
         this.statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate)
-            .buildCountryStatsResult()
 
 
     private fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) =

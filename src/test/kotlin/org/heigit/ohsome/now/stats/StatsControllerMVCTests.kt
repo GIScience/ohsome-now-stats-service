@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.stats.models.StatsResult
+import org.heigit.ohsome.now.stats.models.countryStatsResult
 import org.heigit.ohsome.now.stats.models.statsIntervalResult
 import org.heigit.ohsome.now.stats.models.toStatsResult
 import org.junit.jupiter.api.Test
@@ -199,8 +200,11 @@ class StatsControllerMVCTests {
     @Test
     fun `stats per country can be served with explicit start and end date`() {
 
+        val map = exampleStatsData + mapOf("country" to "xyz")
+
+
         `when`(this.statsService.getStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant()))
-            .thenReturn(listOf(exampleStatsData + mapOf("country" to "xyz")))
+            .thenReturn(listOf(countryStatsResult(map)))
 
         val GET = get("/stats/$hashtag/country")
             .queryParam("startdate", "2017-10-01T04:00:00Z")

@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.stats
 
+import org.heigit.ohsome.now.stats.models.buildCountryStatsResult
 import org.heigit.ohsome.now.stats.models.buildIntervalStatsResult
 import org.heigit.ohsome.now.stats.models.toMultipleStatsResult
 import org.heigit.ohsome.now.stats.models.toStatsResult
@@ -33,8 +34,9 @@ class StatsService {
         .buildIntervalStatsResult()
 
 
-    fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) =
-        this.repo.getStatsForTimeSpanCountry(handler(hashtag), startDate, endDate)
+    fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
+        .getStatsForTimeSpanCountry(handler(hashtag), startDate, endDate)
+        .buildCountryStatsResult()
 
 
     fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) =
