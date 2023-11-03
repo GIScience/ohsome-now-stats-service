@@ -61,6 +61,7 @@ class StatsController {
     @GetMapping("/stats/hashtags/{hashtags}", produces = ["application/json"])
     fun statsHashtags(
         httpServletRequest: HttpServletRequest,
+
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
         hashtags: List<String>,
@@ -90,6 +91,7 @@ class StatsController {
     @Suppress("LongParameterList")
     fun statsInterval(
         httpServletRequest: HttpServletRequest,
+
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
         hashtag: String,
@@ -128,8 +130,10 @@ class StatsController {
     @GetMapping("/stats/{hashtag}/country", produces = ["application/json"])
     fun statsCountry(
         httpServletRequest: HttpServletRequest,
+
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
-        @PathVariable hashtag: String,
+        @PathVariable
+        hashtag: String,
 
         @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
         @RequestParam(name = "startdate", required = false)
@@ -155,6 +159,7 @@ class StatsController {
     @GetMapping("/most-used-hashtags", produces = ["application/json"])
     fun mostUsedHashtags(
         httpServletRequest: HttpServletRequest,
+
         @Parameter(description = "the start date for the query in ISO format (e.g. 2014-01-01T00:00:00Z). Default: start of data")
         @RequestParam(name = "startdate", required = false)
         @DateTimeFormat(iso = ISO.DATE_TIME)
@@ -181,9 +186,7 @@ class StatsController {
 
     @Operation(summary = "Returns maximum and minimum timestamps of the database")
     @GetMapping("/metadata", produces = ["application/json"])
-    fun metadata(
-        httpServletRequest: HttpServletRequest
-    ): OhsomeFormat<MetadataResult> {
+    fun metadata(httpServletRequest: HttpServletRequest): OhsomeFormat<MetadataResult> {
 
         val response: MetadataResult
         val executionTime = measureTimeMillis {
@@ -216,7 +219,6 @@ class StatsController {
 
 
     private fun getMetadata() = this.statsService.getMetadata()
-
 
 
 
