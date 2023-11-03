@@ -80,7 +80,7 @@ class StatsControllerMVCTests {
 
         this.mockMvc
             .perform(
-                get("/stats/*?countries=UGA,DE")
+                get("/stats/*").queryParam("countries", "UGA,DE")
             )
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
