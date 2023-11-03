@@ -1,15 +1,12 @@
 package org.heigit.ohsome.now.stats.models
 
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.validation.constraints.NotNull
 import org.heigit.ohsome.now.stats.utils.makeUrl
 import org.springframework.web.servlet.HandlerMapping
-import org.w3c.dom.Attr
-import java.sql.Time
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-fun <T> build_ohsome_format(
+fun <T> buildOhsomeFormat(
     results: T,
     executionTime: Long,
     httpServletRequest: HttpServletRequest,

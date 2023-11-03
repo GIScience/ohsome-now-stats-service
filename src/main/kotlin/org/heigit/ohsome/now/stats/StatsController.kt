@@ -59,7 +59,7 @@ class StatsController {
                 )
             )
         }
-        return build_ohsome_format(result, executionTime, httpServletRequest)
+        return buildOhsomeFormat(result, executionTime, httpServletRequest)
     }
 
     @Suppress("LongMethod")
@@ -97,7 +97,7 @@ class StatsController {
                 )
             }
         }
-        return build_ohsome_format(results, executionTime, httpServletRequest)
+        return buildOhsomeFormat(results, executionTime, httpServletRequest)
     }
 
     @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval")
@@ -129,7 +129,7 @@ class StatsController {
             response =
                 buildIntervalStatsResult(repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, interval))
         }
-        return build_ohsome_format(response, executionTime, httpServletRequest)
+        return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
 
@@ -157,7 +157,7 @@ class StatsController {
         val executionTime = measureTimeMillis {
             response = buildCountryStatsResult(repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate))
         }
-        return build_ohsome_format(response, executionTime, httpServletRequest)
+        return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
 
@@ -189,7 +189,7 @@ class StatsController {
                 )
             )
         }
-        return build_ohsome_format(response, executionTime, httpServletRequest)
+        return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 
 
@@ -203,6 +203,6 @@ class StatsController {
             val queryResult = repo.getMetadata()
             response = buildMetadataResult(queryResult)
         }
-        return build_ohsome_format(response, executionTime, httpServletRequest)
+        return buildOhsomeFormat(response, executionTime, httpServletRequest)
     }
 }
