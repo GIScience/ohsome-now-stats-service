@@ -1,9 +1,6 @@
 package org.heigit.ohsome.now.stats
 
-import org.heigit.ohsome.now.stats.models.buildCountryStatsResult
-import org.heigit.ohsome.now.stats.models.buildIntervalStatsResult
-import org.heigit.ohsome.now.stats.models.toMultipleStatsResult
-import org.heigit.ohsome.now.stats.models.toStatsResult
+import org.heigit.ohsome.now.stats.models.*
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,8 +36,9 @@ class StatsService {
         .buildCountryStatsResult()
 
 
-    fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) =
-        this.repo.getMostUsedHashtags(startDate, endDate, limit)
+    fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) = this.repo
+        .getMostUsedHashtags(startDate, endDate, limit)
+        .buildHashtagResult()
 
 
     fun getMetadata() = this.repo.getMetadata()

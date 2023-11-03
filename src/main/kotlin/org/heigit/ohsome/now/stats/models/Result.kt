@@ -60,14 +60,14 @@ fun List<Map<String, Any>>.buildCountryStatsResult(): List<CountryStatsResult> {
     return output
 }
 
-fun countryStatsResult(it: Map<String, Any>) = CountryStatsResult(
-    (it["changesets"] as UnsignedLong).toLong(),
-    (it["users"] as UnsignedLong).toLong(),
-    it["roads"] as Double,
-    it["buildings"] as Long,
-    (it["edits"] as UnsignedLong).toLong(),
-    it["latest"].toString(),
-    it["country"].toString(),
+fun countryStatsResult(data: Map<String, Any>) = CountryStatsResult(
+    (data["changesets"] as UnsignedLong).toLong(),
+    (data["users"] as UnsignedLong).toLong(),
+    data["roads"] as Double,
+    data["buildings"] as Long,
+    (data["edits"] as UnsignedLong).toLong(),
+    data["latest"].toString(),
+    data["country"].toString(),
 )
 
 @Suppress("LongParameterList")
@@ -107,14 +107,16 @@ fun List<Map<String, Any>>.buildHashtagResult(): List<HashtagResult> {
     val output = mutableListOf<HashtagResult>()
     this.forEach {
         output.add(
-            HashtagResult(
-                it["hashtag"].toString(),
-                (it["number_of_users"] as UnsignedLong).toLong()
-            )
+            hashtagResult(it)
         )
     }
     return output
 }
+
+fun hashtagResult(data: Map<String, Any>) = HashtagResult(
+    data["hashtag"].toString(),
+    (data["number_of_users"] as UnsignedLong).toLong()
+)
 
 data class HashtagResult(
     val hashtag: String,

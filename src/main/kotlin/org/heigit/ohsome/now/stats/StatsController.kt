@@ -218,7 +218,7 @@ class StatsController {
 
     private fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) =
         this.statsService.getMostUsedHashtags(startDate, endDate, limit)
-            .buildHashtagResult()
+
 
     private fun getMetadata() = this.statsService.getMetadata()
 

@@ -1,10 +1,7 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
-import org.heigit.ohsome.now.stats.models.StatsResult
-import org.heigit.ohsome.now.stats.models.countryStatsResult
-import org.heigit.ohsome.now.stats.models.statsIntervalResult
-import org.heigit.ohsome.now.stats.models.toStatsResult
+import org.heigit.ohsome.now.stats.models.*
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
@@ -231,8 +228,11 @@ class StatsControllerMVCTests {
     @Test
     fun `most-used-hashtags should return list of hashtags`() {
 
+        val data = hashtagResult(mapOf("hashtag" to "testtag", "number_of_users" to UnsignedLong.valueOf(242L)))
+
+
         `when`(this.statsService.getMostUsedHashtags(anyInstant(), anyInstant(), anyInt()))
-            .thenReturn(listOf(mapOf("hashtag" to "testtag", "number_of_users" to UnsignedLong.valueOf(242))))
+            .thenReturn(listOf(data))
 
         val GET = get("/most-used-hashtags")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
