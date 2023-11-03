@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.stats
 
+import org.heigit.ohsome.now.stats.models.buildIntervalStatsResult
 import org.heigit.ohsome.now.stats.models.toMultipleStatsResult
 import org.heigit.ohsome.now.stats.models.toStatsResult
 import org.heigit.ohsome.now.stats.utils.CountryHandler
@@ -27,8 +28,9 @@ class StatsService {
 
 
     @Suppress("LongParameterList")
-    fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant?, endDate: Instant?, interval: String, countries: List<String>) =
-        this.repo.getStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries))
+    fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant?, endDate: Instant?, interval: String, countries: List<String>) = this.repo
+        .getStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries))
+        .buildIntervalStatsResult()
 
 
     fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) =

@@ -29,24 +29,27 @@ fun List<Map<String, Any>>.toMultipleStatsResult(): Map<String, StatsResult> {
     return output
 }
 
-@Suppress("LongMethod")
-fun buildIntervalStatsResult(result: List<Map<String, Any>>): List<StatsIntervalResult> {
+
+//TODO: cleanup
+fun List<Map<String, Any>>.buildIntervalStatsResult(): List<StatsIntervalResult> {
     val output = mutableListOf<StatsIntervalResult>()
-    result.forEach { it ->
-        output.add(
-            StatsIntervalResult(
-                (it["changesets"] as UnsignedLong).toLong(),
-                (it["users"] as UnsignedLong).toLong(),
-                it["roads"] as Double,
-                it["buildings"] as Long,
-                (it["edits"] as UnsignedLong).toLong(),
-                it["startdate"].toString(),
-                it["enddate"].toString(),
-            )
-        )
+    this.forEach {
+        output.add(statsIntervalResult(it))
     }
+
     return output
 }
+
+
+fun statsIntervalResult(data: Map<String, Any>) = StatsIntervalResult(
+    (data["changesets"] as UnsignedLong).toLong(),
+    (data["users"] as UnsignedLong).toLong(),
+    data["roads"] as Double,
+    data["buildings"] as Long,
+    (data["edits"] as UnsignedLong).toLong(),
+    data["startdate"].toString(),
+    data["enddate"].toString(),
+)
 
 @Suppress("LongMethod")
 fun buildCountryStatsResult(result: List<Map<String, Any>>): List<CountryStatsResult> {

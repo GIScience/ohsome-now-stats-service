@@ -1,6 +1,8 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
+import org.heigit.ohsome.now.stats.models.StatsResult
+import org.heigit.ohsome.now.stats.models.statsIntervalResult
 import org.heigit.ohsome.now.stats.models.toStatsResult
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -30,7 +32,7 @@ class StatsControllerMVCTests {
     private lateinit var mockMvc: MockMvc
 
 
-    private var exampleStatsData = mapOf(
+    private var exampleStatsData: Map<String, Any> = mapOf(
         "users" to UnsignedLong.valueOf(1001L),
         "roads" to 43534.5,
         "buildings" to 123L,
@@ -39,14 +41,13 @@ class StatsControllerMVCTests {
         "changesets" to UnsignedLong.valueOf(2),
     )
 
-    private var exampleMultipleStatsData = exampleStatsData + mapOf("hashtag" to hashtag)
+    private var exampleMultipleStatsData: Map<String, Any> = exampleStatsData + mapOf("hashtag" to hashtag)
 
-    private var exampleStats = exampleStatsData.toStatsResult()
-    private var exampleMultipleStats = exampleMultipleStatsData.toStatsResult()
+    private var exampleStats: StatsResult = exampleStatsData.toStatsResult()
+    private var exampleMultipleStats: StatsResult = exampleMultipleStatsData.toStatsResult()
 
 
-
-    private var exampleIntervalStats = mapOf(
+    private var exampleIntervalStatsData = mapOf(
         "users" to UnsignedLong.valueOf(1001L),
         "roads" to 43534.5,
         "buildings" to 123L,
@@ -55,6 +56,8 @@ class StatsControllerMVCTests {
         "endDate" to "20.05.2067",
         "changesets" to UnsignedLong.valueOf(2)
     )
+
+    private var exampleIntervalStats = statsIntervalResult(exampleIntervalStatsData)
 
 
     @Test

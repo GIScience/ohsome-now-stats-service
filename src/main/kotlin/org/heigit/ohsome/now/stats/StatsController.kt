@@ -122,7 +122,7 @@ class StatsController {
         validateIntervalString(interval)
         lateinit var response: List<StatsIntervalResult>
         val executionTime = measureTimeMillis {
-            response = buildIntervalStatsResult(getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!))
+            response = getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!)
         }
 
         return buildOhsomeFormat(response, executionTime, httpServletRequest)
