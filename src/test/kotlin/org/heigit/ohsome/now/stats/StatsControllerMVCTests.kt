@@ -106,7 +106,7 @@ class StatsControllerMVCTests {
 
 
     @Test
-    fun `stats per interval can be served with explicit start and end dates`() {
+    fun `stats per interval can be served with explicit start and end dates and without countries`() {
         `when`(
             repo.getStatsForTimeSpanInterval(
                 any(HashtagHandler::class.java),

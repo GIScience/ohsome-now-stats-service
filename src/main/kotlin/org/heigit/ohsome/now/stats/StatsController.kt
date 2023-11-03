@@ -30,6 +30,7 @@ class StatsController {
     @GetMapping("/stats/{hashtag}", produces = ["application/json"])
     fun stats(
         httpServletRequest: HttpServletRequest,
+
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
         hashtag: String,
@@ -120,7 +121,11 @@ class StatsController {
 
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
-        interval: String
+        interval: String,
+
+        @Parameter(description = "A comma separated list of countries, can also only be one country")
+        @RequestParam("countries", required = false, defaultValue = "")
+        countries: List<String>?
     ): OhsomeFormat<List<StatsIntervalResult>> {
         validateIntervalString(interval)
         lateinit var response: List<StatsIntervalResult>
