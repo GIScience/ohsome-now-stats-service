@@ -59,9 +59,10 @@ class StatsRepo {
         GROUP BY hashtag;
         """.trimIndent()
 
+
     @Suppress("LongMethod")
     //language=sql
-    private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler) = """
+    private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
     SELECT
         count(distinct changeset_id) as changesets,
         count(distinct user_id) as users,
@@ -75,6 +76,7 @@ class StatsRepo {
         ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, :hashtag)
         AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
         AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
+        ${countryHandler.optionalFilterSQL}
     GROUP BY
         startdate
     ORDER BY startdate ASC
@@ -226,8 +228,7 @@ class StatsRepo {
 
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-
-                getStatsFromTimeSpanInterval(hashtagHandler),
+                getStatsFromTimeSpanInterval(hashtagHandler, countryHandler),
             ).bind("interval", getGroupbyInterval(interval))
                 .bind("startdate", startDate ?: EPOCH)
                 .bind("enddate", endDate ?: now())

@@ -67,6 +67,7 @@ class StatsRepoIntegrationTests {
         assertEquals(expected.toString(), result.toString())
     }
 
+
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
     fun `getStatsForTimeSpan should return all data when using no time span and list of 2 countries`() {
@@ -175,7 +176,7 @@ class StatsRepoIntegrationTests {
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
-    fun `getStatsForTimeSpanInterval returns partial data in time span for start and end date with hashtag aggregated by month`() {
+    fun `getStatsForTimeSpanInterval returns partial data in time span for start and end date with hashtag aggregated by month without countries`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&group")
@@ -184,6 +185,24 @@ class StatsRepoIntegrationTests {
         assertEquals(84, result.size)
         assertEquals(7, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
+        assertEquals("1", result[83]["users"].toString())
+        assertEquals("7", result[83]["edits"].toString())
+    }
+
+
+    @Test
+    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    fun `getStatsForTimeSpanInterval returns partial data in time span for start and end date with hashtag aggregated by month with 1 country`() {
+        val startDate = Instant.ofEpochSecond(1420991470)
+        val endDate = Instant.ofEpochSecond(1639054890)
+        val hashtagHandler = HashtagHandler("&uganda")
+        val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("XYZ")))
+        println(result)
+        assertEquals(83, result.size)
+        assertEquals(7, result[0].size)
+        assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
+        assertEquals("1", result[35]["users"].toString())
+        assertEquals("1", result[35]["changesets"].toString())
     }
 
 
