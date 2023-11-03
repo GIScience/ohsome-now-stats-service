@@ -57,9 +57,7 @@ class StatsController {
 
 
     @Suppress("LongMethod")
-    @Operation(
-        summary = "Returns live summary statistics for multiple hashtags. Wildcard-hashtags are disaggregated."
-    )
+    @Operation(summary = "Returns live summary statistics for multiple hashtags. Wildcard-hashtags are disaggregated.")
     @GetMapping("/stats/hashtags/{hashtags}", produces = ["application/json"])
     fun statsHashtags(
         httpServletRequest: HttpServletRequest,
@@ -78,14 +76,10 @@ class StatsController {
         endDate: Instant?
     ): OhsomeFormat<Map<String, StatsResult>> {
 
-        //TODO: move map creation to service
-        val results = mutableMapOf<String, StatsResult>()
+        val results: Map<String, StatsResult>
+
         val executionTime = measureTimeMillis {
-            for (hashtag in hashtags) {
-                results.putAll(
-                    getStatsForTimeSpanAggregate(hashtag, startDate, endDate)
-                )
-            }
+            results = getStatsForTimeSpanAggregate(hashtags, startDate, endDate)
         }
 
         return buildOhsomeFormat(results, executionTime, httpServletRequest)
@@ -203,8 +197,8 @@ class StatsController {
         this.statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries)
 
 
-    private fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) =
-        this.statsService.getStatsForTimeSpanAggregate(hashtag, startDate, endDate)
+    private fun getStatsForTimeSpanAggregate(hashtags: List<String>, startDate: Instant?, endDate: Instant?) =
+        this.statsService.getStatsForTimeSpanAggregate(hashtags, startDate, endDate)
 
 
     @Suppress("LongParameterList")

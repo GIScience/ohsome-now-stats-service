@@ -20,7 +20,20 @@ class StatsService {
         .toStatsResult()
 
 
-    fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
+    //TODO: improve
+    fun getStatsForTimeSpanAggregate(hashtags: List<String>, startDate: Instant?, endDate: Instant?): Map<String, StatsResult> {
+
+        val map: MutableMap<String, StatsResult> = mutableMapOf()
+        for (hashtag in hashtags) {
+            map.putAll(
+                getStatsForTimeSpanAggregate(hashtag, startDate, endDate)
+            )
+        }
+
+        return map
+    }
+
+    private fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
         .getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
         .toMultipleStatsResult()
 
