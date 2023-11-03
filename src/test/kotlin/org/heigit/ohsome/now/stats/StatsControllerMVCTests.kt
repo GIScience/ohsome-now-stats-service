@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.Instant
 
@@ -126,6 +127,7 @@ class StatsControllerMVCTests {
             .queryParam("interval", "P1M")
 
         this.mockMvc.perform(GET)
+            .andDo(print())
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.query.hashtag").value(hashtag))
@@ -135,7 +137,55 @@ class StatsControllerMVCTests {
                 jsonPath("$.metadata.requestUrl")
                     .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M")
             )
+            .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
+            .andExpect(jsonPath("$.result.[0].changesets").value(2))
+            .andExpect(jsonPath("$.result.[0].users").value(1001))
+            .andExpect(jsonPath("$.result.[0].roads").value(43534.5))
+            .andExpect(jsonPath("$.result.[0].buildings").value(123))
+            .andExpect(jsonPath("$.result.[0].edits").value(213124))
     }
+
+
+    @Test
+    fun `stats per interval can be served with explicit start and end dates and with countries`() {
+        `when`(
+            repo.getStatsForTimeSpanInterval(
+                any(HashtagHandler::class.java),
+                any(Instant::class.java),
+                any(Instant::class.java),
+                anyString()
+            )
+        )
+            .thenReturn(
+                listOf(
+                    exampleIntervalStats
+                )
+            )
+        val GET = get("/stats/$hashtag/interval")
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+            .queryParam("interval", "P1M")
+            .queryParam("countries", "UGA,DE")
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.query.hashtag").value(hashtag))
+            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+            .andExpect(
+                jsonPath("$.metadata.requestUrl")
+                    .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M&countries=UGA,DE")
+            )
+            .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
+            .andExpect(jsonPath("$.result.[0].changesets").value(2))
+            .andExpect(jsonPath("$.result.[0].users").value(1001))
+            .andExpect(jsonPath("$.result.[0].roads").value(43534.5))
+            .andExpect(jsonPath("$.result.[0].buildings").value(123))
+            .andExpect(jsonPath("$.result.[0].edits").value(213124))
+
+    }
+
 
     @Test
     fun `stats per interval throws error for invalid interval string`() {
