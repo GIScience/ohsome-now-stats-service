@@ -46,7 +46,7 @@ class StatsController {
     ): OhsomeFormat<StatsResult> {
 
         val result = measure {
-            getStatsForTimeSpan(hashtag, startDate, endDate, countries!!)
+            statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries!!)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
@@ -75,7 +75,7 @@ class StatsController {
     ): OhsomeFormat<Map<String, StatsResult>> {
 
         val results = measure {
-            getStatsForTimeSpanAggregate(hashtags, startDate, endDate)
+            statsService.getStatsForTimeSpanAggregate(hashtags, startDate, endDate)
         }
 
         return buildOhsomeFormat(results, httpServletRequest)
@@ -114,7 +114,7 @@ class StatsController {
         validateIntervalString(interval)
 
         val response = measure {
-            getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!)
+            statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!)
         }
 
         return buildOhsomeFormat(response, httpServletRequest)
@@ -142,7 +142,7 @@ class StatsController {
     ): OhsomeFormat<List<CountryStatsResult>> {
 
         val response = measure {
-            getStatsForTimeSpanCountry(hashtag, startDate, endDate)
+            statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate)
         }
 
         return buildOhsomeFormat(response, httpServletRequest)
@@ -170,7 +170,7 @@ class StatsController {
     ): OhsomeFormat<List<HashtagResult>> {
 
         val response = measure {
-            getMostUsedHashtags(startDate, endDate, limit)
+            statsService.getMostUsedHashtags(startDate, endDate, limit)
         }
 
         return buildOhsomeFormat(response, httpServletRequest)
@@ -182,36 +182,11 @@ class StatsController {
     fun metadata(httpServletRequest: HttpServletRequest): OhsomeFormat<MetadataResult> {
 
         val response = measure {
-            getMetadata()
+            statsService.getMetadata()
         }
 
         return buildOhsomeFormat(response, httpServletRequest)
     }
-
-
-    private fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
-        this.statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries)
-
-
-    private fun getStatsForTimeSpanAggregate(hashtags: List<String>, startDate: Instant?, endDate: Instant?) =
-        this.statsService.getStatsForTimeSpanAggregate(hashtags, startDate, endDate)
-
-
-    @Suppress("LongParameterList")
-    private fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant?, endDate: Instant?, interval: String, countries: List<String>) =
-        this.statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries)
-
-
-    private fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) =
-        this.statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate)
-
-
-    private fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) =
-        this.statsService.getMostUsedHashtags(startDate, endDate, limit)
-
-
-    private fun getMetadata() = this.statsService.getMetadata()
-
 
 
 }
