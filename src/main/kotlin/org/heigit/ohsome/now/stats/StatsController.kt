@@ -74,11 +74,11 @@ class StatsController {
         endDate: Instant?
     ): OhsomeFormat<Map<String, StatsResult>> {
 
-        val results = measure {
+        val result = measure {
             statsService.getStatsForTimeSpanAggregate(hashtags, startDate, endDate)
         }
 
-        return buildOhsomeFormat(results, httpServletRequest)
+        return buildOhsomeFormat(result, httpServletRequest)
     }
 
 
@@ -113,11 +113,11 @@ class StatsController {
 
         validateIntervalString(interval)
 
-        val response = measure {
+        val result = measure {
             statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!)
         }
 
-        return buildOhsomeFormat(response, httpServletRequest)
+        return buildOhsomeFormat(result, httpServletRequest)
     }
 
 
@@ -141,11 +141,11 @@ class StatsController {
         endDate: Instant?
     ): OhsomeFormat<List<CountryStatsResult>> {
 
-        val response = measure {
+        val result = measure {
             statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate)
         }
 
-        return buildOhsomeFormat(response, httpServletRequest)
+        return buildOhsomeFormat(result, httpServletRequest)
     }
 
 
@@ -169,11 +169,11 @@ class StatsController {
         limit: Int?
     ): OhsomeFormat<List<HashtagResult>> {
 
-        val response = measure {
+        val result = measure {
             statsService.getMostUsedHashtags(startDate, endDate, limit)
         }
 
-        return buildOhsomeFormat(response, httpServletRequest)
+        return buildOhsomeFormat(result, httpServletRequest)
     }
 
 
@@ -181,11 +181,11 @@ class StatsController {
     @GetMapping("/metadata", produces = ["application/json"])
     fun metadata(httpServletRequest: HttpServletRequest): OhsomeFormat<MetadataResult> {
 
-        val response = measure {
+        val result = measure {
             statsService.getMetadata()
         }
 
-        return buildOhsomeFormat(response, httpServletRequest)
+        return buildOhsomeFormat(result, httpServletRequest)
     }
 
 
