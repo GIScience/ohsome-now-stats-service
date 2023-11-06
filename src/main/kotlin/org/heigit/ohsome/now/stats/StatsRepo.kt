@@ -15,6 +15,7 @@ import java.time.Instant.now
 import java.time.temporal.ChronoUnit
 import javax.sql.DataSource
 
+
 @Suppress("LargeClass")
 @Component
 class StatsRepo {
@@ -241,24 +242,24 @@ class StatsRepo {
     /**
      * Retrieves aggregated HOT-TM-project statistics for a specific user.
      * ATTENTION: EXPOSING THIS QUERY MIGHT VIOLATE DATA PRIVACY
-     * @param user_id the osm userid which should be queried.
+     * @param userId the osm userid which should be queried.
      * @return A list of maps containing the statistics for all hotTM projects.
      */
     @Suppress("LongMethod")
     fun getStatsForUserIdForAllHotTMProjects(
-        user_id: String
+        userId: String
     ): MutableMap<String, Any> {
-        logger.info("Getting HotOSM stats for user: ${user_id}")
+        logger.info("Getting HotOSM stats for user: ${userId}")
         return try {
             create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
                 it.select(
                     statsForUserIdForHotOSMProject,
-                    user_id
+                    userId
                 ).mapToMap().single()
             }
         } catch (e: NoSuchElementException) {
             mutableMapOf(
-                "user_id" to user_id.toInt(),
+                "user_id" to userId.toInt(),
                 "buildings" to 0L,
                 "roads" to 0.toDouble(),
                 "edits" to UnsignedLong.valueOf(0),
