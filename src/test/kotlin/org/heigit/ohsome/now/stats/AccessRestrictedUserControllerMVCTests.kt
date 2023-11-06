@@ -3,7 +3,7 @@ package org.heigit.ohsome.now.stats
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.stats.models.buildUserResult
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -66,8 +66,10 @@ class AccessRestrictedUserControllerMVCTests {
     @Test
     fun `statsHotTMUserStats returns forbidden without token`() {
 
-        `when`(statsService.getStatsForUserIdForAllHotTMProjects(this.userId))
-            .thenReturn(fakeResult)
+        // service must never be called because auth happens before service invocation
+        verify(statsService, never())
+            .getStatsForUserIdForAllHotTMProjects(anyString())
+
 
         val GET = get("/hot-tm-user")
             .queryParam("userId", "12312")
@@ -80,8 +82,9 @@ class AccessRestrictedUserControllerMVCTests {
     @Test
     fun `statsHotTMUserStats returns forbidden with wrong token`() {
 
-        `when`(statsService.getStatsForUserIdForAllHotTMProjects(this.userId))
-            .thenReturn(fakeResult)
+        // service must never be called because auth happens before service invocation
+        verify(statsService, never())
+            .getStatsForUserIdForAllHotTMProjects(anyString())
 
         val GET = get("/hot-tm-user")
             .queryParam("userId", "12312")
