@@ -13,7 +13,7 @@ fun Map<String, Any>.toStatsResult() = StatsResult(
 )
 
 
-//TODO: methode drüber nutzen?
+//TODO: use method above - write unit test first
 fun List<Map<String, Any>>.toMultipleStatsResult(): Map<String, StatsResult> {
     val output = mutableMapOf<String, StatsResult>()
     this.forEach {
