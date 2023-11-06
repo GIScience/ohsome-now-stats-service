@@ -11,11 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
-import kotlin.system.measureTimeMillis
 
-//TODO: introduce service layer instead of directly accessing the repo
 
-@Suppress("largeClass")
 @CrossOrigin
 @RestController
 class AccessRestrictedUserController {
@@ -43,13 +40,14 @@ class AccessRestrictedUserController {
             throw ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        lateinit var response: MutableMap<String, Any>
-
-        val executionTime = measureTimeMillis {
-            response = repo.getStatsForUserIdForAllHotTMProjects(userId)
+        val result = measure {
+            buildUserResult(getStatsForUserIdForAllHotTMProjects(userId))
         }
 
-        return buildOhsomeFormat(buildUserResult(response), executionTime, httpServletRequest)
+        return buildOhsomeFormat(result, httpServletRequest)
     }
+
+
+    private fun getStatsForUserIdForAllHotTMProjects(userId: String) = repo.getStatsForUserIdForAllHotTMProjects(userId)
 
 }
