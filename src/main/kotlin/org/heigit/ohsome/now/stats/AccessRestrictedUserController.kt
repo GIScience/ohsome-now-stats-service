@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import kotlin.system.measureTimeMillis
 
+//TODO: introduce service layer instead of directly accessing the repo
+
 @Suppress("largeClass")
 @CrossOrigin
 @RestController
@@ -29,9 +31,11 @@ class AccessRestrictedUserController {
     @GetMapping("/hot-tm-user", produces = ["application/json"])
     fun statsHotTMUser(
         httpServletRequest: HttpServletRequest,
+
         @Parameter(description = "OSM user id")
         @RequestParam(name = "userId")
         userId: String,
+
         @RequestHeader(value = "Authorization", required = false)
         authorization: String?
     ): OhsomeFormat<UserResult> {
