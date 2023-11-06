@@ -1,6 +1,7 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
+import org.heigit.ohsome.now.stats.models.buildUserResult
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,11 +20,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @AutoConfigureMockMvc
 class AccessRestrictedUserControllerMVCTests {
 
+
     @MockBean
-    private lateinit var repo: StatsRepo
+    lateinit var statsService: StatsService
+
 
     @Autowired
     private lateinit var mockMvc: MockMvc
+
 
     @Autowired
     lateinit var appProperties: AppProperties
@@ -32,19 +36,19 @@ class AccessRestrictedUserControllerMVCTests {
     val userId = "12312"
 
 
-    val fakeResult: MutableMap<String, Any> = mutableMapOf(
+    val fakeResult = mutableMapOf(
         "buildings" to 1L,
         "roads" to 234.12,
         "edits" to UnsignedLong.valueOf(34L),
         "changesets" to UnsignedLong.valueOf(2L),
         "user_id" to 4324
-    )
+    ).buildUserResult()
 
 
     @Test
     fun `statsHotTMUserStats returns stats for one user only`() {
 
-        `when`(repo.getStatsForUserIdForAllHotTMProjects(this.userId))
+        `when`(statsService.getStatsForUserIdForAllHotTMProjects(this.userId))
             .thenReturn(fakeResult)
 
         val GET = get("/hot-tm-user")
@@ -62,8 +66,8 @@ class AccessRestrictedUserControllerMVCTests {
     @Test
     fun `statsHotTMUserStats returns forbidden without token`() {
 
-        `when`(repo.getStatsForUserIdForAllHotTMProjects(this.userId))
-            .thenReturn(mutableMapOf("building_count" to 1))
+        `when`(statsService.getStatsForUserIdForAllHotTMProjects(this.userId))
+            .thenReturn(fakeResult)
 
         val GET = get("/hot-tm-user")
             .queryParam("userId", "12312")
@@ -76,8 +80,8 @@ class AccessRestrictedUserControllerMVCTests {
     @Test
     fun `statsHotTMUserStats returns forbidden with wrong token`() {
 
-        `when`(repo.getStatsForUserIdForAllHotTMProjects(this.userId))
-            .thenReturn(mutableMapOf("building_count" to 1))
+        `when`(statsService.getStatsForUserIdForAllHotTMProjects(this.userId))
+            .thenReturn(fakeResult)
 
         val GET = get("/hot-tm-user")
             .queryParam("userId", "12312")
@@ -86,4 +90,6 @@ class AccessRestrictedUserControllerMVCTests {
         this.mockMvc.perform(GET)
             .andExpect(status().isForbidden)
     }
+
+
 }

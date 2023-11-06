@@ -16,8 +16,6 @@ import org.springframework.web.server.ResponseStatusException
 @RestController
 class AccessRestrictedUserController {
 
-    @Autowired
-    lateinit var repo: StatsRepo
 
     @Autowired
     lateinit var statsService: StatsService
