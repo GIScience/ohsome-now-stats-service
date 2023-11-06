@@ -1,18 +1,24 @@
 package org.heigit.ohsome.now.stats.models
 
 import jakarta.servlet.http.HttpServletRequest
+import org.heigit.ohsome.now.stats.Measured
 import org.heigit.ohsome.now.stats.utils.makeUrl
 import org.springframework.web.servlet.HandlerMapping
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-fun <T> buildOhsomeFormat(
-    results: T,
-    executionTime: Long,
-    httpServletRequest: HttpServletRequest,
-): OhsomeFormat<T> {
-    val pathVariables =
-        httpServletRequest.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as? Map<String, String>
+
+fun <T> buildOhsomeFormat(results: Measured<T>, httpServletRequest: HttpServletRequest) = buildOhsomeFormat(
+    results.payload,
+    results.executionTime,
+    httpServletRequest
+)
+
+
+@Deprecated("Use the Measured<T> version instead")
+fun <T> buildOhsomeFormat(results: T, executionTime: Long, httpServletRequest: HttpServletRequest): OhsomeFormat<T> {
+    val pathVariables = httpServletRequest
+        .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as? Map<String, String>
 
     val query = QueryInfo(
         Timespan(

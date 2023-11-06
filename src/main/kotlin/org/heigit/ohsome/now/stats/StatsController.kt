@@ -11,20 +11,6 @@ import org.springframework.format.annotation.DateTimeFormat.ISO
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
-import kotlin.system.measureTimeMillis
-
-
-class Measured<T>(val payload: T, val executionTime: Long)
-
-fun <T> measure(command: () -> T): Measured<T> {
-    val result: T
-    val executionTime = measureTimeMillis {
-        result = command.invoke()
-    }
-
-    return Measured(result, executionTime)
-}
-
 
 @CrossOrigin
 @RestController
@@ -63,7 +49,7 @@ class StatsController {
             getStatsForTimeSpan(hashtag, startDate, endDate, countries!!)
         }
 
-        return buildOhsomeFormat(result.payload, result.executionTime, httpServletRequest)
+        return buildOhsomeFormat(result, httpServletRequest)
     }
 
 
@@ -92,7 +78,7 @@ class StatsController {
             getStatsForTimeSpanAggregate(hashtags, startDate, endDate)
         }
 
-        return buildOhsomeFormat(results.payload, results.executionTime, httpServletRequest)
+        return buildOhsomeFormat(results, httpServletRequest)
     }
 
 
@@ -131,7 +117,7 @@ class StatsController {
             getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!)
         }
 
-        return buildOhsomeFormat(response.payload, response.executionTime, httpServletRequest)
+        return buildOhsomeFormat(response, httpServletRequest)
     }
 
 
@@ -159,7 +145,7 @@ class StatsController {
             getStatsForTimeSpanCountry(hashtag, startDate, endDate)
         }
 
-        return buildOhsomeFormat(response.payload, response.executionTime, httpServletRequest)
+        return buildOhsomeFormat(response, httpServletRequest)
     }
 
 
@@ -187,7 +173,7 @@ class StatsController {
             getMostUsedHashtags(startDate, endDate, limit)
         }
 
-        return buildOhsomeFormat(response.payload, response.executionTime, httpServletRequest)
+        return buildOhsomeFormat(response, httpServletRequest)
     }
 
 
@@ -199,7 +185,7 @@ class StatsController {
             getMetadata()
         }
 
-        return buildOhsomeFormat(response.payload, response.executionTime, httpServletRequest)
+        return buildOhsomeFormat(response, httpServletRequest)
     }
 
 
