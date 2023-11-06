@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 
 
+//TODO: build -> to
+
 @Service
 class StatsService {
 
@@ -59,7 +61,13 @@ class StatsService {
         .buildMetadataResult()
 
 
+    fun getStatsForUserIdForAllHotTMProjects(userId: String) = this.repo
+        .getStatsForUserIdForAllHotTMProjects(userId)
+        .buildUserResult()
+
+
     private fun handler(hashtag: String) = HashtagHandler(hashtag)
     private fun handler(countries: List<String>) = CountryHandler(countries)
+
 
 }

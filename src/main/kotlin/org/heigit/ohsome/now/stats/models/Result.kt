@@ -137,14 +137,14 @@ data class MetadataResult(
 )
 
 
-fun buildUserResult(result: Map<String, Any>) =
-    UserResult(
-        result["buildings"] as Long,
-        result["roads"] as Double,
-        (result["edits"] as UnsignedLong).toLong(),
-        (result["changesets"] as UnsignedLong).toLong(),
-        result["user_id"] as Int
-    )
+fun Map<String, Any>.buildUserResult() = UserResult(
+    this["buildings"] as Long,
+    this["roads"] as Double,
+    (this["edits"] as UnsignedLong).toLong(),
+    (this["changesets"] as UnsignedLong).toLong(),
+    this["user_id"] as Int
+)
+
 
 data class UserResult(
     val buildings: Long,

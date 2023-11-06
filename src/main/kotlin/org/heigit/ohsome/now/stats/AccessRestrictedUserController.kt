@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.stats.models.OhsomeFormat
 import org.heigit.ohsome.now.stats.models.UserResult
 import org.heigit.ohsome.now.stats.models.buildOhsomeFormat
-import org.heigit.ohsome.now.stats.models.buildUserResult
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -19,6 +18,10 @@ class AccessRestrictedUserController {
 
     @Autowired
     lateinit var repo: StatsRepo
+
+    @Autowired
+    lateinit var statsService: StatsService
+
 
     @Autowired
     lateinit var appProperties: AppProperties
@@ -41,13 +44,11 @@ class AccessRestrictedUserController {
         }
 
         val result = measure {
-            buildUserResult(getStatsForUserIdForAllHotTMProjects(userId))
+            statsService.getStatsForUserIdForAllHotTMProjects(userId)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
     }
 
-
-    private fun getStatsForUserIdForAllHotTMProjects(userId: String) = repo.getStatsForUserIdForAllHotTMProjects(userId)
 
 }
