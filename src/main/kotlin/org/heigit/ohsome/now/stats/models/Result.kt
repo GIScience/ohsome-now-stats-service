@@ -31,7 +31,7 @@ fun List<Map<String, Any>>.toMultipleStatsResult(): Map<String, StatsResult> {
 
 
 //TODO: cleanup
-fun List<Map<String, Any>>.buildIntervalStatsResult(): List<StatsIntervalResult> {
+fun List<Map<String, Any>>.toIntervalStatsResult(): List<StatsIntervalResult> {
     val output = mutableListOf<StatsIntervalResult>()
     this.forEach {
         output.add(statsIntervalResult(it))
@@ -51,14 +51,16 @@ fun statsIntervalResult(data: Map<String, Any>) = StatsIntervalResult(
     data["enddate"].toString(),
 )
 
+
 //TODO: cleanup
-fun List<Map<String, Any>>.buildCountryStatsResult(): List<CountryStatsResult> {
+fun List<Map<String, Any>>.toCountryStatsResult(): List<CountryStatsResult> {
     val output = mutableListOf<CountryStatsResult>()
     this.forEach {
         output.add(countryStatsResult(it))
     }
     return output
 }
+
 
 fun countryStatsResult(data: Map<String, Any>) = CountryStatsResult(
     (data["changesets"] as UnsignedLong).toLong(),
@@ -70,6 +72,7 @@ fun countryStatsResult(data: Map<String, Any>) = CountryStatsResult(
     data["country"].toString(),
 )
 
+
 @Suppress("LongParameterList")
 open class StatsResult(
     open val changesets: Long,
@@ -79,6 +82,7 @@ open class StatsResult(
     open val edits: Long,
     open val latest: String
 )
+
 
 @Suppress("LongParameterList")
 open class StatsIntervalResult(
@@ -103,7 +107,7 @@ class CountryStatsResult(
 ) : StatsResult(changesets, users, roads, buildings, edits, latest)
 
 
-fun List<Map<String, Any>>.buildHashtagResult(): List<HashtagResult> {
+fun List<Map<String, Any>>.toHashtagResult(): List<HashtagResult> {
     val output = mutableListOf<HashtagResult>()
     this.forEach {
         output.add(
@@ -124,7 +128,7 @@ data class HashtagResult(
 )
 
 
-fun Map<String, Any>.buildMetadataResult(): MetadataResult =
+fun Map<String, Any>.toMetadataResult(): MetadataResult =
     MetadataResult(
         this["max_timestamp"].toString(),
         this["min_timestamp"].toString()
@@ -137,7 +141,7 @@ data class MetadataResult(
 )
 
 
-fun Map<String, Any>.buildUserResult() = UserResult(
+fun Map<String, Any>.toUserResult() = UserResult(
     this["buildings"] as Long,
     this["roads"] as Double,
     (this["edits"] as UnsignedLong).toLong(),

@@ -268,7 +268,7 @@ class StatsControllerMVCTests {
     fun `metadata should return max_timestamp and min_timestamp`() {
 
         `when`(this.statsService.getMetadata())
-            .thenReturn(mapOf("max_timestamp" to "2021-12-09T13:01:28").buildMetadataResult())
+            .thenReturn(mapOf("max_timestamp" to "2021-12-09T13:01:28").toMetadataResult())
 
         this.mockMvc
             .perform(get("/metadata"))

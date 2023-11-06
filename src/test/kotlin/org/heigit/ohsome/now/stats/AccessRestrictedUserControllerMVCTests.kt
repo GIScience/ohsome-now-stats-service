@@ -1,7 +1,7 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
-import org.heigit.ohsome.now.stats.models.buildUserResult
+import org.heigit.ohsome.now.stats.models.toUserResult
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,7 +42,7 @@ class AccessRestrictedUserControllerMVCTests {
         "edits" to UnsignedLong.valueOf(34L),
         "changesets" to UnsignedLong.valueOf(2L),
         "user_id" to 4324
-    ).buildUserResult()
+    ).toUserResult()
 
 
     @Test

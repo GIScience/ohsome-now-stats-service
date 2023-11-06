@@ -43,27 +43,27 @@ class StatsService {
     @Suppress("LongParameterList")
     fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant?, endDate: Instant?, interval: String, countries: List<String>) = this.repo
         .getStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries))
-        .buildIntervalStatsResult()
+        .toIntervalStatsResult()
 
 
     fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
         .getStatsForTimeSpanCountry(handler(hashtag), startDate, endDate)
-        .buildCountryStatsResult()
+        .toCountryStatsResult()
 
 
     fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) = this.repo
         .getMostUsedHashtags(startDate, endDate, limit)
-        .buildHashtagResult()
+        .toHashtagResult()
 
 
     fun getMetadata() = this.repo
         .getMetadata()
-        .buildMetadataResult()
+        .toMetadataResult()
 
 
     fun getStatsForUserIdForAllHotTMProjects(userId: String) = this.repo
         .getStatsForUserIdForAllHotTMProjects(userId)
-        .buildUserResult()
+        .toUserResult()
 
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)
