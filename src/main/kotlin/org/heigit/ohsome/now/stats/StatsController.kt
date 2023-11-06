@@ -14,6 +14,18 @@ import java.time.Instant
 import kotlin.system.measureTimeMillis
 
 
+class Measured<T>(val payload: T, val executionTime: Long)
+
+fun <T> measure(command: () -> T): Measured<T> {
+    val result: T
+    val executionTime = measureTimeMillis {
+        result = command.invoke()
+    }
+
+    return Measured(result, executionTime)
+}
+
+
 @CrossOrigin
 @RestController
 class StatsController {
@@ -47,12 +59,11 @@ class StatsController {
         countries: List<String>?,
     ): OhsomeFormat<StatsResult> {
 
-        val result: StatsResult
-        val executionTime = measureTimeMillis {
-            result = getStatsForTimeSpan(hashtag, startDate, endDate, countries!!)
+        val result = measure {
+            getStatsForTimeSpan(hashtag, startDate, endDate, countries!!)
         }
 
-        return buildOhsomeFormat(result, executionTime, httpServletRequest)
+        return buildOhsomeFormat(result.payload, result.executionTime, httpServletRequest)
     }
 
 
@@ -77,12 +88,11 @@ class StatsController {
         endDate: Instant?
     ): OhsomeFormat<Map<String, StatsResult>> {
 
-        val results: Map<String, StatsResult>
-        val executionTime = measureTimeMillis {
-            results = getStatsForTimeSpanAggregate(hashtags, startDate, endDate)
+        val results = measure {
+            getStatsForTimeSpanAggregate(hashtags, startDate, endDate)
         }
 
-        return buildOhsomeFormat(results, executionTime, httpServletRequest)
+        return buildOhsomeFormat(results.payload, results.executionTime, httpServletRequest)
     }
 
 
@@ -117,12 +127,11 @@ class StatsController {
 
         validateIntervalString(interval)
 
-        val response: List<StatsIntervalResult>
-        val executionTime = measureTimeMillis {
-            response = getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!)
+        val response = measure {
+            getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!)
         }
 
-        return buildOhsomeFormat(response, executionTime, httpServletRequest)
+        return buildOhsomeFormat(response.payload, response.executionTime, httpServletRequest)
     }
 
 
@@ -146,12 +155,11 @@ class StatsController {
         endDate: Instant?
     ): OhsomeFormat<List<CountryStatsResult>> {
 
-        val response: List<CountryStatsResult>
-        val executionTime = measureTimeMillis {
-            response = getStatsForTimeSpanCountry(hashtag, startDate, endDate)
+        val response = measure {
+            getStatsForTimeSpanCountry(hashtag, startDate, endDate)
         }
 
-        return buildOhsomeFormat(response, executionTime, httpServletRequest)
+        return buildOhsomeFormat(response.payload, response.executionTime, httpServletRequest)
     }
 
 
@@ -175,12 +183,11 @@ class StatsController {
         limit: Int?
     ): OhsomeFormat<List<HashtagResult>> {
 
-        val response: List<HashtagResult>
-        val executionTime = measureTimeMillis {
-            response = getMostUsedHashtags(startDate, endDate, limit)
+        val response = measure {
+            getMostUsedHashtags(startDate, endDate, limit)
         }
 
-        return buildOhsomeFormat(response, executionTime, httpServletRequest)
+        return buildOhsomeFormat(response.payload, response.executionTime, httpServletRequest)
     }
 
 
@@ -188,12 +195,11 @@ class StatsController {
     @GetMapping("/metadata", produces = ["application/json"])
     fun metadata(httpServletRequest: HttpServletRequest): OhsomeFormat<MetadataResult> {
 
-        val response: MetadataResult
-        val executionTime = measureTimeMillis {
-            response = getMetadata()
+        val response = measure {
+            getMetadata()
         }
 
-        return buildOhsomeFormat(response, executionTime, httpServletRequest)
+        return buildOhsomeFormat(response.payload, response.executionTime, httpServletRequest)
     }
 
 
