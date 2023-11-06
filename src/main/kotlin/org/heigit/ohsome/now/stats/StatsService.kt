@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 
 
-//TODO: build -> to
+//TODO: add unit or integration tests
 
 @Service
 class StatsService {
