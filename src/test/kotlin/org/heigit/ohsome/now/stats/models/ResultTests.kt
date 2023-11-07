@@ -73,4 +73,21 @@ class ResultTests {
     }
 
 
+    @Test
+    fun toCountryStatsResult() {
+
+        val maps = listOf(this.map1, this.map2)
+        val result = maps.toCountryStatsResult()
+
+        assertThat(result[0])
+            .usingRecursiveComparison()
+            .isEqualTo(countryStatsResult(map1))
+
+        assertThat(result[1])
+            .usingRecursiveComparison()
+            .isEqualTo(countryStatsResult(map2))
+
+    }
+
+
 }
