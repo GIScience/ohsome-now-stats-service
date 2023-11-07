@@ -29,6 +29,16 @@ class StatsRepo {
     private val logger: Logger = LoggerFactory.getLogger(StatsRepo::class.java)
 
 
+    fun defaultResultForMissingUser(userId: String): MutableMap<String, Any> = mutableMapOf(
+        "user_id" to userId.toInt(),
+        "buildings" to 0L,
+        "roads" to 0.toDouble(),
+        "edits" to UnsignedLong.valueOf(0),
+        "changesets" to UnsignedLong.valueOf(0)
+    )
+
+
+
     //language=sql
     private fun statsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
         SELECT
@@ -260,6 +270,7 @@ class StatsRepo {
         userId: String
     ): MutableMap<String, Any> {
         logger.info("Getting HotOSM stats for user: ${userId}")
+
         return try {
             create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
                 it.select(statsForUserIdForHotOSMProjectSQL)
@@ -268,14 +279,9 @@ class StatsRepo {
                     .single()
             }
         } catch (e: NoSuchElementException) {
-            mutableMapOf(
-                "user_id" to userId.toInt(),
-                "buildings" to 0L,
-                "roads" to 0.toDouble(),
-                "edits" to UnsignedLong.valueOf(0),
-                "changesets" to UnsignedLong.valueOf(0)
-            )
+            defaultResultForMissingUser(userId)
         }
+
     }
 
     /**
@@ -291,7 +297,8 @@ class StatsRepo {
         startDate: Instant? = EPOCH,
         endDate: Instant? = now()
     ): List<Map<String, Any>> {
-        val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
+
+        return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(statsFromTimeSpanCountrySQL(hashtagHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
@@ -299,7 +306,6 @@ class StatsRepo {
                 .mapToMap()
                 .list()
         }
-        return result
     }
 
 
@@ -333,12 +339,10 @@ class StatsRepo {
      *
      * @return  A map containing the two keys.
      */
-    fun getMetadata(
-    ): Map<String, Any> {
-        return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
-            it.select(
-                metadataSQL
-            ).mapToMap().single()
-        }
+    fun getMetadata() = create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
+        it.select(metadataSQL)
+            .mapToMap()
+            .single()
     }
+
 }
