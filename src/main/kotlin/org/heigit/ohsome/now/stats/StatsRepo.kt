@@ -40,9 +40,9 @@ class StatsRepo {
             max(changeset_timestamp) as latest
         FROM "stats"
         WHERE
-            ${hashtagHandler.variableFilterSQL}(hashtag, ?) 
-            and changeset_timestamp > parseDateTimeBestEffort(?)
-            and changeset_timestamp < parseDateTimeBestEffort(?)
+            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
+            and changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            and changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
         """.trimIndent()
 
@@ -183,12 +183,12 @@ class StatsRepo {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
-            it.select(
-                statsFromTimeSpanSQL(hashtagHandler, countryHandler),
-                hashtagHandler.hashtag,
-                startDate ?: EPOCH,
-                endDate ?: now()
-            ).mapToMap().single()
+            it.select(statsFromTimeSpanSQL(hashtagHandler, countryHandler))
+                .bind("hashtag", hashtagHandler.hashtag)
+                .bind("startDate", startDate ?: EPOCH)
+                .bind("endDate", endDate ?: now())
+                .mapToMap()
+                .single()
         } + ("hashtag" to hashtagHandler.hashtag)
     }
 
@@ -238,13 +238,13 @@ class StatsRepo {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
 
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
-            it.select(
-                statsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler),
-            ).bind("interval", getGroupbyInterval(interval))
+            it.select(statsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler))
+                .bind("interval", getGroupbyInterval(interval))
                 .bind("startdate", startDate ?: EPOCH)
                 .bind("enddate", endDate ?: now())
                 .bind("hashtag", hashtagHandler.hashtag)
-                .mapToMap().list()
+                .mapToMap()
+                .list()
         }
     }
 
