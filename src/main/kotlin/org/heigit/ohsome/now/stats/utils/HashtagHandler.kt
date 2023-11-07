@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.stats.utils
 
 import java.util.*
 
+//TODO: pull if from sql to here
 data class HashtagHandler(var hashtag: String, var isWildCard: Boolean = false) {
     init {
         this.hashtag = this.hashtag.lowercase(Locale.getDefault())

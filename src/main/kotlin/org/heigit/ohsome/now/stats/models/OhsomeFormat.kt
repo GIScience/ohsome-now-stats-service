@@ -14,7 +14,7 @@ fun <T> buildOhsomeFormat(results: Measured<T>, httpServletRequest: HttpServletR
     httpServletRequest
 )
 
-
+//TODO: cleanup
 @Deprecated("Use the Measured<T> version instead")
 fun <T> buildOhsomeFormat(results: T, executionTime: Long, httpServletRequest: HttpServletRequest): OhsomeFormat<T> {
     val pathVariables = httpServletRequest

@@ -16,6 +16,8 @@ import java.time.temporal.ChronoUnit
 import javax.sql.DataSource
 
 
+//TODO: replace positional with named parameters in sql queries
+
 @Suppress("LargeClass")
 @Component
 class StatsRepo {
