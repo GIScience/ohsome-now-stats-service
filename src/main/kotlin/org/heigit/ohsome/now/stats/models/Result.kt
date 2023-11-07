@@ -13,24 +13,11 @@ fun Map<String, Any>.toStatsResult() = StatsResult(
 )
 
 
-//TODO: use method above - write unit test first
-fun List<Map<String, Any>>.toMultipleStatsResult(): Map<String, StatsResult> {
-    val output = mutableMapOf<String, StatsResult>()
-    this.forEach {
-        output[it["hashtag"].toString()] = StatsResult(
-            (it["changesets"] as UnsignedLong).toLong(),
-            (it["users"] as UnsignedLong).toLong(),
-            it["roads"] as Double,
-            it["buildings"] as Long,
-            (it["edits"] as UnsignedLong).toLong(),
-            it["latest"].toString(),
-        )
-    }
-    return output
+fun List<Map<String, Any>>.toMultipleStatsResult() = this.associate {
+    it["hashtag"].toString() to it.toStatsResult()
 }
 
 
-//TODO: cleanup
 fun List<Map<String, Any>>.toIntervalStatsResult(): List<StatsIntervalResult> {
     val output = mutableListOf<StatsIntervalResult>()
     this.forEach {
