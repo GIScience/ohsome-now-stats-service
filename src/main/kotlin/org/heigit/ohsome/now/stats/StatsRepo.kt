@@ -39,12 +39,13 @@ class StatsRepo {
             max(changeset_timestamp) as latest
         FROM "stats"
         WHERE
-            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?) 
+            ${hashtagHandler.variableFilterSQL}(hashtag, ?) 
             and changeset_timestamp > parseDateTimeBestEffort(?)
             and changeset_timestamp < parseDateTimeBestEffort(?)
             ${countryHandler.optionalFilterSQL}
         """.trimIndent()
 
+    //language=sql
     private fun getStatsFromTimeSpanAggregate(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
@@ -56,7 +57,7 @@ class StatsRepo {
             hashtag
         FROM "stats"
         WHERE
-            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?) 
+            ${hashtagHandler.variableFilterSQL}(hashtag, ?) 
             and changeset_timestamp > parseDateTimeBestEffort(?) 
             and changeset_timestamp < parseDateTimeBestEffort(?)
         GROUP BY hashtag;
@@ -76,7 +77,7 @@ class StatsRepo {
         (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
     FROM "stats"
     WHERE
-        ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, :hashtag)
+        ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
         AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
         AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
         ${countryHandler.optionalFilterSQL}
@@ -111,7 +112,7 @@ class StatsRepo {
         FROM "stats"
         ARRAY JOIN country_iso_a3
         WHERE
-            ${if (hashtagHandler.isWildCard) "startsWith" else "equals"}(hashtag, ?)
+            ${hashtagHandler.variableFilterSQL}(hashtag, ?)
             and changeset_timestamp > parseDateTimeBestEffort(?)
             and changeset_timestamp < parseDateTimeBestEffort(?)
         GROUP BY
