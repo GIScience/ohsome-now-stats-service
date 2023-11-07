@@ -115,9 +115,9 @@ class StatsRepo {
         FROM "stats"
         ARRAY JOIN country_iso_a3
         WHERE
-            ${hashtagHandler.variableFilterSQL}(hashtag, ?)
-            and changeset_timestamp > parseDateTimeBestEffort(?)
-            and changeset_timestamp < parseDateTimeBestEffort(?)
+            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
+            and changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            and changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY
             country
         """.trimIndent()
@@ -291,12 +291,12 @@ class StatsRepo {
         endDate: Instant? = now()
     ): List<Map<String, Any>> {
         val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
-            it.select(
-                statsFromTimeSpanCountrySQL(hashtagHandler),
-                hashtagHandler.hashtag,
-                startDate ?: EPOCH,
-                endDate ?: now()
-            ).mapToMap().list()
+            it.select(statsFromTimeSpanCountrySQL(hashtagHandler))
+                .bind("hashtag", hashtagHandler.hashtag)
+                .bind("startDate", startDate ?: EPOCH)
+                .bind("endDate", endDate ?: now())
+                .mapToMap()
+                .list()
         }
         return result
     }
