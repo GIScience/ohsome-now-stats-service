@@ -191,7 +191,7 @@ class StatsRepo {
     ): Map<String, Any> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
-        return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
+        return jdbi().withHandle<Map<String, Any>, RuntimeException> {
             it.select(statsFromTimeSpanSQL(hashtagHandler, countryHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
@@ -216,7 +216,7 @@ class StatsRepo {
     ): List<Map<String, Any>> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
-        return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
+        return jdbi().withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(statsFromTimeSpanAggregateSQL(hashtagHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
@@ -246,7 +246,7 @@ class StatsRepo {
     ): List<Map<String, Any>> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
 
-        return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
+        return jdbi().withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(statsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler))
                 .bind("interval", getGroupbyInterval(interval))
                 .bind("startdate", startDate ?: EPOCH)
@@ -269,7 +269,7 @@ class StatsRepo {
     ): MutableMap<String, Any> {
         logger.info("Getting HotOSM stats for user: ${userId}")
 
-        return create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
+        return jdbi().withHandle<MutableMap<String, Any>, RuntimeException> {
             it.select(statsForUserIdForHotOSMProjectSQL)
                 .bind("userId", userId)
                 .mapToMap()
@@ -294,7 +294,7 @@ class StatsRepo {
         endDate: Instant? = now()
     ): List<Map<String, Any>> {
 
-        return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
+        return jdbi().withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(statsFromTimeSpanCountrySQL(hashtagHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
@@ -320,7 +320,7 @@ class StatsRepo {
     ): List<Map<String, Any>> {
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
 
-        return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
+        return jdbi().withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(mostUsedHashtagsSQL)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
@@ -335,10 +335,13 @@ class StatsRepo {
      *
      * @return  A map containing the two keys.
      */
-    fun getMetadata() = create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
+    fun getMetadata() = jdbi().withHandle<Map<String, Any>, RuntimeException> {
         it.select(metadataSQL)
             .mapToMap()
             .single()
     }
+
+
+    private fun jdbi() = create(dataSource)
 
 }
