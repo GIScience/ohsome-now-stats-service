@@ -59,10 +59,10 @@ class StatsRepo {
             hashtag
         FROM "stats"
         WHERE
-            ${hashtagHandler.variableFilterSQL}(hashtag, ?) 
-            and changeset_timestamp > parseDateTimeBestEffort(?) 
-            and changeset_timestamp < parseDateTimeBestEffort(?)
-        GROUP BY hashtag;
+            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
+            and changeset_timestamp > parseDateTimeBestEffort(:startDate) 
+            and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+        GROUP BY hashtag
         """.trimIndent()
 
 
@@ -208,12 +208,12 @@ class StatsRepo {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
-            it.select(
-                statsFromTimeSpanAggregateSQL(hashtagHandler),
-                hashtagHandler.hashtag,
-                startDate ?: EPOCH,
-                endDate ?: now()
-            ).mapToMap().list()
+            it.select(statsFromTimeSpanAggregateSQL(hashtagHandler))
+                .bind("hashtag", hashtagHandler.hashtag)
+                .bind("startDate", startDate ?: EPOCH)
+                .bind("endDate", endDate ?: now())
+                .mapToMap()
+                .list()
         }
     }
 
