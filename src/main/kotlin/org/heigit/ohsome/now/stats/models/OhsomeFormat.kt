@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit
 
 
 fun <T> buildOhsomeFormat(results: Measured<T>, httpServletRequest: HttpServletRequest) = buildOhsomeFormat(
-    results.payload,
+    results.result,
     results.executionTime,
     httpServletRequest
 )
