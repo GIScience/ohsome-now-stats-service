@@ -90,4 +90,32 @@ class ResultTests {
     }
 
 
+    @Test
+    fun toHashtagResult() {
+
+        val map3 = mapOf(
+            "hashtag" to hashtag1,
+            "number_of_users" to UnsignedLong.valueOf(2),
+        )
+
+        val map4 = mapOf(
+            "hashtag" to hashtag2,
+            "number_of_users" to UnsignedLong.valueOf(3),
+        )
+
+
+        val maps = listOf(map3, map4)
+        val result = maps.toHashtagResult()
+
+        assertThat(result[0])
+            .usingRecursiveComparison()
+            .isEqualTo(hashtagResult(map3))
+
+        assertThat(result[1])
+            .usingRecursiveComparison()
+            .isEqualTo(hashtagResult(map4))
+
+    }
+
+
 }
