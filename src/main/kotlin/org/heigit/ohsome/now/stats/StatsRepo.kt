@@ -271,18 +271,16 @@ class StatsRepo {
     ): MutableMap<String, Any> {
         logger.info("Getting HotOSM stats for user: ${userId}")
 
-        return try {
-            create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
-                it.select(statsForUserIdForHotOSMProjectSQL)
-                    .bind("userId", userId)
-                    .mapToMap()
-                    .single()
-            }
-        } catch (e: NoSuchElementException) {
-            defaultResultForMissingUser(userId)
+        return create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
+            it.select(statsForUserIdForHotOSMProjectSQL)
+                .bind("userId", userId)
+                .mapToMap()
+                .singleOrNull()
+                ?: defaultResultForMissingUser(userId)
         }
 
     }
+
 
     /**
      * Retrieves statistics for a specific hashtag grouped by country.
