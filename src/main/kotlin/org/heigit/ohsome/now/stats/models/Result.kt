@@ -18,9 +18,7 @@ fun List<Map<String, Any>>.toMultipleStatsResult() = this.associate {
 }
 
 
-fun List<Map<String, Any>>.toIntervalStatsResult() = this.map {
-    statsIntervalResult(it)
-}
+fun List<Map<String, Any>>.toIntervalStatsResult() = this.map(::statsIntervalResult)
 
 
 fun statsIntervalResult(data: Map<String, Any>) = StatsIntervalResult(
@@ -34,14 +32,7 @@ fun statsIntervalResult(data: Map<String, Any>) = StatsIntervalResult(
 )
 
 
-//TODO: cleanup
-fun List<Map<String, Any>>.toCountryStatsResult(): List<CountryStatsResult> {
-    val output = mutableListOf<CountryStatsResult>()
-    this.forEach {
-        output.add(countryStatsResult(it))
-    }
-    return output
-}
+fun List<Map<String, Any>>.toCountryStatsResult() = this.map(::countryStatsResult)
 
 
 fun countryStatsResult(data: Map<String, Any>) = CountryStatsResult(
@@ -89,6 +80,7 @@ class CountryStatsResult(
 ) : StatsResult(changesets, users, roads, buildings, edits, latest)
 
 
+//TODO: cleanup
 fun List<Map<String, Any>>.toHashtagResult(): List<HashtagResult> {
     val output = mutableListOf<HashtagResult>()
     this.forEach {
