@@ -133,7 +133,7 @@ class StatsRepo {
             user_id
         from stats
         where
-            user_id = ?
+            user_id = :userId
             and startsWith(hashtag, 'hotosm-project-')
         group by user_id
 
@@ -146,12 +146,13 @@ class StatsRepo {
             hashtag, COUNT(DISTINCT user_id) as number_of_users
         FROM "stats"
         WHERE
-            changeset_timestamp > parseDateTimeBestEffort(?) and changeset_timestamp < parseDateTimeBestEffort(?)
+            changeset_timestamp > parseDateTimeBestEffort(:startDate) and 
+            changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY
             hashtag
         ORDER BY
             number_of_users DESC
-        LIMIT ?
+        LIMIT :limit
     """.trimIndent()
 
 
@@ -261,10 +262,10 @@ class StatsRepo {
         logger.info("Getting HotOSM stats for user: ${userId}")
         return try {
             create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
-                it.select(
-                    statsForUserIdForHotOSMProjectSQL,
-                    userId
-                ).mapToMap().single()
+                it.select(statsForUserIdForHotOSMProjectSQL)
+                    .bind("userId", userId)
+                    .mapToMap()
+                    .single()
             }
         } catch (e: NoSuchElementException) {
             mutableMapOf(
@@ -316,13 +317,14 @@ class StatsRepo {
         limit: Int? = 10
     ): List<Map<String, Any>> {
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
+
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
-            it.select(
-                mostUsedHashtagsSQL,
-                startDate,
-                endDate,
-                limit
-            ).mapToMap().list()
+            it.select(mostUsedHashtagsSQL)
+                .bind("startDate", startDate ?: EPOCH)
+                .bind("endDate", endDate ?: now())
+                .bind("limit", limit)
+                .mapToMap()
+                .list()
         }
     }
 
