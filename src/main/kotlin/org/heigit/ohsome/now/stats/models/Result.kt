@@ -80,22 +80,16 @@ class CountryStatsResult(
 ) : StatsResult(changesets, users, roads, buildings, edits, latest)
 
 
-//TODO: cleanup
-fun List<Map<String, Any>>.toHashtagResult(): List<HashtagResult> {
-    val output = mutableListOf<HashtagResult>()
-    this.forEach {
-        output.add(
-            hashtagResult(it)
-        )
-    }
-    return output
-}
+fun List<Map<String, Any>>.toHashtagResult() = this.map(::hashtagResult)
 
+
+//TODO: convert to extension function
 fun hashtagResult(data: Map<String, Any>) = HashtagResult(
     data["hashtag"].toString(),
     (data["number_of_users"] as UnsignedLong).toLong()
 )
 
+//TODO: fix naming
 data class HashtagResult(
     val hashtag: String,
     val number_of_users: Long
