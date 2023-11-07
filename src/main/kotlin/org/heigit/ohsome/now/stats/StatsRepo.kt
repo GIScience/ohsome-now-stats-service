@@ -28,8 +28,9 @@ class StatsRepo {
 
     private val logger: Logger = LoggerFactory.getLogger(StatsRepo::class.java)
 
+
     //language=sql
-    private fun getStatsFromTimeSpan(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
+    private fun statsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
@@ -45,8 +46,9 @@ class StatsRepo {
             ${countryHandler.optionalFilterSQL}
         """.trimIndent()
 
+
     //language=sql
-    private fun getStatsFromTimeSpanAggregate(hashtagHandler: HashtagHandler) = """
+    private fun statsFromTimeSpanAggregateSQL(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
@@ -66,7 +68,7 @@ class StatsRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun getStatsFromTimeSpanInterval(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
+    private fun statsFromTimeSpanIntervalSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
     SELECT
         count(distinct changeset_id) as changesets,
         count(distinct user_id) as users,
@@ -98,9 +100,10 @@ class StatsRepo {
     )
     """.trimIndent()
 
+
     @Suppress("LongMethod")
     //language=sql
-    private fun getStatsFromTimeSpanCountry(hashtagHandler: HashtagHandler) = """
+    private fun statsFromTimeSpanCountrySQL(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
@@ -119,8 +122,9 @@ class StatsRepo {
             country
         """.trimIndent()
 
+
     //language=sql
-    private val statsForUserIdForHotOSMProject = """
+    private val statsForUserIdForHotOSMProjectSQL = """
         select
             ifNull(sum(building_edit), 0) as buildings,
             ifNull(sum(road_length_delta) /1000, 0) as roads,
@@ -135,8 +139,9 @@ class StatsRepo {
 
     """.trimIndent()
 
+
     //language=sql
-    private val mostUsedHashtags = """
+    private val mostUsedHashtagsSQL = """
         SELECT 
             hashtag, COUNT(DISTINCT user_id) as number_of_users
         FROM "stats"
@@ -149,8 +154,9 @@ class StatsRepo {
         LIMIT ?
     """.trimIndent()
 
+
     //language=sql
-    private val metadata = """
+    private val metadataSQL = """
         SELECT 
             max(changeset_timestamp) as max_timestamp,
             min(changeset_timestamp) as min_timestamp
@@ -178,7 +184,7 @@ class StatsRepo {
 
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
             it.select(
-                getStatsFromTimeSpan(hashtagHandler, countryHandler),
+                statsFromTimeSpanSQL(hashtagHandler, countryHandler),
                 hashtagHandler.hashtag,
                 startDate ?: EPOCH,
                 endDate ?: now()
@@ -203,7 +209,7 @@ class StatsRepo {
 
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-                getStatsFromTimeSpanAggregate(hashtagHandler),
+                statsFromTimeSpanAggregateSQL(hashtagHandler),
                 hashtagHandler.hashtag,
                 startDate ?: EPOCH,
                 endDate ?: now()
@@ -233,7 +239,7 @@ class StatsRepo {
 
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-                getStatsFromTimeSpanInterval(hashtagHandler, countryHandler),
+                statsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler),
             ).bind("interval", getGroupbyInterval(interval))
                 .bind("startdate", startDate ?: EPOCH)
                 .bind("enddate", endDate ?: now())
@@ -256,7 +262,7 @@ class StatsRepo {
         return try {
             create(dataSource).withHandle<MutableMap<String, Any>, RuntimeException> {
                 it.select(
-                    statsForUserIdForHotOSMProject,
+                    statsForUserIdForHotOSMProjectSQL,
                     userId
                 ).mapToMap().single()
             }
@@ -286,7 +292,7 @@ class StatsRepo {
     ): List<Map<String, Any>> {
         val result = create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-                getStatsFromTimeSpanCountry(hashtagHandler),
+                statsFromTimeSpanCountrySQL(hashtagHandler),
                 hashtagHandler.hashtag,
                 startDate ?: EPOCH,
                 endDate ?: now()
@@ -312,7 +318,7 @@ class StatsRepo {
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
         return create(dataSource).withHandle<List<Map<String, Any>>, RuntimeException> {
             it.select(
-                mostUsedHashtags,
+                mostUsedHashtagsSQL,
                 startDate,
                 endDate,
                 limit
@@ -329,7 +335,7 @@ class StatsRepo {
     ): Map<String, Any> {
         return create(dataSource).withHandle<Map<String, Any>, RuntimeException> {
             it.select(
-                metadata
+                metadataSQL
             ).mapToMap().single()
         }
     }
