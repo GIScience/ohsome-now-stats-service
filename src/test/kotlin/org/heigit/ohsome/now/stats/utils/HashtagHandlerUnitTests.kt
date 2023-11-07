@@ -1,10 +1,10 @@
-package org.heigit.ohsome.now.stats
+package org.heigit.ohsome.now.stats.utils
 
-import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-class UtilsHashtagHandlerUnitTests {
+
+class HashtagHandlerUnitTests {
 
     @Test
     fun `check if normal hashtag is wildcard`() {
@@ -13,11 +13,13 @@ class UtilsHashtagHandlerUnitTests {
         assertFalse(hashtagHandler.isWildCard)
     }
 
+
     @Test
     fun `check if wildcard hashtag is wildcard`() {
         val hashtagHandler = HashtagHandler("wildcardHashtag*")
         assertEquals("wildcardhashtag", hashtagHandler.hashtag)
         assertTrue(hashtagHandler.isWildCard)
     }
+
 
 }
