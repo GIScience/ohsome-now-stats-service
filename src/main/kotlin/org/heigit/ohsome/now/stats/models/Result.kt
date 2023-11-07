@@ -18,13 +18,8 @@ fun List<Map<String, Any>>.toMultipleStatsResult() = this.associate {
 }
 
 
-fun List<Map<String, Any>>.toIntervalStatsResult(): List<StatsIntervalResult> {
-    val output = mutableListOf<StatsIntervalResult>()
-    this.forEach {
-        output.add(statsIntervalResult(it))
-    }
-
-    return output
+fun List<Map<String, Any>>.toIntervalStatsResult() = this.map {
+    statsIntervalResult(it)
 }
 
 
