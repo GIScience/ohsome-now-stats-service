@@ -56,4 +56,21 @@ class ResultTests {
     }
 
 
+    @Test
+    fun toIntervalStatsResult() {
+
+        val maps = listOf(this.map1, this.map2)
+        val result = maps.toIntervalStatsResult()
+
+        assertThat(result[0])
+            .usingRecursiveComparison()
+            .isEqualTo(statsIntervalResult(map1))
+
+        assertThat(result[1])
+            .usingRecursiveComparison()
+            .isEqualTo(statsIntervalResult(map2))
+
+    }
+
+
 }
