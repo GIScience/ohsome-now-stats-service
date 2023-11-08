@@ -4,6 +4,7 @@ import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.heigit.ohsome.now.stats.utils.getGroupbyInterval
+import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi.create
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -34,7 +35,6 @@ class StatsRepo {
         "edits" to UnsignedLong.valueOf(0),
         "changesets" to UnsignedLong.valueOf(0)
     )
-
 
 
     //language=sql
@@ -191,14 +191,16 @@ class StatsRepo {
     ): Map<String, Any> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
-        return jdbi().withHandle<Map<String, Any>, RuntimeException> {
+        val result = query {
             it.select(statsFromTimeSpanSQL(hashtagHandler, countryHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
                 .mapToMap()
                 .single()
-        } + ("hashtag" to hashtagHandler.hashtag)
+        }
+
+        return result + ("hashtag" to hashtagHandler.hashtag)
     }
 
     /**
@@ -216,7 +218,7 @@ class StatsRepo {
     ): List<Map<String, Any>> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
-        return jdbi().withHandle<List<Map<String, Any>>, RuntimeException> {
+        return query {
             it.select(statsFromTimeSpanAggregateSQL(hashtagHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
@@ -224,6 +226,7 @@ class StatsRepo {
                 .mapToMap()
                 .list()
         }
+
     }
 
 
@@ -244,9 +247,10 @@ class StatsRepo {
         interval: String,
         countryHandler: CountryHandler
     ): List<Map<String, Any>> {
+
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
 
-        return jdbi().withHandle<List<Map<String, Any>>, RuntimeException> {
+        return query {
             it.select(statsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler))
                 .bind("interval", getGroupbyInterval(interval))
                 .bind("startdate", startDate ?: EPOCH)
@@ -269,7 +273,7 @@ class StatsRepo {
     ): MutableMap<String, Any> {
         logger.info("Getting HotOSM stats for user: ${userId}")
 
-        return jdbi().withHandle<MutableMap<String, Any>, RuntimeException> {
+        return query {
             it.select(statsForUserIdForHotOSMProjectSQL)
                 .bind("userId", userId)
                 .mapToMap()
@@ -294,7 +298,7 @@ class StatsRepo {
         endDate: Instant? = now()
     ): List<Map<String, Any>> {
 
-        return jdbi().withHandle<List<Map<String, Any>>, RuntimeException> {
+        return query {
             it.select(statsFromTimeSpanCountrySQL(hashtagHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
@@ -302,6 +306,7 @@ class StatsRepo {
                 .mapToMap()
                 .list()
         }
+
     }
 
 
@@ -318,9 +323,10 @@ class StatsRepo {
         endDate: Instant? = now().truncatedTo(ChronoUnit.SECONDS),
         limit: Int? = 10
     ): List<Map<String, Any>> {
+
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
 
-        return jdbi().withHandle<List<Map<String, Any>>, RuntimeException> {
+        return query {
             it.select(mostUsedHashtagsSQL)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
@@ -328,6 +334,7 @@ class StatsRepo {
                 .mapToMap()
                 .list()
         }
+
     }
 
     /**
@@ -335,13 +342,15 @@ class StatsRepo {
      *
      * @return  A map containing the two keys.
      */
-    fun getMetadata() = jdbi().withHandle<Map<String, Any>, RuntimeException> {
+    fun getMetadata() = query {
         it.select(metadataSQL)
             .mapToMap()
             .single()
     }
 
 
-    private fun jdbi() = create(dataSource)
+    private fun <T> query(queryFunction: (handle: Handle) -> T) = create(dataSource)
+        .withHandle<T, RuntimeException>(queryFunction)
+
 
 }
