@@ -4,7 +4,7 @@ WITH
 
 SELECT sum(place_edit)
 
-FROM test_new_schema.stats_new_with_place_viewtable
+FROM topic_place
 WHERE startsWith(hashtag, 'hotosm-project-')
 
   AND changeset_timestamp > parseDateTimeBestEffort('2009-04-21T22:02:04.000Z')

@@ -25,19 +25,23 @@ class TopicRepo {
 
     //language=sql
     private fun statsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
-        SELECT
-            count(distinct changeset_id) as changesets,
-            count(distinct user_id) as users,
-            ifNull(sum(road_length_delta)/1000, 0) as roads,
-            ifNull(sum(building_edit), 0) as buildings,
-            count(map_feature_edit) as edits,
-            max(changeset_timestamp) as latest
-        FROM "stats"
+        WITH
+        ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
+            'neighbourhood', 'town', 'village', 'hamlet', 'isolated_dwelling'] as place_tags, 
+            
+            place_current in place_tags as current, 
+            place_before in place_tags as before, 
+            if ((current = 0) AND (before = 0), NULL, current - before) as place_edit
+
+        SELECT sum(place_edit) as places
+
+        FROM topic_place
         WHERE
             ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
             and changeset_timestamp > parseDateTimeBestEffort(:startDate)
             and changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
+        ;
         """.trimIndent()
 
 
@@ -47,7 +51,7 @@ class TopicRepo {
         endDate: Instant?,
         countryHandler: CountryHandler
     ): Map<String, Any> {
-        logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
+        logger.info("Getting topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         val result = query {
             it.select(statsFromTimeSpanSQL(hashtagHandler, countryHandler))
