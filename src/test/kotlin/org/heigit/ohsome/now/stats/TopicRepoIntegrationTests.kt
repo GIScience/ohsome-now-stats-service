@@ -44,7 +44,7 @@ class TopicRepoIntegrationTests {
 
 
     val expected = mapOf(
-        "places" to 0,
+        "places" to 2,
         "hashtag" to "hotmicrogrant"
     )
 
@@ -59,7 +59,7 @@ class TopicRepoIntegrationTests {
         val result = this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler)
         assertEquals(2, result.size)
         println(result)
-//        assertEquals(expected.toString(), result.toString())
+        assertEquals(expected.toString(), result.toString())
     }
 
 
