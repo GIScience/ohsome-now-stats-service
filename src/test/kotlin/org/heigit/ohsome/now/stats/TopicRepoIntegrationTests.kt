@@ -44,7 +44,7 @@ class TopicRepoIntegrationTests {
 
 
     val expected = mapOf(
-        "places" to 2,
+        "topic_result" to 2,
         "hashtag" to "hotmicrogrant"
     )
 
@@ -56,7 +56,7 @@ class TopicRepoIntegrationTests {
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler)
+        val result = this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, "place")
         assertEquals(2, result.size)
         println(result)
         assertEquals(expected.toString(), result.toString())

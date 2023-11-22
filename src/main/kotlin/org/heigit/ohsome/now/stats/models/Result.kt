@@ -124,3 +124,15 @@ data class UserResult(
     val changesets: Long,
     val userId: Int
 )
+
+fun Map<String, Any>.toTopicResult(topic: String) = TopicResult(
+    this["hashtag"].toString(),
+    topic,
+    (this["topic_result"] as UnsignedLong).toLong()
+)
+
+data class TopicResult(
+    val hashtag: String,
+    val topic: String,
+    val value: Long,
+)

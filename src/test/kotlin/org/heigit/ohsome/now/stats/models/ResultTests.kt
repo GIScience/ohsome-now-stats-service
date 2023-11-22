@@ -117,5 +117,18 @@ class ResultTests {
 
     }
 
+    @Test
+    fun toTopicResult() {
+        val map5 = mapOf(
+            "hashtag" to hashtag1,
+            "topic_result" to UnsignedLong.valueOf(20),
+        )
+        val topic: String = "place"
+        val result = map5.toTopicResult(topic)
+
+        assertThat(result.hashtag).isEqualTo(hashtag1)
+        assertThat(result.topic).isEqualTo(topic)
+        assertThat(result.value).isEqualTo(20)
+    }
 
 }

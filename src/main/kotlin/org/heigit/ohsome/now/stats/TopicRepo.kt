@@ -22,7 +22,7 @@ class TopicRepo {
 
     private val logger: Logger = LoggerFactory.getLogger(TopicRepo::class.java)
 
-
+    @Suppress("LongMethod")
     //language=sql
     private fun topicStatsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
         WITH
@@ -33,7 +33,7 @@ class TopicRepo {
             place_before in place_tags as before, 
             if ((current = 0) AND (before = 0), NULL, current - before) as place_edit
 
-        SELECT sum(place_edit) as places
+        SELECT sum(place_edit) as topic_result
 
         FROM topic_place
         WHERE
@@ -44,12 +44,13 @@ class TopicRepo {
         ;
         """.trimIndent()
 
-
+    @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpan(
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?,
-        countryHandler: CountryHandler
+        countryHandler: CountryHandler,
+        topic: String
     ): Map<String, Any> {
         logger.info("Getting topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
