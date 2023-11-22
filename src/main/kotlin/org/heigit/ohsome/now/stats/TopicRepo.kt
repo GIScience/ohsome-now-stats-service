@@ -24,7 +24,7 @@ class TopicRepo {
 
 
     //language=sql
-    private fun statsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
+    private fun topicStatsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
         WITH
         ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
             'neighbourhood', 'town', 'village', 'hamlet', 'isolated_dwelling'] as place_tags, 
@@ -54,7 +54,7 @@ class TopicRepo {
         logger.info("Getting topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         val result = query {
-            it.select(statsFromTimeSpanSQL(hashtagHandler, countryHandler))
+            it.select(topicStatsFromTimeSpanSQL(hashtagHandler, countryHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
