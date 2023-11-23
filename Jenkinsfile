@@ -64,25 +64,27 @@ pipeline {
       }
     }
 
-    stage ('Reports and Statistics') {
-      steps {
-        script {
-          withSonarQubeEnv('sonarcloud GIScience/ohsome') {
-            SONAR_CLI_PARAMETER = ""
-            if (env.CHANGE_ID) {
-              SONAR_CLI_PARAMETER += " " +
-                "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
-                "-Dsonar.pullrequest.branch=${env.CHANGE_BRANCH} " +
-                "-Dsonar.pullrequest.base=${env.CHANGE_TARGET}"
-            } else {
-              SONAR_CLI_PARAMETER += " " +
-                "-Dsonar.branch.name=${env.BRANCH_NAME}"
-            }
-            sh 'gradle sonar ' + SONAR_CLI_PARAMETER
-          }
-        }
-      }
-    }
+//   temporarily disabled due to sonarcloud issues
+//
+//    stage ('Reports and Statistics') {
+//      steps {
+//        script {
+//          withSonarQubeEnv('sonarcloud GIScience/ohsome') {
+//            SONAR_CLI_PARAMETER = ""
+//            if (env.CHANGE_ID) {
+//              SONAR_CLI_PARAMETER += " " +
+//                "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
+//                "-Dsonar.pullrequest.branch=${env.CHANGE_BRANCH} " +
+//                "-Dsonar.pullrequest.base=${env.CHANGE_TARGET}"
+//            } else {
+//              SONAR_CLI_PARAMETER += " " +
+//                "-Dsonar.branch.name=${env.BRANCH_NAME}"
+//            }
+//            sh 'gradle sonar ' + SONAR_CLI_PARAMETER
+//          }
+//        }
+//      }
+//    }
 
     stage ('Deploy Snapshot') {
       when {
