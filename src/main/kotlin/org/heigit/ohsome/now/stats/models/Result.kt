@@ -128,7 +128,7 @@ data class UserResult(
 fun Map<String, Any>.toTopicResult(topic: String) = TopicResult(
     this["hashtag"].toString(),
     topic,
-    (this["topic_result"] as UnsignedLong).toLong()
+    (this["topic_result"].toString()).toLong()
 )
 
 data class TopicResult(
