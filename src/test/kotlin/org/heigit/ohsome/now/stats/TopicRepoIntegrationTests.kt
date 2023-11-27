@@ -59,8 +59,9 @@ class TopicRepoIntegrationTests {
     fun `getTopicStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
         val result = this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, "place")
-        assertEquals(2, result.size)
+
         println(result)
+        assertEquals(2, result.size)
         assertEquals(expected.toString(), result.toString())
     }
 
@@ -73,11 +74,7 @@ class TopicRepoIntegrationTests {
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
         val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
 
-//        println(result)
-
-        result.forEach(::println)
-
-
+        println(result)
         assertEquals(83, result.size)
         assertEquals(3, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
@@ -87,20 +84,18 @@ class TopicRepoIntegrationTests {
 
 
 
-    @Disabled
-//    @Test
+    @Test
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpanInterval returns partial topic data in time span for start and end date with hashtag aggregated by month with 1 country`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1640054890)
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("XYZ")))
+        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("BOL")))
         println(result)
         assertEquals(83, result.size)
-        assertEquals(7, result[0].size)
+        assertEquals(3, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
-        assertEquals("1", result[35]["users"].toString())
-        assertEquals("1", result[35]["changesets"].toString())
+        assertEquals("2", result[35]["topic_result"].toString())
     }
 
 
