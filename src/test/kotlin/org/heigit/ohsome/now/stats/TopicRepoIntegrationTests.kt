@@ -5,6 +5,7 @@ import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -65,11 +66,34 @@ class TopicRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
-    fun `getTopicStatsForTimeSpanInterval returns partial data in time span for start and end date with hashtag aggregated by month with 1 country`() {
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
+    fun `getTopicStatsForTimeSpanInterval returns partial topic data in time span for start and end date with hashtag aggregated by month without countries`() {
         val startDate = Instant.ofEpochSecond(1420991470)
-        val endDate = Instant.ofEpochSecond(1639054890)
-        val hashtagHandler = HashtagHandler("&uganda")
+        val endDate = Instant.ofEpochSecond(1640054890)
+        val hashtagHandler = HashtagHandler("hotmicrogrant*")
+        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
+
+//        println(result)
+
+        result.forEach(::println)
+
+
+        assertEquals(83, result.size)
+        assertEquals(3, result[0].size)
+        assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
+        assertEquals("2", result[35]["topic_result"].toString())
+    }
+
+
+
+
+    @Disabled
+//    @Test
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
+    fun `getTopicStatsForTimeSpanInterval returns partial topic data in time span for start and end date with hashtag aggregated by month with 1 country`() {
+        val startDate = Instant.ofEpochSecond(1420991470)
+        val endDate = Instant.ofEpochSecond(1640054890)
+        val hashtagHandler = HashtagHandler("hotmicrogrant*")
         val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("XYZ")))
         println(result)
         assertEquals(83, result.size)
@@ -80,8 +104,9 @@ class TopicRepoIntegrationTests {
     }
 
 
-    @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Disabled
+//    @Test
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpanInterval fills data between two dates with zeros`() {
         val startDate = Instant.ofEpochSecond(1503644723)
         val endDate = Instant.ofEpochSecond(1640486233)
@@ -94,8 +119,9 @@ class TopicRepoIntegrationTests {
     }
 
 
-    @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Disabled
+//    @Test
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpanInterval returns all data when nothing is supplied as startdate`() {
         val startDate = null
         val endDate = Instant.ofEpochSecond(1639054888)

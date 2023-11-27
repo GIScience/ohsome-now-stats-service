@@ -1,3 +1,5 @@
+DROP table IF EXISTS topic_place;
+
 CREATE TABLE IF NOT EXISTS topic_place
 (
     `changeset_timestamp` DateTime,

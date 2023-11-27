@@ -28,7 +28,7 @@ class TopicRepo {
     //language=sql
     private fun topicStatsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
         WITH
-        ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
+            ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
             'neighbourhood', 'town', 'village', 'hamlet', 'isolated_dwelling'] as place_tags, 
             
             place_current in place_tags as current, 
@@ -50,36 +50,42 @@ class TopicRepo {
     @Suppress("LongMethod")
     //language=sql
     private fun topicStatsFromTimeSpanIntervalSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
-    SELECT
-        count(distinct changeset_id) as changesets,
-        count(distinct user_id) as users,
-        ifNull(sum(road_length_delta)/1000, 0) as roads,
-        ifNull(sum(building_edit), 0) as buildings,
-        count(map_feature_edit) as edits,
-        toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
-        (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
-    FROM "stats"
-    WHERE
-        ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
-        AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
-        AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
-        ${countryHandler.optionalFilterSQL}
-    GROUP BY
-        startdate
-    ORDER BY startdate ASC
-    WITH FILL
-        FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
-        TO toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime
-    STEP INTERVAL :interval Interpolate (
-        enddate as (
-            if (
-                startdate != parseDateTimeBestEffort('1970-01-01 00:00:00'), -- condition
-                ((startdate + INTERVAL :interval) + INTERVAL :interval), 			 -- then
-                (toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval) -- else
-            )
-	    )
-    )
-    """.trimIndent()
+
+        WITH
+        ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
+        'neighbourhood', 'town', 'village', 'hamlet', 'isolated_dwelling'] as place_tags, 
+        
+        place_current in place_tags as current, 
+        place_before in place_tags as before, 
+        if ((current = 0) AND (before = 0), NULL, current - before) as place_edit
+            
+       SELECT 
+           sum(place_edit) as topic_result,
+           toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
+           (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
+
+       FROM topic_place
+       WHERE
+           ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
+           AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
+           AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
+           ${countryHandler.optionalFilterSQL}
+       GROUP BY
+           startdate
+       ORDER BY startdate ASC
+       WITH FILL
+           FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
+           TO toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime
+       STEP INTERVAL :interval Interpolate (
+           enddate as (
+               if (
+                   startdate != parseDateTimeBestEffort('1970-01-01 00:00:00'), -- condition
+                   ((startdate + INTERVAL :interval) + INTERVAL :interval), 			 -- then
+                   (toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval) -- else
+               )
+           )
+       )
+        """.trimIndent()
 
 
 
