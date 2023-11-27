@@ -46,7 +46,7 @@ class TopicRepoIntegrationTests {
 
 
     val expected = mapOf(
-        "topic_result" to 2,
+        "topic_result" to 5,
         "hashtag" to "hotmicrogrant"
     )
 
@@ -78,6 +78,9 @@ class TopicRepoIntegrationTests {
         assertEquals(83, result.size)
         assertEquals(3, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
+
+        // 3 new places at the beginning of the interval
+        assertEquals("3", result[0]["topic_result"].toString())
         assertEquals("2", result[35]["topic_result"].toString())
     }
 
@@ -91,10 +94,14 @@ class TopicRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1640054890)
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
         val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("BOL")))
+
         println(result)
         assertEquals(83, result.size)
         assertEquals(3, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
+
+        // 3 new places in 'BRA' at the beginning of the interval but contries are restricted to 'BOL'
+        assertEquals("null", result[0]["topic_result"].toString())
         assertEquals("2", result[35]["topic_result"].toString())
     }
 

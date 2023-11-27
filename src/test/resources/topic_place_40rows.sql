@@ -1,3 +1,7 @@
+INSERT INTO topic_place (changeset_timestamp, country_iso_a3, hashtag, place_current, place_before) VALUES (toDateTime(1420991580), ['BRA'], 'hotmicrogrant', 'town', '');
+INSERT INTO topic_place (changeset_timestamp, country_iso_a3, hashtag, place_current, place_before) VALUES (toDateTime(1420991580), ['BRA'], 'hotmicrogrant', 'hamlet', '');
+INSERT INTO topic_place (changeset_timestamp, country_iso_a3, hashtag, place_current, place_before) VALUES (toDateTime(1420991580), ['BRA'], 'hotmicrogrant', 'village', '');
+
 INSERT INTO topic_place (changeset_timestamp, country_iso_a3, hashtag, place_current, place_before) VALUES (toDateTime(1513644723), ['BOL'], 'hotmicrogrant', 'locality', '');
 INSERT INTO topic_place (changeset_timestamp, country_iso_a3, hashtag, place_current, place_before) VALUES (toDateTime(1513644723), ['BOL'], 'hotmicrogrant', '', 'farm');
 INSERT INTO topic_place (changeset_timestamp, country_iso_a3, hashtag, place_current, place_before) VALUES (toDateTime(1513644723), ['BOL'], 'hotmicrogrant', 'locality', 'locality');
