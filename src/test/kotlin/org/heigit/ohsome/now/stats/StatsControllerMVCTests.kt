@@ -3,7 +3,6 @@ package org.heigit.ohsome.now.stats
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.stats.models.*
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -13,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import java.time.Instant
 
 
 @WebMvcTest(StatsController::class)
@@ -277,9 +275,5 @@ class StatsControllerMVCTests {
             .andExpect(jsonPath("$.result.max_timestamp").value("2021-12-09T13:01:28"))
     }
 
-
-    private fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
-
-    private fun anyInstant() = any(Instant::class.java)
 
 }
