@@ -85,8 +85,6 @@ class TopicRepoIntegrationTests {
     }
 
 
-
-
     @Test
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpanInterval returns partial topic data in time span for start and end date with hashtag aggregated by month with 1 country`() {
@@ -106,33 +104,37 @@ class TopicRepoIntegrationTests {
     }
 
 
-    @Disabled
-//    @Test
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
-    fun `getTopicStatsForTimeSpanInterval fills data between two dates with zeros`() {
-        val startDate = Instant.ofEpochSecond(1503644723)
-        val endDate = Instant.ofEpochSecond(1640486233)
-        val hashtagHandler = HashtagHandler("&gid")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
-        println(result)
-        assertEquals(52, result.size)
-        assertEquals(7, result[0].size)
-        assertEquals("2017-08-01T00:00", result[0]["startdate"].toString())
-    }
-
-
-    @Disabled
-//    @Test
+    @Test
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpanInterval returns all data when nothing is supplied as startdate`() {
         val startDate = null
         val endDate = Instant.ofEpochSecond(1639054888)
-        val hashtagHandler = HashtagHandler("&group")
+        val hashtagHandler = HashtagHandler("hotmicrogrant*")
         val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
+
         println(result)
         assertEquals(623, result.size)
-        assertEquals(7, result[0].size)
+        assertEquals(3, result[0].size)
         assertEquals("1970-01-01T00:00", result[0]["startdate"].toString())
+
+        assertEquals("3", result[540]["topic_result"].toString())
+        assertEquals("2", result[575]["topic_result"].toString())
+    }
+
+
+
+    @Disabled
+    @Test
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
+    fun `getTopicStatsForTimeSpanInterval fills data between two dates with zeros`(topicRepoIntegrationTests: TopicRepoIntegrationTests) {
+        val startDate = Instant.ofEpochSecond(1503644723)
+        val endDate = Instant.ofEpochSecond(1640486233)
+        val hashtagHandler = HashtagHandler("&gid")
+        val result = topicRepoIntegrationTests.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", topicRepoIntegrationTests.emptyListCountryHandler)
+        println(result)
+        assertEquals(52, result.size)
+        assertEquals(3, result[0].size)
+        assertEquals("2017-08-01T00:00", result[0]["startdate"].toString())
     }
 
 
