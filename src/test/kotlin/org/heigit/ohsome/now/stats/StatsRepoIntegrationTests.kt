@@ -213,9 +213,16 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1640486233)
         val hashtagHandler = HashtagHandler("&gid")
         val result = this.repo.getStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
+
         println(result)
         assertEquals(52, result.size)
         assertEquals(7, result[0].size)
+
+        result.forEach() {
+            assertNotNull(it["buildings"])
+            assertNotNull(it["roads"])
+        }
+
         assertEquals("2017-08-01T00:00", result[0]["startdate"].toString())
     }
 
