@@ -170,10 +170,10 @@ class TopicControllerMVCTests {
     }
 
 
-//    @Test
+    @Test
     fun `topic stats per interval throws error for invalid interval string`() {
 
-        val GET = get("/stats/$hashtag/interval")
+        val GET = get("/topic/$topic/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "ErrorString")
@@ -183,10 +183,10 @@ class TopicControllerMVCTests {
     }
 
 
-//    @Test
+    @Test
     fun `topic stats per interval throws error for interval under one Minute`() {
 
-        val GET = get("/stats/$hashtag/interval")
+        val GET = get("/topic/$topic/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "PT1S")
