@@ -37,7 +37,7 @@ class TopicService {
         countries: List<String>,
         topic: String
     ) = this.repo
-        .getTopicStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries))
+        .getTopicStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries), topic)
         .toTopicIntervalResult(topic)
 
 

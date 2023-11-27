@@ -42,6 +42,8 @@ class TopicRepoIntegrationTests {
     @Autowired
     lateinit var repo: TopicRepo
 
+    val topic = "place"
+
 
     val expected = mapOf(
         "topic_result" to 5,
@@ -70,7 +72,7 @@ class TopicRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1640054890)
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
+        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, topic)
 
         println(result)
         assertEquals(83, result.size)
@@ -89,7 +91,7 @@ class TopicRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1640054890)
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("BOL")))
+        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("BOL")), topic)
 
         println(result)
         assertEquals(83, result.size)
@@ -108,7 +110,7 @@ class TopicRepoIntegrationTests {
         val startDate = null
         val endDate = Instant.ofEpochSecond(1639054888)
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
+        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, topic)
 
         println(result)
         assertEquals(623, result.size)
@@ -126,7 +128,7 @@ class TopicRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(1503644723)
         val endDate = Instant.ofEpochSecond(1640486233)
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
+        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, topic)
 
         println(result)
         result.forEachIndexed { counter, it -> println(" $counter $it") }

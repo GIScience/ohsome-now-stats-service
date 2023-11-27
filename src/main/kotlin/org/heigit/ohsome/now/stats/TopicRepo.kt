@@ -113,14 +113,14 @@ class TopicRepo {
     }
 
 
-    //TODO: topic als letzten parameter einführen
     @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpanInterval(
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?,
         interval: String,
-        countryHandler: CountryHandler
+        countryHandler: CountryHandler,
+        topic: String
     ): List<Map<String, Any>> {
 
         logger.info("Getting topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
