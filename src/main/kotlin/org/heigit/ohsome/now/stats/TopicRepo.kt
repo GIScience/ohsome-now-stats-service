@@ -60,7 +60,7 @@ class TopicRepo {
         if ((current = 0) AND (before = 0), NULL, current - before) as place_edit
             
        SELECT 
-           sum(place_edit) as topic_result,
+           ifNull(sum(place_edit), 0) as topic_result,
            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
            (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
 

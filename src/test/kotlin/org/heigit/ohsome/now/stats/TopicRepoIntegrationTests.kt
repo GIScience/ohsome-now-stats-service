@@ -2,10 +2,8 @@ package org.heigit.ohsome.now.stats
 
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -99,7 +97,7 @@ class TopicRepoIntegrationTests {
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
 
         // 3 new places in 'BRA' at the beginning of the interval but contries are restricted to 'BOL'
-        assertEquals("null", result[0]["topic_result"].toString())
+        assertEquals("0", result[0]["topic_result"].toString())
         assertEquals("2", result[35]["topic_result"].toString())
     }
 
@@ -122,21 +120,26 @@ class TopicRepoIntegrationTests {
     }
 
 
-
-    @Disabled
     @Test
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
-    fun `getTopicStatsForTimeSpanInterval fills data between two dates with zeros`(topicRepoIntegrationTests: TopicRepoIntegrationTests) {
+    fun `getTopicStatsForTimeSpanInterval fills data between two dates with zeros`() {
         val startDate = Instant.ofEpochSecond(1503644723)
         val endDate = Instant.ofEpochSecond(1640486233)
-        val hashtagHandler = HashtagHandler("&gid")
-        val result = topicRepoIntegrationTests.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", topicRepoIntegrationTests.emptyListCountryHandler)
+        val hashtagHandler = HashtagHandler("hotmicrogrant*")
+        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler)
+
         println(result)
+        result.forEachIndexed { counter, it -> println(" $counter $it") }
+
         assertEquals(52, result.size)
         assertEquals(3, result[0].size)
+
+        result.forEach() {
+            assertNotNull(it["topic_result"])
+        }
+
         assertEquals("2017-08-01T00:00", result[0]["startdate"].toString())
     }
-
 
 
 }
