@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.stats
 
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
+import org.heigit.ohsome.now.stats.utils.getGroupbyInterval
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi.create
 import org.slf4j.Logger
@@ -21,6 +22,7 @@ class TopicRepo {
     lateinit var dataSource: DataSource
 
     private val logger: Logger = LoggerFactory.getLogger(TopicRepo::class.java)
+
 
     @Suppress("LongMethod")
     //language=sql
@@ -44,6 +46,44 @@ class TopicRepo {
         ;
         """.trimIndent()
 
+
+    @Suppress("LongMethod")
+    //language=sql
+    private fun topicStatsFromTimeSpanIntervalSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
+    SELECT
+        count(distinct changeset_id) as changesets,
+        count(distinct user_id) as users,
+        ifNull(sum(road_length_delta)/1000, 0) as roads,
+        ifNull(sum(building_edit), 0) as buildings,
+        count(map_feature_edit) as edits,
+        toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
+        (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
+    FROM "stats"
+    WHERE
+        ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
+        AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
+        AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
+        ${countryHandler.optionalFilterSQL}
+    GROUP BY
+        startdate
+    ORDER BY startdate ASC
+    WITH FILL
+        FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
+        TO toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime
+    STEP INTERVAL :interval Interpolate (
+        enddate as (
+            if (
+                startdate != parseDateTimeBestEffort('1970-01-01 00:00:00'), -- condition
+                ((startdate + INTERVAL :interval) + INTERVAL :interval), 			 -- then
+                (toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval) -- else
+            )
+	    )
+    )
+    """.trimIndent()
+
+
+
+
     @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpan(
         hashtagHandler: HashtagHandler,
@@ -65,6 +105,31 @@ class TopicRepo {
 
         return result + ("hashtag" to hashtagHandler.hashtag)
     }
+
+
+    @Suppress("LongParameterList")
+    fun getTopicStatsForTimeSpanInterval(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant?,
+        endDate: Instant?,
+        interval: String,
+        countryHandler: CountryHandler
+    ): List<Map<String, Any>> {
+
+        logger.info("Getting topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
+
+        return query {
+            it.select(topicStatsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler))
+                .bind("interval", getGroupbyInterval(interval))
+                .bind("startdate", startDate ?: EPOCH)
+                .bind("enddate", endDate ?: now())
+                .bind("hashtag", hashtagHandler.hashtag)
+                .mapToMap()
+                .list()
+        }
+    }
+
+
 
 
     //TODO: remove duplication with StatsRepo
