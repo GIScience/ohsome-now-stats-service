@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 
+//TODO: split in 2 test classes for stats and topic results
 class ResultTests {
 
     private val hashtag1 = "hotosm-123"

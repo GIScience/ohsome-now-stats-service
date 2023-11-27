@@ -113,6 +113,7 @@ class TopicRepo {
     }
 
 
+    //TODO: topic als letzten parameter einführen
     @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpanInterval(
         hashtagHandler: HashtagHandler,
@@ -134,7 +135,6 @@ class TopicRepo {
                 .list()
         }
     }
-
 
 
 
