@@ -5,8 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 
-//TODO: split in 2 test classes for stats and topic results
-class ResultTests {
+class StatsModelTests {
 
     private val hashtag1 = "hotosm-123"
     private val hashtag2 = "missing_maps"
@@ -118,33 +117,5 @@ class ResultTests {
 
     }
 
-    @Test
-    fun toTopicResultForClickhouseLong() {
-        val map5 = mapOf(
-            "hashtag" to hashtag1,
-            "topic_result" to UnsignedLong.valueOf(20),
-        )
-        val topic = "place"
-        val result = map5.toTopicResult(topic)
-
-        assertThat(result.hashtag).isEqualTo(hashtag1)
-        assertThat(result.topic).isEqualTo(topic)
-        assertThat(result.value).isEqualTo(20L)
-    }
-
-
-    @Test
-    fun toTopicResultForJavaLong() {
-        val map5 = mapOf(
-            "hashtag" to hashtag1,
-            "topic_result" to 20L,
-        )
-        val topic = "place"
-        val result = map5.toTopicResult(topic)
-
-        assertThat(result.hashtag).isEqualTo(hashtag1)
-        assertThat(result.topic).isEqualTo(topic)
-        assertThat(result.value).isEqualTo(20L)
-    }
 
 }
