@@ -243,7 +243,7 @@ class StatsRepoIntegrationTests {
 
     @Test
     @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
-    fun `getStatsTimeCountry returns partial data in time span for start and  end date with hashtag aggregated by month and country`() {
+    fun `getStatsForTimeSpanCountry returns partial data in time span for start and end date with hashtag aggregated by month and country`() {
         val startDate = Instant.ofEpochSecond(0)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("*")
