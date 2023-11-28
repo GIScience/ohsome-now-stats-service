@@ -1,6 +1,7 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
+import org.heigit.ohsome.now.stats.models.TopicCountryResult
 import org.heigit.ohsome.now.stats.models.TopicResult
 import org.heigit.ohsome.now.stats.models.toTopicResult
 import org.heigit.ohsome.now.stats.models.topicIntervalResult
@@ -194,6 +195,35 @@ class TopicControllerMVCTests {
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)
     }
+
+
+    @Test
+    fun `topic stats per country can be served with explicit start and end date`() {
+
+        val result1 = TopicCountryResult(444, "place", "BOL")
+        val result2 = TopicCountryResult(333, "place", "BRA")
+        val result = listOf(result1, result2)
+
+        `when`(this.topicService.getTopicStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant(), anyString()))
+            .thenReturn(result)
+
+        val GET = get("/topic/$topic/country")
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+            .queryParam("hashtag", hashtag)
+
+        val expectedURL = "/topic/place/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&hashtag=%26uganda"
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+
+            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.metadata.requestUrl").value(expectedURL))
+            .andExpect(jsonPath("$.result.[0].country").value("BOL"))
+    }
+
 
 
 }

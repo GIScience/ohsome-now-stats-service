@@ -3,10 +3,7 @@ package org.heigit.ohsome.now.stats
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import org.heigit.ohsome.now.stats.models.OhsomeFormat
-import org.heigit.ohsome.now.stats.models.TopicIntervalResult
-import org.heigit.ohsome.now.stats.models.TopicResult
-import org.heigit.ohsome.now.stats.models.buildOhsomeFormat
+import org.heigit.ohsome.now.stats.models.*
 import org.heigit.ohsome.now.stats.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
@@ -97,6 +94,39 @@ class TopicController {
 
         val result = measure {
             topicService.getTopicStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!, topic)
+        }
+
+        return buildOhsomeFormat(result, httpServletRequest)
+    }
+
+
+    @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval")
+    @GetMapping("/topic/{topic}/country", produces = ["application/json"])
+    @Suppress("LongParameterList")
+    fun topicCountry(
+        httpServletRequest: HttpServletRequest,
+
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @RequestParam("hashtag")
+        hashtag: String,
+
+        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam(name = "startdate", required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+        startDate: Instant?,
+
+        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @RequestParam(name = "enddate", required = false)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+        endDate: Instant?,
+
+        @Parameter(description = "A topic for which stats are to be generated e.g. 'place'")
+        @PathVariable
+        topic: String
+    ): OhsomeFormat<List<TopicCountryResult>> {
+
+        val result = measure {
+            topicService.getTopicStatsForTimeSpanCountry(hashtag, startDate, endDate, topic)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
