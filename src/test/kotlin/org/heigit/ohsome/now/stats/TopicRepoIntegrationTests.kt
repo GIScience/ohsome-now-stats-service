@@ -144,6 +144,27 @@ class TopicRepoIntegrationTests {
     }
 
 
+    @Test
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
+    fun `getTopicStatsForTimeSpanCountry returns partial data in time span for start and end date with hashtag aggregated by month and country`() {
+        val startDate = Instant.ofEpochSecond(0)
+        val endDate = Instant.ofEpochSecond(1639054890)
+        val hashtagHandler = HashtagHandler("*")
+        val result = this.repo.getTopicStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
+
+        println(result)
+        result.forEachIndexed { counter, it -> println(" $counter $it") }
+        assertEquals(2, result.size)
+        assertEquals(2, result[0].size)
+
+        assertEquals(2L, result[0]["topic_result"])
+        assertEquals("BOL", result[0]["country"])
+
+        assertEquals(3L, result[1]["topic_result"])
+        assertEquals("BRA", result[1]["country"])
+    }
+
+
 }
 
 

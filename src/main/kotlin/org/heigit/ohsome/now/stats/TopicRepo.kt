@@ -88,6 +88,34 @@ class TopicRepo {
         """.trimIndent()
 
 
+    @Suppress("LongMethod")
+    //language=sql
+    private fun topicStatsFromTimeSpanCountrySQL(hashtagHandler: HashtagHandler) = """
+
+        WITH
+        ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
+        'neighbourhood', 'town', 'village', 'hamlet', 'isolated_dwelling'] as place_tags, 
+        
+        place_current in place_tags as current, 
+        place_before in place_tags as before, 
+        if ((current = 0) AND (before = 0), NULL, current - before) as place_edit
+            
+        SELECT 
+            ifNull(sum(place_edit), 0) as topic_result,
+            country_iso_a3 as country
+        FROM topic_place
+
+        ARRAY JOIN country_iso_a3
+        WHERE
+            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
+            and changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+        GROUP BY
+            country
+        ORDER BY
+            country
+        """.trimIndent()
+
 
 
     @Suppress("LongParameterList")
@@ -138,7 +166,28 @@ class TopicRepo {
 
 
 
-    //TODO: remove duplication with StatsRepo
+    //TODO: defaults aus methode weg, da schon im binding??
+    fun getTopicStatsForTimeSpanCountry(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant? = EPOCH,
+        endDate: Instant? = now()
+    ): List<Map<String, Any>> {
+
+        //TODO: logging
+
+        return query {
+            it.select(topicStatsFromTimeSpanCountrySQL(hashtagHandler))
+                .bind("hashtag", hashtagHandler.hashtag)
+                .bind("startDate", startDate ?: EPOCH)
+                .bind("endDate", endDate ?: now())
+                .mapToMap()
+                .list()
+        }
+
+    }
+
+
+
     private fun <T> query(queryFunction: (handle: Handle) -> T) = create(dataSource)
         .withHandle<T, RuntimeException>(queryFunction)
 
