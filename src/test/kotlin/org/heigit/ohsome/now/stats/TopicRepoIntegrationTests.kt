@@ -150,7 +150,7 @@ class TopicRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(0)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getTopicStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
+        val result = this.repo.getTopicStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, "place")
 
         println(result)
         result.forEachIndexed { counter, it -> println(" $counter $it") }

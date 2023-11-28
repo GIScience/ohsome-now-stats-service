@@ -168,7 +168,8 @@ class TopicRepo {
     fun getTopicStatsForTimeSpanCountry(
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
-        endDate: Instant?
+        endDate: Instant?,
+        topic: String
     ): List<Map<String, Any>> {
 
         logger.info("Getting topic stats by country for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
