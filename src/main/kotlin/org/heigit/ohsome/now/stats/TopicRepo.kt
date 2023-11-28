@@ -151,7 +151,7 @@ class TopicRepo {
         topic: String
     ): List<Map<String, Any>> {
 
-        logger.info("Getting topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
+        logger.info("Getting topic stats by interval for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
 
         return query {
             it.select(topicStatsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler))
@@ -165,15 +165,13 @@ class TopicRepo {
     }
 
 
-
-    //TODO: defaults aus methode weg, da schon im binding??
     fun getTopicStatsForTimeSpanCountry(
         hashtagHandler: HashtagHandler,
-        startDate: Instant? = EPOCH,
-        endDate: Instant? = now()
+        startDate: Instant?,
+        endDate: Instant?
     ): List<Map<String, Any>> {
 
-        //TODO: logging
+        logger.info("Getting topic stats by country for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         return query {
             it.select(topicStatsFromTimeSpanCountrySQL(hashtagHandler))
