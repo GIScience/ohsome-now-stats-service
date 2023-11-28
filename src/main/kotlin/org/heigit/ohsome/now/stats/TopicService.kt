@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.stats
 
+import org.heigit.ohsome.now.stats.models.toTopicCountryResult
 import org.heigit.ohsome.now.stats.models.toTopicIntervalResult
 import org.heigit.ohsome.now.stats.models.toTopicResult
 import org.heigit.ohsome.now.stats.utils.CountryHandler
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Instant
 
+
+//TODO: add unit or integration tests
 
 @Service
 class TopicService {
@@ -39,6 +42,17 @@ class TopicService {
     ) = this.repo
         .getTopicStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries), topic)
         .toTopicIntervalResult(topic)
+
+
+    @Suppress("LongParameterList")
+    fun getTopicStatsForTimeSpanCountry(
+        hashtag: String,
+        startDate: Instant?,
+        endDate: Instant?,
+        topic: String
+    ) = this.repo
+        .getTopicStatsForTimeSpanCountry(handler(hashtag), startDate, endDate, topic)
+        .toTopicCountryResult(topic)
 
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)

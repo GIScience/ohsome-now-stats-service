@@ -32,3 +32,25 @@ fun topicIntervalResult(data: Map<String, Any>, topic: String) = TopicIntervalRe
     data["enddate"].toString(),
 )
 
+
+
+
+//TODO: common superclass for all interval results?
+open class TopicCountryResult(
+    open val value: Long,
+    open val topic: String,
+    open val Country: String
+)
+
+
+fun List<Map<String, Any>>.toTopicCountryResult(topic: String) = this.map { topicCountryResult(it, topic) }
+
+
+fun topicCountryResult(data: Map<String, Any>, topic: String) = TopicCountryResult(
+    data["topic_result"].toString().toLong(),
+    topic,
+    data["country"].toString()
+)
+
+
+
