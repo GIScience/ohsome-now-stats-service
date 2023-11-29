@@ -72,10 +72,17 @@ class TopicRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1640054890)
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, topic)
+        val result = this.repo.getTopicStatsForTimeSpanInterval(
+            hashtagHandler,
+            startDate,
+            endDate,
+            "P1M",
+            this.emptyListCountryHandler,
+            topic
+        )
 
         println(result)
-        assertEquals(83, result.size)
+        assertEquals(84, result.size)
         assertEquals(3, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
 
@@ -91,10 +98,17 @@ class TopicRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1640054890)
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("BOL")), topic)
+        val result = this.repo.getTopicStatsForTimeSpanInterval(
+            hashtagHandler,
+            startDate,
+            endDate,
+            "P1M",
+            CountryHandler(listOf("BOL")),
+            topic
+        )
 
         println(result)
-        assertEquals(83, result.size)
+        assertEquals(84, result.size)
         assertEquals(3, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
 
@@ -110,10 +124,17 @@ class TopicRepoIntegrationTests {
         val startDate = null
         val endDate = Instant.ofEpochSecond(1639054888)
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, topic)
+        val result = this.repo.getTopicStatsForTimeSpanInterval(
+            hashtagHandler,
+            startDate,
+            endDate,
+            "P1M",
+            this.emptyListCountryHandler,
+            topic
+        )
 
         println(result)
-        assertEquals(623, result.size)
+        assertEquals(624, result.size)
         assertEquals(3, result[0].size)
         assertEquals("1970-01-01T00:00", result[0]["startdate"].toString())
 
@@ -128,12 +149,19 @@ class TopicRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(1503644723)
         val endDate = Instant.ofEpochSecond(1640486233)
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, topic)
+        val result = this.repo.getTopicStatsForTimeSpanInterval(
+            hashtagHandler,
+            startDate,
+            endDate,
+            "P1M",
+            this.emptyListCountryHandler,
+            topic
+        )
 
         println(result)
         result.forEachIndexed { counter, it -> println(" $counter $it") }
 
-        assertEquals(52, result.size)
+        assertEquals(53, result.size)
         assertEquals(3, result[0].size)
 
         result.forEach() {

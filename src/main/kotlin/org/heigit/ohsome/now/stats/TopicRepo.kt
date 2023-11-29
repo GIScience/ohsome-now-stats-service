@@ -75,7 +75,7 @@ class TopicRepo {
        ORDER BY startdate ASC
        WITH FILL
            FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
-           TO toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime
+           TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
        STEP INTERVAL :interval Interpolate (
            enddate as (
                if (
@@ -115,7 +115,6 @@ class TopicRepo {
         ORDER BY
             country
         """.trimIndent()
-
 
 
     @Suppress("LongParameterList")
@@ -184,7 +183,6 @@ class TopicRepo {
         }
 
     }
-
 
 
     private fun <T> query(queryFunction: (handle: Handle) -> T) = create(dataSource)

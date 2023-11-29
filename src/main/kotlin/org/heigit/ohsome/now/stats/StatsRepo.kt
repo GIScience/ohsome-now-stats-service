@@ -96,7 +96,7 @@ class StatsRepo {
     ORDER BY startdate ASC
     WITH FILL
         FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
-        TO toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime
+        TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
     STEP INTERVAL :interval Interpolate (
         enddate as (
             if (
@@ -287,7 +287,7 @@ class StatsRepo {
     /**
      * Retrieves statistics for a specific hashtag grouped by country.
      *
-     * @param hashtag The hashtag to retrieve statistics for.
+     * @param hashtagHandler The hashtag to retrieve statistics for.
      * @param startDate The start date of the time span.
      * @param endDate The end date of the time span.
      * @return A list of maps containing the statistics for each interval.
