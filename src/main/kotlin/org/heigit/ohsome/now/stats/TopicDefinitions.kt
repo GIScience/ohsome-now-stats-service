@@ -39,6 +39,19 @@ val topics = mapOf(
                 )
             )
         )
+    ),
+    "healthcare" to TopicDefinition(
+        "healthcare",
+        listOf(
+            KeyValueMatcher(
+                "healthcare",
+                listOf("doctors", "clinic", "midwife", "nurse", "center", "health_post", "hospital")
+            ),
+            KeyValueMatcher(
+                "amenity",
+                listOf("doctors", "clinic", "hospital", "health_post")
+            )
+        )
     )
 )
 

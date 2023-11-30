@@ -17,9 +17,6 @@ class TopicHandler(val topic: String) {
 
     private fun buildValueLists() {
         for (matcher in definition.matchers) {
-            // add "," between matchers
-            if (valueLists != "") valueLists += ","
-
             val allowedValuesList = matcher.allowedValues
                 .filter(String::isNotBlank)
                 .map { "'$it'" }
