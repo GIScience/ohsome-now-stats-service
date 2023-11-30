@@ -11,13 +11,11 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.web.util.UriBuilder
 import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
-
-
-//TODO: parameter explizit angeben statt in der URL?
 
 //TODO: extract superclass for system tests?
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -55,9 +53,15 @@ class SystemTests {
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `get topic place`() {
 
+        val url = { uriBuilder: UriBuilder -> uriBuilder
+            .path("/topic/$topic")
+            .queryParam("hashtag", "hotmicrogrant*")
+            .build()
+        }
+
         client()
             .get()
-            .uri("/topic/$topic?hashtag=hotmicrogrant*")
+            .uri(url)
             .exchange()
             .expectStatus()
                 .isOk
@@ -82,9 +86,18 @@ class SystemTests {
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `get topic by interval`() {
 
+        val url = { uriBuilder: UriBuilder -> uriBuilder
+            .path("/topic/$topic/interval")
+            .queryParam("hashtag", "hotmicrogrant*")
+            .queryParam("startdate", "2015-01-01T00:00:00Z")
+            .queryParam("enddate", "2018-01-01T00:00:00Z")
+            .queryParam("interval", "P1M")
+            .build()
+        }
+
         client()
             .get()
-            .uri("topic/$topic/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
+            .uri(url)
             .exchange()
             .expectStatus()
                 .isOk
@@ -104,17 +117,24 @@ class SystemTests {
     }
 
 
-
-
     @Test
     @DisplayName("GET topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M&countries=BOL")
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `get topic by interval for one country`() {
 
+        val url = { uriBuilder: UriBuilder -> uriBuilder
+            .path("/topic/$topic/interval")
+            .queryParam("hashtag", "hotmicrogrant*")
+            .queryParam("startdate", "2015-01-01T00:00:00Z")
+            .queryParam("enddate", "2018-01-01T00:00:00Z")
+            .queryParam("interval", "P1M")
+            .queryParam("countries", "BOL")
+            .build()
+        }
+
         client()
             .get()
-            .uri("topic/$topic/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z" +
-                    "&interval=P1M&countries=BOL")
+            .uri(url)
             .exchange()
             .expectStatus()
                 .isOk
