@@ -37,7 +37,7 @@ class TopicRepo {
             ${topicHandler.beforeCurrent} 
             if ((current = 0) AND (before = 0), NULL, current - before) as edit
 
-        SELECT sum(edit) as topic_result
+        SELECT ifNull(sum(edit), 0) as topic_result
 
         FROM topic_${topicHandler.topic}
         WHERE
@@ -58,19 +58,17 @@ class TopicRepo {
     ) = """
 
         WITH
-        ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
-        'neighbourhood', 'town', 'village', 'hamlet', 'isolated_dwelling'] as place_tags, 
-        
-        place_current in place_tags as current, 
-        place_before in place_tags as before, 
-        if ((current = 0) AND (before = 0), NULL, current - before) as place_edit
+            ${topicHandler.valueLists} 
+            
+            ${topicHandler.beforeCurrent} 
+            if ((current = 0) AND (before = 0), NULL, current - before) as edit
             
        SELECT 
-           ifNull(sum(place_edit), 0) as topic_result,
+           ifNull(sum(edit), 0) as topic_result,
            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
            (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
 
-       FROM topic_place
+       FROM topic_${topicHandler.topic}
        WHERE
            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
            AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
@@ -96,20 +94,21 @@ class TopicRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun topicStatsFromTimeSpanCountrySQL(hashtagHandler: HashtagHandler, topicHandler: TopicHandler) = """
-
+    private fun topicStatsFromTimeSpanCountrySQL(
+        hashtagHandler: HashtagHandler,
+        topicHandler:
+        TopicHandler
+    ) = """
         WITH
-        ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
-        'neighbourhood', 'town', 'village', 'hamlet', 'isolated_dwelling'] as place_tags, 
-        
-        place_current in place_tags as current, 
-        place_before in place_tags as before, 
-        if ((current = 0) AND (before = 0), NULL, current - before) as place_edit
+            ${topicHandler.valueLists} 
+            
+            ${topicHandler.beforeCurrent} 
+            if ((current = 0) AND (before = 0), NULL, current - before) as edit
             
         SELECT 
-            ifNull(sum(place_edit), 0) as topic_result,
+            ifNull(sum(edit), 0) as topic_result,
             country_iso_a3 as country
-        FROM topic_place
+        FROM topic_${topicHandler.topic}
 
         ARRAY JOIN country_iso_a3
         WHERE
