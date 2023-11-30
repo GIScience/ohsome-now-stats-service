@@ -15,15 +15,13 @@ import org.springframework.web.util.UriBuilder
 import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.net.URI
 
 
 //TODO: extract superclass for system tests?
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
 class SystemTests {
-
-
-    //TODO: extract common checks to function
 
 
     @LocalServerPort
@@ -62,20 +60,13 @@ class SystemTests {
             .build()
         }
 
-        client()
-            .get()
-            .uri(url)
-            .exchange()
-            .expectStatus()
-                .isOk
-            .expectBody()
-                .jsonPath("$.result.value").isEqualTo(5)
-
-                //TODO: check if this is a bug: should be 'hotmicrogrant*' instead of 'hotmicrogrant'
-                .jsonPath("$.result.hashtag").isEqualTo("hotmicrogrant")
-                .jsonPath("$.result.topic").isEqualTo("place")
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
+        doGetAndAssertThat(url)
+            .jsonPath("$.result.value").isEqualTo(5)
+            //TODO: check if this is a bug: should be 'hotmicrogrant*' instead of 'hotmicrogrant'
+            .jsonPath("$.result.hashtag").isEqualTo("hotmicrogrant")
+            .jsonPath("$.result.topic").isEqualTo("place")
+            .jsonPath("$.query.timespan.startDate").exists()
+            .jsonPath("$.query.timespan.endDate").exists()
     }
 
 
@@ -93,25 +84,19 @@ class SystemTests {
             .build()
         }
 
-        client()
-            .get()
-            .uri(url)
-            .exchange()
-            .expectStatus()
-                .isOk
-            .expectBody()
-                .jsonPath("$.result[0].value").isEqualTo(3)
-                .jsonPath("$.result[0].topic").isEqualTo("place")
-                .jsonPath("$.result[0].startDate").isEqualTo("2015-01-01T00:00")
-                .jsonPath("$.result[0].endDate").isEqualTo("2015-02-01T00:00")
+        doGetAndAssertThat(url)
+            .jsonPath("$.result[0].value").isEqualTo(3)
+            .jsonPath("$.result[0].topic").isEqualTo("place")
+            .jsonPath("$.result[0].startDate").isEqualTo("2015-01-01T00:00")
+            .jsonPath("$.result[0].endDate").isEqualTo("2015-02-01T00:00")
 
-                .jsonPath("$.result[35].value").isEqualTo(2)
-                .jsonPath("$.result[35].topic").isEqualTo("place")
-                .jsonPath("$.result[35].startDate").isEqualTo("2017-12-01T00:00")
-                .jsonPath("$.result[35].endDate").isEqualTo("2018-01-01T00:00")
+            .jsonPath("$.result[35].value").isEqualTo(2)
+            .jsonPath("$.result[35].topic").isEqualTo("place")
+            .jsonPath("$.result[35].startDate").isEqualTo("2017-12-01T00:00")
+            .jsonPath("$.result[35].endDate").isEqualTo("2018-01-01T00:00")
 
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
+            .jsonPath("$.query.timespan.startDate").exists()
+            .jsonPath("$.query.timespan.endDate").exists()
     }
 
 
@@ -130,25 +115,19 @@ class SystemTests {
             .build()
         }
 
-        client()
-            .get()
-            .uri(url)
-            .exchange()
-            .expectStatus()
-                .isOk
-            .expectBody()
-                .jsonPath("$.result[0].value").isEqualTo(0)
-                .jsonPath("$.result[0].topic").isEqualTo("place")
-                .jsonPath("$.result[0].startDate").isEqualTo("2015-01-01T00:00")
-                .jsonPath("$.result[0].endDate").isEqualTo("2015-02-01T00:00")
+        doGetAndAssertThat(url)
+            .jsonPath("$.result[0].value").isEqualTo(0)
+            .jsonPath("$.result[0].topic").isEqualTo("place")
+            .jsonPath("$.result[0].startDate").isEqualTo("2015-01-01T00:00")
+            .jsonPath("$.result[0].endDate").isEqualTo("2015-02-01T00:00")
 
-                .jsonPath("$.result[35].value").isEqualTo(2)
-                .jsonPath("$.result[35].topic").isEqualTo("place")
-                .jsonPath("$.result[35].startDate").isEqualTo("2017-12-01T00:00")
-                .jsonPath("$.result[35].endDate").isEqualTo("2018-01-01T00:00")
+            .jsonPath("$.result[35].value").isEqualTo(2)
+            .jsonPath("$.result[35].topic").isEqualTo("place")
+            .jsonPath("$.result[35].startDate").isEqualTo("2017-12-01T00:00")
+            .jsonPath("$.result[35].endDate").isEqualTo("2018-01-01T00:00")
 
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
+            .jsonPath("$.query.timespan.startDate").exists()
+            .jsonPath("$.query.timespan.endDate").exists()
 
     }
 
@@ -166,30 +145,24 @@ class SystemTests {
             .build()
         }
 
-        client()
-            .get()
-            .uri(url)
-            .exchange()
-            .expectStatus()
-                .isOk
-            .expectBody()
-                .jsonPath("$.result[0].value").isEqualTo(0)
-                .jsonPath("$.result[0].topic").isEqualTo("place")
-                .jsonPath("$.result[0].startDate").isEqualTo("1970-01-01T00:00")
-                .jsonPath("$.result[0].endDate").isEqualTo("1970-02-01T00:00")
+        doGetAndAssertThat(url)
+            .jsonPath("$.result[0].value").isEqualTo(0)
+            .jsonPath("$.result[0].topic").isEqualTo("place")
+            .jsonPath("$.result[0].startDate").isEqualTo("1970-01-01T00:00")
+            .jsonPath("$.result[0].endDate").isEqualTo("1970-02-01T00:00")
 
-                .jsonPath("$.result[540].value").isEqualTo(3)
-                .jsonPath("$.result[540].topic").isEqualTo("place")
-                .jsonPath("$.result[540].startDate").isEqualTo("2015-01-01T00:00")
-                .jsonPath("$.result[540].endDate").isEqualTo("2015-02-01T00:00")
+            .jsonPath("$.result[540].value").isEqualTo(3)
+            .jsonPath("$.result[540].topic").isEqualTo("place")
+            .jsonPath("$.result[540].startDate").isEqualTo("2015-01-01T00:00")
+            .jsonPath("$.result[540].endDate").isEqualTo("2015-02-01T00:00")
 
-                .jsonPath("$.result[575].value").isEqualTo(2)
-                .jsonPath("$.result[575].topic").isEqualTo("place")
-                .jsonPath("$.result[575].startDate").isEqualTo("2017-12-01T00:00")
-                .jsonPath("$.result[575].endDate").isEqualTo("2018-01-01T00:00")
+            .jsonPath("$.result[575].value").isEqualTo(2)
+            .jsonPath("$.result[575].topic").isEqualTo("place")
+            .jsonPath("$.result[575].startDate").isEqualTo("2017-12-01T00:00")
+            .jsonPath("$.result[575].endDate").isEqualTo("2018-01-01T00:00")
 
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
+            .jsonPath("$.query.timespan.startDate").exists()
+            .jsonPath("$.query.timespan.endDate").exists()
 
     }
 
@@ -207,25 +180,28 @@ class SystemTests {
             .build()
         }
 
-        client()
-            .get()
-            .uri(url)
-            .exchange()
-            .expectStatus()
-                .isOk
-            .expectBody()
-                .jsonPath("$.result[0].value").isEqualTo(2)
-                .jsonPath("$.result[0].topic").isEqualTo("place")
-                .jsonPath("$.result[0].country").isEqualTo("BOL")
+        doGetAndAssertThat(url)
+            .jsonPath("$.result[0].value").isEqualTo(2)
+            .jsonPath("$.result[0].topic").isEqualTo("place")
+            .jsonPath("$.result[0].country").isEqualTo("BOL")
 
-                .jsonPath("$.result[1].value").isEqualTo(3)
-                .jsonPath("$.result[1].topic").isEqualTo("place")
-                .jsonPath("$.result[1].country").isEqualTo("BRA")
+            .jsonPath("$.result[1].value").isEqualTo(3)
+            .jsonPath("$.result[1].topic").isEqualTo("place")
+            .jsonPath("$.result[1].country").isEqualTo("BRA")
 
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
+            .jsonPath("$.query.timespan.startDate").exists()
+            .jsonPath("$.query.timespan.endDate").exists()
 
     }
+
+
+    private fun doGetAndAssertThat(url: (UriBuilder) -> URI) = client()
+        .get()
+        .uri(url)
+        .exchange()
+        .expectStatus()
+            .isOk
+        .expectBody()
 
 
     private fun client() = WebTestClient
