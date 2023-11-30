@@ -48,11 +48,11 @@ class SystemTests {
 
     val topic1 = "place"
     val topic2 = "healthcare"
-    val topics = listOf(topic1)
+    val topics = listOf(topic1, topic2)
 
     @Test
     @DisplayName("GET /topic/topic?hashtag=hotmicrogrant*")
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql", "/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
     fun `get topic place`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -67,6 +67,8 @@ class SystemTests {
             //TODO: check if this is a bug: should be 'hotmicrogrant*' instead of 'hotmicrogrant'
             .jsonPath("$.result.$topic1.hashtag").isEqualTo("hotmicrogrant")
             .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+            .jsonPath("$.result.$topic2.value").isEqualTo(2)
+            .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()
     }
@@ -74,7 +76,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql", "/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
     fun `get topic by interval`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -92,11 +94,16 @@ class SystemTests {
             .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
             .jsonPath("$.result.$topic1[0].startDate").isEqualTo("2015-01-01T00:00")
             .jsonPath("$.result.$topic1[0].endDate").isEqualTo("2015-02-01T00:00")
+            .jsonPath("$.result.$topic2[0].startDate").isEqualTo("2015-01-01T00:00")
+            .jsonPath("$.result.$topic2[0].endDate").isEqualTo("2015-02-01T00:00")
 
             .jsonPath("$.result.$topic1[35].value").isEqualTo(2)
+            .jsonPath("$.result.$topic2[35].value").isEqualTo(0)
             .jsonPath("$.result.$topic1[35].topic").isEqualTo("place")
             .jsonPath("$.result.$topic1[35].startDate").isEqualTo("2017-12-01T00:00")
             .jsonPath("$.result.$topic1[35].endDate").isEqualTo("2018-01-01T00:00")
+            .jsonPath("$.result.$topic2[35].startDate").isEqualTo("2017-12-01T00:00")
+            .jsonPath("$.result.$topic2[35].endDate").isEqualTo("2018-01-01T00:00")
 
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()
@@ -105,7 +112,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M&countries=BOL")
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql", "/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
     fun `get topic by interval for one country`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -124,6 +131,8 @@ class SystemTests {
             .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
             .jsonPath("$.result.$topic1[0].startDate").isEqualTo("2015-01-01T00:00")
             .jsonPath("$.result.$topic1[0].endDate").isEqualTo("2015-02-01T00:00")
+            .jsonPath("$.result.$topic2[0].startDate").isEqualTo("2015-01-01T00:00")
+            .jsonPath("$.result.$topic2[0].endDate").isEqualTo("2015-02-01T00:00")
 
             .jsonPath("$.result.$topic1[35].value").isEqualTo(2)
             .jsonPath("$.result.$topic1[35].topic").isEqualTo("place")
@@ -138,7 +147,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&enddate=2018-01-01T00:00:00Z&interval=P1M")
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql", "/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
     fun `get topic by interval for all countries without start date`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -174,7 +183,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/country?hashtag=*&startdate=1970-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z")
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql", "/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
     fun `get topic by country`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -182,18 +191,21 @@ class SystemTests {
                 .path("/topic/${topics.joinToString()}/country")
                 .queryParam("hashtag", "*")
                 .queryParam("startdate", "1970-01-01T00:00:00Z")
-                .queryParam("enddate", "2018-01-01T00:00:00Z")
+                .queryParam("enddate", "2024-01-01T00:00:00Z")
                 .build()
         }
 
         doGetAndAssertThat(url)
             .jsonPath("$.result.$topic1[0].value").isEqualTo(2)
             .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
+            .jsonPath("$.result.$topic2[0].topic").isEqualTo("healthcare")
             .jsonPath("$.result.$topic1[0].country").isEqualTo("BOL")
+            .jsonPath("$.result.$topic2[0].country").isEqualTo("BEL")
 
             .jsonPath("$.result.$topic1[1].value").isEqualTo(3)
             .jsonPath("$.result.$topic1[1].topic").isEqualTo("place")
             .jsonPath("$.result.$topic1[1].country").isEqualTo("BRA")
+            .jsonPath("$.result.$topic2[1].country").isEqualTo("BRA")
 
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()

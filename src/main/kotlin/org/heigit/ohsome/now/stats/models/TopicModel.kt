@@ -37,7 +37,7 @@ fun topicIntervalResult(data: Map<String, Any>, topic: String) = TopicIntervalRe
 open class TopicCountryResult(
     open val value: Long,
     open val topic: String,
-    open val Country: String
+    open val country: String
 )
 
 
