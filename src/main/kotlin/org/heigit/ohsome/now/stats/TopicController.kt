@@ -58,7 +58,7 @@ class TopicController {
 
 
     @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval")
-    @GetMapping("/topic/{topic}/interval", produces = ["application/json"])
+    @GetMapping("/topic/{topics}/interval", produces = ["application/json"])
     @Suppress("LongParameterList")
     fun topicInterval(
         httpServletRequest: HttpServletRequest,
@@ -85,15 +85,15 @@ class TopicController {
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>?,
 
-        @Parameter(description = "A topic for which stats are to be generated e.g. 'place'")
+        @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
-        topic: String
-    ): OhsomeFormat<List<TopicIntervalResult>> {
+        topics: List<String>
+    ): OhsomeFormat<Map<String, List<TopicIntervalResult>>> {
 
         validateIntervalString(interval)
 
         val result = measure {
-            topicService.getTopicStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!, topic)
+            topicService.getTopicStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!, topics)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
@@ -101,7 +101,7 @@ class TopicController {
 
 
     @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval")
-    @GetMapping("/topic/{topic}/country", produces = ["application/json"])
+    @GetMapping("/topic/{topics}/country", produces = ["application/json"])
     @Suppress("LongParameterList")
     fun topicCountry(
         httpServletRequest: HttpServletRequest,
@@ -120,13 +120,13 @@ class TopicController {
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         endDate: Instant?,
 
-        @Parameter(description = "A topic for which stats are to be generated e.g. 'place'")
+        @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
-        topic: String
-    ): OhsomeFormat<List<TopicCountryResult>> {
+        topics: List<String>
+    ): OhsomeFormat<Map<String, List<TopicCountryResult>>> {
 
         val result = measure {
-            topicService.getTopicStatsForTimeSpanCountry(hashtag, startDate, endDate, topic)
+            topicService.getTopicStatsForTimeSpanCountry(hashtag, startDate, endDate, topics)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)

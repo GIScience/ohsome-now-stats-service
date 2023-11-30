@@ -46,8 +46,9 @@ class SystemTests {
     }
 
 
-    val topic = "place"
-
+    val topic1 = "place"
+    val topic2 = "healthcare"
+    val topics = listOf(topic1)
 
     @Test
     @DisplayName("GET /topic/topic?hashtag=hotmicrogrant*")
@@ -56,16 +57,16 @@ class SystemTests {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
-                .path("/topic/$topic")
+                .path("/topic/${topics.joinToString()}")
                 .queryParam("hashtag", "hotmicrogrant*")
                 .build()
         }
 
         doGetAndAssertThat(url)
-            .jsonPath("$.result.$topic.value").isEqualTo(5)
+            .jsonPath("$.result.$topic1.value").isEqualTo(5)
             //TODO: check if this is a bug: should be 'hotmicrogrant*' instead of 'hotmicrogrant'
-            .jsonPath("$.result.$topic.hashtag").isEqualTo("hotmicrogrant")
-            .jsonPath("$.result.$topic.topic").isEqualTo("place")
+            .jsonPath("$.result.$topic1.hashtag").isEqualTo("hotmicrogrant")
+            .jsonPath("$.result.$topic1.topic").isEqualTo("place")
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()
     }
@@ -78,7 +79,7 @@ class SystemTests {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
-                .path("/topic/$topic/interval")
+                .path("/topic/${topics.joinToString()}/interval")
                 .queryParam("hashtag", "hotmicrogrant*")
                 .queryParam("startdate", "2015-01-01T00:00:00Z")
                 .queryParam("enddate", "2018-01-01T00:00:00Z")
@@ -87,15 +88,15 @@ class SystemTests {
         }
 
         doGetAndAssertThat(url)
-            .jsonPath("$.result[0].value").isEqualTo(3)
-            .jsonPath("$.result[0].topic").isEqualTo("place")
-            .jsonPath("$.result[0].startDate").isEqualTo("2015-01-01T00:00")
-            .jsonPath("$.result[0].endDate").isEqualTo("2015-02-01T00:00")
+            .jsonPath("$.result.$topic1[0].value").isEqualTo(3)
+            .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
+            .jsonPath("$.result.$topic1[0].startDate").isEqualTo("2015-01-01T00:00")
+            .jsonPath("$.result.$topic1[0].endDate").isEqualTo("2015-02-01T00:00")
 
-            .jsonPath("$.result[35].value").isEqualTo(2)
-            .jsonPath("$.result[35].topic").isEqualTo("place")
-            .jsonPath("$.result[35].startDate").isEqualTo("2017-12-01T00:00")
-            .jsonPath("$.result[35].endDate").isEqualTo("2018-01-01T00:00")
+            .jsonPath("$.result.$topic1[35].value").isEqualTo(2)
+            .jsonPath("$.result.$topic1[35].topic").isEqualTo("place")
+            .jsonPath("$.result.$topic1[35].startDate").isEqualTo("2017-12-01T00:00")
+            .jsonPath("$.result.$topic1[35].endDate").isEqualTo("2018-01-01T00:00")
 
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()
@@ -109,7 +110,7 @@ class SystemTests {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
-                .path("/topic/$topic/interval")
+                .path("/topic/${topics.joinToString()}/interval")
                 .queryParam("hashtag", "hotmicrogrant*")
                 .queryParam("startdate", "2015-01-01T00:00:00Z")
                 .queryParam("enddate", "2018-01-01T00:00:00Z")
@@ -119,15 +120,15 @@ class SystemTests {
         }
 
         doGetAndAssertThat(url)
-            .jsonPath("$.result[0].value").isEqualTo(0)
-            .jsonPath("$.result[0].topic").isEqualTo("place")
-            .jsonPath("$.result[0].startDate").isEqualTo("2015-01-01T00:00")
-            .jsonPath("$.result[0].endDate").isEqualTo("2015-02-01T00:00")
+            .jsonPath("$.result.$topic1[0].value").isEqualTo(0)
+            .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
+            .jsonPath("$.result.$topic1[0].startDate").isEqualTo("2015-01-01T00:00")
+            .jsonPath("$.result.$topic1[0].endDate").isEqualTo("2015-02-01T00:00")
 
-            .jsonPath("$.result[35].value").isEqualTo(2)
-            .jsonPath("$.result[35].topic").isEqualTo("place")
-            .jsonPath("$.result[35].startDate").isEqualTo("2017-12-01T00:00")
-            .jsonPath("$.result[35].endDate").isEqualTo("2018-01-01T00:00")
+            .jsonPath("$.result.$topic1[35].value").isEqualTo(2)
+            .jsonPath("$.result.$topic1[35].topic").isEqualTo("place")
+            .jsonPath("$.result.$topic1[35].startDate").isEqualTo("2017-12-01T00:00")
+            .jsonPath("$.result.$topic1[35].endDate").isEqualTo("2018-01-01T00:00")
 
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()
@@ -142,7 +143,7 @@ class SystemTests {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
-                .path("/topic/$topic/interval")
+                .path("/topic/${topics.joinToString()}/interval")
                 .queryParam("hashtag", "hotmicrogrant*")
                 .queryParam("enddate", "2018-01-01T00:00:00Z")
                 .queryParam("interval", "P1M")
@@ -150,20 +151,20 @@ class SystemTests {
         }
 
         doGetAndAssertThat(url)
-            .jsonPath("$.result[0].value").isEqualTo(0)
-            .jsonPath("$.result[0].topic").isEqualTo("place")
-            .jsonPath("$.result[0].startDate").isEqualTo("1970-01-01T00:00")
-            .jsonPath("$.result[0].endDate").isEqualTo("1970-02-01T00:00")
+            .jsonPath("$.result.$topic1[0].value").isEqualTo(0)
+            .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
+            .jsonPath("$.result.$topic1[0].startDate").isEqualTo("1970-01-01T00:00")
+            .jsonPath("$.result.$topic1[0].endDate").isEqualTo("1970-02-01T00:00")
 
-            .jsonPath("$.result[540].value").isEqualTo(3)
-            .jsonPath("$.result[540].topic").isEqualTo("place")
-            .jsonPath("$.result[540].startDate").isEqualTo("2015-01-01T00:00")
-            .jsonPath("$.result[540].endDate").isEqualTo("2015-02-01T00:00")
+            .jsonPath("$.result.$topic1[540].value").isEqualTo(3)
+            .jsonPath("$.result.$topic1[540].topic").isEqualTo("place")
+            .jsonPath("$.result.$topic1[540].startDate").isEqualTo("2015-01-01T00:00")
+            .jsonPath("$.result.$topic1[540].endDate").isEqualTo("2015-02-01T00:00")
 
-            .jsonPath("$.result[575].value").isEqualTo(2)
-            .jsonPath("$.result[575].topic").isEqualTo("place")
-            .jsonPath("$.result[575].startDate").isEqualTo("2017-12-01T00:00")
-            .jsonPath("$.result[575].endDate").isEqualTo("2018-01-01T00:00")
+            .jsonPath("$.result.$topic1[575].value").isEqualTo(2)
+            .jsonPath("$.result.$topic1[575].topic").isEqualTo("place")
+            .jsonPath("$.result.$topic1[575].startDate").isEqualTo("2017-12-01T00:00")
+            .jsonPath("$.result.$topic1[575].endDate").isEqualTo("2018-01-01T00:00")
 
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()
@@ -178,7 +179,7 @@ class SystemTests {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
-                .path("/topic/$topic/country")
+                .path("/topic/${topics.joinToString()}/country")
                 .queryParam("hashtag", "*")
                 .queryParam("startdate", "1970-01-01T00:00:00Z")
                 .queryParam("enddate", "2018-01-01T00:00:00Z")
@@ -186,13 +187,13 @@ class SystemTests {
         }
 
         doGetAndAssertThat(url)
-            .jsonPath("$.result[0].value").isEqualTo(2)
-            .jsonPath("$.result[0].topic").isEqualTo("place")
-            .jsonPath("$.result[0].country").isEqualTo("BOL")
+            .jsonPath("$.result.$topic1[0].value").isEqualTo(2)
+            .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
+            .jsonPath("$.result.$topic1[0].country").isEqualTo("BOL")
 
-            .jsonPath("$.result[1].value").isEqualTo(3)
-            .jsonPath("$.result[1].topic").isEqualTo("place")
-            .jsonPath("$.result[1].country").isEqualTo("BRA")
+            .jsonPath("$.result.$topic1[1].value").isEqualTo(3)
+            .jsonPath("$.result.$topic1[1].topic").isEqualTo("place")
+            .jsonPath("$.result.$topic1[1].country").isEqualTo("BRA")
 
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()

@@ -132,10 +132,9 @@ class TopicControllerMVCTests {
                 anyInstant(),
                 anyString(),
                 anyList(),
-                anyString()
+                anyList()
             )
-        )
-            .thenReturn(listOf(exampleTopicStats))
+        ).thenReturn(mapOf(topic1 to listOf(exampleTopicStats)))
 
 
         val GET = get("/topic/${topics.joinToString()}/interval")
@@ -156,7 +155,7 @@ class TopicControllerMVCTests {
             .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
             .andExpect(jsonPath("$.metadata.requestUrl").value(expectedUrl))
             .andExpect(jsonPath("$.query.timespan.interval").value("P1M"))
-            .andExpect(jsonPath("$.result.[0].value").value(1001))
+            .andExpect(jsonPath("$.result.$topic1.[0].value").value(1001))
     }
 
 
@@ -170,10 +169,9 @@ class TopicControllerMVCTests {
                 anyInstant(),
                 anyString(),
                 anyList(),
-                anyString()
+                anyList()
             )
-        )
-            .thenReturn(listOf(exampleTopicStats))
+        ).thenReturn(mapOf(topic1 to listOf(exampleTopicStats)))
 
         val GET = get("/topic/${topics.joinToString()}/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
@@ -193,14 +191,14 @@ class TopicControllerMVCTests {
             .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
             .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
             .andExpect(jsonPath("$.metadata.requestUrl").value(expectedUrl))
-            .andExpect(jsonPath("$.result.[0].value").value(1001))
+            .andExpect(jsonPath("$.result.$topic1.[0].value").value(1001))
     }
 
 
     @Test
     fun `topic stats per interval throws error for invalid interval string`() {
 
-        val GET = get("/topic/$topics/interval")
+        val GET = get("/topic/${topics.joinToString()}/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "ErrorString")
@@ -213,7 +211,7 @@ class TopicControllerMVCTests {
     @Test
     fun `topic stats per interval throws error for interval under one Minute`() {
 
-        val GET = get("/topic/$topics/interval")
+        val GET = get("/topic/${topics.joinToString()}/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "PT1S")
@@ -228,16 +226,16 @@ class TopicControllerMVCTests {
 
         val result1 = TopicCountryResult(444, "place", "BOL")
         val result2 = TopicCountryResult(333, "place", "BRA")
-        val result = listOf(result1, result2)
+        val result = mapOf(topic1 to listOf(result1, result2))
 
-        `when`(this.topicService.getTopicStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant(), anyString()))
+        `when`(this.topicService.getTopicStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant(), anyList()))
             .thenReturn(result)
 
         val GET = get("/topic/${topics.joinToString()}/country")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("hashtag", hashtag)
-
+        println("/topic/${topics.joinToString()}/country")
         val expectedURL =
             "/topic/place/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&hashtag=%26uganda"
 
@@ -248,7 +246,7 @@ class TopicControllerMVCTests {
             .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
             .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
             .andExpect(jsonPath("$.metadata.requestUrl").value(expectedURL))
-            .andExpect(jsonPath("$.result.[0].country").value("BOL"))
+            .andExpect(jsonPath("$.result.$topic1.[0].country").value("BOL"))
     }
 
 

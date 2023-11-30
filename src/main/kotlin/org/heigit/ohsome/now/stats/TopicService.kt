@@ -1,9 +1,6 @@
 package org.heigit.ohsome.now.stats
 
-import org.heigit.ohsome.now.stats.models.TopicResult
-import org.heigit.ohsome.now.stats.models.toTopicCountryResult
-import org.heigit.ohsome.now.stats.models.toTopicIntervalResult
-import org.heigit.ohsome.now.stats.models.toTopicResult
+import org.heigit.ohsome.now.stats.models.*
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.heigit.ohsome.now.stats.utils.TopicHandler
@@ -45,17 +42,23 @@ class TopicService {
         endDate: Instant?,
         interval: String,
         countries: List<String>,
-        topic: String
-    ) = this.repo
-        .getTopicStatsForTimeSpanInterval(
-            handler(hashtag),
-            startDate,
-            endDate,
-            interval,
-            handler(countries),
-            TopicHandler(topic)
-        )
-        .toTopicIntervalResult(topic)
+        topics: List<String>
+    ): Map<String, List<TopicIntervalResult>> {
+        val topicResults = mutableMapOf<String, List<TopicIntervalResult>>()
+        for (topic in topics) {
+            topicResults[topic] = this.repo
+                .getTopicStatsForTimeSpanInterval(
+                    handler(hashtag),
+                    startDate,
+                    endDate,
+                    interval,
+                    handler(countries),
+                    TopicHandler(topic)
+                ).toTopicIntervalResult(topic)
+
+        }
+        return topicResults
+    }
 
 
     @Suppress("LongParameterList")
@@ -63,10 +66,20 @@ class TopicService {
         hashtag: String,
         startDate: Instant?,
         endDate: Instant?,
-        topic: String
-    ) = this.repo
-        .getTopicStatsForTimeSpanCountry(handler(hashtag), startDate, endDate, TopicHandler(topic))
-        .toTopicCountryResult(topic)
+        topics: List<String>
+    ): Map<String, List<TopicCountryResult>> {
+        val topicResults = mutableMapOf<String, List<TopicCountryResult>>()
+        for (topic in topics) {
+            topicResults[topic] = this.repo
+                .getTopicStatsForTimeSpanCountry(
+                    handler(hashtag),
+                    startDate,
+                    endDate,
+                    TopicHandler(topic)
+                ).toTopicCountryResult(topic)
+        }
+        return topicResults
+    }
 
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)
