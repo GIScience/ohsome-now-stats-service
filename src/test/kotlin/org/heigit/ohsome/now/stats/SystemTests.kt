@@ -155,35 +155,51 @@ class SystemTests {
     }
 
 
+    @Test
+    @DisplayName("GET topic/place/interval?hashtag=hotmicrogrant*&nddate=2018-01-01T00:00:00Z&interval=P1M")
+    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
+    fun `get topic by interval for all countries without start date`() {
+
+        val url = { uriBuilder: UriBuilder -> uriBuilder
+            .path("/topic/$topic/interval")
+            .queryParam("hashtag", "hotmicrogrant*")
+            .queryParam("enddate", "2018-01-01T00:00:00Z")
+            .queryParam("interval", "P1M")
+            .build()
+        }
+
+        client()
+            .get()
+            .uri(url)
+            .exchange()
+            .expectStatus()
+                .isOk
+            .expectBody()
+                .jsonPath("$.result[0].value").isEqualTo(0)
+                .jsonPath("$.result[0].topic").isEqualTo("place")
+                .jsonPath("$.result[0].startDate").isEqualTo("1970-01-01T00:00")
+                .jsonPath("$.result[0].endDate").isEqualTo("1970-02-01T00:00")
+
+                .jsonPath("$.result[540].value").isEqualTo(3)
+                .jsonPath("$.result[540].topic").isEqualTo("place")
+                .jsonPath("$.result[540].startDate").isEqualTo("2015-01-01T00:00")
+                .jsonPath("$.result[540].endDate").isEqualTo("2015-02-01T00:00")
+
+                .jsonPath("$.result[575].value").isEqualTo(2)
+                .jsonPath("$.result[575].topic").isEqualTo("place")
+                .jsonPath("$.result[575].startDate").isEqualTo("2017-12-01T00:00")
+                .jsonPath("$.result[575].endDate").isEqualTo("2018-01-01T00:00")
+
+                .jsonPath("$.query.timespan.startDate").exists()
+                .jsonPath("$.query.timespan.endDate").exists()
+
+    }
+
+
 
 
     /*
 
-
-    @Test
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
-    fun `getTopicStatsForTimeSpanInterval returns partial topic data in time span for start and end date with hashtag aggregated by month with 1 country`() {
-        val startDate = Instant.ofEpochSecond(1420991470)
-        val endDate = Instant.ofEpochSecond(1640054890)
-        val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(
-            hashtagHandler,
-            startDate,
-            endDate,
-            "P1M",
-            CountryHandler(listOf("BOL")),
-            topic
-        )
-
-        println(result)
-        assertEquals(84, result.size)
-        assertEquals(3, result[0].size)
-        assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
-
-        // 3 new places in 'BRA' at the beginning of the interval but contries are restricted to 'BOL'
-        assertEquals("0", result[0]["topic_result"].toString())
-        assertEquals("2", result[35]["topic_result"].toString())
-    }
 
 
     @Test
