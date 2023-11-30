@@ -91,19 +91,19 @@ class SystemTests {
             .expectBody()
                 .jsonPath("$.result[0].value").isEqualTo(3)
                 .jsonPath("$.result[0].topic").isEqualTo("place")
-
-                //TODO: check
-//                .jsonPath("$.result[0].startDate").isEqualTo("place")
-//                .jsonPath("$.result[0].endDate").isEqualTo("place")
-
+                .jsonPath("$.result[0].startDate").isEqualTo("2015-01-01T00:00")
+                .jsonPath("$.result[0].endDate").isEqualTo("2015-02-01T00:00")
 
                 .jsonPath("$.result[35].value").isEqualTo(2)
                 .jsonPath("$.result[35].topic").isEqualTo("place")
-
+                .jsonPath("$.result[35].startDate").isEqualTo("2017-12-01T00:00")
+                .jsonPath("$.result[35].endDate").isEqualTo("2018-01-01T00:00")
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
     }
+
+
 
     /*
 
