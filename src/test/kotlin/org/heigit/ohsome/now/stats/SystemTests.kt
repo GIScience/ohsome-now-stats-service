@@ -75,11 +75,6 @@ class SystemTests {
                 .jsonPath("$.query.timespan.endDate").exists()
     }
 
-    private fun client() = WebTestClient
-        .bindToServer()
-        .baseUrl("http://localhost:$port")
-        .build()
-
 
     @Test
     @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
@@ -118,7 +113,7 @@ class SystemTests {
 
 
     @Test
-    @DisplayName("GET topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M&countries=BOL")
+    @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M&countries=BOL")
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `get topic by interval for one country`() {
 
@@ -156,7 +151,7 @@ class SystemTests {
 
 
     @Test
-    @DisplayName("GET topic/place/interval?hashtag=hotmicrogrant*&nddate=2018-01-01T00:00:00Z&interval=P1M")
+    @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&enddate=2018-01-01T00:00:00Z&interval=P1M")
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `get topic by interval for all countries without start date`() {
 
@@ -195,87 +190,44 @@ class SystemTests {
 
     }
 
-
-
-
-    /*
-
-
-
     @Test
+    @DisplayName("GET /topic/place/country?hashtag=*&startdate=1970-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z")
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
-    fun `getTopicStatsForTimeSpanInterval returns all data when nothing is supplied as startdate`() {
-        val startDate = null
-        val endDate = Instant.ofEpochSecond(1639054888)
-        val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(
-            hashtagHandler,
-            startDate,
-            endDate,
-            "P1M",
-            this.emptyListCountryHandler,
-            topic
-        )
+    fun `get topic by country`() {
 
-        println(result)
-        assertEquals(624, result.size)
-        assertEquals(3, result[0].size)
-        assertEquals("1970-01-01T00:00", result[0]["startdate"].toString())
-
-        assertEquals("3", result[540]["topic_result"].toString())
-        assertEquals("2", result[575]["topic_result"].toString())
-    }
-
-
-    @Test
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
-    fun `getTopicStatsForTimeSpanInterval fills data between two dates with zeros`() {
-        val startDate = Instant.ofEpochSecond(1503644723)
-        val endDate = Instant.ofEpochSecond(1640486233)
-        val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(
-            hashtagHandler,
-            startDate,
-            endDate,
-            "P1M",
-            this.emptyListCountryHandler,
-            topic
-        )
-
-        println(result)
-        result.forEachIndexed { counter, it -> println(" $counter $it") }
-
-        assertEquals(53, result.size)
-        assertEquals(3, result[0].size)
-
-        result.forEach() {
-            assertNotNull(it["topic_result"])
+        val url = { uriBuilder: UriBuilder -> uriBuilder
+            .path("/topic/$topic/country")
+            .queryParam("hashtag", "*")
+            .queryParam("startdate", "1970-01-01T00:00:00Z")
+            .queryParam("enddate", "2018-01-01T00:00:00Z")
+            .build()
         }
 
-        assertEquals("2017-08-01T00:00", result[0]["startdate"].toString())
+        client()
+            .get()
+            .uri(url)
+            .exchange()
+            .expectStatus()
+                .isOk
+            .expectBody()
+                .jsonPath("$.result[0].value").isEqualTo(2)
+                .jsonPath("$.result[0].topic").isEqualTo("place")
+                .jsonPath("$.result[0].country").isEqualTo("BOL")
+
+                .jsonPath("$.result[1].value").isEqualTo(3)
+                .jsonPath("$.result[1].topic").isEqualTo("place")
+                .jsonPath("$.result[1].country").isEqualTo("BRA")
+
+                .jsonPath("$.query.timespan.startDate").exists()
+                .jsonPath("$.query.timespan.endDate").exists()
+
     }
 
 
-    @Test
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
-    fun `getTopicStatsForTimeSpanCountry returns partial data in time span for start and end date with hashtag aggregated by month and country`() {
-        val startDate = Instant.ofEpochSecond(0)
-        val endDate = Instant.ofEpochSecond(1639054890)
-        val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getTopicStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, "place")
-
-        println(result)
-        result.forEachIndexed { counter, it -> println(" $counter $it") }
-        assertEquals(2, result.size)
-        assertEquals(2, result[0].size)
-
-        assertEquals(2L, result[0]["topic_result"])
-        assertEquals("BOL", result[0]["country"])
-
-        assertEquals(3L, result[1]["topic_result"])
-        assertEquals("BRA", result[1]["country"])
-    }
-*/
+    private fun client() = WebTestClient
+        .bindToServer()
+        .baseUrl("http://localhost:$port")
+        .build()
 
 
 }
