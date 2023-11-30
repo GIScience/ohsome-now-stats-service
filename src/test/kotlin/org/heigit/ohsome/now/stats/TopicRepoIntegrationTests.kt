@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.stats
 
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
+import org.heigit.ohsome.now.stats.utils.TopicHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -58,7 +59,8 @@ class TopicRepoIntegrationTests {
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, "place")
+        val result =
+            this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, TopicHandler(topic))
 
         println(result)
         assertEquals(2, result.size)
@@ -78,7 +80,7 @@ class TopicRepoIntegrationTests {
             endDate,
             "P1M",
             this.emptyListCountryHandler,
-            topic
+            TopicHandler(topic)
         )
 
         println(result)
@@ -104,7 +106,7 @@ class TopicRepoIntegrationTests {
             endDate,
             "P1M",
             CountryHandler(listOf("BOL")),
-            topic
+            TopicHandler(topic)
         )
 
         println(result)
@@ -130,7 +132,7 @@ class TopicRepoIntegrationTests {
             endDate,
             "P1M",
             this.emptyListCountryHandler,
-            topic
+            TopicHandler(topic)
         )
 
         println(result)
@@ -155,7 +157,7 @@ class TopicRepoIntegrationTests {
             endDate,
             "P1M",
             this.emptyListCountryHandler,
-            topic
+            TopicHandler(topic)
         )
 
         println(result)
@@ -178,7 +180,7 @@ class TopicRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(0)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getTopicStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, "place")
+        val result = this.repo.getTopicStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, TopicHandler(topic))
 
         println(result)
         result.forEachIndexed { counter, it -> println(" $counter $it") }

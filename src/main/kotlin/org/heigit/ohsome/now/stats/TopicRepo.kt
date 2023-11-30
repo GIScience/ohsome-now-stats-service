@@ -13,7 +13,7 @@ import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
 import javax.sql.DataSource
-
+import org.heigit.ohsome.now.stats.utils.TopicHandler
 
 @Component
 class TopicRepo {
@@ -26,18 +26,20 @@ class TopicRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun topicStatsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
+    private fun topicStatsFromTimeSpanSQL(
+        hashtagHandler: HashtagHandler,
+        countryHandler: CountryHandler,
+        topicHandler: TopicHandler
+    ) = """
         WITH
-            ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
-            'neighbourhood', 'town', 'village', 'hamlet', 'isolated_dwelling'] as place_tags, 
+            ${topicHandler.valueLists} 
             
-            place_current in place_tags as current, 
-            place_before in place_tags as before, 
-            if ((current = 0) AND (before = 0), NULL, current - before) as place_edit
+            ${topicHandler.beforeCurrent} 
+            if ((current = 0) AND (before = 0), NULL, current - before) as edit
 
-        SELECT sum(place_edit) as topic_result
+        SELECT sum(edit) as topic_result
 
-        FROM topic_place
+        FROM topic_${topicHandler.topic}
         WHERE
             ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
             and changeset_timestamp > parseDateTimeBestEffort(:startDate)
@@ -49,7 +51,11 @@ class TopicRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun topicStatsFromTimeSpanIntervalSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
+    private fun topicStatsFromTimeSpanIntervalSQL(
+        hashtagHandler: HashtagHandler,
+        countryHandler: CountryHandler,
+        topicHandler: TopicHandler
+    ) = """
 
         WITH
         ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
@@ -90,7 +96,7 @@ class TopicRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun topicStatsFromTimeSpanCountrySQL(hashtagHandler: HashtagHandler) = """
+    private fun topicStatsFromTimeSpanCountrySQL(hashtagHandler: HashtagHandler, topicHandler: TopicHandler) = """
 
         WITH
         ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 
@@ -123,12 +129,12 @@ class TopicRepo {
         startDate: Instant?,
         endDate: Instant?,
         countryHandler: CountryHandler,
-        topic: String
+        topicHandler: TopicHandler
     ): Map<String, Any> {
         logger.info("Getting topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         val result = query {
-            it.select(topicStatsFromTimeSpanSQL(hashtagHandler, countryHandler))
+            it.select(topicStatsFromTimeSpanSQL(hashtagHandler, countryHandler, topicHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
@@ -147,13 +153,13 @@ class TopicRepo {
         endDate: Instant?,
         interval: String,
         countryHandler: CountryHandler,
-        topic: String
+        topicHandler: TopicHandler
     ): List<Map<String, Any>> {
 
         logger.info("Getting topic stats by interval for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
 
         return query {
-            it.select(topicStatsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler))
+            it.select(topicStatsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler, topicHandler))
                 .bind("interval", getGroupbyInterval(interval))
                 .bind("startdate", startDate ?: EPOCH)
                 .bind("enddate", endDate ?: now())
@@ -168,13 +174,13 @@ class TopicRepo {
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?,
-        topic: String
+        topicHandler: TopicHandler
     ): List<Map<String, Any>> {
 
         logger.info("Getting topic stats by country for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         return query {
-            it.select(topicStatsFromTimeSpanCountrySQL(hashtagHandler))
+            it.select(topicStatsFromTimeSpanCountrySQL(hashtagHandler, topicHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
@@ -187,6 +193,4 @@ class TopicRepo {
 
     private fun <T> query(queryFunction: (handle: Handle) -> T) = create(dataSource)
         .withHandle<T, RuntimeException>(queryFunction)
-
-
 }

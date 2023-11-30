@@ -5,6 +5,7 @@ import org.heigit.ohsome.now.stats.models.toTopicIntervalResult
 import org.heigit.ohsome.now.stats.models.toTopicResult
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
+import org.heigit.ohsome.now.stats.utils.TopicHandler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -18,7 +19,7 @@ class TopicService {
     @Autowired
     lateinit var repo: TopicRepo
 
-
+    // todo: check if topic is valid (contained as key in TopicDefinition)
     @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpan(
         hashtag: String,
@@ -27,7 +28,7 @@ class TopicService {
         countries: List<String>,
         topic: String
     ) = this.repo
-        .getTopicStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries), topic)
+        .getTopicStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries), TopicHandler(topic))
         .toTopicResult(topic)
 
 
@@ -40,7 +41,14 @@ class TopicService {
         countries: List<String>,
         topic: String
     ) = this.repo
-        .getTopicStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries), topic)
+        .getTopicStatsForTimeSpanInterval(
+            handler(hashtag),
+            startDate,
+            endDate,
+            interval,
+            handler(countries),
+            TopicHandler(topic)
+        )
         .toTopicIntervalResult(topic)
 
 
@@ -51,7 +59,7 @@ class TopicService {
         endDate: Instant?,
         topic: String
     ) = this.repo
-        .getTopicStatsForTimeSpanCountry(handler(hashtag), startDate, endDate, topic)
+        .getTopicStatsForTimeSpanCountry(handler(hashtag), startDate, endDate, TopicHandler(topic))
         .toTopicCountryResult(topic)
 
 
