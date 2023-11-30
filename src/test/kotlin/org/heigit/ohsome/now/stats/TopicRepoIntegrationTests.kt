@@ -67,6 +67,23 @@ class TopicRepoIntegrationTests {
         assertEquals(expected.toString(), result.toString())
     }
 
+    @Test
+    @Sql(*["/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
+    fun `getTopicStatsForTimeSpan should return all data for topic with two key columns`() {
+        val hashtagHandler = HashtagHandler("adt")
+        val result =
+            this.repo.getTopicStatsForTimeSpan(
+                hashtagHandler,
+                null,
+                null,
+                emptyListCountryHandler,
+                TopicHandler("healthcare")
+            )
+
+        println(result)
+        assertEquals(2, result.size)
+        assertEquals("-3", result["topic_result"].toString())
+    }
 
     @Test
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
@@ -114,7 +131,7 @@ class TopicRepoIntegrationTests {
         assertEquals(3, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
 
-        // 3 new places in 'BRA' at the beginning of the interval but contries are restricted to 'BOL'
+        // 3 new places in 'BRA' at the beginning of the interval but countries are restricted to 'BOL'
         assertEquals("0", result[0]["topic_result"].toString())
         assertEquals("2", result[35]["topic_result"].toString())
     }

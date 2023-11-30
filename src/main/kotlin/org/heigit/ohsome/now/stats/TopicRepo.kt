@@ -71,7 +71,7 @@ class TopicRepo {
        FROM topic_${topicHandler.topic}
        WHERE
            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
-           AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
+               AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
            AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
            ${countryHandler.optionalFilterSQL}
        GROUP BY
