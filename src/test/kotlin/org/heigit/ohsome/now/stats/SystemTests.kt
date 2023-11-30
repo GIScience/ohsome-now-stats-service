@@ -23,6 +23,9 @@ import org.testcontainers.junit.jupiter.Testcontainers
 class SystemTests {
 
 
+    //TODO: extract common checks to function
+
+
     @LocalServerPort
     var port: Int = 0
 
@@ -189,6 +192,7 @@ class SystemTests {
                 .jsonPath("$.query.timespan.endDate").exists()
 
     }
+
 
     @Test
     @DisplayName("GET /topic/place/country?hashtag=*&startdate=1970-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z")
