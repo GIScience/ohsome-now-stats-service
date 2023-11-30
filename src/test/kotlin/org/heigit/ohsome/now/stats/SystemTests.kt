@@ -17,6 +17,8 @@ import org.testcontainers.junit.jupiter.Testcontainers
 
 
 
+//TODO: parameter explizit angeben statt in der URL?
+
 //TODO: extract superclass for system tests?
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
@@ -51,14 +53,9 @@ class SystemTests {
     @Test
     @DisplayName("GET /topic/topic?hashtag=hotmicrogrant*")
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
-    fun `get topic`() {
+    fun `get topic place`() {
 
-        val client = WebTestClient
-            .bindToServer()
-            .baseUrl("http://localhost:$port")
-            .build()
-
-        client
+        client()
             .get()
             .uri("/topic/$topic?hashtag=hotmicrogrant*")
             .exchange()
@@ -74,33 +71,41 @@ class SystemTests {
                 .jsonPath("$.query.timespan.endDate").exists()
     }
 
+    private fun client() = WebTestClient
+        .bindToServer()
+        .baseUrl("http://localhost:$port")
+        .build()
 
-    /*
 
     @Test
+    @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
-    fun `getTopicStatsForTimeSpanInterval returns partial topic data in time span for start and end date with hashtag aggregated by month without countries`() {
-        val startDate = Instant.ofEpochSecond(1420991470)
-        val endDate = Instant.ofEpochSecond(1640054890)
-        val hashtagHandler = HashtagHandler("hotmicrogrant*")
-        val result = this.repo.getTopicStatsForTimeSpanInterval(
-            hashtagHandler,
-            startDate,
-            endDate,
-            "P1M",
-            this.emptyListCountryHandler,
-            topic
-        )
+    fun `get topic by interval`() {
 
-        println(result)
-        assertEquals(84, result.size)
-        assertEquals(3, result[0].size)
-        assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
+        client()
+            .get()
+            .uri("topic/$topic/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
+            .exchange()
+            .expectStatus()
+                .isOk
+            .expectBody()
+                .jsonPath("$.result[0].value").isEqualTo(3)
+                .jsonPath("$.result[0].topic").isEqualTo("place")
 
-        // 3 new places at the beginning of the interval
-        assertEquals("3", result[0]["topic_result"].toString())
-        assertEquals("2", result[35]["topic_result"].toString())
+                //TODO: check
+//                .jsonPath("$.result[0].startDate").isEqualTo("place")
+//                .jsonPath("$.result[0].endDate").isEqualTo("place")
+
+
+                .jsonPath("$.result[35].value").isEqualTo(2)
+                .jsonPath("$.result[35].topic").isEqualTo("place")
+
+
+                .jsonPath("$.query.timespan.startDate").exists()
+                .jsonPath("$.query.timespan.endDate").exists()
     }
+
+    /*
 
 
     @Test
