@@ -21,7 +21,7 @@ class TopicController {
 
     @Suppress("LongParameterList")
     @Operation(summary = "Get stats for a specified topic")
-    @GetMapping("/topic/{topic}", produces = ["application/json"])
+    @GetMapping("/topic/{topics}", produces = ["application/json"])
     fun topic(
         httpServletRequest: HttpServletRequest,
 
@@ -43,14 +43,14 @@ class TopicController {
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>?,
 
-        @Parameter(description = "A topic for which stats are to be generated e.g. 'place'")
+        @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
-        topic: String
+        topics: List<String>
 
-    ): OhsomeFormat<TopicResult> {
+    ): OhsomeFormat<Map<String, TopicResult>> {
 
         val result = measure {
-            topicService.getTopicStatsForTimeSpan(hashtag, startDate, endDate, countries!!, topic)
+            topicService.getTopicStatsForTimeSpan(hashtag, startDate, endDate, countries!!, topics)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
@@ -131,7 +131,6 @@ class TopicController {
 
         return buildOhsomeFormat(result, httpServletRequest)
     }
-
 
 
 }

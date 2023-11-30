@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.stats
 
+import org.heigit.ohsome.now.stats.models.TopicResult
 import org.heigit.ohsome.now.stats.models.toTopicCountryResult
 import org.heigit.ohsome.now.stats.models.toTopicIntervalResult
 import org.heigit.ohsome.now.stats.models.toTopicResult
@@ -26,11 +27,16 @@ class TopicService {
         startDate: Instant?,
         endDate: Instant?,
         countries: List<String>,
-        topic: String
-    ) = this.repo
-        .getTopicStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries), TopicHandler(topic))
-        .toTopicResult(topic)
-
+        topics: List<String>
+    ): Map<String, TopicResult> {
+        val topicResults = mutableMapOf<String, TopicResult>()
+        for (topic in topics) {
+            topicResults[topic] = this.repo
+                .getTopicStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries), TopicHandler(topic))
+                .toTopicResult(topic)
+        }
+        return topicResults
+    }
 
     @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpanInterval(

@@ -33,8 +33,6 @@ fun topicIntervalResult(data: Map<String, Any>, topic: String) = TopicIntervalRe
 )
 
 
-
-
 //TODO: common superclass for all interval results?
 open class TopicCountryResult(
     open val value: Long,

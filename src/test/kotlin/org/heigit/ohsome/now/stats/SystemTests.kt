@@ -54,17 +54,18 @@ class SystemTests {
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `get topic place`() {
 
-        val url = { uriBuilder: UriBuilder -> uriBuilder
-            .path("/topic/$topic")
-            .queryParam("hashtag", "hotmicrogrant*")
-            .build()
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/topic/$topic")
+                .queryParam("hashtag", "hotmicrogrant*")
+                .build()
         }
 
         doGetAndAssertThat(url)
-            .jsonPath("$.result.value").isEqualTo(5)
+            .jsonPath("$.result.$topic.value").isEqualTo(5)
             //TODO: check if this is a bug: should be 'hotmicrogrant*' instead of 'hotmicrogrant'
-            .jsonPath("$.result.hashtag").isEqualTo("hotmicrogrant")
-            .jsonPath("$.result.topic").isEqualTo("place")
+            .jsonPath("$.result.$topic.hashtag").isEqualTo("hotmicrogrant")
+            .jsonPath("$.result.$topic.topic").isEqualTo("place")
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()
     }
@@ -75,13 +76,14 @@ class SystemTests {
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `get topic by interval`() {
 
-        val url = { uriBuilder: UriBuilder -> uriBuilder
-            .path("/topic/$topic/interval")
-            .queryParam("hashtag", "hotmicrogrant*")
-            .queryParam("startdate", "2015-01-01T00:00:00Z")
-            .queryParam("enddate", "2018-01-01T00:00:00Z")
-            .queryParam("interval", "P1M")
-            .build()
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/topic/$topic/interval")
+                .queryParam("hashtag", "hotmicrogrant*")
+                .queryParam("startdate", "2015-01-01T00:00:00Z")
+                .queryParam("enddate", "2018-01-01T00:00:00Z")
+                .queryParam("interval", "P1M")
+                .build()
         }
 
         doGetAndAssertThat(url)
@@ -105,14 +107,15 @@ class SystemTests {
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `get topic by interval for one country`() {
 
-        val url = { uriBuilder: UriBuilder -> uriBuilder
-            .path("/topic/$topic/interval")
-            .queryParam("hashtag", "hotmicrogrant*")
-            .queryParam("startdate", "2015-01-01T00:00:00Z")
-            .queryParam("enddate", "2018-01-01T00:00:00Z")
-            .queryParam("interval", "P1M")
-            .queryParam("countries", "BOL")
-            .build()
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/topic/$topic/interval")
+                .queryParam("hashtag", "hotmicrogrant*")
+                .queryParam("startdate", "2015-01-01T00:00:00Z")
+                .queryParam("enddate", "2018-01-01T00:00:00Z")
+                .queryParam("interval", "P1M")
+                .queryParam("countries", "BOL")
+                .build()
         }
 
         doGetAndAssertThat(url)
@@ -137,12 +140,13 @@ class SystemTests {
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `get topic by interval for all countries without start date`() {
 
-        val url = { uriBuilder: UriBuilder -> uriBuilder
-            .path("/topic/$topic/interval")
-            .queryParam("hashtag", "hotmicrogrant*")
-            .queryParam("enddate", "2018-01-01T00:00:00Z")
-            .queryParam("interval", "P1M")
-            .build()
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/topic/$topic/interval")
+                .queryParam("hashtag", "hotmicrogrant*")
+                .queryParam("enddate", "2018-01-01T00:00:00Z")
+                .queryParam("interval", "P1M")
+                .build()
         }
 
         doGetAndAssertThat(url)
@@ -172,12 +176,13 @@ class SystemTests {
     @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql"])
     fun `get topic by country`() {
 
-        val url = { uriBuilder: UriBuilder -> uriBuilder
-            .path("/topic/$topic/country")
-            .queryParam("hashtag", "*")
-            .queryParam("startdate", "1970-01-01T00:00:00Z")
-            .queryParam("enddate", "2018-01-01T00:00:00Z")
-            .build()
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/topic/$topic/country")
+                .queryParam("hashtag", "*")
+                .queryParam("startdate", "1970-01-01T00:00:00Z")
+                .queryParam("enddate", "2018-01-01T00:00:00Z")
+                .build()
         }
 
         doGetAndAssertThat(url)
@@ -200,7 +205,7 @@ class SystemTests {
         .uri(url)
         .exchange()
         .expectStatus()
-            .isOk
+        .isOk
         .expectBody()
 
 
