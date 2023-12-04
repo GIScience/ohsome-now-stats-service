@@ -1,11 +1,37 @@
 package org.heigit.ohsome.now.stats
 
 
-class TopicDefinition(
-    val topic: String,
-    val matchers: List<KeyValueMatcher>
+class TopicDefinition(val topic: String, val matchers: List<KeyValueMatcher>) {
 
-)
+    fun buildValueLists(): String {
+        var valueLists = ""
+
+        for (matcher in this.matchers) {
+            val allowedValuesList = matcher.allowedValues
+                .filter(String::isNotBlank)
+                .map { "'$it'" }
+
+            valueLists += "${allowedValuesList} as ${matcher.key}_tags\n,"
+        }
+
+        return valueLists
+    }
+
+
+    fun beforeCurrentCondition(beforeOrCurrent: String): String {
+        var temp = ""
+        for (matcher in this.matchers) {
+            // add "OR " between conditions
+            if (temp != "") temp += "OR "
+
+            temp += "${matcher.key}_${beforeOrCurrent} in ${matcher.key}_tags\n"
+        }
+        temp += "as ${beforeOrCurrent},\n"
+        return temp
+    }
+
+}
+
 
 class KeyValueMatcher(
     val key: String,
@@ -50,6 +76,16 @@ val topics = mapOf(
             KeyValueMatcher(
                 "amenity",
                 listOf("doctors", "clinic", "hospital", "health_post")
+            )
+        )
+    ),
+    //TODO: fix this
+    "amenity" to TopicDefinition(
+        "amenity",
+        listOf(
+            KeyValueMatcher(
+                "amenity",
+                listOf("XXXXXXXXXXXXXXXX")
             )
         )
     )
