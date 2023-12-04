@@ -34,13 +34,23 @@ class TopicRepoUnitTests {
     }
 
 
-
     @Test
     fun `can create SQL for topic 'healthcare', all countries & non-wildcard hashtag`() {
 
         val expected = file("topic_healthcare_allcountries_fixed_hashtag")
 
         val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, healthcareTopic)
+        assertThat(sql)
+            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+    }
+
+
+    @Test
+    fun `can create SQL for topic 'place' by country & wildcard hashtag`() {
+
+        val expected = file("topic_place_bycountry_wildcard_hashtag")
+
+        val sql = repo.topicStatsFromTimeSpanCountrySQL(wildcardHashtag, placeTopic)
         assertThat(sql)
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
