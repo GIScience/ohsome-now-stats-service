@@ -1,11 +1,7 @@
 WITH
-    ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 'neighbourhood', 'town', 'village', 'hamlet', 'isolated_dwelling'] as place_tags
-        ,
-
-    place_before in place_tags
-    as before,
-    place_current in place_tags
-    as current,
+    ['country', 'state', 'region', 'province', 'district', 'county', 'municipality', 'city', 'borough', 'suburb', 'quarter', 'neighbourhood', 'town', 'village', 'hamlet', 'isolated_dwelling'] as place_tags,
+    place_before in place_tags as before,
+    place_current in place_tags as current,
 
     if ((current = 0) AND (before = 0), NULL, current - before) as edit
 
