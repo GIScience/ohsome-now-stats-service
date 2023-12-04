@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.stats
 
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
+import org.heigit.ohsome.now.stats.utils.TopicHandler
 import org.heigit.ohsome.now.stats.utils.getGroupbyInterval
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi.create
@@ -13,7 +14,7 @@ import java.time.Instant
 import java.time.Instant.EPOCH
 import java.time.Instant.now
 import javax.sql.DataSource
-import org.heigit.ohsome.now.stats.utils.TopicHandler
+
 
 @Component
 class TopicRepo {
@@ -26,7 +27,7 @@ class TopicRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun topicStatsFromTimeSpanSQL(
+    fun topicStatsFromTimeSpanSQL(
         hashtagHandler: HashtagHandler,
         countryHandler: CountryHandler,
         topicHandler: TopicHandler
@@ -51,7 +52,7 @@ class TopicRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun topicStatsFromTimeSpanIntervalSQL(
+    fun topicStatsFromTimeSpanIntervalSQL(
         hashtagHandler: HashtagHandler,
         countryHandler: CountryHandler,
         topicHandler: TopicHandler
@@ -94,7 +95,7 @@ class TopicRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun topicStatsFromTimeSpanCountrySQL(
+    fun topicStatsFromTimeSpanCountrySQL(
         hashtagHandler: HashtagHandler,
         topicHandler:
         TopicHandler
@@ -137,6 +138,7 @@ class TopicRepo {
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
+//                .setSqlLogger(Slf4JSqlLogger(logger))
                 .mapToMap()
                 .single()
         }
