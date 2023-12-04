@@ -21,6 +21,20 @@ class TopicRepoUnitTests {
 
     private val healthcareTopic = TopicHandler("healthcare")
     private val placeTopic = TopicHandler("place")
+    private val amenityTopic = TopicHandler("amenity")
+
+
+    @Test
+    fun `can create SQL for topic 'amenity', all countries & non-wildcard hashtag`() {
+
+        val expected = file("topic_amenity_allcountries_fixed_hashtag")
+
+        val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, amenityTopic)
+        assertThat(sql)
+            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+    }
+
+
 
 
     @Test

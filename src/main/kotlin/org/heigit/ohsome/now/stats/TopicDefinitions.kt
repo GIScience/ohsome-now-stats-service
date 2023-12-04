@@ -1,9 +1,26 @@
 package org.heigit.ohsome.now.stats
 
 
-class TopicDefinition(val topic: String, val matchers: List<KeyValueMatcher>) {
+interface TopicDefinition {
 
-    fun buildValueLists(): String {
+    fun buildValueLists(): String
+    fun beforeCurrentCondition(beforeOrCurrent: String): String
+}
+
+
+class KeyOnlyTopicDefinition(val topic: String) : TopicDefinition {
+
+    override fun buildValueLists() = ""
+
+    override fun beforeCurrentCondition(beforeOrCurrent: String) =
+        " ${topic}_${beforeOrCurrent} <> '' as ${beforeOrCurrent}, "
+
+}
+
+
+class KeyValueTopicDefinition(val topic: String, val matchers: List<KeyValueMatcher>) : TopicDefinition {
+
+    override fun buildValueLists(): String {
         var valueLists = ""
 
         for (matcher in this.matchers) {
@@ -18,7 +35,7 @@ class TopicDefinition(val topic: String, val matchers: List<KeyValueMatcher>) {
     }
 
 
-    fun beforeCurrentCondition(beforeOrCurrent: String): String {
+    override fun beforeCurrentCondition(beforeOrCurrent: String): String {
         var temp = ""
         for (matcher in this.matchers) {
             // add "OR " between conditions
@@ -40,7 +57,10 @@ class KeyValueMatcher(
 
 
 val topics = mapOf(
-    "place" to TopicDefinition(
+
+    "amenity" to KeyOnlyTopicDefinition("amenity"),
+
+    "place" to KeyValueTopicDefinition(
         "place",
         listOf(
             KeyValueMatcher(
@@ -66,7 +86,7 @@ val topics = mapOf(
             )
         )
     ),
-    "healthcare" to TopicDefinition(
+    "healthcare" to KeyValueTopicDefinition(
         "healthcare",
         listOf(
             KeyValueMatcher(
@@ -78,16 +98,7 @@ val topics = mapOf(
                 listOf("doctors", "clinic", "hospital", "health_post")
             )
         )
-    ),
-    //TODO: fix this
-    "amenity" to TopicDefinition(
-        "amenity",
-        listOf(
-            KeyValueMatcher(
-                "amenity",
-                listOf("XXXXXXXXXXXXXXXX")
-            )
-        )
     )
+
 )
 
