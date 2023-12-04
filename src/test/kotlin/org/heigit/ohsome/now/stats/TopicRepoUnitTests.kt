@@ -14,8 +14,25 @@ class TopicRepoUnitTests {
     private val repo = TopicRepo()
 
     private val fixedHashtag = HashtagHandler("hotmicrogrant")
+    private val wildcardHashtag = HashtagHandler("hotmicrogrant*")
+
     private val allCountries = CountryHandler(emptyList())
+    private val bolivia = CountryHandler(listOf("BOL"))
+
     private val healthcareTopic = TopicHandler("healthcare")
+    private val placeTopic = TopicHandler("place")
+
+
+    @Test
+    fun `can create SQL for topic 'place' by month, 1 country & wildcard hashtag`() {
+
+        val expected = file("topic_place_bymonth_1country_wildcard_hashtag")
+
+        val sql = repo.topicStatsFromTimeSpanIntervalSQL(wildcardHashtag, bolivia, placeTopic)
+        assertThat(sql)
+            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+    }
+
 
 
     @Test
@@ -27,6 +44,7 @@ class TopicRepoUnitTests {
         assertThat(sql)
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
+
 
 
     private fun file(name: String) = File("src/test/resources/expected_sql/$name.sql")
