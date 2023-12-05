@@ -56,8 +56,9 @@ class SystemTests {
     val topic2 = "healthcare"
     val topics = listOf(topic1, topic2)
 
+
     @Test
-    @DisplayName("GET /topic/topic?hashtag=hotmicrogrant*")
+    @DisplayName("GET /topic/place,healthcare?hashtag=hotmicrogrant*")
     fun `get topic place`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -80,7 +81,7 @@ class SystemTests {
 
 
     @Test
-    @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
+    @DisplayName("GET /topic/place,healthcare/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
     fun `get topic by interval`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -115,7 +116,7 @@ class SystemTests {
 
 
     @Test
-    @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M&countries=BOL")
+    @DisplayName("GET /topic/place,healthcare/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M&countries=BOL")
     fun `get topic by interval for one country`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -149,7 +150,7 @@ class SystemTests {
 
 
     @Test
-    @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&enddate=2018-01-01T00:00:00Z&interval=P1M")
+    @DisplayName("GET /topic/place,healthcare/interval?hashtag=hotmicrogrant*&enddate=2018-01-01T00:00:00Z&interval=P1M")
     fun `get topic by interval for all countries without start date`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -184,7 +185,7 @@ class SystemTests {
 
 
     @Test
-    @DisplayName("GET /topic/place/country?hashtag=*&startdate=1970-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z")
+    @DisplayName("GET /topic/place,healthcare/country?hashtag=*&startdate=1970-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z")
     fun `get topic by country`() {
 
         val url = { uriBuilder: UriBuilder ->
