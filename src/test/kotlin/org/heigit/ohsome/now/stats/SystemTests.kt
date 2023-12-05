@@ -52,7 +52,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/topic?hashtag=hotmicrogrant*")
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql", "/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
+    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql", "/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `get topic place`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -76,7 +76,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql", "/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
+    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql", "/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `get topic by interval`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -112,7 +112,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M&countries=BOL")
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql", "/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
+    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql", "/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `get topic by interval for one country`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -147,7 +147,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&enddate=2018-01-01T00:00:00Z&interval=P1M")
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql", "/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
+    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql", "/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `get topic by interval for all countries without start date`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -183,7 +183,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/country?hashtag=*&startdate=1970-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z")
-    @Sql(*["/init_schema_place_view.sql", "/topic_place_40rows.sql", "/init_schema_healthcare_view.sql", "/topic_healthcare_40rows.sql"])
+    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql", "/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `get topic by country`() {
 
         val url = { uriBuilder: UriBuilder ->
