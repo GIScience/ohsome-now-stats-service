@@ -58,7 +58,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
         val hashtagHandler = HashtagHandler("&uganda")
         val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler)
@@ -69,7 +69,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpan should return all data when using no time span and list of 2 countries`() {
         val hashtagHandler = HashtagHandler("*")
         val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, CountryHandler(listOf("HUN", "BEL")))
@@ -83,7 +83,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns partial data in time span`() {
         val startDate = Instant.ofEpochSecond(1457186410)
         val endDate = Instant.ofEpochSecond(1457186430)
@@ -98,7 +98,7 @@ class StatsRepoIntegrationTests {
     }
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns partial data in time span for start date only`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val hashtagHandler = HashtagHandler("&group")
@@ -111,7 +111,7 @@ class StatsRepoIntegrationTests {
     }
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns partial data in time span for end date only`() {
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&group")
@@ -124,7 +124,7 @@ class StatsRepoIntegrationTests {
     }
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns combined data of multiple hashtags with wildcard`() {
         val hashtagHandlerWildcard = HashtagHandler("&group*")
         val resultWildCard =
@@ -137,7 +137,7 @@ class StatsRepoIntegrationTests {
     }
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpanAggregate returns disaggregated data with wildcard`() {
         val hashtagHandlerWildcard = HashtagHandler("&group*")
         val resultsWildCard = this.repo.getStatsForTimeSpanAggregate(hashtagHandlerWildcard, null, null)
@@ -150,7 +150,7 @@ class StatsRepoIntegrationTests {
     }
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpanAggregate returns data in list without wildcard`() {
         val hashtagHandlerWildcard = HashtagHandler("&group")
         val resultsWildCard = this.repo.getStatsForTimeSpanAggregate(hashtagHandlerWildcard, null, null)
@@ -164,7 +164,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpan returns all data on everything with only wildcard character`() {
         // wasn't sure about the sql behavior of startWith(""), but it seems that it selects everything like expected
         val hashtagHandlerWildcard = HashtagHandler("*")
@@ -175,7 +175,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpanInterval returns partial data in time span for start and end date with hashtag aggregated by month without countries`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1639054890)
@@ -197,7 +197,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpanInterval returns partial data in time span for start and end date with hashtag aggregated by month with 1 country`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1639054890)
@@ -219,7 +219,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpanInterval fills data between two dates with zeros`() {
         val startDate = Instant.ofEpochSecond(1503644723)
         val endDate = Instant.ofEpochSecond(1640486233)
@@ -246,7 +246,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpanInterval returns all data when nothing is supplied as startdate`() {
         val startDate = null
         val endDate = Instant.ofEpochSecond(1639054888)
@@ -266,7 +266,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForTimeSpanCountry returns partial data in time span for start and end date with hashtag aggregated by month and country`() {
         val startDate = Instant.ofEpochSecond(0)
         val endDate = Instant.ofEpochSecond(1639054890)
@@ -279,7 +279,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForUserIdForAllHotTMProjects returns stats for only one userid`() {
         val result = this.repo.getStatsForUserIdForAllHotTMProjects("2186388")
         println(result)
@@ -288,7 +288,7 @@ class StatsRepoIntegrationTests {
     }
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getStatsForUserIdForAllHotTMProjects returns zeros for unavailable user id`() {
         val result = this.repo.getStatsForUserIdForAllHotTMProjects("2186381")
         println(result)
@@ -302,7 +302,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getMostUsedHashtags returns the most used hashtags in given time range for start and enddate`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1639054890)
@@ -316,7 +316,7 @@ class StatsRepoIntegrationTests {
     }
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getMostUsedHashtags returns empty list when out of time bounds`() {
         val startDate = Instant.ofEpochSecond(1020991470)
         val endDate = Instant.ofEpochSecond(1019054890)
@@ -325,7 +325,7 @@ class StatsRepoIntegrationTests {
     }
 
     @Test
-    @Sql(*["/init_schema.sql", "/stats_400rows.sql"])
+    @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
     fun `getMetadata returns the minimum and maximum timestamp`() {
         val result = this.repo.getMetadata()
         println(result)
