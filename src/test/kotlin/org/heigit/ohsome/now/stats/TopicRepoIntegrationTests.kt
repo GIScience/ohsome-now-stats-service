@@ -23,8 +23,10 @@ import java.time.Instant
 @Sql(*[
     "/topics/init_schema_place_view.sql",
     "/topics/init_schema_healthcare_view.sql",
+    "/topics/init_schema_amenity_view.sql",
     "/topics/topic_place_40rows.sql",
-    "/topics/topic_healthcare_40rows.sql"
+    "/topics/topic_healthcare_40rows.sql",
+    "/topics/topic_amenity_40rows.sql"
 ])
 class TopicRepoIntegrationTests {
 
@@ -59,6 +61,8 @@ class TopicRepoIntegrationTests {
 
 
     private val emptyListCountryHandler = CountryHandler(emptyList())
+    val bolivia = CountryHandler(listOf("BOL"))
+    val liberia = CountryHandler(listOf("LBR"))
 
 
     @Test
@@ -88,6 +92,26 @@ class TopicRepoIntegrationTests {
         println(result)
         assertEquals(2, result.size)
         assertEquals("-3", result["topic_result"].toString())
+    }
+
+
+
+    //TODO: enddate: 1496605067 -> result: 19
+    @Test
+    fun `getTopicStatsForTimeSpan should return all data for topic without value restriction`() {
+        val hashtagHandler = HashtagHandler("osmliber*")
+        val result =
+            this.repo.getTopicStatsForTimeSpan(
+                hashtagHandler,
+                null,
+                null,
+                liberia,
+                TopicHandler("amenity")
+            )
+
+        println(result)
+        assertEquals(2, result.size)
+        assertEquals("23", result["topic_result"].toString())
     }
 
 
@@ -126,7 +150,7 @@ class TopicRepoIntegrationTests {
             startDate,
             endDate,
             "P1M",
-            CountryHandler(listOf("BOL")),
+            bolivia,
             TopicHandler(topic)
         )
 
