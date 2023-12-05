@@ -20,7 +20,7 @@ class TopicController {
 
 
     @Suppress("LongParameterList")
-    @Operation(summary = "Get stats for a specified topic")
+    @Operation(summary = "Get stats for a list of topics")
     @GetMapping("/topic/{topics}", produces = ["application/json"])
     fun topic(
         httpServletRequest: HttpServletRequest,
@@ -57,7 +57,7 @@ class TopicController {
     }
 
 
-    @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval")
+    @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval for a list of topics")
     @GetMapping("/topic/{topics}/interval", produces = ["application/json"])
     @Suppress("LongParameterList")
     fun topicInterval(
@@ -100,7 +100,7 @@ class TopicController {
     }
 
 
-    @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval")
+    @Operation(summary = "Returns live summary statistics for one hashtag grouped by country for a list of topics")
     @GetMapping("/topic/{topics}/country", produces = ["application/json"])
     @Suppress("LongParameterList")
     fun topicCountry(
