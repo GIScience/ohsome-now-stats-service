@@ -4,43 +4,19 @@ import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE
-import org.springframework.test.context.DynamicPropertyRegistry
-import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.jdbc.Sql
-import org.testcontainers.containers.ClickHouseContainer
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Instant
 import java.time.LocalDateTime
 
 
 @SpringBootTest(webEnvironment = NONE)
-@Testcontainers
 @Sql(*["/stats/init_schema.sql", "/stats/stats_400rows.sql"])
-class StatsRepoIntegrationTests {
+class StatsRepoIntegrationTests: IntegrationTestWithClickhouse() {
 
-
-    @BeforeEach
-    fun checkClickhouse() = assertTrue(clickHouse.isRunning)
-
-
-    companion object {
-
-        @JvmStatic
-        @Container
-        private val clickHouse = ClickHouseContainer("clickhouse/clickhouse-server")
-
-
-        @JvmStatic
-        @DynamicPropertySource
-        fun clickhouseUrl(registry: DynamicPropertyRegistry) =
-            registry.add("spring.datasource.url") { clickHouse.jdbcUrl }
-    }
 
     @Autowired
     lateinit var repo: StatsRepo
