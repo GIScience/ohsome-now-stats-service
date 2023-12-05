@@ -96,22 +96,24 @@ class TopicRepoIntegrationTests {
 
 
 
-    //TODO: enddate: 1496605067 -> result: 19
     @Test
-    fun `getTopicStatsForTimeSpan should return all data for topic without value restriction`() {
+    fun `getTopicStatsForTimeSpan should return partial data for given end date and single country for topic without value restriction`() {
+
         val hashtagHandler = HashtagHandler("osmliber*")
+        val endDate = Instant.ofEpochSecond(1496605067)
+
         val result =
             this.repo.getTopicStatsForTimeSpan(
                 hashtagHandler,
                 null,
-                null,
+                endDate,
                 liberia,
                 TopicHandler("amenity")
             )
 
         println(result)
         assertEquals(2, result.size)
-        assertEquals("23", result["topic_result"].toString())
+        assertEquals("19", result["topic_result"].toString())
     }
 
 
