@@ -21,6 +21,12 @@ import java.net.URI
 //TODO: extract superclass for system tests?
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
+@Sql(*[
+    "/topics/init_schema_place_view.sql",
+    "/topics/init_schema_healthcare_view.sql",
+    "/topics/topic_place_40rows.sql",
+    "/topics/topic_healthcare_40rows.sql"
+])
 class SystemTests {
 
 
@@ -52,7 +58,6 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/topic?hashtag=hotmicrogrant*")
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql", "/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `get topic place`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -76,7 +81,6 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql", "/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `get topic by interval`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -112,7 +116,6 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M&countries=BOL")
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql", "/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `get topic by interval for one country`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -147,7 +150,6 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/interval?hashtag=hotmicrogrant*&enddate=2018-01-01T00:00:00Z&interval=P1M")
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql", "/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `get topic by interval for all countries without start date`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -183,7 +185,6 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place/country?hashtag=*&startdate=1970-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z")
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql", "/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `get topic by country`() {
 
         val url = { uriBuilder: UriBuilder ->
