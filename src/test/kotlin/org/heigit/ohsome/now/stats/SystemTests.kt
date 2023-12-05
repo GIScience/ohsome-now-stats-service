@@ -59,7 +59,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place,healthcare?hashtag=hotmicrogrant*")
-    fun `get topic place`() {
+    fun `get topics place and healthcare`() {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
@@ -82,7 +82,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place,healthcare/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
-    fun `get topic by interval`() {
+    fun `get topics place and healthcare by interval`() {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
@@ -117,7 +117,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place,healthcare/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M&countries=BOL")
-    fun `get topic by interval for one country`() {
+    fun `get topics place and healthcare by interval for one country`() {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
@@ -151,7 +151,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place,healthcare/interval?hashtag=hotmicrogrant*&enddate=2018-01-01T00:00:00Z&interval=P1M")
-    fun `get topic by interval for all countries without start date`() {
+    fun `get topics place and healthcare by interval for all countries without start date`() {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
@@ -186,7 +186,7 @@ class SystemTests {
 
     @Test
     @DisplayName("GET /topic/place,healthcare/country?hashtag=*&startdate=1970-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z")
-    fun `get topic by country`() {
+    fun `get topics place and healthcare by country`() {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
