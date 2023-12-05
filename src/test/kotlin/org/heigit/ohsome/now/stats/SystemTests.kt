@@ -24,8 +24,10 @@ import java.net.URI
 @Sql(*[
     "/topics/init_schema_place_view.sql",
     "/topics/init_schema_healthcare_view.sql",
+    "/topics/init_schema_amenity_view.sql",
     "/topics/topic_place_40rows.sql",
-    "/topics/topic_healthcare_40rows.sql"
+    "/topics/topic_healthcare_40rows.sql",
+    "/topics/topic_amenity_40rows.sql"
 ])
 class SystemTests {
 
@@ -54,7 +56,29 @@ class SystemTests {
 
     val topic1 = "place"
     val topic2 = "healthcare"
+    val topic3 = "amenity"
     val topics = listOf(topic1, topic2)
+
+
+    @Test
+    @DisplayName("GET /topic/amenity?hashtag=osmliberia")
+    fun `get topic amenity`() {
+
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/topic/$topic3")
+                .queryParam("hashtag", "osmliberia")
+                .build()
+        }
+
+        doGetAndAssertThat(url)
+            .jsonPath("$.result.$topic3.value").isEqualTo(23)
+            .jsonPath("$.result.$topic3.hashtag").isEqualTo("osmliberia")
+            .jsonPath("$.result.$topic3.topic").isEqualTo("$topic3")
+
+            .jsonPath("$.query.timespan.startDate").exists()
+            .jsonPath("$.query.timespan.endDate").exists()
+    }
 
 
     @Test
