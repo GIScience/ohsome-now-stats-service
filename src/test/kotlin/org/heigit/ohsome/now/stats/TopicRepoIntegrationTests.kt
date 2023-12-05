@@ -20,6 +20,12 @@ import java.time.Instant
 
 @SpringBootTest(webEnvironment = NONE)
 @Testcontainers
+@Sql(*[
+    "/topics/init_schema_place_view.sql",
+    "/topics/init_schema_healthcare_view.sql",
+    "/topics/topic_place_40rows.sql",
+    "/topics/topic_healthcare_40rows.sql"
+])
 class TopicRepoIntegrationTests {
 
 
@@ -56,7 +62,6 @@ class TopicRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
         val result =
@@ -67,8 +72,8 @@ class TopicRepoIntegrationTests {
         assertEquals(expected.toString(), result.toString())
     }
 
+
     @Test
-    @Sql(*["/topics/init_schema_healthcare_view.sql", "/topics/topic_healthcare_40rows.sql"])
     fun `getTopicStatsForTimeSpan should return all data for topic with two key columns`() {
         val hashtagHandler = HashtagHandler("adt")
         val result =
@@ -85,8 +90,8 @@ class TopicRepoIntegrationTests {
         assertEquals("-3", result["topic_result"].toString())
     }
 
+
     @Test
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpanInterval returns partial topic data in time span for start and end date with hashtag aggregated by month without countries`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1640054890)
@@ -112,7 +117,6 @@ class TopicRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpanInterval returns partial topic data in time span for start and end date with hashtag aggregated by month with 1 country`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1640054890)
@@ -138,7 +142,6 @@ class TopicRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpanInterval returns all data when nothing is supplied as startdate`() {
         val startDate = null
         val endDate = Instant.ofEpochSecond(1639054888)
@@ -163,7 +166,6 @@ class TopicRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpanInterval fills data between two dates with zeros`() {
         val startDate = Instant.ofEpochSecond(1503644723)
         val endDate = Instant.ofEpochSecond(1640486233)
@@ -192,7 +194,6 @@ class TopicRepoIntegrationTests {
 
 
     @Test
-    @Sql(*["/topics/init_schema_place_view.sql", "/topics/topic_place_40rows.sql"])
     fun `getTopicStatsForTimeSpanCountry returns partial data in time span for start and end date with hashtag aggregated by month and country`() {
         val startDate = Instant.ofEpochSecond(0)
         val endDate = Instant.ofEpochSecond(1639054890)
