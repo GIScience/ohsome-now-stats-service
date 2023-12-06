@@ -37,7 +37,7 @@ class TopicRepo {
             ${topicHandler.beforeCurrent} 
             if ((current = 0) AND (before = 0), NULL, current - before) as edit
 
-        SELECT ifNull(sum(edit), 0) as topic_result
+        SELECT ${topicHandler.topicResult} as topic_result
 
         FROM topic_${topicHandler.topic}
         WHERE
@@ -64,7 +64,7 @@ class TopicRepo {
             if ((current = 0) AND (before = 0), NULL, current - before) as edit
             
        SELECT 
-           ifNull(sum(edit), 0) as topic_result,
+           ${topicHandler.topicResult} as topic_result,
            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
            (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
 
@@ -106,7 +106,7 @@ class TopicRepo {
             if ((current = 0) AND (before = 0), NULL, current - before) as edit
             
         SELECT 
-            ifNull(sum(edit), 0) as topic_result,
+            ${topicHandler.topicResult} as topic_result,
             country_iso_a3 as country
         FROM topic_${topicHandler.topic}
 

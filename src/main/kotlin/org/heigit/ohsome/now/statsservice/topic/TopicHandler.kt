@@ -8,6 +8,9 @@ class TopicHandler(val topic: String) {
     var valueLists: String = ""
     var beforeCurrent: String = ""
 
+    val topicResult = "ifNull(sum(edit), 0)"
+
+
     init {
         this.valueLists = this.definition.buildValueLists()
         buildBeforeCurrent()
