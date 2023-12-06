@@ -5,14 +5,12 @@ class TopicHandler(val topic: String) {
 
     val definition: TopicDefinition = topics[topic]!!
 
-    var valueLists: String = ""
     var beforeCurrent: String = ""
-
-    val topicResult = "ifNull(sum(edit), 0)"
+    var valueLists = this.definition.buildValueLists()
+    var topicResult = this.definition.defineTopicResult()
 
 
     init {
-        this.valueLists = this.definition.buildValueLists()
         buildBeforeCurrent()
     }
 

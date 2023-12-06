@@ -5,6 +5,8 @@ interface TopicDefinition {
 
     fun buildValueLists(): String
     fun beforeCurrentCondition(beforeOrCurrent: String): String
+
+    fun defineTopicResult(): String = "ifNull(sum(edit), 0)"
 }
 
 
