@@ -1,12 +1,18 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
+enum class AggregationStrategy(val sql: String) {
+    COUNT("ifNull(sum(edit), 0)")
+//  LENGTH("ifNull(sum(edit) * length, 0)")
+}
+
+
 interface TopicDefinition {
 
     fun buildValueLists(): String
     fun beforeCurrentCondition(beforeOrCurrent: String): String
 
-    fun defineTopicResult(): String = "ifNull(sum(edit), 0)"
+    fun defineTopicResult() = AggregationStrategy.COUNT.sql
 }
 
 
