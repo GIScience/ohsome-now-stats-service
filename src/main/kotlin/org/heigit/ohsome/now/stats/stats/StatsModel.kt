@@ -1,4 +1,4 @@
-package org.heigit.ohsome.now.stats.models
+package org.heigit.ohsome.now.stats.stats
 
 import com.clickhouse.data.value.UnsignedLong
 

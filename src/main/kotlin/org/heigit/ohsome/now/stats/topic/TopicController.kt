@@ -1,9 +1,11 @@
-package org.heigit.ohsome.now.stats
+package org.heigit.ohsome.now.stats.topic
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import org.heigit.ohsome.now.stats.models.*
+import org.heigit.ohsome.now.stats.OhsomeFormat
+import org.heigit.ohsome.now.stats.buildOhsomeFormat
+import org.heigit.ohsome.now.stats.measure
 import org.heigit.ohsome.now.stats.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat

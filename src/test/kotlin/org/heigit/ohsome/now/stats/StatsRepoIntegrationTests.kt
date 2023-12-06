@@ -1,6 +1,7 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
+import org.heigit.ohsome.now.stats.stats.StatsRepo
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.*

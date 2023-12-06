@@ -1,9 +1,7 @@
-package org.heigit.ohsome.now.stats
+package org.heigit.ohsome.now.stats.topic
 
-import org.heigit.ohsome.now.stats.models.*
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
-import org.heigit.ohsome.now.stats.utils.TopicHandler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Instant

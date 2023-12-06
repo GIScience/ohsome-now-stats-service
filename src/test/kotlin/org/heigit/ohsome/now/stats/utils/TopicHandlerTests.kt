@@ -1,9 +1,9 @@
 package org.heigit.ohsome.now.stats.utils
 
+import org.heigit.ohsome.now.stats.topic.TopicHandler
+import org.heigit.ohsome.now.stats.topic.topics
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-
-import org.heigit.ohsome.now.stats.topics
 
 class TopicHandlerTests {
     private val topicOneKey: String = "place"

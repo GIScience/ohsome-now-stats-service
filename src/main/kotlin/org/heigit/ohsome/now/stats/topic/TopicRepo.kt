@@ -1,8 +1,7 @@
-package org.heigit.ohsome.now.stats
+package org.heigit.ohsome.now.stats.topic
 
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
-import org.heigit.ohsome.now.stats.utils.TopicHandler
 import org.heigit.ohsome.now.stats.utils.getGroupbyInterval
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi.create

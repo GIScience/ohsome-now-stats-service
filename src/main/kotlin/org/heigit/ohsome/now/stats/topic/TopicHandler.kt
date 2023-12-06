@@ -1,7 +1,4 @@
-package org.heigit.ohsome.now.stats.utils
-
-import org.heigit.ohsome.now.stats.TopicDefinition
-import org.heigit.ohsome.now.stats.topics
+package org.heigit.ohsome.now.stats.topic
 
 
 class TopicHandler(val topic: String) {

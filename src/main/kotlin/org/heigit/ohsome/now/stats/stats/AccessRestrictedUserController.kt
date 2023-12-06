@@ -1,11 +1,12 @@
-package org.heigit.ohsome.now.stats
+package org.heigit.ohsome.now.stats.stats
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import org.heigit.ohsome.now.stats.models.OhsomeFormat
-import org.heigit.ohsome.now.stats.models.UserResult
-import org.heigit.ohsome.now.stats.models.buildOhsomeFormat
+import org.heigit.ohsome.now.stats.AppProperties
+import org.heigit.ohsome.now.stats.OhsomeFormat
+import org.heigit.ohsome.now.stats.buildOhsomeFormat
+import org.heigit.ohsome.now.stats.measure
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*

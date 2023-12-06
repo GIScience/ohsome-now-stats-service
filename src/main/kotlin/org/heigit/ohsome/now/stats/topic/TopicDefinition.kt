@@ -1,4 +1,4 @@
-package org.heigit.ohsome.now.stats
+package org.heigit.ohsome.now.stats.topic
 
 
 interface TopicDefinition {

@@ -1,4 +1,4 @@
-package org.heigit.ohsome.now.stats
+package org.heigit.ohsome.now.stats.stats
 
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.stats.utils.CountryHandler

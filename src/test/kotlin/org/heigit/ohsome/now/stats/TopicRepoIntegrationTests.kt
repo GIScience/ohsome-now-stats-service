@@ -1,8 +1,9 @@
 package org.heigit.ohsome.now.stats
 
+import org.heigit.ohsome.now.stats.topic.TopicHandler
+import org.heigit.ohsome.now.stats.topic.TopicRepo
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
-import org.heigit.ohsome.now.stats.utils.TopicHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

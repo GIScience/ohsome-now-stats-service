@@ -1,7 +1,6 @@
-package org.heigit.ohsome.now.stats.models
+package org.heigit.ohsome.now.stats
 
 import jakarta.servlet.http.HttpServletRequest
-import org.heigit.ohsome.now.stats.Measured
 import org.heigit.ohsome.now.stats.utils.makeUrl
 import org.springframework.web.servlet.HandlerMapping
 import java.time.Instant

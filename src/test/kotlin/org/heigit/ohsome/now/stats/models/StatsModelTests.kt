@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.stats.models
 
 import com.clickhouse.data.value.UnsignedLong
 import org.assertj.core.api.Assertions.assertThat
+import org.heigit.ohsome.now.stats.stats.*
 import org.junit.jupiter.api.Test
 
 

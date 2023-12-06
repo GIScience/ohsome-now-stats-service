@@ -1,7 +1,8 @@
 package org.heigit.ohsome.now.stats
 
 import com.clickhouse.data.value.UnsignedLong
-import org.heigit.ohsome.now.stats.models.toUserResult
+import org.heigit.ohsome.now.stats.stats.StatsService
+import org.heigit.ohsome.now.stats.stats.toUserResult
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired

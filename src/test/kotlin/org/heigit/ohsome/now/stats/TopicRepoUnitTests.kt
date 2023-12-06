@@ -1,9 +1,10 @@
 package org.heigit.ohsome.now.stats
 
 import org.assertj.core.api.Assertions.assertThat
+import org.heigit.ohsome.now.stats.topic.TopicHandler
+import org.heigit.ohsome.now.stats.topic.TopicRepo
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
-import org.heigit.ohsome.now.stats.utils.TopicHandler
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.text.Charsets.UTF_8

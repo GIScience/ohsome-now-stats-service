@@ -1,4 +1,4 @@
-package org.heigit.ohsome.now.stats.models
+package org.heigit.ohsome.now.stats.topic
 
 
 fun Map<String, Any>.toTopicResult(topic: String) = TopicResult(
