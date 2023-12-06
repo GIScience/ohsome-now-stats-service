@@ -3,27 +3,37 @@ package org.heigit.ohsome.now.stats
 import org.heigit.ohsome.now.stats.utils.CountryHandler
 import org.heigit.ohsome.now.stats.utils.HashtagHandler
 import org.heigit.ohsome.now.stats.utils.TopicHandler
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE
-import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.ClickHouseContainer
+import org.testcontainers.junit.jupiter.Container
 import java.time.Instant
 
 
-@SpringBootTest(webEnvironment = NONE)
-@Sql(*[
-    "/topics/init_schema_place_view.sql",
-    "/topics/init_schema_healthcare_view.sql",
-    "/topics/init_schema_amenity_view.sql",
-    "/topics/topic_place_40rows.sql",
-    "/topics/topic_healthcare_40rows.sql",
-    "/topics/topic_amenity_40rows.sql"
-])
-class TopicRepoIntegrationTests: IntegrationTestWithClickhouse() {
+@SpringTestWithClickhouse
+class TopicRepoIntegrationTests {
 
+
+    @BeforeEach
+    fun checkClickhouse() = assertTrue(clickHouse.isRunning)
+
+
+    companion object {
+
+        @JvmStatic
+        @Container
+        private val clickHouse = ClickHouseContainer("clickhouse/clickhouse-server")
+
+
+        @JvmStatic
+        @DynamicPropertySource
+        fun clickhouseUrl(registry: DynamicPropertyRegistry) =
+            registry.add("spring.datasource.url") { clickHouse.jdbcUrl }
+    }
 
     @Autowired
     lateinit var repo: TopicRepo
