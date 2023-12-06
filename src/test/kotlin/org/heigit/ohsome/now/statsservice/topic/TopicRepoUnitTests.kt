@@ -1,8 +1,6 @@
-package org.heigit.ohsome.now.statsservice
+package org.heigit.ohsome.now.statsservice.topic
 
 import org.assertj.core.api.Assertions.assertThat
-import org.heigit.ohsome.now.statsservice.topic.TopicHandler
-import org.heigit.ohsome.now.statsservice.topic.TopicRepo
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.junit.jupiter.api.Test

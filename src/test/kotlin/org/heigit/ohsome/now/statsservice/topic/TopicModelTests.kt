@@ -1,8 +1,7 @@
-package org.heigit.ohsome.now.statsservice.models
+package org.heigit.ohsome.now.statsservice.topic
 
 import com.clickhouse.data.value.UnsignedLong
 import org.assertj.core.api.Assertions.assertThat
-import org.heigit.ohsome.now.statsservice.topic.toTopicResult
 import org.junit.jupiter.api.Test
 
 

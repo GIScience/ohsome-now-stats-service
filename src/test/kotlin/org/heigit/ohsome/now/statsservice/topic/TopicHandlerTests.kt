@@ -1,7 +1,5 @@
-package org.heigit.ohsome.now.statsservice.utils
+package org.heigit.ohsome.now.statsservice.topic
 
-import org.heigit.ohsome.now.statsservice.topic.TopicHandler
-import org.heigit.ohsome.now.statsservice.topic.topics
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

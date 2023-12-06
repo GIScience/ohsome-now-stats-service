@@ -1,7 +1,6 @@
-package org.heigit.ohsome.now.statsservice
+package org.heigit.ohsome.now.statsservice.utils
 
 import org.assertj.core.api.Assertions.assertThat
-import org.heigit.ohsome.now.statsservice.utils.getGroupbyInterval
 import org.junit.jupiter.api.Test
 
 class UtilsStringUtilitiesUnitTests {
