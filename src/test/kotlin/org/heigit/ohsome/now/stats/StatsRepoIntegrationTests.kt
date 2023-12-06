@@ -16,6 +16,7 @@ import java.time.LocalDateTime
 
 
 @SpringTestWithClickhouse
+@WithStatsData
 class StatsRepoIntegrationTests {
 
 

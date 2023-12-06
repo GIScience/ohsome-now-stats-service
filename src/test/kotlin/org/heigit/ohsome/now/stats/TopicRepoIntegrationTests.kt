@@ -15,6 +15,7 @@ import java.time.Instant
 
 
 @SpringTestWithClickhouse
+@WithTopicData
 class TopicRepoIntegrationTests {
 
 

@@ -15,6 +15,7 @@ import java.net.URI
 
 
 @SpringTestWithClickhouse
+@WithTopicData
 class SystemTests {
 
 
