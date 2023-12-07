@@ -1,5 +1,7 @@
 package org.heigit.ohsome.now.statsservice.topic
 
+import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.COUNT
+
 
 enum class AggregationStrategy(val sql: String) {
     COUNT("ifNull(sum(edit), 0)")
@@ -12,11 +14,13 @@ interface TopicDefinition {
     fun buildValueLists(): String
     fun beforeCurrentCondition(beforeOrCurrent: String): String
 
-    fun defineTopicResult() = AggregationStrategy.COUNT.sql
+    fun defineTopicResult(): String
 }
 
 
-class KeyOnlyTopicDefinition(val topic: String) : TopicDefinition {
+class KeyOnlyTopicDefinition(val topic: String, val aggregationStrategy: AggregationStrategy = COUNT) : TopicDefinition {
+
+    override fun defineTopicResult() = aggregationStrategy.sql
 
     override fun buildValueLists() = ""
 
@@ -26,7 +30,11 @@ class KeyOnlyTopicDefinition(val topic: String) : TopicDefinition {
 }
 
 
-class KeyValueTopicDefinition(val topic: String, val matchers: List<KeyValueMatcher>) : TopicDefinition {
+class KeyValueTopicDefinition(val topic: String, val matchers: List<KeyValueMatcher>,
+      val aggregationStrategy: AggregationStrategy = COUNT) : TopicDefinition {
+
+    override fun defineTopicResult() = aggregationStrategy.sql
+
 
     override fun buildValueLists(): String {
         var valueLists = ""
