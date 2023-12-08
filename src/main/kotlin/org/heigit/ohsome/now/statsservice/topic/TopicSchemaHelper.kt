@@ -3,17 +3,8 @@ package org.heigit.ohsome.now.statsservice.topic
 
 fun createMVDDL(definition: TopicDefinition): String {
 
-
-    val keyColumns = definition
-        .keys()
-        .map(::columnNames)
-        .joinToString(separator = ",\n")
-
-    val whereClause = definition
-        .keys()
-        .map(::whereClauseParts)
-        .joinToString(separator = "\nOR\n")
-
+    val keyColumns = keyColumns(definition)
+    val whereClause = whereClause(definition)
 
     return """
         CREATE MATERIALIZED VIEW int.mv__stats_to_topic_${definition.topicName} TO int.topic_${definition.topicName}
@@ -31,13 +22,11 @@ fun createMVDDL(definition: TopicDefinition): String {
             """.trimIndent().trimMargin()
 }
 
+
 fun createTableDDL(definition: TopicDefinition): String {
 
 
-    val keyColumns = definition
-        .keys()
-        .map(::columnDefinitions)
-        .joinToString(separator = ",\n")
+    val keyColumnDefinitions = keyColumnDefinitions(definition)
 
 
     return """
@@ -47,13 +36,33 @@ fun createTableDDL(definition: TopicDefinition): String {
                 `hashtag`             String,
                 `user_id`             Int32,
                 `country_iso_a3`      Array(String),
-                $keyColumns
+                $keyColumnDefinitions
             )
                 ENGINE = MergeTree
                 PRIMARY KEY( hashtag, changeset_timestamp)
             ;
         """.trimIndent()
 }
+
+
+
+private fun whereClause(definition: TopicDefinition) = definition
+    .keys()
+    .map(::whereClauseParts)
+    .joinToString(separator = "\nOR\n")
+
+
+private fun keyColumns(definition: TopicDefinition) = definition
+    .keys()
+    .map(::columnNames)
+    .joinToString(separator = ",\n")
+
+
+private fun keyColumnDefinitions(definition: TopicDefinition) = definition
+    .keys()
+    .map(::columnDefinitions)
+    .joinToString(separator = ",\n")
+
 
 private fun columnDefinitions(key: String) = """
         `${key}_current`      String, 
