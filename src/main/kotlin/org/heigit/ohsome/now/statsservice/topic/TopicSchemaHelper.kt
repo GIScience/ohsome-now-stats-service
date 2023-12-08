@@ -1,6 +1,27 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
+fun createInsertStatement(definition: TopicDefinition): String {
+
+    val keyColumns = keyColumns(definition)
+    val whereClause = whereClause(definition)
+
+    return """
+        INSERT into int.topic_${definition.topicName}
+        SELECT
+            changeset_timestamp,
+            user_id,
+            hashtag,
+            country_iso_a3,
+            $keyColumns
+        FROM
+            int.stats;
+        WHERE
+            $whereClause
+        """.trimIndent().trimMargin()
+}
+
+
 fun createMVDDL(definition: TopicDefinition): String {
 
     val keyColumns = keyColumns(definition)

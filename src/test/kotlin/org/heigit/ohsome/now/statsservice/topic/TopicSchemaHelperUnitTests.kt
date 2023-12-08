@@ -18,6 +18,8 @@ class TopicSchemaHelperUnitTests {
     val expectedMV1Key = file("create_topic_mv_for_1_key")
     val expectedMV2Keys = file("create_topic_mv_for_2_keys")
 
+    val expectedInsertStatement1Key = file("create_topic_insert_statement_for_1_key")
+
 
     @Nested
     @DisplayName("table DDL")
@@ -96,9 +98,25 @@ class TopicSchemaHelperUnitTests {
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV2Keys)
         }
 
+    }
+
+    @Nested
+    @DisplayName("insert statements")
+    inner class InsertStatementTests {
+
+        @Test
+        fun `for single key and INT stage - key-value definition`() {
+
+            val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
+
+            val sql = createInsertStatement(definition)
+            assertThat(sql)
+                .isEqualToNormalizingPunctuationAndWhitespace(expectedInsertStatement1Key)
+        }
+
+    }
 
 
-}
 }
 
 
