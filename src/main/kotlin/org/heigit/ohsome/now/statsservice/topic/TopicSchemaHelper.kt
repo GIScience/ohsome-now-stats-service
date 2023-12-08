@@ -40,7 +40,11 @@ fun createMVDDL(definition: TopicDefinition): String {
         )
         FROM int.stats
         WHERE
-            $whereClause
+            changeset_timestamp > toDateTime('2023-06-15 17:00:00')
+            AND
+            (
+                $whereClause
+            )
             """.trimIndent().trimMargin()
 }
 
