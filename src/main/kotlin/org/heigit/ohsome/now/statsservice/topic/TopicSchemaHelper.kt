@@ -12,7 +12,7 @@ fun createMVDDL(definition: TopicDefinition): String {
     val whereClause = definition
         .keys()
         .map(::whereClauseParts)
-        .joinToString(separator = ",\n")
+        .joinToString(separator = "\nOR\n")
 
 
     return """

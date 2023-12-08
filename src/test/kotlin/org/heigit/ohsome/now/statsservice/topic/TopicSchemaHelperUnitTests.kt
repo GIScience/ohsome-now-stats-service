@@ -15,6 +15,7 @@ class TopicSchemaHelperUnitTests {
     private val expectedTable2Keys = file("create_topic_table_for_2_keys")
 
     private val expectedMV1Key = file("create_topic_mv_for_1_key")
+    private val expectedMV2Keys = file("create_topic_mv_for_2_keys")
 
 
 
@@ -71,6 +72,17 @@ class TopicSchemaHelperUnitTests {
         val sql = createTableDDL(definition)
         assertThat(sql)
             .isEqualToNormalizingPunctuationAndWhitespace(expectedTable2Keys)
+    }
+
+
+    @Test
+    fun `can generate topic MV DDL for two keys and INT stage`() {
+
+        val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
+
+        val sql = createMVDDL(definition)
+        assertThat(sql)
+            .isEqualToNormalizingPunctuationAndWhitespace(expectedMV2Keys)
     }
 
 
