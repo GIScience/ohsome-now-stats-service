@@ -11,8 +11,23 @@ class TopicSchemaHelperUnitTests {
     private val healthcareMatcher = KeyValueMatcher("healthcare", listOf("doctors", "clinic")) // values not important here
 
 
-    private val expected1Key = file("create_topic_table_for_1_key")
-    private val expected2Keys = file("create_topic_table_for_2_keys")
+    private val expectedTable1Key = file("create_topic_table_for_1_key")
+    private val expectedTable2Keys = file("create_topic_table_for_2_keys")
+
+    private val expectedMV1Key = file("create_topic_mv_for_1_key")
+
+
+
+
+    @Test
+    fun `can generate topic MV DDL for single key and INT stage - key-value definition`() {
+
+        val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
+
+        val sql = createMVDDL(definition)
+        assertThat(sql)
+            .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
+    }
 
 
     @Test
@@ -22,7 +37,7 @@ class TopicSchemaHelperUnitTests {
 
         val sql = createTableDDL(definition)
         assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expected1Key)
+            .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
     }
 
 
@@ -33,7 +48,7 @@ class TopicSchemaHelperUnitTests {
 
         val sql = createTableDDL(definition)
         assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expected1Key)
+            .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
     }
 
 
@@ -44,7 +59,7 @@ class TopicSchemaHelperUnitTests {
 
         val sql = createTableDDL(definition)
         assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expected2Keys)
+            .isEqualToNormalizingPunctuationAndWhitespace(expectedTable2Keys)
     }
 
 
