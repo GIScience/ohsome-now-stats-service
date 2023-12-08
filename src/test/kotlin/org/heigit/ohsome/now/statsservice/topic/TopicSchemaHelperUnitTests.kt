@@ -1,92 +1,104 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 
+@DisplayName("can generate topic")
 class TopicSchemaHelperUnitTests {
 
+    val amenityMatcher = KeyValueMatcher("amenity", listOf("doctors", "clinic")) // values not important here
+    val healthcareMatcher = KeyValueMatcher("healthcare", listOf("doctors", "clinic")) // values not important here
 
-    private val amenityMatcher = KeyValueMatcher("amenity", listOf("doctors", "clinic")) // values not important here
-    private val healthcareMatcher = KeyValueMatcher("healthcare", listOf("doctors", "clinic")) // values not important here
+    val expectedTable1Key = file("create_topic_table_for_1_key")
+    val expectedTable2Keys = file("create_topic_table_for_2_keys")
 
-
-    private val expectedTable1Key = file("create_topic_table_for_1_key")
-    private val expectedTable2Keys = file("create_topic_table_for_2_keys")
-
-    private val expectedMV1Key = file("create_topic_mv_for_1_key")
-    private val expectedMV2Keys = file("create_topic_mv_for_2_keys")
+    val expectedMV1Key = file("create_topic_mv_for_1_key")
+    val expectedMV2Keys = file("create_topic_mv_for_2_keys")
 
 
+    @Nested
+    @DisplayName("table DDL")
+    inner class TableDDLTests {
 
 
-    @Test
-    fun `can generate topic MV DDL for single key and INT stage - key-value definition`() {
+        @Test
+        fun `for single key and INT stage - key-value definition`() {
 
-        val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
+            val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
 
-        val sql = createMVDDL(definition)
-        assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
+            val sql = createTableDDL(definition)
+            assertThat(sql)
+                .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
+        }
+
+
+        @Test
+        fun `for single key and INT stage - key-only definition`() {
+
+            val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
+
+            val sql = createTableDDL(definition)
+            assertThat(sql)
+                .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
+        }
+
+
+        @Test
+        fun `for two keys and INT stage`() {
+
+            val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
+
+            val sql = createTableDDL(definition)
+            assertThat(sql)
+                .isEqualToNormalizingPunctuationAndWhitespace(expectedTable2Keys)
+        }
+
     }
 
 
-    @Test
-    fun `can generate topic table DDL for single key and INT stage - key-value definition`() {
-
-        val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
-
-        val sql = createTableDDL(definition)
-        assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
-    }
+    @Nested
+    @DisplayName("MV DDL")
+    inner class MVDDLTests {
 
 
-    @Test
-    fun `can generate topic MVV DDL for single key and INT stage - key-only definition`() {
+        @Test
+        fun `for single key and INT stage - key-value definition`() {
 
-        val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
+            val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
 
-        val sql = createMVDDL(definition)
-        assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
-    }
-
-
-    @Test
-    fun `can generate topic table DDL for single key and INT stage - key-only definition`() {
-
-        val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
-
-        val sql = createTableDDL(definition)
-        assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
-    }
+            val sql = createMVDDL(definition)
+            assertThat(sql)
+                .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
+        }
 
 
-    @Test
-    fun `can generate topic table DDL for two keys and INT stage`() {
+        @Test
+        fun `for single key and INT stage - key-only definition`() {
 
-        val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
+            val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
 
-        val sql = createTableDDL(definition)
-        assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expectedTable2Keys)
-    }
+            val sql = createMVDDL(definition)
+            assertThat(sql)
+                .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
+        }
 
 
-    @Test
-    fun `can generate topic MV DDL for two keys and INT stage`() {
+        @Test
+        fun `for two keys and INT stage`() {
 
-        val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
+            val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-        val sql = createMVDDL(definition)
-        assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expectedMV2Keys)
-    }
+            val sql = createMVDDL(definition)
+            assertThat(sql)
+                .isEqualToNormalizingPunctuationAndWhitespace(expectedMV2Keys)
+        }
 
 
 
+}
 }
 
 
