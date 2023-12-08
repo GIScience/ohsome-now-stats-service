@@ -15,10 +15,16 @@ interface TopicDefinition {
     fun beforeCurrentCondition(beforeOrCurrent: String): String
 
     fun defineTopicResult(): String
+
+    fun keys(): List<String>
+
 }
 
 
 class KeyOnlyTopicDefinition(val topic: String, val key: String, val aggregationStrategy: AggregationStrategy = COUNT) : TopicDefinition {
+
+    override fun keys() = listOf(key)
+
 
     override fun defineTopicResult() = aggregationStrategy.sql
 
@@ -32,6 +38,10 @@ class KeyOnlyTopicDefinition(val topic: String, val key: String, val aggregation
 
 class KeyValueTopicDefinition(val topic: String, val matchers: List<KeyValueMatcher>,
       val aggregationStrategy: AggregationStrategy = COUNT) : TopicDefinition {
+
+
+    override fun keys() = matchers.map { it.key }
+
 
     override fun defineTopicResult() = aggregationStrategy.sql
 
