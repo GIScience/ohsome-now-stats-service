@@ -12,6 +12,11 @@ SELECT
 FROM
     int.stats;
 WHERE
-    healthcare_current != '' OR healthcare_before != ''
-    OR
-    amenity_current != '' OR amenity_before != ''
+    changeset_timestamp <= toDateTime('2023-06-15 17:00:00')
+    AND
+    (
+        healthcare_current != '' OR healthcare_before != ''
+        OR
+        amenity_current != '' OR amenity_before != ''
+    )
+

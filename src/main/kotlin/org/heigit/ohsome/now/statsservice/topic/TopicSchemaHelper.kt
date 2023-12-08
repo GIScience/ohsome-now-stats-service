@@ -2,7 +2,7 @@ package org.heigit.ohsome.now.statsservice.topic
 
 
 
-fun createInsertStatement(definition: TopicDefinition): String {
+fun createInsertStatement(definition: TopicDefinition, dateTime: String): String {
 
     val keyColumns = keyColumns(definition)
     val whereClause = whereClause(definition)
@@ -18,7 +18,11 @@ fun createInsertStatement(definition: TopicDefinition): String {
         FROM
             int.stats;
         WHERE
-            $whereClause
+            changeset_timestamp <= toDateTime('$dateTime')
+            AND
+            (
+                $whereClause
+            )
         """.trimIndent().trimMargin()
 }
 
