@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test
 @DisplayName("can generate topic")
 class TopicSchemaHelperUnitTests {
 
+    private val dateTime = "2023-06-15 17:00:00"
+
     val amenityMatcher = KeyValueMatcher("amenity", listOf("doctors", "clinic")) // values not important here
     val healthcareMatcher = KeyValueMatcher("healthcare", listOf("doctors", "clinic")) // values not important here
 
@@ -72,7 +74,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createMVDDL(definition)
+            val sql = createMVDDL(definition, dateTime)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
         }
@@ -83,7 +85,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
 
-            val sql = createMVDDL(definition)
+            val sql = createMVDDL(definition, dateTime)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
         }
@@ -94,7 +96,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createMVDDL(definition)
+            val sql = createMVDDL(definition, dateTime)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV2Keys)
         }

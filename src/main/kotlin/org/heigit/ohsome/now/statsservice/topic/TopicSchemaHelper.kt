@@ -23,7 +23,7 @@ fun createInsertStatement(definition: TopicDefinition): String {
 }
 
 
-fun createMVDDL(definition: TopicDefinition): String {
+fun createMVDDL(definition: TopicDefinition, dateTime: String): String {
 
     val keyColumns = keyColumns(definition)
     val whereClause = whereClause(definition)
@@ -40,7 +40,7 @@ fun createMVDDL(definition: TopicDefinition): String {
         )
         FROM int.stats
         WHERE
-            changeset_timestamp > toDateTime('2023-06-15 17:00:00')
+            changeset_timestamp > toDateTime('$dateTime')
             AND
             (
                 $whereClause
