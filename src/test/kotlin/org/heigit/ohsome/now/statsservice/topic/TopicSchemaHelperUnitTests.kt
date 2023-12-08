@@ -42,6 +42,17 @@ class TopicSchemaHelperUnitTests {
 
 
     @Test
+    fun `can generate topic MVV DDL for single key and INT stage - key-only definition`() {
+
+        val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
+
+        val sql = createMVDDL(definition)
+        assertThat(sql)
+            .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
+    }
+
+
+    @Test
     fun `can generate topic table DDL for single key and INT stage - key-only definition`() {
 
         val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
