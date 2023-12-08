@@ -3,7 +3,7 @@ package org.heigit.ohsome.now.statsservice.topic
 
 val topics = mapOf(
 
-    "amenity" to KeyOnlyTopicDefinition("amenity"),
+    "amenity" to KeyOnlyTopicDefinition("amenity", "amenity"),
 
     "place" to KeyValueTopicDefinition(
         "place",

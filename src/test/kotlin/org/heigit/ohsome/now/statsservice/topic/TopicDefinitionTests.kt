@@ -10,7 +10,7 @@ class TopicDefinitionTests {
     @Test
     fun `check topic aggregation strategy COUNT`() {
 
-        val definition = KeyOnlyTopicDefinition("place")
+        val definition = KeyOnlyTopicDefinition("amenity", "amenity")
 
         assertEquals("ifNull(sum(edit), 0)", definition.defineTopicResult())
     }

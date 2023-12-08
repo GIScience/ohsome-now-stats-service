@@ -18,14 +18,14 @@ interface TopicDefinition {
 }
 
 
-class KeyOnlyTopicDefinition(val topic: String, val aggregationStrategy: AggregationStrategy = COUNT) : TopicDefinition {
+class KeyOnlyTopicDefinition(val topic: String, val key: String, val aggregationStrategy: AggregationStrategy = COUNT) : TopicDefinition {
 
     override fun defineTopicResult() = aggregationStrategy.sql
 
     override fun buildValueLists() = ""
 
     override fun beforeCurrentCondition(beforeOrCurrent: String) =
-        " ${topic}_${beforeOrCurrent} <> '' as ${beforeOrCurrent}, "
+        " ${key}_${beforeOrCurrent} <> '' as ${beforeOrCurrent}, "
 
 }
 
