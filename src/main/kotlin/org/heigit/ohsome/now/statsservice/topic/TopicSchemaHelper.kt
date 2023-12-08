@@ -46,22 +46,15 @@ fun createTableDDL(definition: TopicDefinition): String {
 
 
 
-private fun whereClause(definition: TopicDefinition) = definition
+private fun keyColumns(definition: TopicDefinition) = createFromKeys(definition, ::columnNames)
+private fun keyColumnDefinitions(definition: TopicDefinition) = createFromKeys(definition, ::columnDefinitions)
+private fun whereClause(definition: TopicDefinition ) = createFromKeys(definition, ::whereClauseParts, "\nOR\n")
+
+
+private fun createFromKeys(definition: TopicDefinition, transform: (String) -> String, separator: String = ",\n") = definition
     .keys()
-    .map(::whereClauseParts)
-    .joinToString(separator = "\nOR\n")
-
-
-private fun keyColumns(definition: TopicDefinition) = definition
-    .keys()
-    .map(::columnNames)
-    .joinToString(separator = ",\n")
-
-
-private fun keyColumnDefinitions(definition: TopicDefinition) = definition
-    .keys()
-    .map(::columnDefinitions)
-    .joinToString(separator = ",\n")
+    .map(transform)
+    .joinToString(separator = separator)
 
 
 private fun columnDefinitions(key: String) = """
