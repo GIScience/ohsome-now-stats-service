@@ -8,6 +8,11 @@ import java.io.File
 import kotlin.text.Charsets.UTF_8
 
 
+fun file(name: String) = File("src/test/resources/expected_sql/$name.sql")
+    .readText(UTF_8)
+
+
+
 class TopicRepoUnitTests {
 
     private val repo = TopicRepo()
@@ -67,11 +72,6 @@ class TopicRepoUnitTests {
         assertThat(sql)
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
-
-
-
-    private fun file(name: String) = File("src/test/resources/expected_sql/$name.sql")
-        .readText(UTF_8)
 
 
 }
