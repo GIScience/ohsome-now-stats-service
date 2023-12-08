@@ -11,32 +11,40 @@ class TopicSchemaHelperUnitTests {
     private val healthcareMatcher = KeyValueMatcher("healthcare", listOf("doctors", "clinic")) // values not important here
 
 
-    @Test
-    fun `can generate topic table DDL for single key and INT stage`() {
+    private val expectedSingleKey = file("create_topic_table_for_1_key")
+    private val expected2Keys = file("create_topic_table_for_2_keys")
 
-        val expected = file("create_topic_table_for_1_key")
+
+    @Test
+    fun `can generate topic table DDL for single key and INT stage - key-value definition`() {
 
         val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
 
         val sql = createTableDDL(definition)
-
-
         assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+            .isEqualToNormalizingPunctuationAndWhitespace(expectedSingleKey)
+    }
+
+
+    @Test
+    fun `can generate topic table DDL for single key and INT stage - key-only definition`() {
+
+        val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
+
+        val sql = createTableDDL(definition)
+        assertThat(sql)
+            .isEqualToNormalizingPunctuationAndWhitespace(expectedSingleKey)
     }
 
 
     @Test
     fun `can generate topic table DDL for two keys and INT stage`() {
 
-        val expected = file("create_topic_table_for_2_keys")
-
         val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
         val sql = createTableDDL(definition)
-
         assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+            .isEqualToNormalizingPunctuationAndWhitespace(expected2Keys)
     }
 
 
