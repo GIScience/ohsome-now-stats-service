@@ -11,7 +11,7 @@ class TopicSchemaHelperUnitTests {
     private val healthcareMatcher = KeyValueMatcher("healthcare", listOf("doctors", "clinic")) // values not important here
 
 
-    private val expectedSingleKey = file("create_topic_table_for_1_key")
+    private val expected1Key = file("create_topic_table_for_1_key")
     private val expected2Keys = file("create_topic_table_for_2_keys")
 
 
@@ -22,7 +22,7 @@ class TopicSchemaHelperUnitTests {
 
         val sql = createTableDDL(definition)
         assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expectedSingleKey)
+            .isEqualToNormalizingPunctuationAndWhitespace(expected1Key)
     }
 
 
@@ -33,7 +33,7 @@ class TopicSchemaHelperUnitTests {
 
         val sql = createTableDDL(definition)
         assertThat(sql)
-            .isEqualToNormalizingPunctuationAndWhitespace(expectedSingleKey)
+            .isEqualToNormalizingPunctuationAndWhitespace(expected1Key)
     }
 
 
