@@ -1,8 +1,6 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
-// TODO: simplify where clauses
-
 
 fun createInsertStatement(definition: TopicDefinition): String {
 
@@ -92,7 +90,7 @@ private fun columnNames(key: String) = """
 
 
 private fun whereClauseParts(key: String) = """
-        tags['${key}']  != '' OR tags_before['${key}'] != '' """
+        ${key}_current  != '' OR ${key}_before != '' """
 
 
 

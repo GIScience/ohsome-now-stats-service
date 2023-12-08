@@ -10,4 +10,4 @@ SELECT
 FROM
     int.stats;
 WHERE
-    tags['amenity'] != '' OR tags_before['amenity'] != ''
+    amenity_current != '' OR amenity_before != ''

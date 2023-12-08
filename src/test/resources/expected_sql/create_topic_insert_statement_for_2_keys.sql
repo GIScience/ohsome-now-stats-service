@@ -12,6 +12,6 @@ SELECT
 FROM
     int.stats;
 WHERE
-    tags['healthcare'] != '' OR tags_before['healthcare'] != ''
+    healthcare_current != '' OR healthcare_before != ''
     OR
-    tags['amenity'] != '' OR tags_before['amenity'] != ''
+    amenity_current != '' OR amenity_before != ''
