@@ -1,6 +1,9 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
+// TODO: simplify where clauses
+
+
 fun createInsertStatement(definition: TopicDefinition): String {
 
     val keyColumns = keyColumns(definition)
