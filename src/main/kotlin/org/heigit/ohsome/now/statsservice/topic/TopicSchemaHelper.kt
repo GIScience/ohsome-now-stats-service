@@ -1,7 +1,7 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
-
+@Suppress("LongMethod")
 fun createInsertStatement(definition: TopicDefinition, dateTime: String): String {
 
     val keyColumns = keyColumns(definition)
@@ -26,7 +26,7 @@ fun createInsertStatement(definition: TopicDefinition, dateTime: String): String
         """.trimIndent().trimMargin()
 }
 
-
+@Suppress("LongMethod")
 fun createMVDDL(definition: TopicDefinition, dateTime: String): String {
 
     val keyColumns = keyColumns(definition)
@@ -75,16 +75,16 @@ fun createTableDDL(definition: TopicDefinition): String {
 }
 
 
-
 private fun keyColumns(definition: TopicDefinition) = createFromKeys(definition, ::columnNames)
 private fun keyColumnDefinitions(definition: TopicDefinition) = createFromKeys(definition, ::columnDefinitions)
-private fun whereClause(definition: TopicDefinition ) = createFromKeys(definition, ::whereClauseParts, "\nOR\n")
+private fun whereClause(definition: TopicDefinition) = createFromKeys(definition, ::whereClauseParts, "\nOR\n")
 
 
-private fun createFromKeys(definition: TopicDefinition, transform: (String) -> String, separator: String = ",\n") = definition
-    .keys()
-    .map(transform)
-    .joinToString(separator = separator)
+private fun createFromKeys(definition: TopicDefinition, transform: (String) -> String, separator: String = ",\n") =
+    definition
+        .keys()
+        .map(transform)
+        .joinToString(separator = separator)
 
 
 private fun columnDefinitions(key: String) = """
