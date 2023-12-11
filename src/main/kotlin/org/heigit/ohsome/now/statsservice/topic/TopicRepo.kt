@@ -121,6 +121,29 @@ class TopicRepo {
             country
         """.trimIndent()
 
+    fun topicForUserIdForHotOSMProjectSQL(topicHandler: TopicHandler) =
+        """        
+        WITH
+            ${topicHandler.valueLists} 
+            
+            ${topicHandler.beforeCurrent} 
+            if ((current = 0) AND (before = 0), NULL, current - before) as edit
+            
+        SELECT 
+            ${topicHandler.topicResult} as topic_result,
+        user_id
+        from topic_${topicHandler.topic}
+                where
+        user_id = :userId
+                and startsWith(hashtag, 'hotosm-project-')
+        group by user_id
+        """
+
+
+    fun defaultTopicResultForMissingUser(userId: String, topic: String): Map<String, Any> = mapOf(
+        "topic_result" to 0L,
+        "user_id" to userId.toInt(),
+    )
 
     @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpan(
@@ -130,7 +153,7 @@ class TopicRepo {
         countryHandler: CountryHandler,
         topicHandler: TopicHandler
     ): Map<String, Any> {
-        logger.info("Getting topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
+        logger.info("Getting topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, topic: ${topicHandler.topic}")
 
         val result = query {
             it.select(topicStatsFromTimeSpanSQL(hashtagHandler, countryHandler, topicHandler))
@@ -156,7 +179,7 @@ class TopicRepo {
         topicHandler: TopicHandler
     ): List<Map<String, Any>> {
 
-        logger.info("Getting topic stats by interval for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
+        logger.info("Getting topic stats by interval for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval, , topic: ${topicHandler.topic}")
 
         return query {
             it.select(topicStatsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler, topicHandler))
@@ -177,7 +200,7 @@ class TopicRepo {
         topicHandler: TopicHandler
     ): List<Map<String, Any>> {
 
-        logger.info("Getting topic stats by country for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
+        logger.info("Getting topic stats by country for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, topic: ${topicHandler.topic}")
 
         return query {
             it.select(topicStatsFromTimeSpanCountrySQL(hashtagHandler, topicHandler))
@@ -188,6 +211,17 @@ class TopicRepo {
                 .list()
         }
 
+    }
+
+    fun getTopicForUserIdForAllHotTMProjects(userId: String, topicHandler: TopicHandler): Map<String, Any> {
+        logger.info("Getting topic stats for user: $userId, topic: ${topicHandler.topic}")
+        return query {
+            it.select(topicForUserIdForHotOSMProjectSQL(topicHandler))
+                .bind("userId", userId)
+                .mapToMap()
+                .singleOrNull()
+                ?: defaultTopicResultForMissingUser(userId, topicHandler.topic)
+        }
     }
 
 

@@ -12,7 +12,6 @@ fun file(name: String) = File("src/test/resources/expected_sql/$name.sql")
     .readText(UTF_8)
 
 
-
 class TopicRepoUnitTests {
 
     private val repo = TopicRepo()
@@ -37,8 +36,6 @@ class TopicRepoUnitTests {
         assertThat(sql)
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
-
-
 
 
     @Test
@@ -73,6 +70,15 @@ class TopicRepoUnitTests {
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
+
+    @Test
+    fun `can create SQL for topic user endpoint`() {
+
+        val expected = file("topic_place_by_userid")
+
+        val sql = repo.topicForUserIdForHotOSMProjectSQL(placeTopic)
+        assertThat(sql).isEqualToNormalizingPunctuationAndWhitespace(expected)
+    }
 
 }
 

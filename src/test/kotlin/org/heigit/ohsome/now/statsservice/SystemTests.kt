@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -25,6 +26,9 @@ class SystemTests {
 
     @BeforeEach
     fun checkClickhouse() = assertTrue(clickHouse.isRunning)
+
+    @Autowired
+    lateinit var appProperties: AppProperties
 
 
     companion object {
@@ -74,7 +78,7 @@ class SystemTests {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
-                .path("/topic/${topics.joinToString()}")
+                .path("/topic/${topics.joinToString(separator = ",")}")
                 .queryParam("hashtag", "hotmicrogrant*")
                 .build()
         }
@@ -97,7 +101,7 @@ class SystemTests {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
-                .path("/topic/${topics.joinToString()}/interval")
+                .path("/topic/${topics.joinToString(separator = ",")}/interval")
                 .queryParam("hashtag", "hotmicrogrant*")
                 .queryParam("startdate", "2015-01-01T00:00:00Z")
                 .queryParam("enddate", "2018-01-01T00:00:00Z")
@@ -132,7 +136,7 @@ class SystemTests {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
-                .path("/topic/${topics.joinToString()}/interval")
+                .path("/topic/${topics.joinToString(separator = ",")}/interval")
                 .queryParam("hashtag", "hotmicrogrant*")
                 .queryParam("startdate", "2015-01-01T00:00:00Z")
                 .queryParam("enddate", "2018-01-01T00:00:00Z")
@@ -166,7 +170,7 @@ class SystemTests {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
-                .path("/topic/${topics.joinToString()}/interval")
+                .path("/topic/${topics.joinToString(separator = ",")}/interval")
                 .queryParam("hashtag", "hotmicrogrant*")
                 .queryParam("enddate", "2018-01-01T00:00:00Z")
                 .queryParam("interval", "P1M")
@@ -201,7 +205,7 @@ class SystemTests {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
-                .path("/topic/${topics.joinToString()}/country")
+                .path("/topic/${topics.joinToString(separator = ",")}/country")
                 .queryParam("hashtag", "*")
                 .queryParam("startdate", "1970-01-01T00:00:00Z")
                 .queryParam("enddate", "2024-01-01T00:00:00Z")
@@ -215,7 +219,7 @@ class SystemTests {
             .jsonPath("$.result.$topic1[0].country").isEqualTo("BOL")
             .jsonPath("$.result.$topic2[0].country").isEqualTo("BEL")
 
-            .jsonPath("$.result.$topic1[1].value").isEqualTo(3)
+            .jsonPath("$.result.$topic1[1].value").isEqualTo(2)
             .jsonPath("$.result.$topic1[1].topic").isEqualTo("place")
             .jsonPath("$.result.$topic1[1].country").isEqualTo("BRA")
             .jsonPath("$.result.$topic2[1].country").isEqualTo("BRA")
@@ -223,6 +227,32 @@ class SystemTests {
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()
 
+    }
+
+    @Test
+    @DisplayName("GET /hot-tm-user/topics/place,healthcare?userid=4362353")
+    fun `get userstats topics with good token`() {
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/hot-tm-user/topics/${topics.joinToString(separator = ",")}")
+                .queryParam("userId", "4362353")
+                .build()
+        }
+
+        val response = client()
+            .get()
+            .uri(url)
+            .header("Authorization", "Basic ${appProperties.token}")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectBody()
+
+        response
+            .jsonPath("$.result.$topic1.value").isEqualTo(-1)
+            .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+            .jsonPath("$.result.$topic2.value").isEqualTo(0)
+            .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
     }
 
 

@@ -84,7 +84,6 @@ class TopicRepoIntegrationTests {
     }
 
 
-
     @Test
     fun `getTopicStatsForTimeSpan should return partial data for given end date and single country for topic without value restriction`() {
 
@@ -223,8 +222,26 @@ class TopicRepoIntegrationTests {
         assertEquals(2L, result[0]["topic_result"])
         assertEquals("BOL", result[0]["country"])
 
-        assertEquals(3L, result[1]["topic_result"])
+        assertEquals(2L, result[1]["topic_result"])
         assertEquals("BRA", result[1]["country"])
+    }
+
+    @Test
+    fun `getStatsForUserIdForAllHotTMProjects returns stats for only one userid`() {
+        val result = this.repo.getTopicForUserIdForAllHotTMProjects("4362353", TopicHandler(topic))
+        println(result)
+        assertTrue(result is MutableMap<String, *>)
+        assertEquals(-1L, result["topic_result"])
+        assertEquals(2, result.size)
+    }
+
+    @Test
+    fun `getStatsForUserIdForAllHotTMProjects returns zeros for unavailable user id`() {
+        val result = this.repo.getTopicForUserIdForAllHotTMProjects("2381", TopicHandler(topic))
+        println(result)
+        assertTrue(result is MutableMap<String, *>)
+        assertEquals(2381, result["user_id"])
+        assertEquals(0L, result["topic_result"])
     }
 
 

@@ -50,5 +50,15 @@ fun topicCountryResult(data: Map<String, Any>, topic: String) = TopicCountryResu
     data["country"].toString()
 )
 
+fun Map<String, Any>.toUserTopicResult(topic: String) = UserTopicResult(
+    topic,
+    this["topic_result"].toString().toLong(),
+    this["user_id"] as Int
+)
 
 
+data class UserTopicResult(
+    val topic: String,
+    val value: Long,
+    val userId: Int
+)
