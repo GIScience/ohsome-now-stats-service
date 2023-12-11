@@ -1,7 +1,7 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
-
+@Suppress("LongMethod")
 fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: String) = """
     INSERT into $stage.topic_${definition.topicName}
     SELECT
@@ -21,6 +21,7 @@ fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: 
     """.trimIndent().trimMargin()
 
 
+@Suppress("LongMethod")
 fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String) = """
     CREATE MATERIALIZED VIEW $stage.mv__stats_to_topic_${definition.topicName} TO $stage.topic_${definition.topicName}
     AS SELECT
@@ -41,6 +42,7 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String) = 
         """.trimIndent().trimMargin()
 
 
+@Suppress("LongMethod")
 fun createTableDDL(definition: TopicDefinition, stage: String) = """
         CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}
         (
