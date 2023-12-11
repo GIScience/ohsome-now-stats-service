@@ -24,25 +24,23 @@ class TopicSqlGenerator {
         .forEach(::writeSql)
 
 
-    fun writeSql(definition: TopicDefinition) {
+    private fun writeSql(definition: TopicDefinition) {
         writeDDLs(definition)
         writeInserts(definition)
     }
 
 
-    private fun writeDDLs(definition: TopicDefinition) {
-        val file = getFile("DDL", definition)
-
-        val text = createDDLCommands(definition)
-        file.writeText(text)
+    private fun writeDDLs(definition: TopicDefinition) = writeSqlToFile("DDL", definition) {
+        createDDLCommands(definition)
     }
 
-    private fun writeInserts(definition: TopicDefinition) {
-        val file = getFile("INSERT", definition)
-
-        val text = createInsertCommands(definition)
-        file.writeText(text)
+    private fun writeInserts(definition: TopicDefinition) = writeSqlToFile("INSERT", definition) {
+        createInsertCommands(definition)
     }
+
+
+    private fun writeSqlToFile(prefix: String, definition: TopicDefinition, command: () -> String) = this.getFile(prefix, definition)
+        .writeText(command())
 
 
     private fun createDDLCommands(definition: TopicDefinition) = comment() +
