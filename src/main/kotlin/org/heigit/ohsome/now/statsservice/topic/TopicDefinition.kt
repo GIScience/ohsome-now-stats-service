@@ -4,8 +4,16 @@ import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.COUNT
 
 
 enum class AggregationStrategy(val sql: String) {
-    COUNT("ifNull(sum(edit), 0)")
-//  LENGTH("ifNull(sum(edit) * length, 0)")
+    COUNT("ifNull(sum(edit), 0)"),
+    LENGTH(
+        "ifNull(sum(" +
+                "multiIf(" +                                // this is a 'case'
+                "edit = 1, length," +                       // case, then,
+                "edit = 0, length_delta," +                 // case, then,
+                "edit = -1, - length + length_delta," +     // case, then,
+                "0)" +                                 // else
+                "), 0)"
+    )
 }
 
 
@@ -21,7 +29,11 @@ interface TopicDefinition {
 }
 
 
-class KeyOnlyTopicDefinition(override val topicName: String, val key: String, val aggregationStrategy: AggregationStrategy = COUNT) : TopicDefinition {
+class KeyOnlyTopicDefinition(
+    override val topicName: String,
+    val key: String,
+    val aggregationStrategy: AggregationStrategy = COUNT
+) : TopicDefinition {
 
     override fun keys() = listOf(key)
 
@@ -37,7 +49,8 @@ class KeyOnlyTopicDefinition(override val topicName: String, val key: String, va
 
 class KeyValueTopicDefinition(
     override val topicName: String, val matchers: List<KeyValueMatcher>,
-    val aggregationStrategy: AggregationStrategy = COUNT) : TopicDefinition {
+    val aggregationStrategy: AggregationStrategy = COUNT
+) : TopicDefinition {
 
 
     override fun keys() = matchers.map { it.key }

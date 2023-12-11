@@ -83,6 +83,22 @@ class TopicRepoIntegrationTests {
         assertEquals("-3", result["topic_result"].toString())
     }
 
+    @Test
+    fun `getTopicStatsForTimeSpan should return all data for topic with length aggregation`() {
+        val hashtagHandler = HashtagHandler("hotmicrogrants*")
+        val result =
+            this.repo.getTopicStatsForTimeSpan(
+                hashtagHandler,
+                null,
+                null,
+                emptyListCountryHandler,
+                TopicHandler("waterway")
+            )
+
+        println(result)
+        assertEquals(2, result.size)
+        assertEquals("1206", result["topic_result"].toString())
+    }
 
     @Test
     fun `getTopicStatsForTimeSpan should return partial data for given end date and single country for topic without value restriction`() {

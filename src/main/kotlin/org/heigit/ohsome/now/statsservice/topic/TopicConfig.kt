@@ -31,6 +31,7 @@ val topics = mapOf(
             )
         )
     ),
+
     "healthcare" to KeyValueTopicDefinition(
         "healthcare",
         listOf(
@@ -43,7 +44,17 @@ val topics = mapOf(
                 listOf("doctors", "clinic", "hospital", "health_post")
             )
         )
-    )
+    ),
 
+    "waterway" to KeyValueTopicDefinition(
+        "waterway",
+        listOf(
+            KeyValueMatcher(
+                "waterway",
+                listOf("river", "canal", "stream", "brook", "drain", "ditch")
+            )
+        ),
+        AggregationStrategy.LENGTH
+    )
 )
 
