@@ -34,7 +34,7 @@ class TopicSqlGenerator {
             .toString()
 
 
-        val filename = "topic_" + definition.topicName + ".sql"
+        val filename = "DDL__topic_" + definition.topicName + ".sql"
         val file = File(path + filename)
 
         println("fourHoursLater = $fourHoursLater")
