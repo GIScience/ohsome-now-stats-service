@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS int.topic_healthcare
+CREATE TABLE IF NOT EXISTS prod.topic_healthcare
 (
     `changeset_timestamp` DateTime,
     `hashtag`             String,

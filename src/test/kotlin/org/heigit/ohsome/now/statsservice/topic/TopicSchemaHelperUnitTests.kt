@@ -34,7 +34,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createTableDDL(definition)
+            val sql = createTableDDL(definition, "prod")
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
         }
@@ -45,7 +45,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
 
-            val sql = createTableDDL(definition)
+            val sql = createTableDDL(definition, "prod")
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
         }
@@ -56,7 +56,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createTableDDL(definition)
+            val sql = createTableDDL(definition, "prod")
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable2Keys)
         }
@@ -74,7 +74,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createMVDDL(definition, dateTime)
+            val sql = createMvDdl(definition, dateTime, "prod")
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
         }
@@ -85,7 +85,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
 
-            val sql = createMVDDL(definition, dateTime)
+            val sql = createMvDdl(definition, dateTime, "prod")
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
         }
@@ -96,7 +96,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createMVDDL(definition, dateTime)
+            val sql = createMvDdl(definition, dateTime, "prod")
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV2Keys)
         }
@@ -112,7 +112,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createInsertStatement(definition, dateTime)
+            val sql = createInsertStatement(definition, dateTime, "prod")
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedInsertStatement1Key)
         }
@@ -122,7 +122,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
 
-            val sql = createInsertStatement(definition, dateTime)
+            val sql = createInsertStatement(definition, dateTime, "prod")
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedInsertStatement1Key)
         }
@@ -133,7 +133,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createInsertStatement(definition, dateTime)
+            val sql = createInsertStatement(definition, dateTime, "prod")
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedInsertStatement2Keys)
         }
