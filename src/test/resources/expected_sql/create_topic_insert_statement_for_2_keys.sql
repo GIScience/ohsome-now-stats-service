@@ -1,5 +1,5 @@
 
-INSERT into int.topic_healthcare
+INSERT into prod.topic_healthcare
 SELECT
     changeset_timestamp,
     user_id,
@@ -10,7 +10,7 @@ SELECT
     tags['amenity'] as amenity_current,
     tags_before['amenity'] as amenity_before
 FROM
-    int.stats;
+    prod.stats;
 WHERE
     changeset_timestamp <= parseDateTimeBestEffort('2023-06-15 17:00:00')
     AND

@@ -2,29 +2,23 @@ package org.heigit.ohsome.now.statsservice.topic
 
 
 @Suppress("LongMethod")
-fun createInsertStatement(definition: TopicDefinition, dateTime: String): String {
-
-    val keyColumns = keyColumns(definition)
-    val whereClause = whereClause(definition)
-
-    return """
-        INSERT into int.topic_${definition.topicName}
-        SELECT
-            changeset_timestamp,
-            user_id,
-            hashtag,
-            country_iso_a3,
-            $keyColumns
-        FROM
-            int.stats;
-        WHERE
-            changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
-            AND
-            (
-                $whereClause
-            )
-        """.trimIndent().trimMargin()
-}
+fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: String) = """
+    INSERT into $stage.topic_${definition.topicName}
+    SELECT
+        changeset_timestamp,
+        user_id,
+        hashtag,
+        country_iso_a3,
+        ${keyColumns(definition)}
+    FROM
+        $stage.stats;
+    WHERE
+        changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
+        AND
+        (
+            ${whereClause(definition)}
+        )
+    """.trimIndent().trimMargin()
 
 @Suppress("LongMethod")
 fun createMVDDL(definition: TopicDefinition, dateTime: String): String {
