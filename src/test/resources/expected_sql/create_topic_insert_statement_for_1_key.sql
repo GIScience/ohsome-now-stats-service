@@ -10,7 +10,7 @@ SELECT
 FROM
     int.stats;
 WHERE
-    changeset_timestamp <= toDateTime('2023-06-15 17:00:00')
+    changeset_timestamp <= parseDateTimeBestEffort('2023-06-15 17:00:00')
     AND
     (
         amenity_current != '' OR amenity_before != ''
