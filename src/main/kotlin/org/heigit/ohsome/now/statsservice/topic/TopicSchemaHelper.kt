@@ -18,7 +18,7 @@ fun createInsertStatement(definition: TopicDefinition, dateTime: String): String
         FROM
             int.stats;
         WHERE
-            changeset_timestamp <= toDateTime('$dateTime')
+            changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
             AND
             (
                 $whereClause
@@ -44,7 +44,7 @@ fun createMVDDL(definition: TopicDefinition, dateTime: String): String {
         )
         FROM int.stats
         WHERE
-            changeset_timestamp > toDateTime('$dateTime')
+            changeset_timestamp > parseDateTimeBestEffort('$dateTime')
             AND
             (
                 $whereClause
