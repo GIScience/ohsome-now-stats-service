@@ -53,26 +53,19 @@ fun createMVDDL(definition: TopicDefinition, dateTime: String): String {
 }
 
 
-fun createTableDDL(definition: TopicDefinition): String {
-
-
-    val keyColumnDefinitions = keyColumnDefinitions(definition)
-
-
-    return """
-            CREATE TABLE IF NOT EXISTS int.topic_${definition.topicName}
-            (
-                `changeset_timestamp` DateTime,
-                `hashtag`             String,
-                `user_id`             Int32,
-                `country_iso_a3`      Array(String),
-                $keyColumnDefinitions
-            )
-                ENGINE = MergeTree
-                PRIMARY KEY( hashtag, changeset_timestamp)
-            ;
-        """.trimIndent()
-}
+fun createTableDDL(definition: TopicDefinition, stage: String) = """
+        CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}
+        (
+            `changeset_timestamp` DateTime,
+            `hashtag`             String,
+            `user_id`             Int32,
+            `country_iso_a3`      Array(String),
+            ${keyColumnDefinitions(definition)}
+        )
+            ENGINE = MergeTree
+            PRIMARY KEY( hashtag, changeset_timestamp)
+        ;
+    """.trimIndent()
 
 
 private fun keyColumns(definition: TopicDefinition) = createFromKeys(definition, ::columnNames)

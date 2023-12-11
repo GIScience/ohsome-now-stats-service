@@ -44,7 +44,7 @@ class TopicSqlGenerator {
 
 
     private fun createDDLCommands(definition: TopicDefinition) = comment() +
-            createTableDDL(definition) + "\n\n" +
+            createTableDDL(definition, "prod") + "\n\n" +
             createMVDDL(definition, fourHoursLater)
 
 
