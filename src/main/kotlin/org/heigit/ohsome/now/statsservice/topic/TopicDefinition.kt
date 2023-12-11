@@ -6,13 +6,14 @@ import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.COUNT
 enum class AggregationStrategy(val sql: String) {
     COUNT("ifNull(sum(edit), 0)"),
     LENGTH(
-        "ifNull(sum(" +
+        "ifNull(intDiv(" +
+                "sum(" +
                 "multiIf(" +                                // this is a 'case'
                 "edit = 1, length," +                       // case, then,
                 "edit = 0, length_delta," +                 // case, then,
                 "edit = -1, - length + length_delta," +     // case, then,
-                "0)" +                                 // else
-                "), 0)"
+                "0)" +                              // else
+                "), 1000), 0)"
     )
 }
 

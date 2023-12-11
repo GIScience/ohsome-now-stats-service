@@ -1,6 +1,6 @@
 package org.heigit.ohsome.now.statsservice.topic
 
-
+    
 @Suppress("LongMethod")
 fun createInsertStatement(definition: TopicDefinition, dateTime: String): String {
 
