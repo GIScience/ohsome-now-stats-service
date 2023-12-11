@@ -9,12 +9,7 @@ CREATE TABLE IF NOT EXISTS topic_place
     `place_current`       String,
     `place_before`        String
 
-) ENGINE =
-    MergeTree
-    PRIMARY
-    KEY
-(
-    hashtag,
-    changeset_timestamp
 )
+ENGINE = MergeTree
+order by (`hashtag`, `changeset_timestamp`)
 ;

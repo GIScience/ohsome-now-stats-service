@@ -11,6 +11,6 @@ create table topic_healthcare
     `amenity_current` String,
     `amenity_before` String
 )
-Engine = MergeTree
+ENGINE = MergeTree
 order by (`hashtag`, `changeset_timestamp`)
 ;

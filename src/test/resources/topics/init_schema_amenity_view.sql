@@ -9,12 +9,7 @@ CREATE TABLE IF NOT EXISTS topic_amenity
     `amenity_current`       String,
     `amenity_before`        String
 
-) ENGINE =
-    MergeTree
-    PRIMARY
-    KEY
-(
-    hashtag,
-    changeset_timestamp
 )
+ENGINE = MergeTree
+order by (`hashtag`, `changeset_timestamp`)
 ;
