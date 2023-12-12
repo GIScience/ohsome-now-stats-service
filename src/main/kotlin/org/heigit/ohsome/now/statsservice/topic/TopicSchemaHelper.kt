@@ -100,8 +100,8 @@ else
 
 fun optionalAreaOrLengthColumnNames(definition: TopicDefinition) = if (definition.aggregationStrategy == LENGTH) {
     """,
-            length,
-            length_delta"""
+        length,
+        length_delta"""
 }
 else
     ""
