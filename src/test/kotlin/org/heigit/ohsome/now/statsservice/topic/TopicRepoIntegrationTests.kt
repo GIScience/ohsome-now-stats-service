@@ -97,7 +97,7 @@ class TopicRepoIntegrationTests {
 
         println(result)
         assertEquals(2, result.size)
-        assertEquals("1", result["topic_result"].toString())
+        assertEquals("1.206", result["topic_result"].toString())
     }
 
     @Test

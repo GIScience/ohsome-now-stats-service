@@ -21,7 +21,7 @@ class TopicModelTests {
 
         assertThat(result.hashtag).isEqualTo(hashtag)
         assertThat(result.topic).isEqualTo(topic)
-        assertThat(result.value).isEqualTo(20L)
+        assertThat(result.value).isEqualTo(20.0)
     }
 
 
@@ -36,7 +36,7 @@ class TopicModelTests {
 
         assertThat(result.hashtag).isEqualTo(hashtag)
         assertThat(result.topic).isEqualTo(topic)
-        assertThat(result.value).isEqualTo(20L)
+        assertThat(result.value).isEqualTo(20.0)
     }
 
 }

@@ -21,7 +21,7 @@ class TopicDefinitionTests {
         // ! only mocking, not the real topic definition
         val definition = KeyOnlyTopicDefinition("waterway", "waterway", AggregationStrategy.LENGTH)
         assertEquals(
-            "ifNull(intDiv(sum(multiIf(edit = 1, length,edit = 0, length_delta,edit = -1, - length + length_delta,0)), 1000), 0)",
+            "ifNull(sum(multiIf(edit = 1, length,edit = 0, length_delta,edit = -1, - length + length_delta,0))/ 1000, 0)",
             definition.defineTopicResult()
         )
     }

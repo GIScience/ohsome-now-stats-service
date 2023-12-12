@@ -221,8 +221,8 @@ class TopicControllerMVCTests {
     @Test
     fun `topic stats per country can be served with explicit start and end date`() {
 
-        val result1 = TopicCountryResult(444, "place", "BOL")
-        val result2 = TopicCountryResult(333, "place", "BRA")
+        val result1 = TopicCountryResult(444.0, "place", "BOL")
+        val result2 = TopicCountryResult(333.0, "place", "BRA")
         val result = mapOf(topic1 to listOf(result1, result2))
 
         `when`(this.topicService.getTopicStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant(), anyList()))

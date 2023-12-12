@@ -48,7 +48,8 @@ class SystemTests {
     val topic1 = "place"
     val topic2 = "healthcare"
     val topic3 = "amenity"
-    val topics = listOf(topic1, topic2)
+    val topic4 = "waterway"
+    val topics = listOf(topic1, topic2, topic4)
 
 
     @Test
@@ -73,8 +74,8 @@ class SystemTests {
 
 
     @Test
-    @DisplayName("GET /topic/place,healthcare?hashtag=hotmicrogrant*")
-    fun `get topics place and healthcare`() {
+    @DisplayName("GET /topic/place,healthcare,waterway?hashtag=hotmicrogrant*")
+    fun `get topics place and healthcare and waterway`() {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
@@ -88,8 +89,10 @@ class SystemTests {
             //TODO: check if this is a bug: should be 'hotmicrogrant*' instead of 'hotmicrogrant'
             .jsonPath("$.result.$topic1.hashtag").isEqualTo("hotmicrogrant")
             .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-            .jsonPath("$.result.$topic2.value").isEqualTo(2)
             .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
+            .jsonPath("$.result.$topic2.value").isEqualTo(2)
+            .jsonPath("$.result.$topic4.topic").isEqualTo("waterway")
+            .jsonPath("$.result.$topic4.value").isEqualTo(2.207)
             .jsonPath("$.query.timespan.startDate").exists()
             .jsonPath("$.query.timespan.endDate").exists()
     }
