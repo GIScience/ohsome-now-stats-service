@@ -59,7 +59,7 @@ class TopicSqlGenerator {
 
 
     private fun getFile(prefix: String, definition: TopicDefinition, stage: String): File {
-        val filename = stage + "_" + prefix + "__topic_" + definition.topicName + ".sql"
+        val filename = stage + "/" + stage + "_" + prefix + "__topic_" + definition.topicName + ".sql"
         return File(path + filename)
     }
 
