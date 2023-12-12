@@ -1,6 +1,7 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 import org.assertj.core.api.Assertions.assertThat
+import org.heigit.ohsome.now.statsservice.file
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

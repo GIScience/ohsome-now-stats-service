@@ -1,15 +1,10 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 import org.assertj.core.api.Assertions.assertThat
+import org.heigit.ohsome.now.statsservice.file
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.junit.jupiter.api.Test
-import java.io.File
-import kotlin.text.Charsets.UTF_8
-
-
-fun file(name: String) = File("src/test/resources/expected_sql/$name.sql")
-    .readText(UTF_8)
 
 
 class TopicRepoUnitTests {

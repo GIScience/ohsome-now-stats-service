@@ -3,6 +3,11 @@ package org.heigit.ohsome.now.statsservice.topic
 import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 
 
+/// TODO: make table name configurable
+/// TODO: make table name configurable
+/// TODO: make table name configurable
+
+
 @Suppress("LongMethod")
 fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: String) = """
     INSERT into $stage.topic_${definition.topicName}
