@@ -21,6 +21,7 @@ enum class AggregationStrategy(val sql: String) {
 interface TopicDefinition {
 
     val topicName: String
+    val aggregationStrategy: AggregationStrategy
     fun keys(): List<String>
 
     fun buildValueLists(): String
@@ -33,7 +34,7 @@ interface TopicDefinition {
 class KeyOnlyTopicDefinition(
     override val topicName: String,
     val key: String,
-    val aggregationStrategy: AggregationStrategy = COUNT
+    override val aggregationStrategy: AggregationStrategy = COUNT
 ) : TopicDefinition {
 
     override fun keys() = listOf(key)
@@ -50,7 +51,7 @@ class KeyOnlyTopicDefinition(
 
 class KeyValueTopicDefinition(
     override val topicName: String, val matchers: List<KeyValueMatcher>,
-    val aggregationStrategy: AggregationStrategy = COUNT
+    override val aggregationStrategy: AggregationStrategy = COUNT
 ) : TopicDefinition {
 
 

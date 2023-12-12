@@ -1,6 +1,8 @@
 package org.heigit.ohsome.now.statsservice.topic
 
-    
+import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
+
+
 @Suppress("LongMethod")
 fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: String) = """
     INSERT into $stage.topic_${definition.topicName}
@@ -51,6 +53,7 @@ fun createTableDDL(definition: TopicDefinition, stage: String) = """
             `user_id`             Int32,
             `country_iso_a3`      Array(String),
             ${keyColumnDefinitions(definition)}
+            ${optionalAreaOrLengthColumns(definition)}
         )
             ENGINE = MergeTree
             PRIMARY KEY( hashtag, changeset_timestamp)
@@ -84,5 +87,13 @@ private fun whereClauseParts(key: String) = """
             ${key}_current  != '' OR ${key}_before != '' """
 
 
+
+fun optionalAreaOrLengthColumns(definition: TopicDefinition) = if (definition.aggregationStrategy == LENGTH) {
+    """,
+            length          Int64,
+            length_delta    Int64"""
+}
+else
+    ""
 
 
