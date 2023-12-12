@@ -71,8 +71,8 @@ private fun createFromKeys(definition: TopicDefinition, transform: (String) -> S
 
 
 private fun columnDefinitions(key: String) = """
-        `${key}_current`      String, 
-        `${key}_before`       String"""
+            `${key}_current`      String, 
+            `${key}_before`       String"""
 
 
 private fun columnNames(key: String) = """
@@ -81,7 +81,7 @@ private fun columnNames(key: String) = """
 
 
 private fun whereClauseParts(key: String) = """
-        ${key}_current  != '' OR ${key}_before != '' """
+            ${key}_current  != '' OR ${key}_before != '' """
 
 
 
