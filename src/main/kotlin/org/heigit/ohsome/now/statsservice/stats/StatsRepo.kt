@@ -42,7 +42,7 @@ class StatsRepo {
 
 
     //language=sql
-    private fun statsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
+    fun statsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
@@ -57,6 +57,7 @@ class StatsRepo {
             and changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
         """.trimIndent()
+        .also { println("###############" + it) }
 
 
     //language=sql
