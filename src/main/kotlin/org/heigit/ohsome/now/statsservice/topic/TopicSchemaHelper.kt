@@ -61,7 +61,7 @@ fun createTableDDL(definition: TopicDefinition, stage: String) = """
 
 private fun keyColumns(definition: TopicDefinition) = createFromKeys(definition, ::columnNames)
 private fun keyColumnDefinitions(definition: TopicDefinition) = createFromKeys(definition, ::columnDefinitions)
-private fun whereClause(definition: TopicDefinition ) = createFromKeys(definition, ::whereClauseParts, "\nOR\n")
+private fun whereClause(definition: TopicDefinition ) = createFromKeys(definition, ::whereClauseParts, "\n            OR\n")
 
 
 private fun createFromKeys(definition: TopicDefinition, transform: (String) -> String, separator: String = ",\n") = definition
