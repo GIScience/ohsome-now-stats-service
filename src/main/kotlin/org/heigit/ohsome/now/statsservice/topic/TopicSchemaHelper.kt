@@ -12,6 +12,7 @@ fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: 
         hashtag,
         country_iso_a3,
         ${keyColumns(definition)}
+        ${optionalAreaOrLengthColumnNames(definition)} 
     FROM
         $stage.stats;
     WHERE
@@ -33,6 +34,7 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String) = 
         `user_id`,
         `country_iso_a3`,
         ${keyColumns(definition)}
+        ${optionalAreaOrLengthColumnNames(definition)}
     )
     FROM $stage.stats
     WHERE
@@ -92,6 +94,14 @@ fun optionalAreaOrLengthColumns(definition: TopicDefinition) = if (definition.ag
     """,
             length          Int64,
             length_delta    Int64"""
+}
+else
+    ""
+
+fun optionalAreaOrLengthColumnNames(definition: TopicDefinition) = if (definition.aggregationStrategy == LENGTH) {
+    """,
+            length,
+            length_delta"""
 }
 else
     ""
