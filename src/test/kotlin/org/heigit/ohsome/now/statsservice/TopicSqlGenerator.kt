@@ -27,6 +27,9 @@ class TopicSqlGenerator {
     private fun writeSql(definition: TopicDefinition) {
         writeDDLs(definition, "int")
         writeInserts(definition, "int")
+
+        writeDDLs(definition, "prod")
+        writeInserts(definition, "prod")
     }
 
 
