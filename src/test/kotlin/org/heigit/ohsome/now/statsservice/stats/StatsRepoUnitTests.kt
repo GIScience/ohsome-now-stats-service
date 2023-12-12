@@ -41,43 +41,15 @@ class StatsRepoUnitTests {
     }
 
 
-    /*
+    @Test
+    fun `can create stats SQL by country for wildcard hashtag`() {
 
+        val expected = file("stats_bycountry_wildcard_hashtag")
 
-        @Test
-        fun `can create SQL for topic 'healthcare', all countries & non-wildcard hashtag`() {
+        val sql = repo.statsFromTimeSpanCountrySQL(wildcardHashtag)
+        assertThat(sql)
+            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+    }
 
-            val expected = file("topic_healthcare_allcountries_fixed_hashtag")
-
-            val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, healthcareTopic)
-            assertThat(sql)
-                .isEqualToNormalizingPunctuationAndWhitespace(expected)
-        }
-
-
-        @Test
-        fun `can create SQL for topic 'place' by country & wildcard hashtag`() {
-
-            val expected = file("topic_place_bycountry_wildcard_hashtag")
-
-            val sql = repo.topicStatsFromTimeSpanCountrySQL(wildcardHashtag, placeTopic)
-            assertThat(sql)
-                .isEqualToNormalizingPunctuationAndWhitespace(expected)
-        }
-
-
-        @Test
-        fun `can create SQL for topic user endpoint`() {
-
-            val expected = file("topic_place_by_userid")
-
-            val sql = repo.topicForUserIdForHotOSMProjectSQL(placeTopic)
-            assertThat(sql).isEqualToNormalizingPunctuationAndWhitespace(expected)
-        }
-
-
-     */
 
 }
-
-

@@ -115,7 +115,7 @@ class StatsRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun statsFromTimeSpanCountrySQL(hashtagHandler: HashtagHandler) = """
+    fun statsFromTimeSpanCountrySQL(hashtagHandler: HashtagHandler) = """
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
