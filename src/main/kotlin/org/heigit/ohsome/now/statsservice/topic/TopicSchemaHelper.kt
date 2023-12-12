@@ -3,13 +3,9 @@ package org.heigit.ohsome.now.statsservice.topic
 import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 
 
-/// TODO: make table name configurable
-/// TODO: make table name configurable
-/// TODO: make table name configurable
-
 
 @Suppress("LongMethod")
-fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: String) = """
+fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: String, tableName: String) = """
     INSERT into $stage.topic_${definition.topicName}
     SELECT
         changeset_timestamp,
@@ -19,7 +15,7 @@ fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: 
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)} 
     FROM
-        $stage.stats;
+        $stage.$tableName
     WHERE
         changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
         AND
@@ -30,8 +26,8 @@ fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: 
 
 
 @Suppress("LongMethod")
-fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String) = """
-    CREATE MATERIALIZED VIEW $stage.mv__stats_to_topic_${definition.topicName} TO $stage.topic_${definition.topicName}
+fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, tableName: String) = """
+    CREATE MATERIALIZED VIEW $stage.mv__${tableName}_to_topic_${definition.topicName} TO $stage.topic_${definition.topicName}
     AS SELECT
     (
         `changeset_timestamp`,
@@ -41,7 +37,7 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String) = 
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)}
     )
-    FROM $stage.stats
+    FROM $stage.$tableName
     WHERE
         changeset_timestamp > parseDateTimeBestEffort('$dateTime')
         AND
