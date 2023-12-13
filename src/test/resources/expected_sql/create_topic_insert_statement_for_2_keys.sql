@@ -1,5 +1,5 @@
 
-INSERT into prod.topic_healthcare
+INSERT into prod.topic_healthcare_7
 SELECT
     changeset_timestamp,
     user_id,

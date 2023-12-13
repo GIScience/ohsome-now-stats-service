@@ -10,8 +10,10 @@ import java.time.temporal.ChronoUnit.SECONDS
 
 class TopicSqlGenerator {
 
+    //TODO: user generation only and not table name anymore
 
     private val currentTableName = statsTableName
+    private val currentGeneration = generationPostfix
 
 
     private val fourHoursLater = now()
@@ -29,16 +31,16 @@ class TopicSqlGenerator {
 
 
     private fun writeSql(definition: TopicDefinition) {
-        writeDDLs(definition, "int", currentTableName)
+        writeDDLs(definition, "int", currentTableName, currentGeneration)
         writeInserts(definition, "int", currentTableName)
 
-        writeDDLs(definition, "prod", currentTableName)
+        writeDDLs(definition, "prod", currentTableName, currentGeneration)
         writeInserts(definition, "prod", currentTableName)
     }
 
 
-    private fun writeDDLs(definition: TopicDefinition, stage: String, tableName: String) = writeSqlToFile("DDL", definition, stage) {
-        createDDLCommands(definition, stage, tableName)
+    private fun writeDDLs(definition: TopicDefinition, stage: String, tableName: String, generation: String) = writeSqlToFile("DDL", definition, stage) {
+        createDDLCommands(definition, stage, tableName, generation)
     }
 
 
@@ -52,9 +54,9 @@ class TopicSqlGenerator {
         .writeText(command())
 
 
-    private fun createDDLCommands(definition: TopicDefinition, stage: String, tableName: String) = comment() +
-            createTableDDL(definition, stage) + "\n\n" +
-            createMvDdl(definition, fourHoursLater, stage, tableName)
+    private fun createDDLCommands(definition: TopicDefinition, stage: String, tableName: String, generation: String) = comment() +
+            createTableDDL(definition, stage, generation) + "\n\n" +
+            createMvDdl(definition, fourHoursLater, stage, tableName, generation)
 
 
     private fun createInsertCommands(definition: TopicDefinition, stage: String, tableName: String) = comment() +

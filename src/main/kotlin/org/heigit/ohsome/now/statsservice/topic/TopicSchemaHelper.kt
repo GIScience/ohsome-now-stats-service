@@ -26,8 +26,9 @@ fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: 
 
 
 @Suppress("LongMethod")
-fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, tableName: String) = """
-    CREATE MATERIALIZED VIEW $stage.mv__${tableName}_to_topic_${definition.topicName} TO $stage.topic_${definition.topicName}
+fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, tableName: String, generation: String) = """
+    CREATE MATERIALIZED VIEW $stage.mv__${tableName}_${generation}_to_topic_${definition.topicName} 
+    TO $stage.topic_${definition.topicName}_${generation}
     AS SELECT
     (
         `changeset_timestamp`,
@@ -37,7 +38,7 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, ta
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)}
     )
-    FROM $stage.$tableName
+    FROM $stage.${tableName}_${generation}
     WHERE
         changeset_timestamp > parseDateTimeBestEffort('$dateTime')
         AND
@@ -48,8 +49,8 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, ta
 
 
 @Suppress("LongMethod")
-fun createTableDDL(definition: TopicDefinition, stage: String) = """
-        CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}
+fun createTableDDL(definition: TopicDefinition, stage: String, generation: String) = """
+        CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}_${generation}
         (
             `changeset_timestamp` DateTime,
             `hashtag`             String,

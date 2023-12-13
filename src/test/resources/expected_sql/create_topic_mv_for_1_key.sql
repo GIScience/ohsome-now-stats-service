@@ -1,4 +1,4 @@
-CREATE MATERIALIZED VIEW prod.mv__stats_7_to_topic_amenity TO prod.topic_amenity
+CREATE MATERIALIZED VIEW prod.mv__stats_7_to_topic_amenity_7 TO prod.topic_amenity_7
 AS
 SELECT
     changeset_timestamp,

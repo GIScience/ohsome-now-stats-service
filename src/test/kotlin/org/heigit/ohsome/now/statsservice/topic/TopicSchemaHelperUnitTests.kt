@@ -7,8 +7,19 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 
+//TODO: fix test!
+//TODO: fix test!
+//TODO: fix test!
+//TODO: fix test!
+
+
 @DisplayName("can generate topic")
 class TopicSchemaHelperUnitTests {
+
+
+//    val generation = org.heigit.ohsome.now.statsservice.generationPostfix
+    val generation = "_7"
+
 
     private val dateTime = "2023-06-15 17:00:00"
 
@@ -35,7 +46,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createTableDDL(definition, "prod")
+            val sql = createTableDDL(definition, "prod", generation)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
         }
@@ -46,7 +57,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
 
-            val sql = createTableDDL(definition, "prod")
+            val sql = createTableDDL(definition, "prod", generation)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
         }
@@ -57,7 +68,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createTableDDL(definition, "prod")
+            val sql = createTableDDL(definition, "prod", generation)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable2Keys)
         }
@@ -75,7 +86,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createMvDdl(definition, dateTime, "prod", "stats_7")
+            val sql = createMvDdl(definition, dateTime, "prod", "stats", generation)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
         }
@@ -86,7 +97,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyOnlyTopicDefinition("amenity", "amenity")
 
-            val sql = createMvDdl(definition, dateTime, "prod", "stats_7")
+            val sql = createMvDdl(definition, dateTime, "prod", "stats_7", generation)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
         }
@@ -97,7 +108,7 @@ class TopicSchemaHelperUnitTests {
 
             val definition =  KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createMvDdl(definition, dateTime, "prod", "stats_7")
+            val sql = createMvDdl(definition, dateTime, "prod", "stats_7", generation)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV2Keys)
         }

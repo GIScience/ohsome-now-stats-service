@@ -1,5 +1,5 @@
 
-INSERT into prod.topic_amenity
+INSERT into prod.topic_amenity_7
 SELECT
     changeset_timestamp,
     user_id,
