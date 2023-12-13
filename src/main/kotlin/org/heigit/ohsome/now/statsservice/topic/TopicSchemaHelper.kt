@@ -3,10 +3,15 @@ package org.heigit.ohsome.now.statsservice.topic
 import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 
 
-
 @Suppress("LongMethod")
-fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: String, tableName: String) = """
-    INSERT into $stage.topic_${definition.topicName}
+fun createInsertStatement(
+    definition: TopicDefinition,
+    dateTime: String,
+    stage: String,
+    tableName: String,
+    generation: String
+) = """
+    INSERT into $stage.topic_${definition.topicName}_${generation}
     SELECT
         changeset_timestamp,
         user_id,
@@ -15,7 +20,7 @@ fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: 
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)} 
     FROM
-        $stage.$tableName
+        $stage.${tableName}_${generation}
     WHERE
         changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
         AND
@@ -26,8 +31,9 @@ fun createInsertStatement(definition: TopicDefinition, dateTime: String, stage: 
 
 
 @Suppress("LongMethod")
-fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, tableName: String, generation: String) = """
-    CREATE MATERIALIZED VIEW $stage.mv__${tableName}_${generation}_to_topic_${definition.topicName} 
+fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, tableName: String, generation: String) =
+    """
+    CREATE MATERIALIZED VIEW $stage.mv__${tableName}_${generation}_to_topic_${definition.topicName}_${generation}
     TO $stage.topic_${definition.topicName}_${generation}
     AS SELECT
     (
@@ -45,7 +51,8 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, ta
         (
             ${whereClause(definition)}
         )
-        """.trimIndent().trimMargin()
+    ;
+    """.trimIndent().trimMargin()
 
 
 @Suppress("LongMethod")
@@ -65,16 +72,17 @@ fun createTableDDL(definition: TopicDefinition, stage: String, generation: Strin
     """.trimIndent()
 
 
-
 private fun keyColumns(definition: TopicDefinition) = createFromKeys(definition, ::columnNames)
 private fun keyColumnDefinitions(definition: TopicDefinition) = createFromKeys(definition, ::columnDefinitions)
-private fun whereClause(definition: TopicDefinition ) = createFromKeys(definition, ::whereClauseParts, "\n            OR\n")
+private fun whereClause(definition: TopicDefinition) =
+    createFromKeys(definition, ::whereClauseParts, "\n            OR\n")
 
 
-private fun createFromKeys(definition: TopicDefinition, transform: (String) -> String, separator: String = ",\n") = definition
-    .keys()
-    .map(transform)
-    .joinToString(separator = separator)
+private fun createFromKeys(definition: TopicDefinition, transform: (String) -> String, separator: String = ",\n") =
+    definition
+        .keys()
+        .map(transform)
+        .joinToString(separator = separator)
 
 
 private fun columnDefinitions(key: String) = """
@@ -91,21 +99,18 @@ private fun whereClauseParts(key: String) = """
             ${key}_current  != '' OR ${key}_before != '' """
 
 
-
 fun optionalAreaOrLengthColumns(definition: TopicDefinition) = if (definition.aggregationStrategy == LENGTH) {
     """,
             length          Int64,
             length_delta    Int64"""
-}
-else
+} else
     ""
 
 fun optionalAreaOrLengthColumnNames(definition: TopicDefinition) = if (definition.aggregationStrategy == LENGTH) {
     """,
         length,
         length_delta"""
-}
-else
+} else
     ""
 
 
