@@ -8,7 +8,6 @@ fun createInsertStatement(
     definition: TopicDefinition,
     dateTime: String,
     stage: String,
-    tableName: String,
     generation: String
 ) = """
     INSERT into $stage.topic_${definition.topicName}_${generation}
@@ -20,7 +19,7 @@ fun createInsertStatement(
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)} 
     FROM
-        $stage.${tableName}_${generation}
+        $stage.stats_${generation}
     WHERE
         changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
         AND
@@ -31,9 +30,9 @@ fun createInsertStatement(
 
 
 @Suppress("LongMethod")
-fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, tableName: String, generation: String) =
+fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, generation: String) =
     """
-    CREATE MATERIALIZED VIEW $stage.mv__${tableName}_${generation}_to_topic_${definition.topicName}_${generation}
+    CREATE MATERIALIZED VIEW $stage.mv__stats_${generation}_to_topic_${definition.topicName}_${generation}
     TO $stage.topic_${definition.topicName}_${generation}
     AS SELECT
         `changeset_timestamp`,
@@ -42,7 +41,7 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, ta
         `country_iso_a3`,
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)}
-    FROM $stage.${tableName}_${generation}
+    FROM $stage.stats_${generation}
     WHERE
         changeset_timestamp > parseDateTimeBestEffort('$dateTime')
         AND
