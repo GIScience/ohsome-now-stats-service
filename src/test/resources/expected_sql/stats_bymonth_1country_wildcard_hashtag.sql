@@ -6,7 +6,7 @@ SELECT
    count(map_feature_edit) as edits,
    toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
    (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
-FROM "stats"
+FROM "stats_2"
 WHERE
    startsWith(hashtag, :hashtag)
  AND changeset_timestamp > parseDateTimeBestEffort(:startdate)

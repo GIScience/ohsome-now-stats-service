@@ -6,7 +6,7 @@ SELECT
     count(map_feature_edit) as edits,
     max(changeset_timestamp) as latest,
     country_iso_a3 as country
-FROM "stats"
+FROM "stats_2"
     ARRAY JOIN country_iso_a3
 WHERE
     startsWith(hashtag, :hashtag)

@@ -1,7 +1,7 @@
 package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
-import org.heigit.ohsome.now.statsservice.statsTableName
+import org.heigit.ohsome.now.statsservice.schemaVersion
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.heigit.ohsome.now.statsservice.utils.getGroupbyInterval
@@ -51,7 +51,7 @@ class StatsRepo {
             ifNull(sum(building_edit), 0) as buildings,
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest
-        FROM "$statsTableName"
+        FROM "stats_$schemaVersion"
         WHERE
             ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
             and changeset_timestamp > parseDateTimeBestEffort(:startDate)
@@ -70,7 +70,7 @@ class StatsRepo {
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest,
             hashtag
-        FROM "$statsTableName"
+        FROM "stats_$schemaVersion"
         WHERE
             ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
             and changeset_timestamp > parseDateTimeBestEffort(:startDate) 
@@ -90,7 +90,7 @@ class StatsRepo {
         count(map_feature_edit) as edits,
         toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
         (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
-    FROM "$statsTableName"
+        FROM "stats_$schemaVersion"
     WHERE
         ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
         AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
@@ -125,7 +125,7 @@ class StatsRepo {
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest,
             country_iso_a3 as country
-        FROM "$statsTableName"
+            FROM "stats_$schemaVersion"
         ARRAY JOIN country_iso_a3
         WHERE
             ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
@@ -144,8 +144,8 @@ class StatsRepo {
             count(map_feature_edit) as edits,
             count(distinct changeset_id) as changesets,
             user_id
-        FROM "$statsTableName"
-        where
+            FROM "stats_$schemaVersion"
+            WHERE
             user_id = :userId
             and startsWith(hashtag, 'hotosm-project-')
         group by user_id
@@ -157,7 +157,7 @@ class StatsRepo {
     private val mostUsedHashtagsSQL = """
         SELECT 
             hashtag, COUNT(DISTINCT user_id) as number_of_users
-        FROM "$statsTableName"
+        FROM "stats_$schemaVersion"
         WHERE
             changeset_timestamp > parseDateTimeBestEffort(:startDate) and 
             changeset_timestamp < parseDateTimeBestEffort(:endDate)
@@ -174,7 +174,7 @@ class StatsRepo {
         SELECT 
             max(changeset_timestamp) as max_timestamp,
             min(changeset_timestamp) as min_timestamp
-        FROM "$statsTableName"
+        FROM "stats_$schemaVersion"
         WHERE changeset_timestamp > now() - toIntervalMonth(1) 
         OR changeset_timestamp < parseDateTimeBestEffort('2009-04-23T00:00:00.000000Z')
     """.trimIndent()

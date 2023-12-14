@@ -5,7 +5,7 @@ SELECT
    ifNull(sum(building_edit), 0) as buildings,
    count(map_feature_edit) as edits,
    max(changeset_timestamp) as latest
-FROM "stats"
+FROM "stats_2"
 WHERE
    equals(hashtag, :hashtag)
  and changeset_timestamp > parseDateTimeBestEffort(:startDate)
