@@ -19,7 +19,7 @@ class SqlGenerator {
         .truncatedTo(SECONDS)
         .toString()
 
-    private val path = "sql_topics_generated/"
+    private val path = "sql_generated/"
 
 
     @Test
