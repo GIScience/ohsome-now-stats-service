@@ -3,6 +3,32 @@ package org.heigit.ohsome.now.statsservice.topic
 import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 
 
+
+@Suppress("LongMethod")
+fun createStatsTableProjections(stage: String, schemaVersion: String) = """
+
+    ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION timestamp_projection_${schemaVersion} (
+        SELECT
+            changeset_timestamp
+        ORDER BY
+            changeset_timestamp
+    );
+    
+    
+    ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION user_id_projection_${schemaVersion} (
+        SELECT
+           user_id,
+            building_area,
+            road_length,
+            hashtag
+        ORDER BY
+            user_id,
+            hashtag
+    );
+    """.trimIndent().trimMargin()
+
+
+
 @Suppress("LongMethod")
 fun createInsertStatement(
     definition: TopicDefinition,
