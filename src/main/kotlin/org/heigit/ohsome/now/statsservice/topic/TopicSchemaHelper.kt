@@ -8,9 +8,9 @@ fun createInsertStatement(
     definition: TopicDefinition,
     dateTime: String,
     stage: String,
-    generation: String
+    schemaVersion: String
 ) = """
-    INSERT into $stage.topic_${definition.topicName}_${generation}
+    INSERT into $stage.topic_${definition.topicName}_${schemaVersion}
     SELECT
         changeset_timestamp,
         user_id,
@@ -19,7 +19,7 @@ fun createInsertStatement(
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)} 
     FROM
-        $stage.stats_${generation}
+        $stage.stats_${schemaVersion}
     WHERE
         changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
         AND
@@ -30,10 +30,10 @@ fun createInsertStatement(
 
 
 @Suppress("LongMethod")
-fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, generation: String) =
+fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, schemaVersion: String) =
     """
-    CREATE MATERIALIZED VIEW $stage.mv__stats_${generation}_to_topic_${definition.topicName}_${generation}
-    TO $stage.topic_${definition.topicName}_${generation}
+    CREATE MATERIALIZED VIEW $stage.mv__stats_${schemaVersion}_to_topic_${definition.topicName}_${schemaVersion}
+    TO $stage.topic_${definition.topicName}_${schemaVersion}
     AS SELECT
         `changeset_timestamp`,
         `hashtag`,
@@ -41,7 +41,7 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, ge
         `country_iso_a3`,
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)}
-    FROM $stage.stats_${generation}
+    FROM $stage.stats_${schemaVersion}
     WHERE
         changeset_timestamp > parseDateTimeBestEffort('$dateTime')
         AND
@@ -53,8 +53,8 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, ge
 
 
 @Suppress("LongMethod")
-fun createTableDDL(definition: TopicDefinition, stage: String, generation: String) = """
-        CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}_${generation}
+fun createTableDDL(definition: TopicDefinition, stage: String, schemaVersion: String) = """
+        CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}_${schemaVersion}
         (
             `changeset_timestamp` DateTime,
             `hashtag`             String,
