@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS stats
+CREATE TABLE IF NOT EXISTS stats_2
 (
     `changeset_id` Int64,
     `changeset_timestamp` DateTime,

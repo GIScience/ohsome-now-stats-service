@@ -1,4 +1,4 @@
-INSERT INTO stats (
+INSERT INTO stats_2 (
   "changeset_id",
   "changeset_timestamp",
   "hashtag",
