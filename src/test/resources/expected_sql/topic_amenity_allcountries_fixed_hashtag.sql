@@ -6,7 +6,7 @@
 
 SELECT ifNull(sum(edit), 0) as topic_result
 
-FROM topic_amenity
+FROM topic_amenity_2
 WHERE
     equals(hashtag, :hashtag) 
     and changeset_timestamp > parseDateTimeBestEffort(:startDate)

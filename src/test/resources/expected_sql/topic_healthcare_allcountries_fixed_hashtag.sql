@@ -9,7 +9,7 @@
 
 SELECT ifNull(sum(edit), 0) as topic_result
 
-FROM topic_healthcare
+FROM topic_healthcare_2
 WHERE
     equals(hashtag, :hashtag) 
     and changeset_timestamp > parseDateTimeBestEffort(:startDate)

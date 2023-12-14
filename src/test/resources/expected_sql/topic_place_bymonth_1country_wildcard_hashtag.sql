@@ -10,7 +10,7 @@ SELECT
     toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
     (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
 
-FROM topic_place
+FROM topic_place_2
 WHERE
     startsWith(hashtag, :hashtag)
   AND changeset_timestamp > parseDateTimeBestEffort(:startdate)

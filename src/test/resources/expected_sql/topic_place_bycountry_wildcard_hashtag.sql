@@ -8,7 +8,7 @@ WITH
 SELECT
     ifNull(sum(edit), 0) as topic_result,
     country_iso_a3 as country
-FROM topic_place
+FROM topic_place_2
 
     ARRAY JOIN country_iso_a3
 WHERE

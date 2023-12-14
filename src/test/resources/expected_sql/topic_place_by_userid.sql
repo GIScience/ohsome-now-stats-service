@@ -10,8 +10,8 @@ WITH
 SELECT
     ifNull(sum(edit), 0) as topic_result,
     user_id
-from topic_place
-where
+FROM topic_place_2
+WHERE
     user_id = :userId
     and startsWith(hashtag, 'hotosm-project-')
 group by user_id
