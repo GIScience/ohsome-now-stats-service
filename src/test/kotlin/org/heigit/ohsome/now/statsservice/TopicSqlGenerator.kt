@@ -12,8 +12,10 @@ class TopicSqlGenerator {
 
     //TODO: user generation only and not table name anymore
 
+    @Deprecated("use schema version only")
     private val currentTableName = statsTableName
-    private val currentGeneration = schemaVersion
+
+    private val currentSchemaVersioin = schemaVersion
 
 
     private val fourHoursLater = now()
@@ -31,11 +33,11 @@ class TopicSqlGenerator {
 
 
     private fun writeSql(definition: TopicDefinition) {
-        writeDDLs(definition, "int", currentTableName, currentGeneration)
-        writeInserts(definition, "int", currentTableName, currentGeneration)
+        writeDDLs(definition, "int", currentTableName, currentSchemaVersioin)
+        writeInserts(definition, "int", currentTableName, currentSchemaVersioin)
 
-        writeDDLs(definition, "prod", currentTableName, currentGeneration)
-        writeInserts(definition, "prod", currentTableName, currentGeneration)
+        writeDDLs(definition, "prod", currentTableName, currentSchemaVersioin)
+        writeInserts(definition, "prod", currentTableName, currentSchemaVersioin)
     }
 
 
