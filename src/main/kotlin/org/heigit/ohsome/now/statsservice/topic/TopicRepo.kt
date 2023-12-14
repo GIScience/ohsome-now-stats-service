@@ -133,7 +133,6 @@ class TopicRepo {
         SELECT 
             ${topicHandler.topicResult} as topic_result,
         user_id
-
         FROM topic_${topicHandler.topic}_$schemaVersion
         WHERE
         user_id = :userId
