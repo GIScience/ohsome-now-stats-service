@@ -36,14 +36,12 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, ta
     CREATE MATERIALIZED VIEW $stage.mv__${tableName}_${generation}_to_topic_${definition.topicName}_${generation}
     TO $stage.topic_${definition.topicName}_${generation}
     AS SELECT
-    (
         `changeset_timestamp`,
         `hashtag`,
         `user_id`,
         `country_iso_a3`,
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)}
-    )
     FROM $stage.${tableName}_${generation}
     WHERE
         changeset_timestamp > parseDateTimeBestEffort('$dateTime')
