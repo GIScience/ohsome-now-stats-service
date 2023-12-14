@@ -7,32 +7,29 @@ CREATE TABLE IF NOT EXISTS int.topic_place_2
     `hashtag`             String,
     `user_id`             Int32,
     `country_iso_a3`      Array(String),
-    
-    `place_current`      String, 
-    `place_before`       String
-    
+
+    `place_current`       String,
+    `place_before`        String
+
 )
     ENGINE = MergeTree
-    PRIMARY KEY( hashtag, changeset_timestamp)
+        PRIMARY KEY (hashtag, changeset_timestamp)
 ;
 
 CREATE MATERIALIZED VIEW int.mv__stats_2_to_topic_place_2
-TO int.topic_place_2
-AS SELECT
-    `changeset_timestamp`,
-    `hashtag`,
-    `user_id`,
-    `country_iso_a3`,
-    
-    tags['place'] as  `place_current`, 
-    tags_before['place'] as `place_before`
-    
+    TO int.topic_place_2
+AS
+SELECT `changeset_timestamp`,
+       `hashtag`,
+       `user_id`,
+       `country_iso_a3`,
+
+       tags['place']        as `place_current`,
+       tags_before['place'] as `place_before`
+
 FROM int.stats_2
-WHERE
-    changeset_timestamp > parseDateTimeBestEffort('2023-12-14T19:48:20Z')
-    AND
-    (
-        
-        place_current  != '' OR place_before != '' 
+WHERE changeset_timestamp > parseDateTimeBestEffort('2023-12-14T12:15:43Z')
+  AND (
+    place_current != '' OR place_before != ''
     )
 ;

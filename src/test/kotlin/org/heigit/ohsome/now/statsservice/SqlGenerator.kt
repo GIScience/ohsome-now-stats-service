@@ -1,13 +1,14 @@
 package org.heigit.ohsome.now.statsservice
 
 import org.heigit.ohsome.now.statsservice.topic.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.time.Instant.now
 import java.time.temporal.ChronoUnit.HOURS
 import java.time.temporal.ChronoUnit.SECONDS
 
-
+@Disabled("Run manually only for schema changes")
 class SqlGenerator {
 
 
@@ -36,7 +37,7 @@ class SqlGenerator {
 
 
     private fun writeTopicSql(definition: TopicDefinition) {
-        writeDDLs(definition, "int",  currentSchemaVersion)
+        writeDDLs(definition, "int", currentSchemaVersion)
         writeInserts(definition, "int", currentSchemaVersion)
 
         writeDDLs(definition, "prod", currentSchemaVersion)
@@ -69,8 +70,8 @@ class SqlGenerator {
 
     private fun createDDLCommands(definition: TopicDefinition, stage: String, schemaVersion: String) =
         comment() +
-        createTableDDL(definition, stage, schemaVersion) + "\n\n" +
-        createMvDdl(definition, fourHoursLater, stage, schemaVersion)
+                createTableDDL(definition, stage, schemaVersion) + "\n\n" +
+                createMvDdl(definition, fourHoursLater, stage, schemaVersion)
 
 
     private fun createInsertCommands(definition: TopicDefinition, stage: String, schemaVersion: String) =

@@ -7,41 +7,37 @@ CREATE TABLE IF NOT EXISTS int.topic_healthcare_2
     `hashtag`             String,
     `user_id`             Int32,
     `country_iso_a3`      Array(String),
-    
-    `healthcare_current`      String, 
-    `healthcare_before`       String,
 
-    `amenity_current`      String, 
-    `amenity_before`       String
-    
+    `healthcare_current`  String,
+    `healthcare_before`   String,
+
+    `amenity_current`     String,
+    `amenity_before`      String
+
 )
     ENGINE = MergeTree
-    PRIMARY KEY( hashtag, changeset_timestamp)
+        PRIMARY KEY (hashtag, changeset_timestamp)
 ;
 
 CREATE MATERIALIZED VIEW int.mv__stats_2_to_topic_healthcare_2
-TO int.topic_healthcare_2
-AS SELECT
-    `changeset_timestamp`,
-    `hashtag`,
-    `user_id`,
-    `country_iso_a3`,
-    
-    tags['healthcare'] as  `healthcare_current`, 
-    tags_before['healthcare'] as `healthcare_before`,
+    TO int.topic_healthcare_2
+AS
+SELECT `changeset_timestamp`,
+       `hashtag`,
+       `user_id`,
+       `country_iso_a3`,
 
-    tags['amenity'] as  `amenity_current`, 
-    tags_before['amenity'] as `amenity_before`
-    
+       tags['healthcare']        as `healthcare_current`,
+       tags_before['healthcare'] as `healthcare_before`,
+
+       tags['amenity']           as `amenity_current`,
+       tags_before['amenity']    as `amenity_before`
+
 FROM int.stats_2
-WHERE
-    changeset_timestamp > parseDateTimeBestEffort('2023-12-14T19:48:20Z')
-    AND
-    (
-        
-        healthcare_current  != '' OR healthcare_before != '' 
+WHERE changeset_timestamp > parseDateTimeBestEffort('2023-12-14T12:15:43Z')
+  AND (
+    healthcare_current != '' OR healthcare_before != ''
         OR
-
-        amenity_current  != '' OR amenity_before != '' 
+    amenity_current != '' OR amenity_before != ''
     )
 ;

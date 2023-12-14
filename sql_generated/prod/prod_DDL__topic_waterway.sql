@@ -7,36 +7,32 @@ CREATE TABLE IF NOT EXISTS prod.topic_waterway_2
     `hashtag`             String,
     `user_id`             Int32,
     `country_iso_a3`      Array(String),
-    
-    `waterway_current`      String, 
-    `waterway_before`       String
-    ,
-    length          Int64,
-    length_delta    Int64
+
+    `waterway_current`    String,
+    `waterway_before`     String,
+    length                Int64,
+    length_delta          Int64
 )
     ENGINE = MergeTree
-    PRIMARY KEY( hashtag, changeset_timestamp)
+        PRIMARY KEY (hashtag, changeset_timestamp)
 ;
 
 CREATE MATERIALIZED VIEW prod.mv__stats_2_to_topic_waterway_2
-TO prod.topic_waterway_2
-AS SELECT
-    `changeset_timestamp`,
-    `hashtag`,
-    `user_id`,
-    `country_iso_a3`,
-    
-    tags['waterway'] as  `waterway_current`, 
-    tags_before['waterway'] as `waterway_before`
-    ,
-    length,
-    length_delta
+    TO prod.topic_waterway_2
+AS
+SELECT `changeset_timestamp`,
+       `hashtag`,
+       `user_id`,
+       `country_iso_a3`,
+
+       tags['waterway']        as `waterway_current`,
+       tags_before['waterway'] as `waterway_before`
+        ,
+       length,
+       length_delta
 FROM prod.stats_2
-WHERE
-    changeset_timestamp > parseDateTimeBestEffort('2023-12-14T19:48:20Z')
-    AND
-    (
-        
-        waterway_current  != '' OR waterway_before != '' 
+WHERE changeset_timestamp > parseDateTimeBestEffort('2023-12-14T12:15:43Z')
+  AND (
+    waterway_current != '' OR waterway_before != ''
     )
 ;

@@ -7,32 +7,29 @@ CREATE TABLE IF NOT EXISTS int.topic_amenity_2
     `hashtag`             String,
     `user_id`             Int32,
     `country_iso_a3`      Array(String),
-    
-    `amenity_current`      String, 
-    `amenity_before`       String
-    
+
+    `amenity_current`     String,
+    `amenity_before`      String
+
 )
     ENGINE = MergeTree
-    PRIMARY KEY( hashtag, changeset_timestamp)
+        PRIMARY KEY (hashtag, changeset_timestamp)
 ;
 
 CREATE MATERIALIZED VIEW int.mv__stats_2_to_topic_amenity_2
-TO int.topic_amenity_2
-AS SELECT
-    `changeset_timestamp`,
-    `hashtag`,
-    `user_id`,
-    `country_iso_a3`,
-    
-    tags['amenity'] as  `amenity_current`, 
-    tags_before['amenity'] as `amenity_before`
-    
+    TO int.topic_amenity_2
+AS
+SELECT `changeset_timestamp`,
+       `hashtag`,
+       `user_id`,
+       `country_iso_a3`,
+
+       tags['amenity']        as `amenity_current`,
+       tags_before['amenity'] as `amenity_before`
+
 FROM int.stats_2
-WHERE
-    changeset_timestamp > parseDateTimeBestEffort('2023-12-14T19:48:20Z')
-    AND
-    (
-        
-        amenity_current  != '' OR amenity_before != '' 
+WHERE changeset_timestamp > parseDateTimeBestEffort('2023-12-14T12:15:43Z')
+  AND (
+    amenity_current != '' OR amenity_before != ''
     )
 ;

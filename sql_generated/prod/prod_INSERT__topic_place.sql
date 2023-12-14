@@ -2,21 +2,16 @@
 
 
 INSERT into prod.topic_place_2
-SELECT
-    changeset_timestamp,
-    user_id,
-    hashtag,
-    country_iso_a3,
-    
-    tags['place'] as  `place_current`, 
-    tags_before['place'] as `place_before`
-     
-FROM
-    prod.stats_2
-WHERE
-    changeset_timestamp <= parseDateTimeBestEffort('2023-12-14T19:48:20Z')
-    AND
-    (
-        
-        place_current  != '' OR place_before != '' 
+SELECT changeset_timestamp,
+       hashtag,
+       user_id,
+       country_iso_a3,
+
+       tags['place']        as `place_current`,
+       tags_before['place'] as `place_before`
+
+FROM prod.stats_2
+WHERE changeset_timestamp <= parseDateTimeBestEffort('2023-12-14T12:15:43Z')
+  AND (
+    place_current != '' OR place_before != ''
     )
