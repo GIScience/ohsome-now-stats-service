@@ -17,7 +17,7 @@ fun createStatsTableProjections(stage: String, schemaVersion: String) = """
     
     ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION user_id_projection_${schemaVersion} (
         SELECT
-           user_id,
+            user_id,
             building_area,
             road_length,
             hashtag
