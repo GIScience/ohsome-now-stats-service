@@ -1,6 +1,6 @@
-DROP table IF EXISTS topic_amenity;
+DROP table IF EXISTS topic_amenity_2;
 
-CREATE TABLE IF NOT EXISTS topic_amenity
+CREATE TABLE IF NOT EXISTS topic_amenity_2
 (
     `changeset_timestamp` DateTime,
     `hashtag`             String,

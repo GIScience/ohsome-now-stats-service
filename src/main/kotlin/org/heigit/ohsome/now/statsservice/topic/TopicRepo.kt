@@ -40,7 +40,7 @@ class TopicRepo {
 
         SELECT ${topicHandler.topicResult} as topic_result
 
-        FROM topic_${topicHandler.topic}_$schemaVersion"
+        FROM topic_${topicHandler.topic}_$schemaVersion
         WHERE
             ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
             and changeset_timestamp > parseDateTimeBestEffort(:startDate)
@@ -69,7 +69,7 @@ class TopicRepo {
            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
            (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
 
-       FROM topic_${topicHandler.topic}_$schemaVersion"
+       FROM topic_${topicHandler.topic}_$schemaVersion
        WHERE
            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
                AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
@@ -110,7 +110,7 @@ class TopicRepo {
             ${topicHandler.topicResult} as topic_result,
             country_iso_a3 as country
 
-        FROM topic_${topicHandler.topic}_$schemaVersion"
+        FROM topic_${topicHandler.topic}_$schemaVersion
         ARRAY JOIN country_iso_a3
         WHERE
             ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
@@ -134,7 +134,7 @@ class TopicRepo {
             ${topicHandler.topicResult} as topic_result,
         user_id
 
-        FROM topic_${topicHandler.topic}_$schemaVersion"
+        FROM topic_${topicHandler.topic}_$schemaVersion
         WHERE
         user_id = :userId
                 and startsWith(hashtag, 'hotosm-project-')

@@ -1,6 +1,6 @@
-DROP table IF EXISTS topic_healthcare;
+DROP table IF EXISTS topic_healthcare_2;
 
-create table topic_healthcare
+create table topic_healthcare_2
 (
     `changeset_timestamp` DateTime,
     `user_id` Int32,

@@ -1,6 +1,6 @@
-DROP table IF EXISTS topic_waterway;
+DROP table IF EXISTS topic_waterway_2;
 
-CREATE TABLE IF NOT EXISTS topic_waterway
+CREATE TABLE IF NOT EXISTS topic_waterway_2
 (
     `changeset_timestamp` DateTime,
     `hashtag`             String,
