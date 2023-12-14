@@ -13,7 +13,7 @@ class TopicSqlGenerator {
     //TODO: user generation only and not table name anymore
 
     private val currentTableName = statsTableName
-    private val currentGeneration = generationPostfix
+    private val currentGeneration = schemaVersion
 
 
     private val fourHoursLater = now()
