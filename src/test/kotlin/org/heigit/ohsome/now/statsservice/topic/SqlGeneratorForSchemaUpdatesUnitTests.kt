@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 
 @DisplayName("can generate topic")
-class TopicSchemaHelperUnitTests {
+class SqlGeneratorForSchemaUpdatesUnitTests {
 
 
     val schemaVersion = "7"
