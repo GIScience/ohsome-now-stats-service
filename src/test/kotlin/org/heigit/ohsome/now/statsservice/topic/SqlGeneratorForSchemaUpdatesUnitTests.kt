@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 
-@DisplayName("can generate topic")
+@DisplayName("can generate")
 class SqlGeneratorForSchemaUpdatesUnitTests {
 
 
@@ -30,7 +30,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
 
     @Nested
-    @DisplayName("table DDL")
+    @DisplayName("topic table DDL")
     inner class TableDDLTests {
 
 
@@ -70,7 +70,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
 
     @Nested
-    @DisplayName("MV DDL")
+    @DisplayName("topic MV DDL")
     inner class MVDDLTests {
 
 
@@ -109,7 +109,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
     }
 
     @Nested
-    @DisplayName("insert statement")
+    @DisplayName("topic insert statement")
     inner class InsertStatementTests {
 
         @Test
