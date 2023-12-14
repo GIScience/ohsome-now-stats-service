@@ -1,5 +1,5 @@
 
-INSERT into prod.topic_amenity_7
+INSERT into int.topic_amenity_7
 SELECT
     changeset_timestamp,
     user_id,
@@ -8,7 +8,7 @@ SELECT
     tags['amenity'] as amenity_current,
     tags_before['amenity'] as amenity_before
 FROM
-    prod.stats_7;
+    int.stats_7;
 WHERE
     changeset_timestamp <= parseDateTimeBestEffort('2023-06-15 17:00:00')
     AND
