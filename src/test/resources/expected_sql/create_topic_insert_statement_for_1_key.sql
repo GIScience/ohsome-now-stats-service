@@ -1,7 +1,7 @@
 INSERT into int.topic_amenity_7
 SELECT changeset_timestamp,
-       user_id,
        hashtag,
+       user_id,
        country_iso_a3,
        tags['amenity']        as `amenity_current`,
        tags_before['amenity'] as `amenity_before`

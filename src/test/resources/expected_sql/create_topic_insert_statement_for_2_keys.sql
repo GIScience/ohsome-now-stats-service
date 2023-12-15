@@ -1,7 +1,7 @@
 INSERT into int.topic_healthcare_7
 SELECT changeset_timestamp,
-       user_id,
        hashtag,
+       user_id,
        country_iso_a3,
        tags['healthcare']        as `healthcare_current`,
        tags_before['healthcare'] as `healthcare_before`,

@@ -1,7 +1,7 @@
 package org.heigit.ohsome.now.statsservice.topic
 
-import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.AREA
+import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 
 
 @Suppress("LongMethod")
@@ -38,8 +38,8 @@ fun createInsertStatement(
     INSERT into $stage.topic_${definition.topicName}_${schemaVersion}
     SELECT
         changeset_timestamp,
-        user_id,
         hashtag,
+        user_id,
         country_iso_a3,
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)} 
