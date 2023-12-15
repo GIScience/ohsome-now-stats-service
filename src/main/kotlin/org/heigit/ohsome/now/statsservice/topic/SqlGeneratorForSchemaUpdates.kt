@@ -1,7 +1,7 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
-
+import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.AREA
 
 
 @Suppress("LongMethod")
@@ -26,7 +26,6 @@ fun createStatsTableProjections(stage: String, schemaVersion: String) = """
             hashtag
     );
     """.trimIndent().trimMargin()
-
 
 
 @Suppress("LongMethod")
@@ -126,14 +125,23 @@ fun optionalAreaOrLengthColumns(definition: TopicDefinition) = if (definition.ag
     """,
             length          Int64,
             length_delta    Int64"""
-} else
+} else if (definition.aggregationStrategy == AREA) {
+    """,
+            area          Int64,
+            area_delta    Int64"""
+} else {
     ""
+}
 
 fun optionalAreaOrLengthColumnNames(definition: TopicDefinition) = if (definition.aggregationStrategy == LENGTH) {
     """,
         length,
         length_delta"""
-} else
+} else if (definition.aggregationStrategy == AREA) {
+    """,
+            area,
+            area_delta"""
+} else {
     ""
-
+}
 

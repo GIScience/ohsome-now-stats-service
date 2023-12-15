@@ -1,7 +1,5 @@
 package org.heigit.ohsome.now.statsservice.topic
 
-import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.COUNT
-
 
 enum class AggregationStrategy(val sql: String) {
     COUNT("ifNull(sum(edit), 0)"),
@@ -13,8 +11,19 @@ enum class AggregationStrategy(val sql: String) {
                 "edit = 0, length_delta," +                 // case, then,
                 "edit = -1, - length + length_delta," +     // case, then,
                 "0)" +                                      // else
-                ")/ 1000, 0)"
+                ")/ 1000, 0)"                               // m to km
+    ),
+    AREA(
+        "ifNull(" +
+                "sum(" +
+                "multiIf(" +                                // this is a 'case'
+                "edit = 1, area," +                         // case, then,
+                "edit = 0, area_delta," +                   // case, then,
+                "edit = -1, - area + area_delta," +         // case, then,
+                "0)" +                                      // else
+                ")/ 1000000, 0)"                            // square m to square km
     )
+
 }
 
 
@@ -34,7 +43,7 @@ interface TopicDefinition {
 class KeyOnlyTopicDefinition(
     override val topicName: String,
     val key: String,
-    override val aggregationStrategy: AggregationStrategy = COUNT
+    override val aggregationStrategy: AggregationStrategy = AggregationStrategy.COUNT
 ) : TopicDefinition {
 
     override fun keys() = listOf(key)
@@ -51,7 +60,7 @@ class KeyOnlyTopicDefinition(
 
 class KeyValueTopicDefinition(
     override val topicName: String, val matchers: List<KeyValueMatcher>,
-    override val aggregationStrategy: AggregationStrategy = COUNT
+    override val aggregationStrategy: AggregationStrategy = AggregationStrategy.COUNT
 ) : TopicDefinition {
 
 

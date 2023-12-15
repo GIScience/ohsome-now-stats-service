@@ -25,4 +25,14 @@ class TopicDefinitionTests {
             definition.defineTopicResult()
         )
     }
+
+    @Test
+    fun `check topic aggregation strategy AREA`() {
+        // ! only mocking, not the real topic definition
+        val definition = KeyOnlyTopicDefinition("landuse", "landuse", AggregationStrategy.AREA)
+        assertEquals(
+            "ifNull(sum(multiIf(edit = 1, area,edit = 0, area_delta,edit = -1, - area + area_delta,0))/ 1000000, 0)",
+            definition.defineTopicResult()
+        )
+    }
 }
