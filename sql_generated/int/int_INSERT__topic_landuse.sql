@@ -4,8 +4,8 @@
 INSERT into int.topic_landuse_2
 SELECT
     changeset_timestamp,
-    user_id,
     hashtag,
+    user_id,
     country_iso_a3,
     
     tags['landuse'] as  `landuse_current`, 

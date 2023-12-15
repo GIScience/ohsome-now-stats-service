@@ -4,8 +4,8 @@
 INSERT into int.topic_social_facility_2
 SELECT
     changeset_timestamp,
-    user_id,
     hashtag,
+    user_id,
     country_iso_a3,
     
     tags['social_facility'] as  `social_facility_current`, 

@@ -4,8 +4,8 @@
 INSERT into int.topic_sanitation_2
 SELECT
     changeset_timestamp,
-    user_id,
     hashtag,
+    user_id,
     country_iso_a3,
     
     tags['man_made'] as  `man_made_current`, 
