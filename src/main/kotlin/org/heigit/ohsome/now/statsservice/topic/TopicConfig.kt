@@ -1,5 +1,10 @@
 package org.heigit.ohsome.now.statsservice.topic
 
+
+//TODO: unit test
+fun areTopicsValid(names: List<String>) = topics.keys.containsAll(names)
+
+
 val topics = mapOf(
     // let's try to order them alphabetically
 

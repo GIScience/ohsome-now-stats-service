@@ -53,6 +53,27 @@ class SystemTests {
 
 
     @Test
+    @DisplayName("GET /topic/kartoffelsupp")
+    fun `a bad topic time leads to a  BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error`() {
+
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/topic/kartoffelsupp")
+                .queryParam("hashtag", "osmliberia")
+                .build()
+        }
+
+        client()
+            .get()
+            .uri(url)
+            .exchange()
+            .expectStatus().isBadRequest
+
+    //            .expectBody()
+
+    }
+
+    @Test
     @DisplayName("GET /topic/amenity?hashtag=osmliberia")
     fun `get topic amenity`() {
 

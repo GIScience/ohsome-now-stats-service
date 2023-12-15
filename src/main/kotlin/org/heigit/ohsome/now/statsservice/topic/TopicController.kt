@@ -9,7 +9,9 @@ import org.heigit.ohsome.now.statsservice.measure
 import org.heigit.ohsome.now.statsservice.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 
 
@@ -50,6 +52,14 @@ class TopicController {
         topics: List<String>
 
     ): OhsomeFormat<Map<String, TopicResult>> {
+
+
+        //TODO: für alle endpoints anwenden
+        val topicsValid = areTopicsValid(topics)
+        if (!topicsValid)
+            throw ResponseStatusException(BAD_REQUEST);
+
+
 
         val result = measure {
             topicService.getTopicStatsForTimeSpan(hashtag, startDate, endDate, countries!!, topics)
