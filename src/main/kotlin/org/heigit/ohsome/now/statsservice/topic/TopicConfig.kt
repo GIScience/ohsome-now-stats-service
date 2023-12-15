@@ -1,6 +1,5 @@
 package org.heigit.ohsome.now.statsservice.topic
 
-
 val topics = mapOf(
     // let's try to order them alphabetically
 
@@ -52,8 +51,18 @@ val topics = mapOf(
         )
     ),
 
+
+    "sanitation" to KeyValueTopicDefinition(
+        "sanitation", listOf(
+            KeyValueMatcher("man_made", listOf("pumping_station", "water_tower")),
+            KeyValueMatcher("building", listOf("pumping_station")),
+            KeyValueMatcher("amenity", listOf("water_point"))
+        )
+    ),
+
+
     // todo: amenity: social_facility also exists - include?
-    "shelter" to KeyOnlyTopicDefinition("shelter", "social_facility"),
+    "social_facility" to KeyOnlyTopicDefinition("social_facility", "social_facility"),
 
 
     "waterway" to KeyValueTopicDefinition(
@@ -67,4 +76,3 @@ val topics = mapOf(
         AggregationStrategy.LENGTH
     )
 )
-
