@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 
-
 @DisplayName("can generate")
 class SqlGeneratorForSchemaUpdatesUnitTests {
 
@@ -43,7 +42,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val sql = createStatsTableProjections(stage, schemaVersion)
             assertThat(sql)
-                .isEqualToNormalizingPunctuationAndWhitespace(expectedProjections)
+                .isEqualToNormalizingWhitespace(expectedProjections)
         }
 
 
@@ -124,7 +123,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val sql = createMvDdl(definition, dateTime, stage, schemaVersion)
             assertThat(sql)
-                .isEqualToNormalizingPunctuationAndWhitespace(expectedMV2Keys)
+                .isEqualToNormalizingWhitespace(expectedMV2Keys)
         }
 
     }
@@ -140,7 +139,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val sql = createInsertStatement(definition, dateTime, stage, schemaVersion)
             assertThat(sql)
-                .isEqualToNormalizingPunctuationAndWhitespace(expectedInsertStatement1Key)
+                .isEqualToNormalizingWhitespace(expectedInsertStatement1Key)
         }
 
         @Test
@@ -150,7 +149,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val sql = createInsertStatement(definition, dateTime, stage, schemaVersion)
             assertThat(sql)
-                .isEqualToNormalizingPunctuationAndWhitespace(expectedInsertStatement1Key)
+                .isEqualToNormalizingWhitespace(expectedInsertStatement1Key)
         }
 
 
@@ -161,7 +160,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val sql = createInsertStatement(definition, dateTime, stage, schemaVersion)
             assertThat(sql)
-                .isEqualToNormalizingPunctuationAndWhitespace(expectedInsertStatement2Keys)
+                .isEqualToNormalizingWhitespace(expectedInsertStatement2Keys)
         }
 
 
