@@ -22,6 +22,9 @@ val topics = mapOf(
     ),
 
 
+    "landuse" to KeyOnlyTopicDefinition("landuse", "landuse", AggregationStrategy.AREA),
+
+
     "place" to KeyValueTopicDefinition(
         "place",
         listOf(
