@@ -73,11 +73,9 @@ class KeyValueTopicDefinition(
     override fun defineTopicResult() = aggregationStrategy.sql
 
 
-
     override fun buildValueLists() = this.matchers
         .map(TagMatcher::getSingleAllowedValuesList)
-        .joinToString()
-
+        .joinToString("\n,")
 
 
     override fun beforeCurrentCondition(beforeOrCurrent: String): String {
@@ -113,7 +111,7 @@ class KeyValueMatcher(override val key: String, private val allowedValues: List<
     override fun getSingleAllowedValuesList() = this.allowedValues
         .filter(String::isNotBlank)
         .map { "'$it'" }
-        .let { "${it} as ${this.key}_tags\n," }
+        .let { "${it} as ${this.key}_tags" }
 
 }
 
