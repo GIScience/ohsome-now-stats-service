@@ -41,6 +41,7 @@ interface TopicDefinition {
 }
 
 
+//TODO: delete deprecated class
 @Deprecated("goal: 1 topic definition, 2 matchers")
 class KeyOnlyTopicDefinition(
     override val topicName: String,
