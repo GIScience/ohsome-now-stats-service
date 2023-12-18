@@ -27,6 +27,7 @@ enum class AggregationStrategy(val sql: String) {
 }
 
 
+//TODO: consider ENUM for `beforeOrCurrent`
 interface TopicDefinition {
 
     val topicName: String
@@ -90,7 +91,7 @@ class KeyValueTopicDefinition(
             // add "OR " between conditions
             if (temp != "") temp += "OR "
 
-            temp += "${matcher.key}_${beforeOrCurrent} in ${matcher.key}_tags\n"
+            temp += matcher.getSingleBeforeOrCurrentCondition(beforeOrCurrent)
         }
         temp += "as ${beforeOrCurrent},\n"
         return temp
@@ -99,8 +100,17 @@ class KeyValueTopicDefinition(
 }
 
 
-class KeyValueMatcher(
-    val key: String,
-    val allowedValues: List<String>
-)
+interface TagMatcher {
+
+    fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String): String
+
+}
+
+
+class KeyValueMatcher( val key: String, val allowedValues: List<String>): TagMatcher {
+
+    override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String) =
+        "${this.key}_${beforeOrCurrent} in ${this.key}_tags\n"
+
+}
 
