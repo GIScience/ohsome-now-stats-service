@@ -53,8 +53,8 @@ class SystemTests {
 
 
     @Test
-    @DisplayName("GET /topic/kartoffelsupp")
-    fun `a bad topic time leads to a  BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error`() {
+    @DisplayName("GET /topic/kartoffelsupp?hashtag=osmliberia")
+    fun `a bad topic time leads to a  BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error - timeSpan`() {
 
         val url = { uriBuilder: UriBuilder ->
             uriBuilder
@@ -63,15 +63,25 @@ class SystemTests {
                 .build()
         }
 
-        client()
-            .get()
-            .uri(url)
-            .exchange()
-            .expectStatus().isBadRequest
-
-    //            .expectBody()
-
+        assertBadRequestResponse(url)
     }
+
+
+    @Test
+    @DisplayName("GET /topic/kartoffelsupp?hashtag=osmliberia&interval=P1M")
+    fun `a bad topic time leads to a  BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error - by interval`() {
+
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/topic/kartoffelsupp/interval")
+                .queryParam("hashtag", "osmliberia")
+                .queryParam("interval", "P1M")
+                .build()
+        }
+
+        assertBadRequestResponse(url)
+    }
+
 
     @Test
     @DisplayName("GET /topic/amenity?hashtag=osmliberia")
@@ -293,6 +303,16 @@ class SystemTests {
         .bindToServer()
         .baseUrl("http://localhost:$port")
         .build()
+
+    private fun assertBadRequestResponse(url: (UriBuilder) -> URI) {
+        client()
+            .get()
+            .uri(url)
+            .exchange()
+            .expectStatus()
+            .isBadRequest
+    }
+
 
 
 }

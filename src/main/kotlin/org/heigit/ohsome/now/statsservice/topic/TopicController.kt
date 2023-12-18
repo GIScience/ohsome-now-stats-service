@@ -53,13 +53,7 @@ class TopicController {
 
     ): OhsomeFormat<Map<String, TopicResult>> {
 
-
-        //TODO: für alle endpoints anwenden
-        val topicsValid = areTopicsValid(topics)
-        if (!topicsValid)
-            throw ResponseStatusException(BAD_REQUEST);
-
-
+        validateTopicsList(topics)
 
         val result = measure {
             topicService.getTopicStatsForTimeSpan(hashtag, startDate, endDate, countries!!, topics)
@@ -102,6 +96,7 @@ class TopicController {
         topics: List<String>
     ): OhsomeFormat<Map<String, List<TopicIntervalResult>>> {
 
+        validateTopicsList(topics)
         validateIntervalString(interval)
 
         val result = measure {
@@ -142,6 +137,13 @@ class TopicController {
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
+    }
+
+
+    //TODO: consider replacing with jakarta bean validation annotations instead of throwing exception
+    private fun validateTopicsList(topics: List<String>) {
+        if (!areTopicsValid(topics))
+            throw ResponseStatusException(BAD_REQUEST)
     }
 
 
