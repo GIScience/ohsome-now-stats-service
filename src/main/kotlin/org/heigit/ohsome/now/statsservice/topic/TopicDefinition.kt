@@ -41,26 +41,28 @@ interface TopicDefinition {
 }
 
 
+@Deprecated("goal: 1 topic definition, 2 matchers")
 class KeyOnlyTopicDefinition(
     override val topicName: String,
-    val key: String,
+    key: String,
     override val aggregationStrategy: AggregationStrategy = AggregationStrategy.COUNT
 ) : TopicDefinition {
 
-    override fun keys() = listOf(key)
+    private val matcher = KeyOnlyMatcher(key)
+
+    override fun keys() = listOf(matcher.key)
 
     override fun defineTopicResult() = aggregationStrategy.sql
 
-    override fun buildValueLists() = ""
+    override fun buildValueLists() = matcher.getSingleAllowedValuesList()
 
-    override fun beforeCurrentCondition(beforeOrCurrent: String) =
-        " ${key}_${beforeOrCurrent} <> '' as ${beforeOrCurrent}, "
+    override fun beforeCurrentCondition(beforeOrCurrent: String) = matcher.getSingleBeforeOrCurrentCondition(beforeOrCurrent)
 
 }
 
 
 class KeyValueTopicDefinition(
-    override val topicName: String, val matchers: List<KeyValueMatcher>,
+    override val topicName: String, val matchers: List<TagMatcher>,
     override val aggregationStrategy: AggregationStrategy = AggregationStrategy.COUNT
 ) : TopicDefinition {
 
@@ -99,13 +101,14 @@ class KeyValueTopicDefinition(
 
 interface TagMatcher {
 
+    val key: String
     fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String): String
     fun getSingleAllowedValuesList(): String
 
 }
 
 
-class KeyValueMatcher( val key: String, val allowedValues: List<String>): TagMatcher {
+class KeyValueMatcher(override val key: String, private val allowedValues: List<String>): TagMatcher {
 
     override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String) =
         "${this.key}_${beforeOrCurrent} in ${this.key}_tags\n"
@@ -118,6 +121,17 @@ class KeyValueMatcher( val key: String, val allowedValues: List<String>): TagMat
 
         return "${allowedValuesList} as ${this.key}_tags\n,"
     }
+
+}
+
+
+class KeyOnlyMatcher(override val key: String): TagMatcher {
+
+    override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String) =
+        " ${key}_${beforeOrCurrent} <> '' as ${beforeOrCurrent}, "
+
+
+    override fun getSingleAllowedValuesList() = ""
 
 }
 
