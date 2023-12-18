@@ -39,12 +39,14 @@ fun validateIntervalString(interval: String) {
     checkIfDurationIsBiggerThanOneMinute(interval)
 }
 
+//TODO: consider replacing with jakarta bean validation annotations instead of throwing exception
 fun checkIfStringIsParsable(interval: String) {
     if (!interval.matches(Regex("^P(?!\$)(\\d+Y)?(\\d+M)?(\\d+W)?(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+S)?)?\$"))) {
         throw UnparsableISO8601StringException()
     }
 }
 
+//TODO: consider replacing with jakarta bean validation annotations instead of throwing exception
 fun checkIfDurationIsBiggerThanOneMinute(interval: String) {
     if (interval.startsWith("PT") && Duration.parseIsoString(interval) < Duration.parseIsoString("PT1M")) {
         throw ISO8601TooSmallException()
