@@ -74,15 +74,12 @@ class KeyValueTopicDefinition(
         var valueLists = ""
 
         for (matcher in this.matchers) {
-            val allowedValuesList = matcher.allowedValues
-                .filter(String::isNotBlank)
-                .map { "'$it'" }
-
-            valueLists += "${allowedValuesList} as ${matcher.key}_tags\n,"
+            valueLists += matcher.getSingleAllowedValuesList()
         }
 
         return valueLists
     }
+
 
 
     override fun beforeCurrentCondition(beforeOrCurrent: String): String {
@@ -103,6 +100,7 @@ class KeyValueTopicDefinition(
 interface TagMatcher {
 
     fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String): String
+    fun getSingleAllowedValuesList(): String
 
 }
 
@@ -111,6 +109,15 @@ class KeyValueMatcher( val key: String, val allowedValues: List<String>): TagMat
 
     override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String) =
         "${this.key}_${beforeOrCurrent} in ${this.key}_tags\n"
+
+
+    override fun getSingleAllowedValuesList(): String {
+        val allowedValuesList = this.allowedValues
+            .filter(String::isNotBlank)
+            .map { "'$it'" }
+
+        return "${allowedValuesList} as ${this.key}_tags\n,"
+    }
 
 }
 
