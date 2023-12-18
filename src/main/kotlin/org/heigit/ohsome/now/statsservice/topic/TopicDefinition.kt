@@ -73,15 +73,10 @@ class KeyValueTopicDefinition(
     override fun defineTopicResult() = aggregationStrategy.sql
 
 
-    override fun buildValueLists(): String {
-        var valueLists = ""
 
-        for (matcher in this.matchers) {
-            valueLists += matcher.getSingleAllowedValuesList()
-        }
-
-        return valueLists
-    }
+    override fun buildValueLists() = this.matchers
+        .map(TagMatcher::getSingleAllowedValuesList)
+        .joinToString()
 
 
 
@@ -115,13 +110,10 @@ class KeyValueMatcher(override val key: String, private val allowedValues: List<
         "${this.key}_${beforeOrCurrent} in ${this.key}_tags\n"
 
 
-    override fun getSingleAllowedValuesList(): String {
-        val allowedValuesList = this.allowedValues
-            .filter(String::isNotBlank)
-            .map { "'$it'" }
-
-        return "${allowedValuesList} as ${this.key}_tags\n,"
-    }
+    override fun getSingleAllowedValuesList() = this.allowedValues
+        .filter(String::isNotBlank)
+        .map { "'$it'" }
+        .let { "${it} as ${this.key}_tags\n," }
 
 }
 
