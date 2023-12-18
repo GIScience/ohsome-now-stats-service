@@ -26,7 +26,7 @@ val topics = mapOf(
     ),
 
 
-    "landuse" to KeyOnlyTopicDefinition("landuse", "landuse", AggregationStrategy.AREA),
+//    "landuse" to KeyOnlyTopicDefinition("landuse", "landuse", AggregationStrategy.AREA),
 
 
     "place" to KeyValueTopicDefinition(
@@ -57,17 +57,17 @@ val topics = mapOf(
     ),
 
 
-    "sanitation" to KeyValueTopicDefinition(
-        "sanitation", listOf(
-            KeyValueMatcher("man_made", listOf("pumping_station", "water_tower")),
-            KeyValueMatcher("building", listOf("pumping_station")),
-            KeyValueMatcher("amenity", listOf("water_point"))
-        )
-    ),
+//    "sanitation" to KeyValueTopicDefinition(
+//        "sanitation", listOf(
+//            KeyValueMatcher("man_made", listOf("pumping_station", "water_tower")),
+//            KeyValueMatcher("building", listOf("pumping_station")),
+//            KeyValueMatcher("amenity", listOf("water_point"))
+//        )
+//    ),
 
 
     // todo: amenity: social_facility also exists - include?
-    "social_facility" to KeyOnlyTopicDefinition("social_facility", "social_facility"),
+//    "social_facility" to KeyOnlyTopicDefinition("social_facility", "social_facility"),
 
 
     "waterway" to KeyValueTopicDefinition(
