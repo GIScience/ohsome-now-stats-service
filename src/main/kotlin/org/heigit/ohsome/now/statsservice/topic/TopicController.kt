@@ -53,7 +53,7 @@ class TopicController {
 
     ): OhsomeFormat<Map<String, TopicResult>> {
 
-        validateTopicsList(topics)
+        validateTopics(topics)
 
         val result = measure {
             topicService.getTopicStatsForTimeSpan(hashtag, startDate, endDate, countries!!, topics)
@@ -96,7 +96,7 @@ class TopicController {
         topics: List<String>
     ): OhsomeFormat<Map<String, List<TopicIntervalResult>>> {
 
-        validateTopicsList(topics)
+        validateTopics(topics)
         validateIntervalString(interval)
 
         val result = measure {
@@ -132,6 +132,8 @@ class TopicController {
         topics: List<String>
     ): OhsomeFormat<Map<String, List<TopicCountryResult>>> {
 
+        validateTopics(topics)
+
         val result = measure {
             topicService.getTopicStatsForTimeSpanCountry(hashtag, startDate, endDate, topics)
         }
@@ -141,7 +143,7 @@ class TopicController {
 
 
     //TODO: consider replacing with jakarta bean validation annotations instead of throwing exception
-    private fun validateTopicsList(topics: List<String>) {
+    private fun validateTopics(topics: List<String>) {
         if (!areTopicsValid(topics))
             throw ResponseStatusException(BAD_REQUEST)
     }

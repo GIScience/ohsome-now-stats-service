@@ -68,7 +68,7 @@ class SystemTests {
 
 
     @Test
-    @DisplayName("GET /topic/kartoffelsupp?hashtag=osmliberia&interval=P1M")
+    @DisplayName("GET /topic/kartoffelsupp/interval?hashtag=osmliberia&interval=P1M")
     fun `a bad topic time leads to a  BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error - by interval`() {
 
         val url = { uriBuilder: UriBuilder ->
@@ -76,6 +76,21 @@ class SystemTests {
                 .path("/topic/kartoffelsupp/interval")
                 .queryParam("hashtag", "osmliberia")
                 .queryParam("interval", "P1M")
+                .build()
+        }
+
+        assertBadRequestResponse(url)
+    }
+
+
+    @Test
+    @DisplayName("GET /topic/kartoffelsupp/country?hashtag=osmliberia")
+    fun `a bad topic time leads to a  BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error - by country`() {
+
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/topic/kartoffelsupp/country")
+                .queryParam("hashtag", "osmliberia")
                 .build()
         }
 
