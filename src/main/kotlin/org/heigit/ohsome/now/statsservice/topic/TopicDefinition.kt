@@ -127,9 +127,7 @@ class KeyValueMatcher(override val key: String, private val allowedValues: List<
 
 class KeyOnlyMatcher(override val key: String): TagMatcher {
 
-    override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String) =
-        " ${key}_${beforeOrCurrent} <> '' as ${beforeOrCurrent}, "
-
+    override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String) = " ${key}_${beforeOrCurrent} <> '' "
 
     override fun getSingleAllowedValuesList() = ""
 

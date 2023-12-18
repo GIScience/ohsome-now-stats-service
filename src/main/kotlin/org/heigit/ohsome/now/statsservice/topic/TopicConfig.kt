@@ -8,7 +8,11 @@ fun areTopicsValid(names: List<String>) = topics.keys.containsAll(names)
 val topics = mapOf(
     // let's try to order them alphabetically
 
-    "amenity" to KeyOnlyTopicDefinition("amenity", "amenity"),
+//    "amenity" to KeyOnlyTopicDefinition("amenity", "amenity"),
+    "amenity" to KeyValueTopicDefinition(
+        "amenity",
+        listOf(KeyOnlyMatcher("amenity"))
+    ),
 
 
     "healthcare" to KeyValueTopicDefinition(
