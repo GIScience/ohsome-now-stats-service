@@ -27,40 +27,27 @@ enum class AggregationStrategy(val sql: String) {
 }
 
 
-//TODO: consider ENUM for `beforeOrCurrent`
-interface TopicDefinition {
 
-    val topicName: String
-    val aggregationStrategy: AggregationStrategy
-    fun keys(): List<String>
-
-    fun buildValueLists(): String
-    fun beforeCurrentCondition(beforeOrCurrent: String): String
-    fun defineTopicResult(): String
-
-}
-
-
-class KeyValueTopicDefinition(
-    override val topicName: String,
+class TopicDefinition(
+    val topicName: String,
     private val matchers: List<TagMatcher>,
-    override val aggregationStrategy: AggregationStrategy = AggregationStrategy.COUNT
-) : TopicDefinition {
+    val aggregationStrategy: AggregationStrategy = AggregationStrategy.COUNT
+)  {
 
 
-    override fun keys() = matchers.map { it.key }
+    fun keys() = matchers.map { it.key }
 
-    override fun defineTopicResult() = aggregationStrategy.sql
+    fun defineTopicResult() = aggregationStrategy.sql
 
 
-    override fun buildValueLists() = matchers
+    fun buildValueLists() = matchers
         .map(TagMatcher::getSingleAllowedValuesList)
         .filter(String::isNotEmpty)
         .map { "$it,\n" }
         .joinToString("")
 
 
-    override fun beforeCurrentCondition(beforeOrCurrent: String) = this.matchers
+    fun beforeCurrentCondition(beforeOrCurrent: String) = this.matchers
         .map { it.getSingleBeforeOrCurrentCondition(beforeOrCurrent) }
         .joinToString("OR ")
         .plus("as ${beforeOrCurrent},\n")

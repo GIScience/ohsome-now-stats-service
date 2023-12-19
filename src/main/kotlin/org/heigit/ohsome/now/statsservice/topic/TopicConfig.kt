@@ -8,13 +8,13 @@ fun areTopicsValid(names: List<String>) = topics.keys.containsAll(names)
 val topics = mapOf(
     // let"s try to order them alphabetically
 
-    "amenity" to KeyValueTopicDefinition(
+    "amenity" to TopicDefinition(
         "amenity",
         listOf(KeyOnlyMatcher("amenity"))
     ),
 
 
-    "healthcare" to KeyValueTopicDefinition(
+    "healthcare" to TopicDefinition(
         "healthcare",
         listOf(
             KeyOnlyMatcher("healthcare"),
@@ -26,7 +26,7 @@ val topics = mapOf(
 //    "landuse" to KeyOnlyTopicDefinition("landuse", "landuse", AggregationStrategy.AREA),
 
 
-    "place" to KeyValueTopicDefinition(
+    "place" to TopicDefinition(
         "place",
         listOf(
             KeyValueMatcher(
@@ -67,7 +67,7 @@ val topics = mapOf(
 //    "social_facility" to KeyOnlyTopicDefinition("social_facility", "social_facility"),
 
 
-    "waterway" to KeyValueTopicDefinition(
+    "waterway" to TopicDefinition(
         "waterway",
         listOf(
             KeyValueMatcher(

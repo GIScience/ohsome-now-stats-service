@@ -57,7 +57,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `for single key and INT stage - key-value definition`() {
 
-            val definition = KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
+            val definition = TopicDefinition("amenity", listOf(amenityMatcher))
 
             val sql = createTableDDL(definition, stage, schemaVersion)
             assertThat(sql)
@@ -68,7 +68,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `for single key and INT stage - key-only definition`() {
 
-            val definition = KeyValueTopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
+            val definition = TopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
 
 
             val sql = createTableDDL(definition, stage, schemaVersion)
@@ -80,7 +80,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `for two keys and INT stage`() {
 
-            val definition = KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
+            val definition = TopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
             val sql = createTableDDL(definition, stage, schemaVersion)
             assertThat(sql)
@@ -98,7 +98,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `for single key and INT stage - key-value definition`() {
 
-            val definition = KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
+            val definition = TopicDefinition("amenity", listOf(amenityMatcher))
 
             val sql = createMvDdl(definition, dateTime, stage, schemaVersion)
             assertThat(sql)
@@ -109,7 +109,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `for single key and INT stage - key-only definition`() {
 
-            val definition = KeyValueTopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
+            val definition = TopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
 
             val sql = createMvDdl(definition, dateTime, stage, schemaVersion)
             assertThat(sql)
@@ -120,7 +120,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `for two keys and INT stage`() {
 
-            val definition = KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
+            val definition = TopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
             val sql = createMvDdl(definition, dateTime, stage, schemaVersion)
             assertThat(sql)
@@ -136,7 +136,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `for single key and INT stage - key-value definition`() {
 
-            val definition = KeyValueTopicDefinition("amenity", listOf(amenityMatcher))
+            val definition = TopicDefinition("amenity", listOf(amenityMatcher))
 
             val sql = createInsertStatement(definition, dateTime, stage, schemaVersion)
             assertThat(sql)
@@ -146,7 +146,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `for single key and INT stage - key-only definition`() {
 
-            val definition = KeyValueTopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
+            val definition = TopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
 
 
             val sql = createInsertStatement(definition, dateTime, stage, schemaVersion)
@@ -158,7 +158,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `for two keys and INT stage`() {
 
-            val definition = KeyValueTopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
+            val definition = TopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
             val sql = createInsertStatement(definition, dateTime, stage, schemaVersion)
             assertThat(sql)
