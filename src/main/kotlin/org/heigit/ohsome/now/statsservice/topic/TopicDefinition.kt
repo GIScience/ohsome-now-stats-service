@@ -27,6 +27,11 @@ enum class AggregationStrategy(val sql: String) {
 }
 
 
+enum class BeforeOrCurrent(val value: String) {
+    BEFORE("before"),
+    CURRENT("current")
+}
+
 
 class TopicDefinition(
     val topicName: String,
@@ -47,10 +52,10 @@ class TopicDefinition(
         .joinToString("")
 
 
-    fun beforeCurrentCondition(beforeOrCurrent: String) = this.matchers
+    fun beforeCurrentCondition(beforeOrCurrent: BeforeOrCurrent) = this.matchers
         .map { it.getSingleBeforeOrCurrentCondition(beforeOrCurrent) }
         .joinToString("OR ")
-        .plus("as ${beforeOrCurrent},\n")
+        .plus("as ${beforeOrCurrent.value},\n")
 
 
 }
@@ -59,7 +64,7 @@ class TopicDefinition(
 interface TagMatcher {
 
     val key: String
-    fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String): String
+    fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: BeforeOrCurrent): String
     fun getSingleAllowedValuesList(): String
 
 }
@@ -67,8 +72,8 @@ interface TagMatcher {
 
 class KeyValueMatcher(override val key: String, private val allowedValues: List<String>): TagMatcher {
 
-    override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String) =
-        "${this.key}_${beforeOrCurrent} in ${this.key}_tags\n"
+    override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: BeforeOrCurrent) =
+        "${this.key}_${beforeOrCurrent.value} in ${this.key}_tags\n"
 
 
     override fun getSingleAllowedValuesList() = this.allowedValues
@@ -81,7 +86,7 @@ class KeyValueMatcher(override val key: String, private val allowedValues: List<
 
 class KeyOnlyMatcher(override val key: String): TagMatcher {
 
-    override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: String) = " ${key}_${beforeOrCurrent} <> '' "
+    override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: BeforeOrCurrent) = " ${key}_${beforeOrCurrent.value} <> '' "
 
     override fun getSingleAllowedValuesList() = ""
 

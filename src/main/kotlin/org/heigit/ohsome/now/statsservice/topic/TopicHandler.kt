@@ -1,5 +1,8 @@
 package org.heigit.ohsome.now.statsservice.topic
 
+import org.heigit.ohsome.now.statsservice.topic.BeforeOrCurrent.BEFORE
+import org.heigit.ohsome.now.statsservice.topic.BeforeOrCurrent.CURRENT
+
 
 // TODO: transform properties to methods
 class TopicHandler(val topic: String) {
@@ -17,8 +20,8 @@ class TopicHandler(val topic: String) {
 
 
     private fun buildBeforeCurrent() {
-        beforeCurrent += this.definition.beforeCurrentCondition("before")
-        beforeCurrent += this.definition.beforeCurrentCondition("current")
+        beforeCurrent += this.definition.beforeCurrentCondition(BEFORE)
+        beforeCurrent += this.definition.beforeCurrentCondition(CURRENT)
     }
 
 }
