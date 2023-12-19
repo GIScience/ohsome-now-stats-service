@@ -33,12 +33,10 @@ class TopicHandlerTests {
 
 
     @Test
-    fun `check valueLists construction two keys`() {
+    fun `check valueLists construction for mixed matchers`() {
         val topicHandler = TopicHandler(topicTwoKeys)
         val expectedValueLists =
-            "['doctors', 'clinic', 'midwife', 'nurse', 'center', 'health_post', 'hospital']" +
-                    " as healthcare_tags,\n" +
-                    "['doctors', 'clinic', 'hospital', 'health_post']" +
+                    "['doctors', 'dentist', 'clinic', 'hospital', 'pharmacy']" +
                     " as amenity_tags,\n"
 
         assertEquals(expectedValueLists, topicHandler.valueLists)
@@ -61,16 +59,30 @@ class TopicHandlerTests {
     @Test
     fun `check beforeCurrent construction two keys`() {
         val topicHandler = TopicHandler(topicTwoKeys)
-        val expectedBeforeAfter =
-            "healthcare_before in healthcare_tags\n" +
-                    "OR amenity_before in amenity_tags\n" +
-                    "as before,\n" +
-                    "healthcare_current in healthcare_tags\n" +
-                    "OR amenity_current in amenity_tags\n" +
-                    "as current,\n"
 
-        assertEquals(expectedBeforeAfter, topicHandler.beforeCurrent)
+        val expectedBeforeAfter =
+        " healthcare_before <> '' OR amenity_before in amenity_tags\n" +
+        "as before,\n" +
+        " healthcare_current <> '' OR amenity_current in amenity_tags\n" +
+        "as current,\n"
+
+
+        val actual = topicHandler.beforeCurrent
+
+        assertEquals(expectedBeforeAfter, actual)
     }
+
+
+    /*
+
+
+    OR amenity_before in amenity_tags as before,
+
+
+    OR amenity_current in amenity_tags as current,
+
+     */
+
 
 
 }
