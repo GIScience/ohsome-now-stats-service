@@ -63,7 +63,8 @@ class KeyOnlyTopicDefinition(
 
 
 class KeyValueTopicDefinition(
-    override val topicName: String, val matchers: List<TagMatcher>,
+    override val topicName: String,
+    private val matchers: List<TagMatcher>,
     override val aggregationStrategy: AggregationStrategy = AggregationStrategy.COUNT
 ) : TopicDefinition {
 
@@ -80,17 +81,11 @@ class KeyValueTopicDefinition(
         .joinToString("")
 
 
-    override fun beforeCurrentCondition(beforeOrCurrent: String): String {
-        var temp = ""
-        for (matcher in this.matchers) {
-            // add "OR " between conditions
-            if (temp != "") temp += "OR "
+    override fun beforeCurrentCondition(beforeOrCurrent: String) = this.matchers
+        .map { it.getSingleBeforeOrCurrentCondition(beforeOrCurrent) }
+        .joinToString("OR ")
+        .plus("as ${beforeOrCurrent},\n")
 
-            temp += matcher.getSingleBeforeOrCurrentCondition(beforeOrCurrent)
-        }
-        temp += "as ${beforeOrCurrent},\n"
-        return temp
-    }
 
 }
 

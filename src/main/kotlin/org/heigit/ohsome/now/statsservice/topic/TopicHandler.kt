@@ -1,6 +1,7 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
+// TODO: transform properties to methods
 class TopicHandler(val topic: String) {
 
     val definition: TopicDefinition = topics[topic]!!
