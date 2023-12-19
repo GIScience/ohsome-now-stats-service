@@ -41,27 +41,6 @@ interface TopicDefinition {
 }
 
 
-//TODO: delete deprecated class
-@Deprecated("goal: 1 topic definition, 2 matchers")
-class KeyOnlyTopicDefinition(
-    override val topicName: String,
-    key: String,
-    override val aggregationStrategy: AggregationStrategy = AggregationStrategy.COUNT
-) : TopicDefinition {
-
-    private val matcher = KeyOnlyMatcher(key)
-
-    override fun keys() = listOf(matcher.key)
-
-    override fun defineTopicResult() = aggregationStrategy.sql
-
-    override fun buildValueLists() = matcher.getSingleAllowedValuesList()
-
-    override fun beforeCurrentCondition(beforeOrCurrent: String) = matcher.getSingleBeforeOrCurrentCondition(beforeOrCurrent)
-
-}
-
-
 class KeyValueTopicDefinition(
     override val topicName: String,
     private val matchers: List<TagMatcher>,
