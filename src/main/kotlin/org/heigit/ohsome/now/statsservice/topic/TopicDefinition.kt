@@ -73,9 +73,20 @@ class KeyValueTopicDefinition(
     override fun defineTopicResult() = aggregationStrategy.sql
 
 
-    override fun buildValueLists() = this.matchers
-        .map(TagMatcher::getSingleAllowedValuesList)
-        .joinToString("\n,")
+    override fun buildValueLists(): String {
+        val matcherList = this.matchers
+
+        val valueLists = matcherList
+            .map(TagMatcher::getSingleAllowedValuesList)
+
+        val filtered = valueLists
+            .filter { it.length > 0 }
+
+
+        val result = filtered.map { "$it,\n" }
+
+        return result.joinToString("")
+    }
 
 
     override fun beforeCurrentCondition(beforeOrCurrent: String): String {
