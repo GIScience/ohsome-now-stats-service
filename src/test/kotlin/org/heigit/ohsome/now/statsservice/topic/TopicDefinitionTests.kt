@@ -12,7 +12,15 @@ class TopicDefinitionTests {
 
         val definition = TopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")), AggregationStrategy.COUNT)
 
-        assertEquals("ifNull(sum(edit), 0)", definition.defineTopicResult())
+        assertEquals(
+            """
+                ifNull(sum(edit), 0) as topic_result,
+                ifNull(sum(if(edit = 1, 1, 0)), 0) as topic_result_created,
+                ifNull(sum(if(edit = 0, 1, 0)), 0) as topic_result_modified,
+                ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted
+            """.trimIndent(),
+            definition.defineTopicResult().trimIndent()
+        )
     }
 
 
@@ -21,7 +29,7 @@ class TopicDefinitionTests {
         // ! only mocking, not the real topic definition
         val definition = TopicDefinition("waterway", listOf(KeyOnlyMatcher("waterway")), AggregationStrategy.LENGTH)
         assertEquals(
-            "ifNull(sum(multiIf(edit = 1, length,edit = 0, length_delta,edit = -1, - length + length_delta,0))/ 1000, 0)",
+            "ifNull(sum(multiIf(edit = 1, length,edit = 0, length_delta,edit = -1, - length + length_delta,0))/ 1000, 0) as topic_result",
             definition.defineTopicResult()
         )
     }
@@ -31,7 +39,7 @@ class TopicDefinitionTests {
         // ! only mocking, not the real topic definition
         val definition = TopicDefinition("landuse", listOf(KeyOnlyMatcher("landuse")), AggregationStrategy.AREA)
         assertEquals(
-            "ifNull(sum(multiIf(edit = 1, area,edit = 0, area_delta,edit = -1, - area + area_delta,0))/ 1000000, 0)",
+            "ifNull(sum(multiIf(edit = 1, area,edit = 0, area_delta,edit = -1, - area + area_delta,0))/ 1000000, 0) as topic_result",
             definition.defineTopicResult()
         )
     }
