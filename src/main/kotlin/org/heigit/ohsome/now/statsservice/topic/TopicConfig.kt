@@ -23,7 +23,7 @@ val topics = mapOf(
     "education" to TopicDefinition(
         "education",
         listOf(
-            KeyValueMatcher("amenity",  listOf("kindergarten", "school", "college", "university")),
+            KeyValueMatcher("amenity", listOf("kindergarten", "school", "college", "university")),
             KeyValueMatcher("building", listOf("kindergarten", "school", "college", "university"))
         )
     ),
@@ -31,7 +31,11 @@ val topics = mapOf(
 
     "financial" to TopicDefinition(
         "financial",
-        listOf(KeyValueMatcher("amenity", listOf("atm", "bank", "money_transfer", "bureau_de_change", "mobile_money_agent"))
+        listOf(
+            KeyValueMatcher(
+                "amenity",
+                listOf("atm", "bank", "money_transfer", "bureau_de_change", "mobile_money_agent")
+            )
         )
     ),
 
@@ -49,31 +53,35 @@ val topics = mapOf(
         "landuse",
         listOf(
             KeyOnlyMatcher("landuse"),
-            KeyValueMatcher("natural", listOf(
-                "bare_rock",
-                "beach",
-                "dune",
-                "fell",
-                "glacier",
-                "grassland",
-                "heath",
-                "landslide",
-                "mud",
-                "rock",
-                "sand",
-                "scree",
-                "scrub",
-                "shingle",
-                "water",
-                "wetland",
-                "wood"
-            )),
-            KeyValueMatcher("waterway", listOf(
-                "boatyard",
-                "dam",
-                "dock",
-                "riverbank"
-            ))
+            KeyValueMatcher(
+                "natural", listOf(
+                    "bare_rock",
+                    "beach",
+                    "dune",
+                    "fell",
+                    "glacier",
+                    "grassland",
+                    "heath",
+                    "landslide",
+                    "mud",
+                    "rock",
+                    "sand",
+                    "scree",
+                    "scrub",
+                    "shingle",
+                    "water",
+                    "wetland",
+                    "wood"
+                )
+            ),
+            KeyValueMatcher(
+                "waterway", listOf(
+                    "boatyard",
+                    "dam",
+                    "dock",
+                    "riverbank"
+                )
+            )
         ),
         AggregationStrategy.AREA
     ),
@@ -107,43 +115,48 @@ val topics = mapOf(
     ),
 
 
-    // todo: amenity: social_facility also exists - include?
-
-    "social_facility" to TopicDefinition("social_facility",
+    "social_facility" to TopicDefinition(
+        "social_facility",
         listOf(
             KeyOnlyMatcher("social_facility"),
-            KeyValueMatcher("amenity",
-            listOf(
-                "shelter",
-                "social_facility",
-                "refugee_site",
+            KeyValueMatcher(
+                "amenity",
+                listOf(
+                    "shelter",
+                    "social_facility",
+                    "refugee_site",
+                )
             )
         )
-    )),
+    ),
 
 
     "wash" to TopicDefinition(
         "wash",
         listOf(
-            KeyValueMatcher("amenity",  listOf(
-                "toilets",
-                "shower",
-                "drinking_water",
-                "water_point"
-            )),
-            KeyValueMatcher("man_made", listOf(
-                "water_tap",
-                "borehole",
-                "water_works",
-                "pumping_station",
-                "pump",
-                "wastewater_plant",
-                "storage_tank",
-                "water_well",
-                "water_tower",
-                "reservoir_covered",
-                "water_tank"
-            ))
+            KeyValueMatcher(
+                "amenity", listOf(
+                    "toilets",
+                    "shower",
+                    "drinking_water",
+                    "water_point"
+                )
+            ),
+            KeyValueMatcher(
+                "man_made", listOf(
+                    "water_tap",
+                    "borehole",
+                    "water_works",
+                    "pumping_station",
+                    "pump",
+                    "wastewater_plant",
+                    "storage_tank",
+                    "water_well",
+                    "water_tower",
+                    "reservoir_covered",
+                    "water_tank"
+                )
+            )
         )
     ),
 
