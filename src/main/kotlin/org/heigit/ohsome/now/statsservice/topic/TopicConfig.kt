@@ -95,7 +95,19 @@ val topics = mapOf(
 
 
     // todo: amenity: social_facility also exists - include?
-//    "social_facility" to KeyOnlyTopicDefinition("social_facility", "social_facility"),
+
+
+   "social_facility" to TopicDefinition("social_facility",
+       listOf(
+           KeyOnlyMatcher("social_facility"),
+           KeyValueMatcher("amenity",
+           listOf(
+               "shelter",
+               "social_facility",
+               "refugee_site",
+           )
+       )
+   )),
 
 
     "waterway" to TopicDefinition(
