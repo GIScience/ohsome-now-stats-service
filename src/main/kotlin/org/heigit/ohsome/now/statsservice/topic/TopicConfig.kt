@@ -13,8 +13,11 @@ val topics = mapOf(
         listOf(KeyOnlyMatcher("amenity"))
     ),
 
-//    amenity IN () OR  IN ('kindergarten', 'school', 'college', 'university')
 
+    "commercial" to TopicDefinition(
+        "commercial",
+        listOf(KeyOnlyMatcher("shop"))
+    ),
 
 
     "education" to TopicDefinition(
