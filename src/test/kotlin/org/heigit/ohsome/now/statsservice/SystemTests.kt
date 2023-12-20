@@ -17,6 +17,7 @@ import java.net.URI
 
 @SpringTestWithClickhouse
 @WithTopicData
+@WithStatsData
 class SystemTests {
 
 
@@ -279,6 +280,31 @@ class SystemTests {
     }
 
     @Test
+    @DisplayName("GET /hot-tm-user?userid=2186388")
+    fun `get userstats with good token`() {
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/hot-tm-user")
+                .queryParam("userId", "2186388")
+                .build()
+        }
+
+        val response = client()
+            .get()
+            .uri(url)
+            .header("Authorization", "Basic ${appProperties.token}")
+            .exchange()
+            .expectStatus()
+            .isOk
+            .expectBody()
+
+        response
+            .jsonPath("$.result.roads_created_km").isEqualTo(1.0)
+            .jsonPath("$.result.roads_modified_longer_km").isEqualTo(0.2)
+            .jsonPath("$.result.buildings_added").isEqualTo(1)
+    }
+
+    @Test
     @DisplayName("GET /hot-tm-user/topics/place,healthcare?userid=4362353")
     fun `get userstats topics with good token`() {
         val url = { uriBuilder: UriBuilder ->
@@ -327,7 +353,6 @@ class SystemTests {
             .expectStatus()
             .isBadRequest
     }
-
 
 
 }

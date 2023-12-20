@@ -38,7 +38,14 @@ class AccessRestrictedUserControllerMVCTests {
 
     val fakeResult = mutableMapOf(
         "buildings" to 1L,
+        "buildings_created" to 1L,
+        "buildings_modified" to 1L,
+        "buildings_deleted" to 1L,
         "roads" to 234.12,
+        "roads_created" to 234.12,
+        "roads_deleted" to 234.12,
+        "roads_modified_longer" to 234.12,
+        "roads_modified_shorter" to 234.12,
         "edits" to UnsignedLong.valueOf(34L),
         "changesets" to UnsignedLong.valueOf(2L),
         "user_id" to 4324

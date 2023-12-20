@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS stats_2
     `road_length_delta` Int64,
     `road_edit` Nullable(Int8), -- -1, 0, 1, NULL
 
-    `country_iso_a3` Array(String),
+    `country_iso_a3` Array(String)
 )
 ENGINE = MergeTree
 PRIMARY KEY( hashtag, changeset_timestamp )
