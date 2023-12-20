@@ -29,6 +29,13 @@ val topics = mapOf(
     ),
 
 
+    "financial" to TopicDefinition(
+        "financial",
+        listOf(KeyValueMatcher("amenity", listOf("atm", "bank", "money_transfer", "bureau_de_change", "mobile_money_agent"))
+        )
+    ),
+
+
     "healthcare" to TopicDefinition(
         "healthcare",
         listOf(
@@ -100,17 +107,7 @@ val topics = mapOf(
     ),
 
 
-//    "sanitation" to KeyValueTopicDefinition(
-//        "sanitation", listOf(
-//            KeyValueMatcher("man_made", listOf("pumping_station", "water_tower")),
-//            KeyValueMatcher("building", listOf("pumping_station")),
-//            KeyValueMatcher("amenity", listOf("water_point"))
-//        )
-//    ),
-
-
     // todo: amenity: social_facility also exists - include?
-
 
     "social_facility" to TopicDefinition("social_facility",
         listOf(
