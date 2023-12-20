@@ -5,6 +5,7 @@ package org.heigit.ohsome.now.statsservice.topic
 fun areTopicsValid(names: List<String>) = topics.keys.containsAll(names)
 
 
+//TODO: avoid redundant topic name (in map key and in definition object)
 val topics = mapOf(
     // let's try to order them alphabetically
 
@@ -50,7 +51,7 @@ val topics = mapOf(
 
 
     "lulc" to TopicDefinition(
-        "landuse",
+        "lulc",
         listOf(
             KeyOnlyMatcher("landuse"),
             KeyValueMatcher(
