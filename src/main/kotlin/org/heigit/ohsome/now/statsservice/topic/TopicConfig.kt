@@ -34,7 +34,7 @@ val topics = mapOf(
         listOf(
             KeyValueMatcher(
                 "amenity",
-                listOf("atm", "bank", "money_transfer", "bureau_de_change", "mobile_money_agent")
+                listOf("atm", "bank", "money_transfer", "bureau_de_change", "mobile_money_agent", "payment_terminal")
             )
         )
     ),
@@ -111,6 +111,19 @@ val topics = mapOf(
                     "isolated_dwelling"
                 )
             )
+        )
+    ),
+
+
+    "poi" to TopicDefinition(
+        "poi",
+        listOf(
+            KeyOnlyMatcher("amenity"),
+            KeyOnlyMatcher("shop"),
+            KeyOnlyMatcher("craft"),
+            KeyOnlyMatcher("office"),
+            KeyOnlyMatcher("leisure"),
+            KeyOnlyMatcher("aeroway")
         )
     ),
 
