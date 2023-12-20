@@ -109,17 +109,43 @@ val topics = mapOf(
     // todo: amenity: social_facility also exists - include?
 
 
-   "social_facility" to TopicDefinition("social_facility",
-       listOf(
-           KeyOnlyMatcher("social_facility"),
-           KeyValueMatcher("amenity",
-           listOf(
-               "shelter",
-               "social_facility",
-               "refugee_site",
-           )
-       )
-   )),
+    "social_facility" to TopicDefinition("social_facility",
+        listOf(
+            KeyOnlyMatcher("social_facility"),
+            KeyValueMatcher("amenity",
+            listOf(
+                "shelter",
+                "social_facility",
+                "refugee_site",
+            )
+        )
+    )),
+
+
+    "wash" to TopicDefinition(
+        "wash",
+        listOf(
+            KeyValueMatcher("amenity",  listOf(
+                "toilets",
+                "shower",
+                "drinking_water",
+                "water_point"
+            )),
+            KeyValueMatcher("man_made", listOf(
+                "water_tap",
+                "borehole",
+                "water_works",
+                "pumping_station",
+                "pump",
+                "wastewater_plant",
+                "storage_tank",
+                "water_well",
+                "water_tower",
+                "reservoir_covered",
+                "water_tank"
+            ))
+        )
+    ),
 
 
     "waterway" to TopicDefinition(
@@ -132,4 +158,5 @@ val topics = mapOf(
         ),
         AggregationStrategy.LENGTH
     )
+
 )
