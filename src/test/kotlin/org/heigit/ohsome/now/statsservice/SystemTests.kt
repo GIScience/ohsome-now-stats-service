@@ -3,6 +3,7 @@ package org.heigit.ohsome.now.statsservice
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -18,6 +19,7 @@ import java.net.URI
 @SpringTestWithClickhouse
 @WithTopicData
 @WithStatsData
+@DisplayName("system tests")
 class SystemTests {
 
 
@@ -53,34 +55,47 @@ class SystemTests {
     val topics = listOf(topic1, topic2, topic4)
 
 
-    @Test
-    @DisplayName("GET /stats/&uganda")
-    fun `get stats for hashtag`() {
 
-        val hashtag = "&uganda"
+    @Nested
+    @DisplayName("for stats queries")
+    inner class StatsTests {
 
-        val url = { uriBuilder: UriBuilder ->
-            uriBuilder
-                .path("/stats/$hashtag")
-                .build()
+
+        @Test
+        @DisplayName("GET /stats/&uganda")
+        fun `get stats for hashtag`() {
+
+            val hashtag = "&uganda"
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/$hashtag")
+                    .build()
+            }
+
+            doGetAndAssertThat(url)
+                .jsonPath("$.result.changesets").isEqualTo(1)
+                .jsonPath("$.result.users").isEqualTo(1)
+                .jsonPath("$.result.roads").isEqualTo(-0.009)
+                .jsonPath("$.result.buildings").isEqualTo(0)
+                .jsonPath("$.result.edits").isEqualTo(0)
+                .jsonPath("$.result.latest").isEqualTo("2017-12-19T00:52:03")
+
+                .jsonPath("$.query.timespan.startDate").exists()
+                .jsonPath("$.query.timespan.endDate").exists()
+                .jsonPath("$.query.hashtag").isEqualTo(hashtag)
         }
 
-        doGetAndAssertThat(url)
-            .jsonPath("$.result.changesets").isEqualTo(1)
-            .jsonPath("$.result.users").isEqualTo(1)
-            .jsonPath("$.result.roads").isEqualTo(-0.009)
-            .jsonPath("$.result.buildings").isEqualTo(0)
-            .jsonPath("$.result.edits").isEqualTo(0)
-            .jsonPath("$.result.latest").isEqualTo("2017-12-19T00:52:03")
-
-            .jsonPath("$.query.timespan.startDate").exists()
-            .jsonPath("$.query.timespan.endDate").exists()
-            .jsonPath("$.query.hashtag").isEqualTo(hashtag)
     }
 
 
 
-    @Test
+    @Nested
+    @DisplayName("for topic queries")
+    inner class TopicTests {
+
+
+        @Test
     @DisplayName("GET /topic/kartoffelsupp?hashtag=osmliberia")
     fun `a bad topic time leads to a  BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error - timeSpan`() {
 
@@ -330,6 +345,8 @@ class SystemTests {
             .jsonPath("$.result.$topic1.topic").isEqualTo("place")
             .jsonPath("$.result.$topic2.value").isEqualTo(0)
             .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
+    }
+
     }
 
 
