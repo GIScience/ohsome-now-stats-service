@@ -17,8 +17,6 @@ import java.net.URI
 
 
 @SpringTestWithClickhouse
-@WithTopicData
-@WithStatsData
 @DisplayName("system tests")
 class SystemTests {
 
@@ -58,6 +56,7 @@ class SystemTests {
 
     @Nested
     @DisplayName("for stats queries")
+    @WithStatsData
     inner class StatsTests {
 
 
@@ -126,6 +125,7 @@ class SystemTests {
 
     @Nested
     @DisplayName("for topic queries")
+    @WithTopicData
     inner class TopicTests {
 
 
