@@ -3,28 +3,29 @@ package org.heigit.ohsome.now.statsservice.topic
 
 
 fun getAllTopicDefinitions() = topics
-fun getTopicDefinitionByName(name: String) = topics[name]!!
+fun getTopicDefinitionByName(name: String) = topics.find { it.topicName == name }!!
 
-fun areTopicsValid(names: List<String>) = topics.keys.containsAll(names)
+fun areTopicsValid(names: List<String>) = topics
+    .map(TopicDefinition::topicName)
+    .containsAll(names)
 
 
-//TODO: avoid redundant topic name (in map key and in definition object)
-private val topics = mapOf(
-    // let's try to order them alphabetically
+// let's try to order them alphabetically
+private val topics = listOf(
 
-    "amenity" to TopicDefinition(
+    TopicDefinition(
         "amenity",
         listOf(KeyOnlyMatcher("amenity"))
     ),
 
 
-    "commercial" to TopicDefinition(
+    TopicDefinition(
         "commercial",
         listOf(KeyOnlyMatcher("shop"))
     ),
 
 
-    "education" to TopicDefinition(
+    TopicDefinition(
         "education",
         listOf(
             KeyValueMatcher("amenity", listOf("kindergarten", "school", "college", "university")),
@@ -33,7 +34,7 @@ private val topics = mapOf(
     ),
 
 
-    "financial" to TopicDefinition(
+    TopicDefinition(
         "financial",
         listOf(
             KeyValueMatcher(
@@ -44,7 +45,7 @@ private val topics = mapOf(
     ),
 
 
-    "healthcare" to TopicDefinition(
+    TopicDefinition(
         "healthcare",
         listOf(
             KeyOnlyMatcher("healthcare"),
@@ -53,7 +54,7 @@ private val topics = mapOf(
     ),
 
 
-    "lulc" to TopicDefinition(
+    TopicDefinition(
         "lulc",
         listOf(
             KeyOnlyMatcher("landuse"),
@@ -91,7 +92,7 @@ private val topics = mapOf(
     ),
 
 
-    "place" to TopicDefinition(
+    TopicDefinition(
         "place",
         listOf(
             KeyValueMatcher(
@@ -119,7 +120,7 @@ private val topics = mapOf(
     ),
 
 
-    "poi" to TopicDefinition(
+    TopicDefinition(
         "poi",
         listOf(
             KeyOnlyMatcher("amenity"),
@@ -132,7 +133,7 @@ private val topics = mapOf(
     ),
 
 
-    "social_facility" to TopicDefinition(
+    TopicDefinition(
         "social_facility",
         listOf(
             KeyOnlyMatcher("social_facility"),
@@ -148,7 +149,7 @@ private val topics = mapOf(
     ),
 
 
-    "wash" to TopicDefinition(
+    TopicDefinition(
         "wash",
         listOf(
             KeyValueMatcher(
@@ -178,7 +179,7 @@ private val topics = mapOf(
     ),
 
 
-    "waterway" to TopicDefinition(
+    TopicDefinition(
         "waterway",
         listOf(
             KeyValueMatcher(

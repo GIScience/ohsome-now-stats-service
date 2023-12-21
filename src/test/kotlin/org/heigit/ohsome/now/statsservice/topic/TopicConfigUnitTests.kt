@@ -4,6 +4,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
+
 class TopicConfigUnitTests {
 
     private val validNames = listOf("education", "poi", "amenity")

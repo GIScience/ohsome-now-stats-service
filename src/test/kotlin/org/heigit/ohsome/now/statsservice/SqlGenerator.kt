@@ -8,6 +8,7 @@ import java.time.Instant.now
 import java.time.temporal.ChronoUnit.HOURS
 import java.time.temporal.ChronoUnit.SECONDS
 
+
 @Disabled("Run manually only for schema changes")
 class SqlGenerator {
 
@@ -25,7 +26,6 @@ class SqlGenerator {
 
     @Test
     fun `create topic SQL for all topics and both stages`() = getAllTopicDefinitions()
-        .values
         .forEach(::writeTopicSql)
 
 
