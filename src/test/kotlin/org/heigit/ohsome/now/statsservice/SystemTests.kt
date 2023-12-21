@@ -159,6 +159,40 @@ class SystemTests {
         }
 
 
+        @Test
+        @DisplayName("GET /stats/*/country")
+        fun `get stats grouped by country`() {
+
+            val hashtag = "*"
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/$hashtag/country")
+                    .build()
+            }
+
+            doGetAndAssertThat(url)
+
+                .jsonPath("$.result[0].country").isEqualTo("UGA")
+                .jsonPath("$.result[1].country").isEqualTo("DE")
+                .jsonPath("$.result[2].country").isEqualTo("FIN")
+                .jsonPath("$.result[3].country").isEqualTo("XYZ")
+                .jsonPath("$.result[4].country").isEqualTo("BEL")
+                .jsonPath("$.result[5].country").isEqualTo("HUN")
+
+                .jsonPath("$.result[5].changesets").isEqualTo(2)
+                .jsonPath("$.result[5].users").isEqualTo(1)
+                .jsonPath("$.result[5].roads").isEqualTo(0.72)
+                .jsonPath("$.result[5].buildings").isEqualTo(0)
+                .jsonPath("$.result[5].edits").isEqualTo(8)
+                .jsonPath("$.result[5].latest").isEqualTo("2021-12-09T13:01:28")
+
+                .jsonPath("$.query.timespan.startDate").exists()
+                .jsonPath("$.query.timespan.endDate").exists()
+                .jsonPath("$.query.hashtag").isEqualTo(hashtag)
+
+        }
+
     }
 
 
