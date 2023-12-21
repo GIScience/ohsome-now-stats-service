@@ -2,12 +2,18 @@ package org.heigit.ohsome.now.statsservice.topic
 
 
 
-fun getAllTopicDefinitions() = topics
-fun getTopicDefinitionByName(name: String) = topics.find { it.topicName == name }!!
+fun getAllTopicDefinitions() = validDefinitions()
 
-fun areTopicsValid(names: List<String>) = topics
+fun getTopicDefinitionByName(name: String) = validDefinitions()
+    .find { it.topicName == name }!!
+
+fun areTopicsValid(names: List<String>) = validDefinitions()
     .map(TopicDefinition::topicName)
     .containsAll(names)
+
+
+private fun validDefinitions() = topics
+    .also(::assertUniqueTopicsNames)
 
 
 // let's try to order them alphabetically
@@ -191,3 +197,15 @@ private val topics = listOf(
     )
 
 )
+
+
+private fun assertUniqueTopicsNames(definitions: List<TopicDefinition>) {
+
+    val uniqueCount = definitions
+        .map(TopicDefinition::topicName)
+        .distinct()
+        .size
+
+    assert(definitions.size == uniqueCount) { "ERROR: topic names are not unique - please check the topic config!" }
+
+}
