@@ -28,7 +28,7 @@ class TopicHandlerTests {
                     "'neighbourhood', 'town', 'village', 'hamlet', " +
                     "'isolated_dwelling'] as place_tags,\n"
 
-        assertEquals(expectedValueLists, topicHandler.valueLists)
+        assertEquals(expectedValueLists, topicHandler.valueLists())
     }
 
 
@@ -39,7 +39,7 @@ class TopicHandlerTests {
                     "['doctors', 'dentist', 'clinic', 'hospital', 'pharmacy']" +
                     " as amenity_tags,\n"
 
-        assertEquals(expectedValueLists, topicHandler.valueLists)
+        assertEquals(expectedValueLists, topicHandler.valueLists())
     }
 
 
@@ -52,7 +52,7 @@ class TopicHandlerTests {
                     "place_current in place_tags\n" +
                     "as current,\n"
 
-        assertEquals(expectedBeforeAfter, topicHandler.beforeCurrent)
+        assertEquals(expectedBeforeAfter, topicHandler.beforeCurrent())
     }
 
 
@@ -67,21 +67,11 @@ class TopicHandlerTests {
         "as current,\n"
 
 
-        val actual = topicHandler.beforeCurrent
+        val actual = topicHandler.beforeCurrent()
 
         assertEquals(expectedBeforeAfter, actual)
     }
 
-
-    /*
-
-
-    OR amenity_before in amenity_tags as before,
-
-
-    OR amenity_current in amenity_tags as current,
-
-     */
 
 
 
