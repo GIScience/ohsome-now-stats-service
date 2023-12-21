@@ -17,6 +17,7 @@ import java.net.URI
 
 @SpringTestWithClickhouse
 @WithTopicData
+@WithStatsData
 class SystemTests {
 
 
@@ -50,6 +51,33 @@ class SystemTests {
     val topic3 = "amenity"
     val topic4 = "waterway"
     val topics = listOf(topic1, topic2, topic4)
+
+
+    @Test
+    @DisplayName("GET /stats/&uganda")
+    fun `get stats for hashtag`() {
+
+        val hashtag = "&uganda"
+
+        val url = { uriBuilder: UriBuilder ->
+            uriBuilder
+                .path("/stats/$hashtag")
+                .build()
+        }
+
+        doGetAndAssertThat(url)
+            .jsonPath("$.result.changesets").isEqualTo(1)
+            .jsonPath("$.result.users").isEqualTo(1)
+            .jsonPath("$.result.roads").isEqualTo(-0.009)
+            .jsonPath("$.result.buildings").isEqualTo(0)
+            .jsonPath("$.result.edits").isEqualTo(0)
+            .jsonPath("$.result.latest").isEqualTo("2017-12-19T00:52:03")
+
+            .jsonPath("$.query.timespan.startDate").exists()
+            .jsonPath("$.query.timespan.endDate").exists()
+            .jsonPath("$.query.hashtag").isEqualTo(hashtag)
+    }
+
 
 
     @Test
