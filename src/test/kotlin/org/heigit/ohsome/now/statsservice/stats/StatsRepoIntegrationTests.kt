@@ -147,8 +147,8 @@ class StatsRepoIntegrationTests {
 
     @Test
     fun `getStatsForTimeSpanAggregate returns data in list without wildcard`() {
-        val hashtagHandlerWildcard = HashtagHandler("&group")
-        val resultsWildCard = this.repo.getStatsForTimeSpanAggregate(hashtagHandlerWildcard, null, null)
+        val hashtagHandler = HashtagHandler("&group")
+        val resultsWildCard = this.repo.getStatsForTimeSpanAggregate(hashtagHandler, null, null)
 
         assertEquals(1, resultsWildCard.size)
 
