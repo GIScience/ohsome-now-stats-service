@@ -24,7 +24,7 @@ class SqlGenerator {
 
 
     @Test
-    fun `create topic SQL for all topics and both stages`() = topics
+    fun `create topic SQL for all topics and both stages`() = getAllTopicDefinitions()
         .values
         .forEach(::writeTopicSql)
 

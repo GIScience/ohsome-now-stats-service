@@ -1,13 +1,15 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
+
+fun getAllTopicDefinitions() = topics
+fun getTopicDefinitionByName(name: String) = topics[name]!!
+
 fun areTopicsValid(names: List<String>) = topics.keys.containsAll(names)
 
 
-
-//TODO: make private and provide accessor by name
 //TODO: avoid redundant topic name (in map key and in definition object)
-val topics = mapOf(
+private val topics = mapOf(
     // let's try to order them alphabetically
 
     "amenity" to TopicDefinition(

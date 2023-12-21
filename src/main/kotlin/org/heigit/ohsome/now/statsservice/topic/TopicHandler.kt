@@ -6,7 +6,7 @@ import org.heigit.ohsome.now.statsservice.topic.BeforeOrCurrent.CURRENT
 
 class TopicHandler(val topic: String) {
 
-    val definition: TopicDefinition = topics[topic]!!
+    val definition = getTopicDefinitionByName(topic)
 
 
     fun valueLists() = this.definition.buildValueLists()

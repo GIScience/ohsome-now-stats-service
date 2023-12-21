@@ -13,7 +13,7 @@ class TopicHandlerTests {
     @Test
     fun `check topic initialisation`() {
         val topicHandler = TopicHandler(topicOneKey)
-        assertEquals(topics["place"], topicHandler.definition)
+        assertEquals(getTopicDefinitionByName("place"), topicHandler.definition)
         assertEquals(topicOneKey, topicHandler.topic)
     }
 
