@@ -119,6 +119,46 @@ class SystemTests {
                 .jsonPath("$.query.timespan.endDate").exists()
         }
 
+
+        @Test
+        @DisplayName("GET /stats/&group/interval?interval=P1Y")
+        fun `get stats grouped by time interval`() {
+
+            val hashtag = "&group"
+            val interval = "P1Y"
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/$hashtag/interval")
+                    .queryParam("interval", interval)
+                    .build()
+            }
+
+
+            doGetAndAssertThat(url)
+
+                // no results in 1970
+                .jsonPath("$.result[0].changesets").isEqualTo(0)
+                .jsonPath("$.result[0].users").isEqualTo(0)
+                .jsonPath("$.result[0].roads").isEqualTo(0)
+                .jsonPath("$.result[0].buildings").isEqualTo(0)
+                .jsonPath("$.result[0].edits").isEqualTo(0)
+
+                // some results in 2021
+                .jsonPath("$.result[51].changesets").isEqualTo(1)
+                .jsonPath("$.result[51].users").isEqualTo(1)
+                .jsonPath("$.result[51].roads").isEqualTo(-0.001)
+                .jsonPath("$.result[51].buildings").isEqualTo(0)
+                .jsonPath("$.result[51].edits").isEqualTo(7)
+
+                .jsonPath("$.query.timespan.startDate").exists()
+                .jsonPath("$.query.timespan.endDate").exists()
+                .jsonPath("$.query.timespan.interval").isEqualTo(interval)
+                .jsonPath("$.query.hashtag").isEqualTo(hashtag)
+
+        }
+
+
     }
 
 
