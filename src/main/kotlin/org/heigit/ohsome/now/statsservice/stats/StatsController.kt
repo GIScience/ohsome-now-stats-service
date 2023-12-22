@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
 
-//TODO: before refactoring this, please add system tests to org.heigit.ohsome.now.stats.SystemTests
-//these can be derived from the StatsRepoIntegrationTests
-
-
 @CrossOrigin
 @RestController
 class StatsController {
