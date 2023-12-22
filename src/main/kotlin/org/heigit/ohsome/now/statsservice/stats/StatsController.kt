@@ -9,9 +9,25 @@ import org.heigit.ohsome.now.statsservice.measure
 import org.heigit.ohsome.now.statsservice.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
-import org.springframework.format.annotation.DateTimeFormat.ISO
+import org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
+import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
+
+
+@Target(VALUE_PARAMETER)
+@Retention(RUNTIME)
+@DateTimeFormat(iso = DATE_TIME)
+@Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+annotation class StartDateConfig { }
+
+@Target(VALUE_PARAMETER)
+@Retention(RUNTIME)
+@DateTimeFormat(iso = DATE_TIME)
+@Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+annotation class EndDateConfig { }
+
 
 
 @CrossOrigin
@@ -32,14 +48,12 @@ class StatsController {
         @PathVariable
         hashtag: String,
 
-        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @StartDateConfig
         @RequestParam("startdate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
         startDate: Instant?,
 
-        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @EndDateConfig
         @RequestParam("enddate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?,
 
         @Parameter(description = "A comma separated list of countries, can also only be one country")
@@ -65,14 +79,12 @@ class StatsController {
         @PathVariable
         hashtags: List<String>,
 
-        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @StartDateConfig
         @RequestParam("startdate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
         startDate: Instant?,
 
-        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @EndDateConfig
         @RequestParam("enddate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?
     ): OhsomeFormat<Map<String, StatsResult>> {
 
@@ -94,14 +106,12 @@ class StatsController {
         @PathVariable
         hashtag: String,
 
-        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @StartDateConfig
         @RequestParam(name = "startdate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
         startDate: Instant?,
 
-        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @EndDateConfig
         @RequestParam(name = "enddate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?,
 
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
@@ -132,14 +142,12 @@ class StatsController {
         @PathVariable
         hashtag: String,
 
-        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @StartDateConfig
         @RequestParam(name = "startdate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
         startDate: Instant?,
 
-        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @EndDateConfig
         @RequestParam(name = "enddate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
         endDate: Instant?
     ): OhsomeFormat<List<CountryStatsResult>> {
 
@@ -156,14 +164,16 @@ class StatsController {
     fun mostUsedHashtags(
         httpServletRequest: HttpServletRequest,
 
+        //TODO: check if this description really should be different from the one above
         @Parameter(description = "the start date for the query in ISO format (e.g. 2014-01-01T00:00:00Z). Default: start of data")
         @RequestParam(name = "startdate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
+        @DateTimeFormat(iso = DATE_TIME)
         startDate: Instant?,
 
+        //TODO: check if this description really should be different from the one above
         @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2023-01-01T00:00:00Z). Default: now")
         @RequestParam(name = "enddate", required = false)
-        @DateTimeFormat(iso = ISO.DATE_TIME)
+        @DateTimeFormat(iso = DATE_TIME)
         endDate: Instant?,
 
         @Parameter(description = "the number of hashtags to return")
