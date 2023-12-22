@@ -18,10 +18,6 @@ import java.time.temporal.ChronoUnit
 import javax.sql.DataSource
 
 
-//TODO: before refactoring this, please add system tests to org.heigit.ohsome.now.stats.SystemTests
-//these can be derived from the StatsRepoIntegrationTests
-
-
 @Suppress("LargeClass")
 @Component
 class StatsRepo {

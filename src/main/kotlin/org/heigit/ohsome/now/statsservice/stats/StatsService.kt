@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 
 
-//TODO: add unit or integration tests
-
 @Service
 class StatsService {
 
@@ -21,18 +19,10 @@ class StatsService {
         .toStatsResult()
 
 
-    //TODO: improve
-    fun getStatsForTimeSpanAggregate(hashtags: List<String>, startDate: Instant?, endDate: Instant?): Map<String, StatsResult> {
+    fun getStatsForTimeSpanAggregate(hashtags: List<String>, startDate: Instant?, endDate: Instant?) = hashtags
+        .map { getStatsForTimeSpanAggregate(it, startDate, endDate) }
+        .reduce { m1, m2 -> m1 + m2 }
 
-        val map: MutableMap<String, StatsResult> = mutableMapOf()
-        for (hashtag in hashtags) {
-            map.putAll(
-                getStatsForTimeSpanAggregate(hashtag, startDate, endDate)
-            )
-        }
-
-        return map
-    }
 
     private fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
         .getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
