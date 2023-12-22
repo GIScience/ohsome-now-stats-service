@@ -46,12 +46,6 @@ class SystemTests {
     }
 
 
-    val topic1 = "place"
-    val topic2 = "healthcare"
-    val topic3 = "amenity"
-    val topic4 = "waterway"
-    val topics = listOf(topic1, topic2, topic4)
-
 
 
     @Nested
@@ -201,6 +195,12 @@ class SystemTests {
     @DisplayName("for topic queries")
     @WithTopicData
     inner class TopicTests {
+
+        val topic1 = "place"
+        val topic2 = "healthcare"
+        val topic3 = "amenity"
+        val topic4 = "waterway"
+        val topics = listOf(topic1, topic2, topic4)
 
 
         @Test
