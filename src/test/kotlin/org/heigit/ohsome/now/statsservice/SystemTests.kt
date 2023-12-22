@@ -46,8 +46,6 @@ class SystemTests {
     }
 
 
-
-
     @Nested
     @DisplayName("for stats queries")
     @WithStatsData
@@ -59,10 +57,14 @@ class SystemTests {
         fun `get stats for hashtag`() {
 
             val hashtag = "&uganda"
+            val startDate = "2015-01-01T00:00:00Z"
+            val endDate = "2018-01-01T00:00:00Z"
 
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
                     .path("/stats/$hashtag")
+                    .queryParam("startdate", startDate)
+                    .queryParam("enddate", endDate)
                     .build()
             }
 
@@ -74,8 +76,8 @@ class SystemTests {
                 .jsonPath("$.result.edits").isEqualTo(0)
                 .jsonPath("$.result.latest").isEqualTo("2017-12-19T00:52:03")
 
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
+                .jsonPath("$.query.timespan.startDate").isEqualTo(startDate)
+                .jsonPath("$.query.timespan.endDate").isEqualTo(endDate)
                 .jsonPath("$.query.hashtag").isEqualTo(hashtag)
         }
 
