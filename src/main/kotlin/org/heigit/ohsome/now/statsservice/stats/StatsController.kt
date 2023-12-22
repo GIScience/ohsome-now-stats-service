@@ -3,30 +3,13 @@ package org.heigit.ohsome.now.statsservice.stats
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import org.heigit.ohsome.now.statsservice.OhsomeFormat
-import org.heigit.ohsome.now.statsservice.buildOhsomeFormat
-import org.heigit.ohsome.now.statsservice.measure
+import org.heigit.ohsome.now.statsservice.*
 import org.heigit.ohsome.now.statsservice.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
-import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
-
-
-@Target(VALUE_PARAMETER)
-@Retention(RUNTIME)
-@DateTimeFormat(iso = DATE_TIME)
-@Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
-annotation class StartDateConfig { }
-
-@Target(VALUE_PARAMETER)
-@Retention(RUNTIME)
-@DateTimeFormat(iso = DATE_TIME)
-@Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
-annotation class EndDateConfig { }
 
 
 
