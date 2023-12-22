@@ -15,7 +15,7 @@ class TopicService {
     @Autowired
     lateinit var repo: TopicRepo
 
-    // todo: check if topic is valid (contained as key in TopicDefinition)
+
     @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpan(
         hashtag: String,
