@@ -15,6 +15,7 @@ import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import java.time.Instant
 import java.time.LocalDateTime
+import java.util.*
 
 
 @SpringTestWithClickhouse
@@ -311,6 +312,15 @@ class StatsRepoIntegrationTests {
         println(result)
     }
 
+    @Test
+    fun `getUniqueHashtags returns all hashtags`() {
+        val result = this.repo.getUniqueHashtags()
+        assertEquals(
+            listOf("&test", "&group", "&uganda", "hotosm-project-1", "&groupExtra", "&", "&gid"),
+            result["hashtags"]?.let { Arrays.asList(*it) }
+        )
+        println(result)
+    }
 
     @Test
     fun `getMetadata returns the minimum and maximum timestamp`() {

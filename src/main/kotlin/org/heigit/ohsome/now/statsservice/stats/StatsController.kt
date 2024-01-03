@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
 
-
 @CrossOrigin
 @RestController
 class StatsController {
@@ -166,6 +165,18 @@ class StatsController {
 
         val result = measure {
             statsService.getMostUsedHashtags(startDate, endDate, limit)
+        }
+
+        return buildOhsomeFormat(result, httpServletRequest)
+    }
+
+
+    @Operation(summary = "Returns all hashtags contained in the database")
+    @GetMapping("/hashtags", produces = ["application/json"])
+    fun hashtags(httpServletRequest: HttpServletRequest): OhsomeFormat<UniqueHashtagsResult> {
+
+        val result = measure {
+            statsService.getUniqueHashtags()
         }
 
         return buildOhsomeFormat(result, httpServletRequest)

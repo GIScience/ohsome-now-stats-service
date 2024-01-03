@@ -1,6 +1,7 @@
 package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
+import java.util.*
 
 
 fun Map<String, Any>.toStatsResult() = StatsResult(
@@ -125,3 +126,11 @@ data class UserResult(
     val userId: Int
 )
 
+
+fun Map<String, Array<String>>.toUniqueHashtagsResult() = UniqueHashtagsResult(
+    this["hashtags"]?.let { Arrays.asList(*it) }
+)
+
+data class UniqueHashtagsResult(
+    val hashtags: MutableList<String>?
+)

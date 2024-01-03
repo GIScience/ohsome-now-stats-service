@@ -14,9 +14,10 @@ class StatsService {
     lateinit var repo: StatsRepo
 
 
-    fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) = this.repo
-        .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
-        .toStatsResult()
+    fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
+        this.repo
+            .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
+            .toStatsResult()
 
 
     fun getStatsForTimeSpanAggregate(hashtags: List<String>, startDate: Instant?, endDate: Instant?) = hashtags
@@ -30,7 +31,13 @@ class StatsService {
 
 
     @Suppress("LongParameterList")
-    fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant?, endDate: Instant?, interval: String, countries: List<String>) = this.repo
+    fun getStatsForTimeSpanInterval(
+        hashtag: String,
+        startDate: Instant?,
+        endDate: Instant?,
+        interval: String,
+        countries: List<String>
+    ) = this.repo
         .getStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries))
         .toIntervalStatsResult()
 
@@ -48,6 +55,11 @@ class StatsService {
     fun getMetadata() = this.repo
         .getMetadata()
         .toMetadataResult()
+
+
+    fun getUniqueHashtags() = this.repo
+        .getUniqueHashtags()
+        .toUniqueHashtagsResult()
 
 
     fun getStatsForUserIdForAllHotTMProjects(userId: String) = this.repo

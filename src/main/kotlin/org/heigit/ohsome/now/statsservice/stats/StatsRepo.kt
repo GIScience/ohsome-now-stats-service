@@ -176,6 +176,13 @@ class StatsRepo {
     """.trimIndent()
 
 
+    private val uniqueHashtagSQL = """
+        SELECT groupArrayDistinct(hashtag) as hashtags 
+        FROM "stats_$schemaVersion"
+        WHERE 
+        hashtag not like '% %' and hashtag not like '%﻿%'
+    """.trimIndent()
+
     /**
      * Retrieves statistics for a specific hashtag within a time span.
      *
@@ -336,6 +343,12 @@ class StatsRepo {
                 .list()
         }
 
+    }
+
+    fun getUniqueHashtags(): Map<String, Array<String>> {
+        return query {
+            it.select(uniqueHashtagSQL).mapToMap().single() as Map<String, Array<String>>
+        }
     }
 
     /**
