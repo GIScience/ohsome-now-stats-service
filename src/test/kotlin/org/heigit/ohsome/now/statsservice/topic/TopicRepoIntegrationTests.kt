@@ -45,6 +45,9 @@ class TopicRepoIntegrationTests {
 
     val expected = mapOf(
         "topic_result" to 5,
+        "topic_result_created" to 9,
+        "topic_result_modified" to 16,
+        "topic_result_deleted" to 4,
         "hashtag" to "hotmicrogrant"
     )
 
@@ -61,7 +64,7 @@ class TopicRepoIntegrationTests {
             this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, TopicHandler(topic))
 
         println(result)
-        assertEquals(2, result.size)
+        assertEquals(5, result.size)
         assertEquals(expected.toString(), result.toString())
     }
 
@@ -79,7 +82,7 @@ class TopicRepoIntegrationTests {
             )
 
         println(result)
-        assertEquals(2, result.size)
+        assertEquals(5, result.size)
         assertEquals("-3", result["topic_result"].toString())
     }
 
@@ -116,7 +119,7 @@ class TopicRepoIntegrationTests {
             )
 
         println(result)
-        assertEquals(2, result.size)
+        assertEquals(5, result.size)
         assertEquals("19", result["topic_result"].toString())
     }
 
@@ -137,7 +140,7 @@ class TopicRepoIntegrationTests {
 
         println(result)
         assertEquals(84, result.size)
-        assertEquals(3, result[0].size)
+        assertEquals(6, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
 
         // 3 new places at the beginning of the interval
@@ -162,7 +165,7 @@ class TopicRepoIntegrationTests {
 
         println(result)
         assertEquals(84, result.size)
-        assertEquals(3, result[0].size)
+        assertEquals(6, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
 
         // 3 new places in 'BRA' at the beginning of the interval but countries are restricted to 'BOL'
@@ -187,7 +190,7 @@ class TopicRepoIntegrationTests {
 
         println(result)
         assertEquals(624, result.size)
-        assertEquals(3, result[0].size)
+        assertEquals(6, result[0].size)
         assertEquals("1970-01-01T00:00", result[0]["startdate"].toString())
 
         assertEquals("3", result[540]["topic_result"].toString())
@@ -213,7 +216,7 @@ class TopicRepoIntegrationTests {
         result.forEachIndexed { counter, it -> println(" $counter $it") }
 
         assertEquals(53, result.size)
-        assertEquals(3, result[0].size)
+        assertEquals(6, result[0].size)
 
         result.forEach() {
             assertNotNull(it["topic_result"])
@@ -233,7 +236,7 @@ class TopicRepoIntegrationTests {
         println(result)
         result.forEachIndexed { counter, it -> println(" $counter $it") }
         assertEquals(2, result.size)
-        assertEquals(2, result[0].size)
+        assertEquals(5, result[0].size)
 
         assertEquals(2L, result[0]["topic_result"])
         assertEquals("BOL", result[0]["country"])
@@ -248,7 +251,7 @@ class TopicRepoIntegrationTests {
         println(result)
         assertTrue(result is MutableMap<String, *>)
         assertEquals(-1L, result["topic_result"])
-        assertEquals(2, result.size)
+        assertEquals(5, result.size)
     }
 
     @Test

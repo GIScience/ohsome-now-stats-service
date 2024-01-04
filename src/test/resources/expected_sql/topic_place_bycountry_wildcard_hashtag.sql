@@ -5,9 +5,12 @@ WITH
 
     if ((current = 0) AND (before = 0), NULL, current - before) as edit
 
-SELECT
-    ifNull(sum(edit), 0) as topic_result,
-    country_iso_a3 as country
+
+SELECT ifNull(sum(edit), 0) as topic_result,
+       ifNull(sum(if(edit = 1, 1, 0)), 0) as topic_result_created,
+       ifNull(sum(if(edit = 0, 1, 0)), 0) as topic_result_modified,
+       ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted,
+       country_iso_a3 as country
 FROM topic_place_2
 
     ARRAY JOIN country_iso_a3
