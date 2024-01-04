@@ -177,10 +177,15 @@ class StatsRepo {
 
 
     private val uniqueHashtagSQL = """
-        SELECT groupArrayDistinct(hashtag) as hashtags 
+        SELECT hashtag
         FROM "stats_$schemaVersion"
         WHERE 
-        hashtag not like '% %' and hashtag not like '%﻿%'
+            hashtag not like '% %' 
+            and hashtag not like '%﻿%' 
+            and not match(hashtag, '^[0-9·-]*$}')
+        group by hashtag
+        having count(*) > 10
+        order by hashtag
     """.trimIndent()
 
     /**
@@ -345,9 +350,9 @@ class StatsRepo {
 
     }
 
-    fun getUniqueHashtags(): Map<String, Array<String>> {
+    fun getUniqueHashtags(): List<String> {
         return query {
-            it.select(uniqueHashtagSQL).mapToMap().single() as Map<String, Array<String>>
+            it.select(uniqueHashtagSQL).mapTo(String::class.java).list()
         }
     }
 

@@ -315,9 +315,10 @@ class StatsRepoIntegrationTests {
     @Test
     fun `getUniqueHashtags returns all hashtags`() {
         val result = this.repo.getUniqueHashtags()
+
         assertEquals(
-            listOf("&test", "&group", "&uganda", "hotosm-project-1", "&groupExtra", "&", "&gid"),
-            result["hashtags"]?.let { Arrays.asList(*it) }
+            listOf("&group"),
+            result
         )
         println(result)
     }

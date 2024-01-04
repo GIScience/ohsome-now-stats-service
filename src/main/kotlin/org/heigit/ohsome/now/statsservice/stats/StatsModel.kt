@@ -127,10 +127,10 @@ data class UserResult(
 )
 
 
-fun Map<String, Array<String>>.toUniqueHashtagsResult() = UniqueHashtagsResult(
-    this["hashtags"]?.let { Arrays.asList(*it) }
+fun List<String>.toUniqueHashtagsResult() = UniqueHashtagsResult(
+    this
 )
 
 data class UniqueHashtagsResult(
-    val hashtags: MutableList<String>?
+    val hashtags: List<String>
 )

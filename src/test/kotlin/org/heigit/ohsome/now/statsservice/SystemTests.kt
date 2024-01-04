@@ -190,7 +190,7 @@ class SystemTests {
                     .build()
             }
 
-            val result = doGetAndAssertThat(url)
+            doGetAndAssertThat(url)
         }
     }
 
