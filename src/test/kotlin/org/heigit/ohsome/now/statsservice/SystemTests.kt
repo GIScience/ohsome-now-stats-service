@@ -168,13 +168,13 @@ class SystemTests {
             }
 
             doGetAndAssertThat(url)
-                .jsonPath("$.result[5].changesets").isEqualTo(3)
-                .jsonPath("$.result[5].users").isEqualTo(2)
-                .jsonPath("$.result[5].roads").isEqualTo(-0.175)
-                .jsonPath("$.result[5].buildings").isEqualTo(0)
-                .jsonPath("$.result[5].edits").isEqualTo(1)
-                .jsonPath("$.result[5].latest").isEqualTo("2021-12-09T13:01:28")
-                .jsonPath("$.result[5].country").isEqualTo("BEL")
+                .jsonPath("$.result[4].changesets").isEqualTo(3)
+                .jsonPath("$.result[4].users").isEqualTo(2)
+                .jsonPath("$.result[4].roads").isEqualTo(-0.175)
+                .jsonPath("$.result[4].buildings").isEqualTo(0)
+                .jsonPath("$.result[4].edits").isEqualTo(1)
+                .jsonPath("$.result[4].latest").isEqualTo("2021-12-09T13:01:28")
+                .jsonPath("$.result[4].country").isEqualTo("BEL")
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
@@ -430,6 +430,8 @@ class SystemTests {
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
 
+        }
+
     @Test
     @DisplayName("GET /hot-tm-user?userid=2186388")
     fun `get userstats with good token`() {
@@ -492,6 +494,7 @@ class SystemTests {
         }
 
     }
+}
 
 
     private fun doGetAndAssertThat(url: (UriBuilder) -> URI) = client()
@@ -516,8 +519,8 @@ class SystemTests {
             .expectStatus()
             .isBadRequest
     }
-
-
 }
+
+
 
 
