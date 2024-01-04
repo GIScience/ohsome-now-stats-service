@@ -13,7 +13,6 @@ data class TopicResult(
     val value: Double,
 )
 
-//TODO: common superclass for all interval results?
 open class TopicIntervalResult(
     open val value: Double,
     open val topic: String,
@@ -33,7 +32,6 @@ fun topicIntervalResult(data: Map<String, Any>, topic: String) = TopicIntervalRe
 )
 
 
-//TODO: common superclass for all interval results?
 open class TopicCountryResult(
     open val value: Double,
     open val topic: String,

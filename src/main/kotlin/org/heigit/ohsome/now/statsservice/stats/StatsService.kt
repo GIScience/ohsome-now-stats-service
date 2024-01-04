@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service
 import java.time.Instant
 
 
-//TODO: add unit or integration tests
-
 @Service
 class StatsService {
 
@@ -16,23 +14,16 @@ class StatsService {
     lateinit var repo: StatsRepo
 
 
-    fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) = this.repo
-        .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
-        .toStatsResult()
+    fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
+        this.repo
+            .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
+            .toStatsResult()
 
 
-    //TODO: improve
-    fun getStatsForTimeSpanAggregate(hashtags: List<String>, startDate: Instant?, endDate: Instant?): Map<String, StatsResult> {
+    fun getStatsForTimeSpanAggregate(hashtags: List<String>, startDate: Instant?, endDate: Instant?) = hashtags
+        .map { getStatsForTimeSpanAggregate(it, startDate, endDate) }
+        .reduce { m1, m2 -> m1 + m2 }
 
-        val map: MutableMap<String, StatsResult> = mutableMapOf()
-        for (hashtag in hashtags) {
-            map.putAll(
-                getStatsForTimeSpanAggregate(hashtag, startDate, endDate)
-            )
-        }
-
-        return map
-    }
 
     private fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
         .getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
@@ -40,7 +31,13 @@ class StatsService {
 
 
     @Suppress("LongParameterList")
-    fun getStatsForTimeSpanInterval(hashtag: String, startDate: Instant?, endDate: Instant?, interval: String, countries: List<String>) = this.repo
+    fun getStatsForTimeSpanInterval(
+        hashtag: String,
+        startDate: Instant?,
+        endDate: Instant?,
+        interval: String,
+        countries: List<String>
+    ) = this.repo
         .getStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries))
         .toIntervalStatsResult()
 
@@ -58,6 +55,11 @@ class StatsService {
     fun getMetadata() = this.repo
         .getMetadata()
         .toMetadataResult()
+
+
+    fun getUniqueHashtags() = this.repo
+        .getUniqueHashtags()
+        .toUniqueHashtagsResult()
 
 
     fun getStatsForUserIdForAllHotTMProjects(userId: String) = this.repo

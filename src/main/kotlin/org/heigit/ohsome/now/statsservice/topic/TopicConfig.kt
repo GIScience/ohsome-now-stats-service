@@ -1,20 +1,57 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
-//TODO: unit test
-fun areTopicsValid(names: List<String>) = topics.keys.containsAll(names)
+
+fun getAllTopicDefinitions() = validDefinitions()
+
+fun getTopicDefinitionByName(name: String) = validDefinitions()
+    .find { it.topicName == name }!!
+
+fun areTopicsValid(names: List<String>) = validDefinitions()
+    .map(TopicDefinition::topicName)
+    .containsAll(names)
 
 
-val topics = mapOf(
-    // let"s try to order them alphabetically
+private fun validDefinitions() = topics
+    .also(::assertUniqueTopicsNames)
 
-    "amenity" to TopicDefinition(
+
+// let's try to order them alphabetically
+private val topics = listOf(
+
+    TopicDefinition(
         "amenity",
         listOf(KeyOnlyMatcher("amenity"))
     ),
 
 
-    "healthcare" to TopicDefinition(
+    TopicDefinition(
+        "commercial",
+        listOf(KeyOnlyMatcher("shop"))
+    ),
+
+
+    TopicDefinition(
+        "education",
+        listOf(
+            KeyValueMatcher("amenity", listOf("kindergarten", "school", "college", "university")),
+            KeyValueMatcher("building", listOf("kindergarten", "school", "college", "university"))
+        )
+    ),
+
+
+    TopicDefinition(
+        "financial",
+        listOf(
+            KeyValueMatcher(
+                "amenity",
+                listOf("atm", "bank", "money_transfer", "bureau_de_change", "mobile_money_agent", "payment_terminal")
+            )
+        )
+    ),
+
+
+    TopicDefinition(
         "healthcare",
         listOf(
             KeyOnlyMatcher("healthcare"),
@@ -23,10 +60,45 @@ val topics = mapOf(
     ),
 
 
-//    "landuse" to KeyOnlyTopicDefinition("landuse", "landuse", AggregationStrategy.AREA),
+    TopicDefinition(
+        "lulc",
+        listOf(
+            KeyOnlyMatcher("landuse"),
+            KeyValueMatcher(
+                "natural", listOf(
+                    "bare_rock",
+                    "beach",
+                    "dune",
+                    "fell",
+                    "glacier",
+                    "grassland",
+                    "heath",
+                    "landslide",
+                    "mud",
+                    "rock",
+                    "sand",
+                    "scree",
+                    "scrub",
+                    "shingle",
+                    "water",
+                    "wetland",
+                    "wood"
+                )
+            ),
+            KeyValueMatcher(
+                "waterway", listOf(
+                    "boatyard",
+                    "dam",
+                    "dock",
+                    "riverbank"
+                )
+            )
+        ),
+        AggregationStrategy.AREA
+    ),
 
 
-    "place" to TopicDefinition(
+    TopicDefinition(
         "place",
         listOf(
             KeyValueMatcher(
@@ -54,20 +126,66 @@ val topics = mapOf(
     ),
 
 
-//    "sanitation" to KeyValueTopicDefinition(
-//        "sanitation", listOf(
-//            KeyValueMatcher("man_made", listOf("pumping_station", "water_tower")),
-//            KeyValueMatcher("building", listOf("pumping_station")),
-//            KeyValueMatcher("amenity", listOf("water_point"))
-//        )
-//    ),
+    TopicDefinition(
+        "poi",
+        listOf(
+            KeyOnlyMatcher("amenity"),
+            KeyOnlyMatcher("shop"),
+            KeyOnlyMatcher("craft"),
+            KeyOnlyMatcher("office"),
+            KeyOnlyMatcher("leisure"),
+            KeyOnlyMatcher("aeroway")
+        )
+    ),
 
 
-    // todo: amenity: social_facility also exists - include?
-//    "social_facility" to KeyOnlyTopicDefinition("social_facility", "social_facility"),
+    TopicDefinition(
+        "social_facility",
+        listOf(
+            KeyOnlyMatcher("social_facility"),
+            KeyValueMatcher(
+                "amenity",
+                listOf(
+                    "shelter",
+                    "social_facility",
+                    "refugee_site",
+                )
+            )
+        )
+    ),
 
 
-    "waterway" to TopicDefinition(
+    TopicDefinition(
+        "wash",
+        listOf(
+            KeyValueMatcher(
+                "amenity", listOf(
+                    "toilets",
+                    "shower",
+                    "drinking_water",
+                    "water_point"
+                )
+            ),
+            KeyValueMatcher(
+                "man_made", listOf(
+                    "water_tap",
+                    "borehole",
+                    "water_works",
+                    "pumping_station",
+                    "pump",
+                    "wastewater_plant",
+                    "storage_tank",
+                    "water_well",
+                    "water_tower",
+                    "reservoir_covered",
+                    "water_tank"
+                )
+            )
+        )
+    ),
+
+
+    TopicDefinition(
         "waterway",
         listOf(
             KeyValueMatcher(
@@ -77,4 +195,17 @@ val topics = mapOf(
         ),
         AggregationStrategy.LENGTH
     )
+
 )
+
+
+private fun assertUniqueTopicsNames(definitions: List<TopicDefinition>) {
+
+    val uniqueCount = definitions
+        .map(TopicDefinition::topicName)
+        .distinct()
+        .size
+
+    assert(definitions.size == uniqueCount) { "ERROR: topic names are not unique - please check the topic config!" }
+
+}

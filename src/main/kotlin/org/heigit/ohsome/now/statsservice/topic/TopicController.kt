@@ -3,12 +3,9 @@ package org.heigit.ohsome.now.statsservice.topic
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import org.heigit.ohsome.now.statsservice.OhsomeFormat
-import org.heigit.ohsome.now.statsservice.buildOhsomeFormat
-import org.heigit.ohsome.now.statsservice.measure
+import org.heigit.ohsome.now.statsservice.*
 import org.heigit.ohsome.now.statsservice.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -33,14 +30,12 @@ class TopicController {
         @RequestParam("hashtag")
         hashtag: String,
 
-        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @StartDateConfig
         @RequestParam("startdate", required = false)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         startDate: Instant?,
 
-        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @EndDateConfig
         @RequestParam("enddate", required = false)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         endDate: Instant?,
 
         @Parameter(description = "A comma separated list of countries, can also only be one country")
@@ -73,14 +68,12 @@ class TopicController {
         @RequestParam("hashtag")
         hashtag: String,
 
-        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @StartDateConfig
         @RequestParam(name = "startdate", required = false)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         startDate: Instant?,
 
-        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @EndDateConfig
         @RequestParam(name = "enddate", required = false)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         endDate: Instant?,
 
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
@@ -117,14 +110,12 @@ class TopicController {
         @RequestParam("hashtag")
         hashtag: String,
 
-        @Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @StartDateConfig
         @RequestParam(name = "startdate", required = false)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         startDate: Instant?,
 
-        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)")
+        @EndDateConfig
         @RequestParam(name = "enddate", required = false)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         endDate: Instant?,
 
         @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")

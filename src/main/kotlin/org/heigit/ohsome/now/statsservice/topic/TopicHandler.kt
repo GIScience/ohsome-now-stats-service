@@ -4,24 +4,15 @@ import org.heigit.ohsome.now.statsservice.topic.BeforeOrCurrent.BEFORE
 import org.heigit.ohsome.now.statsservice.topic.BeforeOrCurrent.CURRENT
 
 
-// TODO: transform properties to methods
 class TopicHandler(val topic: String) {
 
-    val definition: TopicDefinition = topics[topic]!!
-
-    var beforeCurrent: String = ""
-    var valueLists = this.definition.buildValueLists()
-    var topicResult = this.definition.defineTopicResult()
+    val definition = getTopicDefinitionByName(topic)
 
 
-    init {
-        buildBeforeCurrent()
-    }
+    fun valueLists() = this.definition.buildValueLists()
+    fun topicResult() = this.definition.defineTopicResult()
 
+    fun beforeCurrent() = this.definition.beforeCurrentCondition(BEFORE) + this.definition.beforeCurrentCondition(CURRENT)
 
-    private fun buildBeforeCurrent() {
-        beforeCurrent += this.definition.beforeCurrentCondition(BEFORE)
-        beforeCurrent += this.definition.beforeCurrentCondition(CURRENT)
-    }
 
 }

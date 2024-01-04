@@ -33,12 +33,12 @@ class TopicRepo {
         topicHandler: TopicHandler
     ) = """
         WITH
-            ${topicHandler.valueLists} 
+            ${topicHandler.valueLists()} 
             
-            ${topicHandler.beforeCurrent} 
+            ${topicHandler.beforeCurrent()} 
             if ((current = 0) AND (before = 0), NULL, current - before) as edit
 
-        SELECT ${topicHandler.topicResult}
+        SELECT ${topicHandler.topicResult()}
         
         FROM topic_${topicHandler.topic}_$schemaVersion
         WHERE
@@ -59,13 +59,13 @@ class TopicRepo {
     ) = """
 
         WITH
-            ${topicHandler.valueLists} 
+            ${topicHandler.valueLists()} 
             
-            ${topicHandler.beforeCurrent} 
+            ${topicHandler.beforeCurrent()} 
             if ((current = 0) AND (before = 0), NULL, current - before) as edit
             
        SELECT 
-           ${topicHandler.topicResult},
+           ${topicHandler.topicResult()},
            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
            (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
 
@@ -101,13 +101,13 @@ class TopicRepo {
         TopicHandler
     ) = """
         WITH
-            ${topicHandler.valueLists} 
+            ${topicHandler.valueLists()} 
             
-            ${topicHandler.beforeCurrent} 
+            ${topicHandler.beforeCurrent()} 
             if ((current = 0) AND (before = 0), NULL, current - before) as edit
             
         SELECT 
-            ${topicHandler.topicResult},
+            ${topicHandler.topicResult()},
             country_iso_a3 as country
 
         FROM topic_${topicHandler.topic}_$schemaVersion
@@ -125,13 +125,13 @@ class TopicRepo {
     fun topicForUserIdForHotOSMProjectSQL(topicHandler: TopicHandler) =
         """        
         WITH
-            ${topicHandler.valueLists} 
+            ${topicHandler.valueLists()} 
             
-            ${topicHandler.beforeCurrent} 
+            ${topicHandler.beforeCurrent()} 
             if ((current = 0) AND (before = 0), NULL, current - before) as edit
             
         SELECT 
-            ${topicHandler.topicResult},
+            ${topicHandler.topicResult()},
         user_id
         FROM topic_${topicHandler.topic}_$schemaVersion
         WHERE

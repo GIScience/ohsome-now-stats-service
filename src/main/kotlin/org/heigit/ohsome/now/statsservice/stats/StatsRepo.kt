@@ -18,10 +18,6 @@ import java.time.temporal.ChronoUnit
 import javax.sql.DataSource
 
 
-//TODO: before refactoring this, please add system tests to org.heigit.ohsome.now.stats.SystemTests
-//these can be derived from the StatsRepoIntegrationTests
-
-
 @Suppress("LargeClass")
 @Component
 class StatsRepo {
@@ -194,6 +190,18 @@ class StatsRepo {
     """.trimIndent()
 
 
+    private val uniqueHashtagSQL = """
+        SELECT hashtag
+        FROM "stats_$schemaVersion"
+        WHERE 
+            hashtag not like '% %' 
+            and hashtag not like '%﻿%' 
+            and not match(hashtag, '^[0-9·-]*$')
+        group by hashtag
+        having count(*) > 10
+        order by hashtag
+    """.trimIndent()
+
     /**
      * Retrieves statistics for a specific hashtag within a time span.
      *
@@ -354,6 +362,12 @@ class StatsRepo {
                 .list()
         }
 
+    }
+
+    fun getUniqueHashtags(): List<String> {
+        return query {
+            it.select(uniqueHashtagSQL).mapTo(String::class.java).list()
+        }
     }
 
     /**
