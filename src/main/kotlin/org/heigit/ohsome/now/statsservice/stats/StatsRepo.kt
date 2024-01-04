@@ -182,7 +182,7 @@ class StatsRepo {
         WHERE 
             hashtag not like '% %' 
             and hashtag not like '%﻿%' 
-            and not match(hashtag, '^[0-9·-]*$}')
+            and not match(hashtag, '^[0-9·-]*$')
         group by hashtag
         having count(*) > 10
         order by hashtag
