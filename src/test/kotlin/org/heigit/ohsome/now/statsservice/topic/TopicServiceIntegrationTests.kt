@@ -46,7 +46,10 @@ class TopicServiceIntegrationTests {
         val topic1 = "place"
         val topic2 = "healthcare"
 
-        val result: Map<String, UserTopicResult> = this.service.getTopicsForUserIdForAllHotTMProjects(userId.toString(), listOf(topic1, topic2))
+        val topics = listOf(topic1, topic2)
+
+
+        val result = this.service.getTopicsForUserIdForAllHotTMProjects(userId.toString(), topics)
 
         val placeResult = result[topic1]!!
         assertThat(placeResult.userId).isEqualTo(userId)
@@ -63,6 +66,25 @@ class TopicServiceIntegrationTests {
         assertThat(healthcareResult.value).isEqualTo(0.0)
         println("--------------")
         println(healthcareResult)
+        println("--------------")
+
+
+    }
+
+
+    @Test
+    fun `can get user topic stats for a given user id and the 'amenity' topic`() {
+        val userId = 3243541
+        val topic = "amenity"
+
+        val result = this.service.getTopicsForUserIdForAllHotTMProjects(userId.toString(), listOf(topic))
+
+        val amenityResult = result[topic]!!
+        assertThat(amenityResult.userId).isEqualTo(userId)
+        assertThat(amenityResult.topic).isEqualTo(topic)
+        assertThat(amenityResult.value).isEqualTo(14.0)
+        println("--------------")
+        println(amenityResult)
         println("--------------")
 
 

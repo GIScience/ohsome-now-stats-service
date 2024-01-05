@@ -79,6 +79,8 @@ class TopicService {
         return topicResults
     }
 
+
+    //TODO: simplify impl
     fun getTopicsForUserIdForAllHotTMProjects(userId: String, topics: List<String>): Map<String, UserTopicResult> {
         val topicResults = mutableMapOf<String, UserTopicResult>()
         for (topic in topics) {
@@ -90,6 +92,7 @@ class TopicService {
         }
         return topicResults
     }
+
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)
     private fun handler(countries: List<String>) = CountryHandler(countries)

@@ -106,7 +106,7 @@ class TopicRepoIntegrationTests {
     @Test
     fun `getTopicStatsForTimeSpan should return partial data for given end date and single country for topic without value restriction`() {
 
-        val hashtagHandler = HashtagHandler("osmliber*")
+        val hashtagHandler = HashtagHandler("hotosm-project-osmliber*")
         val endDate = Instant.ofEpochSecond(1496605067)
 
         val result =

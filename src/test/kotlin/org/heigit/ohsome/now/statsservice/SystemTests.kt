@@ -283,16 +283,18 @@ class SystemTests {
         @DisplayName("GET /topic/amenity?hashtag=osmliberia")
         fun `get topic amenity`() {
 
+            val hashtag = "hotosm-project-osmliberia"
+
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
                     .path("/topic/$topic3")
-                    .queryParam("hashtag", "osmliberia")
+                    .queryParam("hashtag", hashtag)
                     .build()
             }
 
             doGetAndAssertThat(url)
                 .jsonPath("$.result.$topic3.value").isEqualTo(23)
-                .jsonPath("$.result.$topic3.hashtag").isEqualTo("osmliberia")
+                .jsonPath("$.result.$topic3.hashtag").isEqualTo(hashtag)
                 .jsonPath("$.result.$topic3.topic").isEqualTo("$topic3")
 
                 .jsonPath("$.query.timespan.startDate").exists()
