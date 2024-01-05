@@ -192,6 +192,33 @@ class SystemTests {
 
             doGetAndAssertThat(url)
         }
+
+
+        @Test
+        @DisplayName("GET /hot-tm-user?userid=2186388")
+        fun `get userstats with good token`() {
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/hot-tm-user")
+                    .queryParam("userId", "2186388")
+                    .build()
+            }
+
+            val response = client()
+                .get()
+                .uri(url)
+                .header("Authorization", "Basic ${appProperties.token}")
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody()
+
+            response
+                .jsonPath("$.result.roads_created_km").isEqualTo(1.0)
+                .jsonPath("$.result.roads_modified_longer_km").isEqualTo(0.2)
+                .jsonPath("$.result.buildings_added").isEqualTo(1)
+        }
+
     }
 
     @Nested
@@ -434,57 +461,31 @@ class SystemTests {
 
 
 
-    @Test
-    @DisplayName("GET /hot-tm-user?userid=2186388")
-    fun `get userstats with good token`() {
-        val url = { uriBuilder: UriBuilder ->
-            uriBuilder
-                .path("/hot-tm-user")
-                .queryParam("userId", "2186388")
-                .build()
+        @Test
+        @DisplayName("GET /hot-tm-user/topics/place,healthcare?userid=4362353")
+        fun `get userstats topics with good token`() {
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/hot-tm-user/topics/${topics.joinToString(separator = ",")}")
+                    .queryParam("userId", "4362353")
+                    .build()
+            }
+
+                val response = client()
+                    .get()
+                    .uri(url)
+                    .header("Authorization", "Basic ${appProperties.token}")
+                    .exchange()
+                    .expectStatus()
+                    .isOk
+                    .expectBody()
+
+                response
+                    .jsonPath("$.result.$topic1.value").isEqualTo(-1)
+                    .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+                    .jsonPath("$.result.$topic2.value").isEqualTo(0)
+                    .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
         }
-
-        val response = client()
-            .get()
-            .uri(url)
-            .header("Authorization", "Basic ${appProperties.token}")
-            .exchange()
-            .expectStatus()
-            .isOk
-            .expectBody()
-
-        response
-            .jsonPath("$.result.roads_created_km").isEqualTo(1.0)
-            .jsonPath("$.result.roads_modified_longer_km").isEqualTo(0.2)
-            .jsonPath("$.result.buildings_added").isEqualTo(1)
-    }
-
-
-    @Test
-    @DisplayName("GET /hot-tm-user/topics/place,healthcare?userid=4362353")
-    fun `get userstats topics with good token`() {
-        val url = { uriBuilder: UriBuilder ->
-            uriBuilder
-                .path("/hot-tm-user/topics/${topics.joinToString(separator = ",")}")
-                .queryParam("userId", "4362353")
-                .build()
-        }
-
-            val response = client()
-                .get()
-                .uri(url)
-                .header("Authorization", "Basic ${appProperties.token}")
-                .exchange()
-                .expectStatus()
-                .isOk
-                .expectBody()
-
-            response
-                .jsonPath("$.result.$topic1.value").isEqualTo(-1)
-                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-                .jsonPath("$.result.$topic2.value").isEqualTo(0)
-                .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
-    }
 
     }
 
