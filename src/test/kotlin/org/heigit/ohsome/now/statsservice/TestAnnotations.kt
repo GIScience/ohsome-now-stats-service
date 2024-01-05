@@ -10,12 +10,12 @@ import kotlin.annotation.AnnotationRetention.RUNTIME
 @Retention(RUNTIME)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Testcontainers
-annotation class SpringTestWithClickhouse {}
+annotation class SpringTestWithClickhouse
 
 
 @Retention(RUNTIME)
 @Sql(*["/db_setup/stats/init_schema.sql", "/db_setup/stats/stats_400rows.sql"])
-annotation class WithStatsData {}
+annotation class WithStatsData
 
 
 @Retention(RUNTIME)
@@ -32,6 +32,6 @@ annotation class WithStatsData {}
         "/db_setup/topics/topic_waterway_40rows.sql"
     ]
 )
-annotation class WithTopicData {}
+annotation class WithTopicData
 
 
