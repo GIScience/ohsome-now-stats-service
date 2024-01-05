@@ -432,6 +432,8 @@ class SystemTests {
 
         }
 
+
+
     @Test
     @DisplayName("GET /hot-tm-user?userid=2186388")
     fun `get userstats with good token`() {
@@ -457,6 +459,7 @@ class SystemTests {
             .jsonPath("$.result.buildings_added").isEqualTo(1)
     }
 
+
     @Test
     @DisplayName("GET /hot-tm-user/topics/place,healthcare?userid=4362353")
     fun `get userstats topics with good token`() {
@@ -466,16 +469,6 @@ class SystemTests {
                 .queryParam("userId", "4362353")
                 .build()
         }
-
-        @Test
-        @DisplayName("GET /hot-tm-user/topics/place,healthcare?userid=4362353")
-        fun `get userstats topics with good token`() {
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/hot-tm-user/topics/${topics.joinToString(separator = ",")}")
-                    .queryParam("userId", "4362353")
-                    .build()
-            }
 
             val response = client()
                 .get()
@@ -491,10 +484,10 @@ class SystemTests {
                 .jsonPath("$.result.$topic1.topic").isEqualTo("place")
                 .jsonPath("$.result.$topic2.value").isEqualTo(0)
                 .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
-        }
+    }
 
     }
-}
+
 
 
     private fun doGetAndAssertThat(url: (UriBuilder) -> URI) = client()
@@ -519,6 +512,7 @@ class SystemTests {
             .expectStatus()
             .isBadRequest
     }
+
 }
 
 
