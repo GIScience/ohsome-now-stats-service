@@ -171,7 +171,7 @@ class StatsController {
     }
 
 
-    @Operation(summary = "Returns all hashtags contained in the database")
+    @Operation(summary = "Returns all hashtags with at least 10 contributions contained in the database")
     @GetMapping("/hashtags", produces = ["application/json"])
     fun hashtags(httpServletRequest: HttpServletRequest): OhsomeFormat<UniqueHashtagsResult> {
 
