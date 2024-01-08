@@ -27,6 +27,14 @@ fun createStatsTableProjections(stage: String, schemaVersion: String) = """
             user_id,
             hashtag
     );
+    
+    ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION hashtag_aggregation_projection_${schemaVersion}
+    (
+        SELECT 
+            hashtag,
+            count(*)
+        GROUP BY hashtag
+    );
     """.trimIndent().trimMargin()
 
 
