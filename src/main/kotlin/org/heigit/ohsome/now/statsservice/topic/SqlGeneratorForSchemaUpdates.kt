@@ -6,7 +6,7 @@ import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 
 @Suppress("LongMethod")
 fun createStatsTableProjections(stage: String, schemaVersion: String) = """
-
+    -- for metadata endpoint
     ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION timestamp_projection_${schemaVersion} (
         SELECT
             changeset_timestamp
@@ -14,7 +14,10 @@ fun createStatsTableProjections(stage: String, schemaVersion: String) = """
             changeset_timestamp
     );
     
+    ALTER TABLE ${stage}.stats_${schemaVersion} MATERIALIZE PROJECTION timestamp_projection_${schemaVersion};
     
+    
+    -- for hot-tm-user endpoint 
     ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION user_id_projection_${schemaVersion} (
         SELECT
             user_id,
@@ -28,6 +31,10 @@ fun createStatsTableProjections(stage: String, schemaVersion: String) = """
             hashtag
     );
     
+    ALTER TABLE ${stage}.stats_${schemaVersion} MATERIALIZE PROJECTION user_id_projection_${schemaVersion};
+    
+    
+    -- for hashtags endpoint
     ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION hashtag_aggregation_projection_${schemaVersion}
     (
         SELECT 
@@ -35,6 +42,8 @@ fun createStatsTableProjections(stage: String, schemaVersion: String) = """
             count(*)
         GROUP BY hashtag
     );
+    
+    ALTER TABLE ${stage}.stats_${schemaVersion} MATERIALIZE PROJECTION hashtag_aggregation_projection_${schemaVersion};
     """.trimIndent().trimMargin()
 
 
