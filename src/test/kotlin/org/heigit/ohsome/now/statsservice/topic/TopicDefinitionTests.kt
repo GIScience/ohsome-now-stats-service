@@ -54,4 +54,24 @@ class TopicDefinitionTests {
             definition.defineTopicResult()
         )
     }
+
+
+    @Test
+    fun `check not Value Matcher`() {
+        // ! only mocking, not the real topic definition
+        val definition = TopicDefinition(
+            "landuse",
+            listOf(KeyNotValueMatcher("landuse", listOf("trash"))),
+            AggregationStrategy.COUNT
+        )
+        assertEquals(
+            "['trash', ''] as landuse_tags,\n",
+            definition.buildValueLists()
+        )
+        assertEquals(
+            "landuse_before not in landuse_tags\n" +
+                    "as before,\n",
+            definition.beforeCurrentCondition(BeforeOrCurrent.BEFORE)
+        )
+    }
 }

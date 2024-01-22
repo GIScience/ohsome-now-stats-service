@@ -91,6 +91,19 @@ class KeyValueMatcher(override val key: String, private val allowedValues: List<
 
 }
 
+class KeyNotValueMatcher(override val key: String, private val allowedValues: List<String>) : TagMatcher {
+
+    override fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: BeforeOrCurrent) =
+        "${this.key}_${beforeOrCurrent.value} not in ${this.key}_tags\n"
+
+
+    override fun getSingleAllowedValuesList() = this.allowedValues
+        .filter(String::isNotBlank)
+        .map { "'$it'" }
+        .plus("''")
+        .let { "${it} as ${this.key}_tags" }
+
+}
 
 class KeyOnlyMatcher(override val key: String) : TagMatcher {
 

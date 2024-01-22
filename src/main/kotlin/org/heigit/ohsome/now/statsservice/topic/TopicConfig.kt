@@ -1,7 +1,6 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
-
 fun getAllTopicDefinitions() = validDefinitions()
 
 fun getTopicDefinitionByName(name: String) = validDefinitions()
@@ -24,6 +23,11 @@ private val topics = listOf(
         listOf(KeyOnlyMatcher("amenity"))
     ),
 
+
+    TopicDefinition(
+        "building",
+        listOf(KeyNotValueMatcher("building", listOf("no")))
+    ),
 
     TopicDefinition(
         "commercial",
