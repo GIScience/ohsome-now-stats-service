@@ -22,19 +22,18 @@ class StatsService {
     fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
         this.repo
             .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
+            .toMutableMap()
             .addStatsForTimeSpanBuildingsAndRoads(handler(hashtag), startDate, endDate, handler(countries))
             .toStatsResult()
 
-    fun Map<String, Any>.addStatsForTimeSpanBuildingsAndRoads(
+    @Suppress("LongMethod")
+    fun MutableMap<String, Any>.addStatsForTimeSpanBuildingsAndRoads(
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?,
         countryHandler: CountryHandler
     ): Map<String, Any> {
-        val statsResults = this.toMutableMap()
-
-
-        statsResults["buildings"] = topicRepo.getTopicStatsForTimeSpan(
+        this["buildings"] = topicRepo.getTopicStatsForTimeSpan(
             hashtagHandler,
             startDate,
             endDate,
@@ -42,8 +41,7 @@ class StatsService {
             TopicHandler("building")
         )["topic_result"].toString().toDouble().toLong()
 
-
-        statsResults["roads"] = topicRepo.getTopicStatsForTimeSpan(
+        this["roads"] = topicRepo.getTopicStatsForTimeSpan(
             hashtagHandler,
             startDate,
             endDate,
@@ -51,7 +49,7 @@ class StatsService {
             TopicHandler("highway")
         )["topic_result"].toString().toDouble()
 
-        return statsResults
+        return this
     }
 
     fun getStatsForTimeSpanAggregate(hashtags: List<String>, startDate: Instant?, endDate: Instant?) = hashtags
