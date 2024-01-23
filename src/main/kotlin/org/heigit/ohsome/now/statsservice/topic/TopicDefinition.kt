@@ -1,6 +1,6 @@
 package org.heigit.ohsome.now.statsservice.topic
 
-
+@Suppress("LongMethod")
 fun lengthOrAreaAggregation(type: String, divideBy: Int): String {
     return """        
     ifNull( 

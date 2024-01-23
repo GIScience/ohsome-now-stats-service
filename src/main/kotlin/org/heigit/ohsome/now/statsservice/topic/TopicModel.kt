@@ -13,7 +13,7 @@ fun Map<String, Any>.toTopicResult(topic: String) = TopicResult(
     (this["topic_result"].toString()).toDouble()
 )
 
-
+@Suppress("LongParameterList")
 open class TopicResult(
     open val topic: String,
     open val added: Double,
@@ -29,7 +29,7 @@ data class ModifiedSection(
     val unit_less: Double?,
 )
 
-
+@Suppress("LongParameterList")
 open class TopicIntervalResult(
     topic: String,
     added: Double,
@@ -58,7 +58,7 @@ fun topicIntervalResult(data: Map<String, Any>, topic: String) = TopicIntervalRe
     data["enddate"].toString(),
 )
 
-
+@Suppress("LongParameterList")
 open class TopicCountryResult(
     topic: String,
     added: Double,
@@ -85,7 +85,7 @@ fun topicCountryResult(data: Map<String, Any>, topic: String) = TopicCountryResu
     data["country"].toString()
 )
 
-
+@Suppress("LongParameterList")
 open class UserTopicResult(
     topic: String,
     added: Double,
