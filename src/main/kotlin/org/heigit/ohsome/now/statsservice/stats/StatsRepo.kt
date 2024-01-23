@@ -152,6 +152,7 @@ class StatsRepo {
             ifNull(sum(if(road_edit = -1, road_length_delta, 0)) /1000, 0) as roads_deleted,
             ifNull(sum(if(road_edit = 0 and road_length_delta < 0, road_length_delta, 0)) /1000, 0) as roads_modified_shorter,
             ifNull(sum(if(road_edit = 0 and road_length_delta > 0, road_length_delta, 0)) /1000, 0) as roads_modified_longer,
+            ifNull(sum(if (road_edit = 0, 1, 0)), 0) as roads_modified,
             count(map_feature_edit) as edits,
             count(distinct changeset_id) as changesets,
             user_id

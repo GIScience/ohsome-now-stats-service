@@ -1,6 +1,58 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 
+fun lengthOrAreaAggregation(type: String, divideBy: Int): String {
+    return """        
+    ifNull( 
+        sum( 
+            multiIf(                                      -- this is a 'case'
+                edit = 1, ${type},                        -- case, then,
+                edit = 0, ${type}_delta,                  -- case, then,
+                edit = -1, - ${type} + ${type}_delta,     -- case, then,
+                0                                         -- else
+            )                                            
+        )/ ${divideBy},                                   -- m to km
+        0
+    ) as topic_result,
+        
+    ifNull(
+        sum(
+            if(edit = 1, ${type}, 0)
+        ) / ${divideBy},
+        0
+    ) as topic_result_created,
+    
+    ifNull(
+        sum(
+            if(edit = -1, - ${type} + ${type}_delta, 0)
+        ) / ${divideBy},
+        0
+    ) as topic_result_deleted,
+    
+    ifNull(
+        sum(
+            if(edit = 0 and ${type}_delta < 0, ${type}_delta, 0)
+        ) / ${divideBy},
+        0
+    ) as topic_result_modified_less, 
+    
+    ifNull(
+        sum(
+            if(edit = 0 and ${type}_delta > 0, ${type}_delta, 0)
+        ) / ${divideBy},
+        0
+    ) as topic_result_modified_more,
+    
+    ifNull(
+        sum(
+            if(edit = 0, 1, 0)
+        ),
+        0
+    ) as topic_result_modified
+    """
+}
+
+
 enum class AggregationStrategy(val sql: String) {
     COUNT(
         """
@@ -12,26 +64,11 @@ enum class AggregationStrategy(val sql: String) {
 
     ),
     LENGTH(
-        "ifNull(" +
-                "sum(" +
-                "multiIf(" +                                // this is a 'case'
-                "edit = 1, length," +                       // case, then,
-                "edit = 0, length_delta," +                 // case, then,
-                "edit = -1, - length + length_delta," +     // case, then,
-                "0)" +                                      // else
-                ")/ 1000, 0) as topic_result"               // m to km
+        lengthOrAreaAggregation("length", 1000)
     ),
     AREA(
-        "ifNull(" +
-                "sum(" +
-                "multiIf(" +                                // this is a 'case'
-                "edit = 1, area," +                         // case, then,
-                "edit = 0, area_delta," +                   // case, then,
-                "edit = -1, - area + area_delta," +         // case, then,
-                "0)" +                                      // else
-                ")/ 1000000, 0) as topic_result"            // square m to square km
+        lengthOrAreaAggregation("area", 1000000)
     )
-
 }
 
 

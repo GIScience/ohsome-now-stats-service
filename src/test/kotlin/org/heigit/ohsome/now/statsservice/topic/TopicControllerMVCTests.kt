@@ -31,7 +31,10 @@ class TopicControllerMVCTests {
 
     private val exampleTopicData: Map<String, Any> = mapOf(
         "hashtag" to hashtag,
-        "topic_result" to UnsignedLong.valueOf(20L)
+        "topic_result" to UnsignedLong.valueOf(20L),
+        "topic_result_modified" to UnsignedLong.valueOf(0L),
+        "topic_result_created" to UnsignedLong.valueOf(20L),
+        "topic_result_deleted" to UnsignedLong.valueOf(0L)
     )
 
     private val exampleTopic: Map<String, TopicResult> = mapOf(topic1 to exampleTopicData.toTopicResult(topic1))
@@ -39,6 +42,9 @@ class TopicControllerMVCTests {
 
     private val exampleTopicIntervalStatsData = mapOf(
         "topic_result" to UnsignedLong.valueOf(1001L),
+        "topic_result_modified" to UnsignedLong.valueOf(0L),
+        "topic_result_created" to UnsignedLong.valueOf(1001L),
+        "topic_result_deleted" to UnsignedLong.valueOf(0L),
         "startDate" to "20.05.2053",
         "endDate" to "20.05.2067",
     )
@@ -221,8 +227,8 @@ class TopicControllerMVCTests {
     @Test
     fun `topic stats per country can be served with explicit start and end date`() {
 
-        val result1 = TopicCountryResult(444.0, "place", "BOL")
-        val result2 = TopicCountryResult(333.0, "place", "BRA")
+        val result1 = TopicCountryResult("place", 444.0, ModifiedSection(0L, null, null), 0.0, 444.0, "BOL")
+        val result2 = TopicCountryResult("place", 333.0, ModifiedSection(0L, null, null), 0.0, 333.0, "BRA")
         val result = mapOf(topic1 to listOf(result1, result2))
 
         `when`(this.topicService.getTopicStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant(), anyList()))

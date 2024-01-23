@@ -294,7 +294,6 @@ class SystemTests {
 
             doGetAndAssertThat(url)
                 .jsonPath("$.result.$topic3.value").isEqualTo(23)
-                .jsonPath("$.result.$topic3.hashtag").isEqualTo(hashtag)
                 .jsonPath("$.result.$topic3.topic").isEqualTo("$topic3")
 
                 .jsonPath("$.query.timespan.startDate").exists()
@@ -316,7 +315,6 @@ class SystemTests {
             doGetAndAssertThat(url)
                 .jsonPath("$.result.$topic1.value").isEqualTo(5)
                 //TODO: check if this is a bug: should be 'hotmicrogrant*' instead of 'hotmicrogrant'
-                .jsonPath("$.result.$topic1.hashtag").isEqualTo("hotmicrogrant")
                 .jsonPath("$.result.$topic1.topic").isEqualTo("place")
                 .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
                 .jsonPath("$.result.$topic2.value").isEqualTo(2)
@@ -386,9 +384,16 @@ class SystemTests {
                 .jsonPath("$.result.$topic2[0].endDate").isEqualTo("2015-02-01T00:00")
 
                 .jsonPath("$.result.$topic1[35].value").isEqualTo(2)
+                .jsonPath("$.result.$topic1[35].modified.unit_more").doesNotExist()
                 .jsonPath("$.result.$topic1[35].topic").isEqualTo("place")
                 .jsonPath("$.result.$topic1[35].startDate").isEqualTo("2017-12-01T00:00")
                 .jsonPath("$.result.$topic1[35].endDate").isEqualTo("2018-01-01T00:00")
+
+                .jsonPath("$.result.$topic4[35].value").isEqualTo(0)
+                .jsonPath("$.result.$topic4[35].modified.unit_more").isEqualTo(0.0)
+                .jsonPath("$.result.$topic4[35].topic").isEqualTo("waterway")
+                .jsonPath("$.result.$topic4[35].startDate").isEqualTo("2017-12-01T00:00")
+                .jsonPath("$.result.$topic4[35].endDate").isEqualTo("2018-01-01T00:00")
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
@@ -405,7 +410,7 @@ class SystemTests {
                     .path("/topic/${topics.joinToString(separator = ",")}/interval")
                     .queryParam("hashtag", "hotmicrogrant*")
                     .queryParam("enddate", "2018-01-01T00:00:00Z")
-                    .queryParam("interval", "P1M")
+                    .queryParam("interval", "P1Y")
                     .build()
             }
 
@@ -413,17 +418,17 @@ class SystemTests {
                 .jsonPath("$.result.$topic1[0].value").isEqualTo(0)
                 .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
                 .jsonPath("$.result.$topic1[0].startDate").isEqualTo("1970-01-01T00:00")
-                .jsonPath("$.result.$topic1[0].endDate").isEqualTo("1970-02-01T00:00")
+                .jsonPath("$.result.$topic1[0].endDate").isEqualTo("1971-01-01T00:00")
 
-                .jsonPath("$.result.$topic1[540].value").isEqualTo(3)
-                .jsonPath("$.result.$topic1[540].topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1[540].startDate").isEqualTo("2015-01-01T00:00")
-                .jsonPath("$.result.$topic1[540].endDate").isEqualTo("2015-02-01T00:00")
+                .jsonPath("$.result.$topic1[45].value").isEqualTo(3)
+                .jsonPath("$.result.$topic1[45].topic").isEqualTo("place")
+                .jsonPath("$.result.$topic1[45].startDate").isEqualTo("2015-01-01T00:00")
+                .jsonPath("$.result.$topic1[45].endDate").isEqualTo("2016-01-01T00:00")
 
-                .jsonPath("$.result.$topic1[575].value").isEqualTo(2)
-                .jsonPath("$.result.$topic1[575].topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1[575].startDate").isEqualTo("2017-12-01T00:00")
-                .jsonPath("$.result.$topic1[575].endDate").isEqualTo("2018-01-01T00:00")
+                .jsonPath("$.result.$topic1[47].value").isEqualTo(2)
+                .jsonPath("$.result.$topic1[47].topic").isEqualTo("place")
+                .jsonPath("$.result.$topic1[47].startDate").isEqualTo("2017-01-01T00:00")
+                .jsonPath("$.result.$topic1[47].endDate").isEqualTo("2018-01-01T00:00")
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()

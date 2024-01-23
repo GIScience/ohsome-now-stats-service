@@ -273,7 +273,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForUserIdForAllHotTMProjects("2186388")
         println(result)
         assertTrue(result is MutableMap<String, *>)
-        assertEquals(12, result.size)
+        assertEquals(13, result.size)
     }
 
 
