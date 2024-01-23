@@ -71,8 +71,8 @@ class SystemTests {
             doGetAndAssertThat(url)
                 .jsonPath("$.result.changesets").isEqualTo(1)
                 .jsonPath("$.result.users").isEqualTo(1)
-                .jsonPath("$.result.roads").isEqualTo(-0.009)
-                .jsonPath("$.result.buildings").isEqualTo(0)
+                .jsonPath("$.result.roads").isEqualTo(1.059)
+                .jsonPath("$.result.buildings").isEqualTo(1)
                 .jsonPath("$.result.edits").isEqualTo(0)
                 .jsonPath("$.result.latest").isEqualTo("2017-12-19T00:52:03")
 
@@ -462,7 +462,6 @@ class SystemTests {
         }
 
 
-
         @Test
         @DisplayName("GET /hot-tm-user/topics/place,healthcare?userid=4362353")
         fun `get userstats topics with good token`() {
@@ -473,24 +472,23 @@ class SystemTests {
                     .build()
             }
 
-                val response = client()
-                    .get()
-                    .uri(url)
-                    .header("Authorization", "Basic ${appProperties.token}")
-                    .exchange()
-                    .expectStatus()
-                    .isOk
-                    .expectBody()
+            val response = client()
+                .get()
+                .uri(url)
+                .header("Authorization", "Basic ${appProperties.token}")
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody()
 
-                response
-                    .jsonPath("$.result.$topic1.value").isEqualTo(-1)
-                    .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-                    .jsonPath("$.result.$topic2.value").isEqualTo(0)
-                    .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
+            response
+                .jsonPath("$.result.$topic1.value").isEqualTo(-1)
+                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+                .jsonPath("$.result.$topic2.value").isEqualTo(0)
+                .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
         }
 
     }
-
 
 
     private fun doGetAndAssertThat(url: (UriBuilder) -> URI) = client()

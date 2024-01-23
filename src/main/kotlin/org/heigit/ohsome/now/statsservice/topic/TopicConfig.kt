@@ -29,6 +29,7 @@ private val topics = listOf(
         listOf(KeyNotValueMatcher("building", listOf("no")))
     ),
 
+
     TopicDefinition(
         "commercial",
         listOf(KeyOnlyMatcher("shop"))
@@ -140,6 +141,15 @@ private val topics = listOf(
             KeyOnlyMatcher("leisure"),
             KeyOnlyMatcher("aeroway")
         )
+    ),
+
+
+    TopicDefinition(
+        "highway",
+        listOf(
+            KeyOnlyMatcher("highway")
+        ),
+        AggregationStrategy.LENGTH
     ),
 
 

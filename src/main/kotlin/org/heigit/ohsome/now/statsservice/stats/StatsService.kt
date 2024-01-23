@@ -1,5 +1,7 @@
 package org.heigit.ohsome.now.statsservice.stats
 
+import org.heigit.ohsome.now.statsservice.topic.TopicHandler
+import org.heigit.ohsome.now.statsservice.topic.TopicRepo
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,12 +15,44 @@ class StatsService {
     @Autowired
     lateinit var repo: StatsRepo
 
+    @Autowired
+    lateinit var topicRepo: TopicRepo
+
 
     fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
         this.repo
             .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
+            .addStatsForTimeSpanBuildingsAndRoads(handler(hashtag), startDate, endDate, handler(countries))
             .toStatsResult()
 
+    fun Map<String, Any>.addStatsForTimeSpanBuildingsAndRoads(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant?,
+        endDate: Instant?,
+        countryHandler: CountryHandler
+    ): Map<String, Any> {
+        val statsResults = this.toMutableMap()
+
+
+        statsResults["buildings"] = topicRepo.getTopicStatsForTimeSpan(
+            hashtagHandler,
+            startDate,
+            endDate,
+            countryHandler,
+            TopicHandler("building")
+        )["topic_result"].toString().toDouble().toLong()
+
+
+        statsResults["roads"] = topicRepo.getTopicStatsForTimeSpan(
+            hashtagHandler,
+            startDate,
+            endDate,
+            countryHandler,
+            TopicHandler("highway")
+        )["topic_result"].toString().toDouble()
+
+        return statsResults
+    }
 
     fun getStatsForTimeSpanAggregate(hashtags: List<String>, startDate: Instant?, endDate: Instant?) = hashtags
         .map { getStatsForTimeSpanAggregate(it, startDate, endDate) }
