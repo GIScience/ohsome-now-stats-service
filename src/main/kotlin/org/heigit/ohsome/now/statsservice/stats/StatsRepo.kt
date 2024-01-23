@@ -136,6 +136,7 @@ class StatsRepo {
             and changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY
             country
+        ORDER BY country
         """.trimIndent()
 
 
