@@ -143,7 +143,7 @@ class SystemTests {
                 // some results in 2021
                 .jsonPath("$.result[51].changesets").isEqualTo(1)
                 .jsonPath("$.result[51].users").isEqualTo(1)
-                .jsonPath("$.result[51].roads").isEqualTo(-0.001)
+                .jsonPath("$.result[51].roads").isEqualTo(0)
                 .jsonPath("$.result[51].buildings").isEqualTo(0)
                 .jsonPath("$.result[51].edits").isEqualTo(7)
 

@@ -181,7 +181,7 @@ class StatsRepoIntegrationTests {
         )
         println(result)
         assertEquals(84, result.size)
-        assertEquals(7, result[0].size)
+        assertEquals(5, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
         assertEquals("1", result[83]["users"].toString())
         assertEquals("7", result[83]["edits"].toString())
@@ -202,7 +202,7 @@ class StatsRepoIntegrationTests {
         )
         println(result)
         assertEquals(84, result.size)
-        assertEquals(7, result[0].size)
+        assertEquals(5, result[0].size)
         assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
         assertEquals("1", result[35]["users"].toString())
         assertEquals("1", result[35]["changesets"].toString())
@@ -224,11 +224,11 @@ class StatsRepoIntegrationTests {
 
         println(result)
         assertEquals(53, result.size)
-        assertEquals(7, result[0].size)
+        assertEquals(5, result[0].size)
 
         result.forEach() {
-            assertNotNull(it["buildings"])
-            assertNotNull(it["roads"])
+            assertNull(it["buildings"])
+            assertNull(it["roads"])
         }
 
         assertEquals("2017-08-01T00:00", result[0]["startdate"].toString())
@@ -249,7 +249,7 @@ class StatsRepoIntegrationTests {
         )
         println(result)
         assertEquals(624, result.size)
-        assertEquals(7, result[0].size)
+        assertEquals(5, result[0].size)
         assertEquals("1970-01-01T00:00", result[0]["startdate"].toString())
     }
 

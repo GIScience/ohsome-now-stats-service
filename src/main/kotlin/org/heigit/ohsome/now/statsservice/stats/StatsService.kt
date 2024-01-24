@@ -79,8 +79,46 @@ class StatsService {
         countries: List<String>
     ) = this.repo
         .getStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries))
+        .addStatsForTimeSpanIntervalBuildingsAndRoads(
+            hashtag,
+            startDate,
+            endDate,
+            interval,
+            countries
+        )
         .toIntervalStatsResult()
 
+    fun List<Map<String, Any>>.addStatsForTimeSpanIntervalBuildingsAndRoads(
+        hashtag: String,
+        startDate: Instant?,
+        endDate: Instant?,
+        interval: String,
+        countries: List<String>
+    ): List<Map<String, Any>> {
+        var zipped: List<Map<String, Any>>
+        val buildings = topicRepo.getTopicStatsForTimeSpanInterval(
+            handler(hashtag),
+            startDate,
+            endDate,
+            interval,
+            handler(countries),
+            TopicHandler("building")
+        )
+        zipped = this.zip(buildings) { a, b -> a.plus("buildings" to b["topic_result"].toString().toDouble().toLong()) }
+
+        val roads = topicRepo.getTopicStatsForTimeSpanInterval(
+            handler(hashtag),
+            startDate,
+            endDate,
+            interval,
+            handler(countries),
+            TopicHandler("highway")
+        )
+        zipped = zipped.zip(roads) { a, b -> a.plus("roads" to b["topic_result"].toString().toDouble()) }
+
+        return zipped
+
+    }
 
     fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
         .getStatsForTimeSpanCountry(handler(hashtag), startDate, endDate)
