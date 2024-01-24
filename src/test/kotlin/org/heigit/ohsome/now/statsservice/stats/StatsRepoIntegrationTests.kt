@@ -46,8 +46,6 @@ class StatsRepoIntegrationTests {
     val expected = mapOf(
         "changesets" to 1,
         "users" to 1,
-        "roads" to -0.009,
-        "buildings" to 0,
         "edits" to 0,
         "latest" to "2017-12-19T00:52:03",
         "hashtag" to "&uganda"
@@ -60,7 +58,7 @@ class StatsRepoIntegrationTests {
     fun `getStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
         val hashtagHandler = HashtagHandler("&uganda")
         val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler)
-        assertEquals(7, result.size)
+        assertEquals(5, result.size)
         println(result)
         assertEquals(expected.toString(), result.toString())
     }
@@ -70,10 +68,10 @@ class StatsRepoIntegrationTests {
     fun `getStatsForTimeSpan should return all data when using no time span and list of 2 countries`() {
         val hashtagHandler = HashtagHandler("*")
         val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, CountryHandler(listOf("HUN", "BEL")))
-        assertEquals(7, result.size)
+        assertEquals(5, result.size)
         println(result)
         assertEquals(
-            "{changesets=4, users=2, roads=0.72, buildings=0, edits=9, latest=2021-12-09T13:01:28, hashtag=}",
+            "{changesets=4, users=2, edits=9, latest=2021-12-09T13:01:28, hashtag=}",
             result.toString()
         )
     }
@@ -88,7 +86,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate, emptyListCountryHandler)
         println(result)
 
-        assertEquals(7, result.size)
+        assertEquals(5, result.size)
         assertEquals("1", result["changesets"].toString())
         assertEquals("2016-03-05T14:00:20", result["latest"].toString())
     }
@@ -101,7 +99,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpan(hashtagHandler, startDate, null, emptyListCountryHandler)
         println(result)
 
-        assertEquals(7, result.size)
+        assertEquals(5, result.size)
         assertEquals("1", result["changesets"].toString())
         assertEquals("2021-12-09T13:01:28", result["latest"].toString())
     }
@@ -114,7 +112,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, endDate, emptyListCountryHandler)
         println(result)
 
-        assertEquals(7, result.size)
+        assertEquals(5, result.size)
         assertEquals("1", result["changesets"].toString())
         assertEquals("2021-12-09T13:01:28", result["latest"].toString())
     }
