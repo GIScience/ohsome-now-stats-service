@@ -170,7 +170,7 @@ class SystemTests {
             doGetAndAssertThat(url)
                 .jsonPath("$.result[0].changesets").isEqualTo(3)
                 .jsonPath("$.result[0].users").isEqualTo(2)
-                .jsonPath("$.result[0].roads").isEqualTo(-0.175)
+                .jsonPath("$.result[0].roads").isEqualTo(0.0)
                 .jsonPath("$.result[0].buildings").isEqualTo(0)
                 .jsonPath("$.result[0].edits").isEqualTo(1)
                 .jsonPath("$.result[0].latest").isEqualTo("2021-12-09T13:01:28")

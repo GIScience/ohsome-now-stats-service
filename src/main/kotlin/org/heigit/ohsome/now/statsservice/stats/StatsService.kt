@@ -88,6 +88,7 @@ class StatsService {
         )
         .toIntervalStatsResult()
 
+    @Suppress("LongMethod", "LongParameterList")
     fun List<Map<String, Any>>.addStatsForTimeSpanIntervalBuildingsAndRoads(
         hashtag: String,
         startDate: Instant?,
@@ -122,8 +123,52 @@ class StatsService {
 
     fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
         .getStatsForTimeSpanCountry(handler(hashtag), startDate, endDate)
+        .addStatsForTimeSpanCountriesBuildingsAndRoads(
+            hashtag,
+            startDate,
+            endDate,
+        )
         .toCountryStatsResult()
 
+    @Suppress("LongMethod")
+    fun List<Map<String, Any>>.addStatsForTimeSpanCountriesBuildingsAndRoads(
+        hashtag: String,
+        startDate: Instant?,
+        endDate: Instant?,
+    ): List<Map<String, Any>> {
+        var zipped: List<Map<String, Any>>
+        val buildings = topicRepo.getTopicStatsForTimeSpanCountry(
+            handler(hashtag),
+            startDate,
+            endDate,
+            TopicHandler("building")
+        )
+        zipped = this.map {
+            it.plus("buildings" to buildings
+                .find { iter -> iter["country"] == it["country"] }
+                ?.get("topic_result").toString().nullToZero().toDouble().toLong())
+
+        }
+
+        val roads = topicRepo.getTopicStatsForTimeSpanCountry(
+            handler(hashtag),
+            startDate,
+            endDate,
+            TopicHandler("highway")
+        )
+        zipped = zipped.map {
+            it.plus(
+                "roads" to roads
+                    .find { iter -> iter["country"] == it["country"] }
+                    ?.get("topic_result").toString().nullToZero().toDouble()
+            )
+        }
+        return zipped
+    }
+
+    fun String.nullToZero(): String {
+        return if (this != "null") this else "0"
+    }
 
     fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) = this.repo
         .getMostUsedHashtags(startDate, endDate, limit)

@@ -262,7 +262,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
         println(result)
         assertTrue(result is List)
-        assertEquals(7, result[0].size)
+        assertEquals(5, result[0].size)
     }
 
 
