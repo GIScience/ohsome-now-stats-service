@@ -187,8 +187,35 @@ class StatsService {
 
     fun getStatsForUserIdForAllHotTMProjects(userId: String) = this.repo
         .getStatsForUserIdForAllHotTMProjects(userId)
+        .addStatsForUserIdForAllHotTMProjectsBuildingsAndRoads(userId)
         .toUserResult()
 
+    fun MutableMap<String, Any>.addStatsForUserIdForAllHotTMProjectsBuildingsAndRoads(userId: String): Map<String, Any> {
+        this += topicRepo
+            .getTopicForUserIdForAllHotTMProjects(userId, TopicHandler("building"))
+            .topicResultToNamedResult("buildings")
+        this += topicRepo
+            .getTopicForUserIdForAllHotTMProjects(userId, TopicHandler("highway"))
+            .topicResultToNamedResult("roads")
+        println(this)
+        return this
+    }
+
+    fun Map<String, Any>.topicResultToNamedResult(name: String): Map<String, Any> {
+        val renamed = mutableMapOf(
+            "$name" to this["topic_result"]!!,
+            "${name}_created" to this["topic_result_created"]!!,
+            "${name}_deleted" to this["topic_result_deleted"]!!,
+            "${name}_modified" to this["topic_result_modified"]!!
+        )
+        if (name == "roads") {
+            renamed += mapOf(
+                "${name}_modified_longer" to this["topic_result_modified_more"]!!,
+                "${name}_modified_shorter" to this["topic_result_modified_less"]!!
+            )
+        }
+        return renamed
+    }
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)
     private fun handler(countries: List<String>) = CountryHandler(countries)

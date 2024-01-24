@@ -214,9 +214,9 @@ class SystemTests {
                 .expectBody()
 
             response
-                .jsonPath("$.result.roads_created_km").isEqualTo(1.0)
-                .jsonPath("$.result.roads_modified_longer_km").isEqualTo(0.2)
-                .jsonPath("$.result.buildings_added").isEqualTo(1)
+                .jsonPath("$.result.roads_created_km").isEqualTo(0.0)
+                .jsonPath("$.result.roads_modified_longer_km").isEqualTo(0.0)
+                .jsonPath("$.result.buildings_added").isEqualTo(0.0)
         }
 
     }

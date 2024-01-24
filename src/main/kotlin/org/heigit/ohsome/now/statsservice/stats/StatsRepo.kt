@@ -31,15 +31,6 @@ class StatsRepo {
 
     fun defaultResultForMissingUser(userId: String): MutableMap<String, Any> = mutableMapOf(
         "user_id" to userId.toInt(),
-        "buildings" to 0L,
-        "buildings_created" to 0L,
-        "buildings_modified" to 0L,
-        "buildings_deleted" to 0L,
-        "roads" to 0.toDouble(),
-        "roads_created" to 0.toDouble(),
-        "roads_modified_longer" to 0.toDouble(),
-        "roads_modified_shorter" to 0.toDouble(),
-        "roads_deleted" to 0.toDouble(),
         "edits" to UnsignedLong.valueOf(0),
         "changesets" to UnsignedLong.valueOf(0)
     )
@@ -135,16 +126,6 @@ class StatsRepo {
     //language=sql
     private val statsForUserIdForHotOSMProjectSQL = """
         select
-            ifNull(sum(building_edit), 0) as buildings,
-            ifNull(sum(if(building_edit = 1, 1, 0)), 0) as buildings_created,
-            ifNull(sum(if(building_edit = -1, 1, 0)), 0) as buildings_deleted,
-            ifNull(sum(if(building_edit = 0, 1, 0)), 0) as buildings_modified,
-            ifNull(sum(road_length_delta) /1000, 0) as roads,
-            ifNull(sum(if(road_edit = 1, road_length_delta, 0)) /1000, 0) as roads_created,
-            ifNull(sum(if(road_edit = -1, road_length_delta, 0)) /1000, 0) as roads_deleted,
-            ifNull(sum(if(road_edit = 0 and road_length_delta < 0, road_length_delta, 0)) /1000, 0) as roads_modified_shorter,
-            ifNull(sum(if(road_edit = 0 and road_length_delta > 0, road_length_delta, 0)) /1000, 0) as roads_modified_longer,
-            ifNull(sum(if (road_edit = 0, 1, 0)), 0) as roads_modified,
             count(map_feature_edit) as edits,
             count(distinct changeset_id) as changesets,
             user_id

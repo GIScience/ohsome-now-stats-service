@@ -260,7 +260,7 @@ class TopicRepoIntegrationTests {
         println(result)
         assertTrue(result is MutableMap<String, *>)
         assertEquals(2381, result["user_id"])
-        assertEquals(0L, result["topic_result"])
+        assertEquals(0.0, result["topic_result"])
     }
 
 

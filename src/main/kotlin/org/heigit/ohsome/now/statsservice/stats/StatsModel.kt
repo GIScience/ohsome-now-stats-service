@@ -110,11 +110,11 @@ data class MetadataResult(
 
 
 fun Map<String, Any>.toUserResult() = UserResult(
-    this["buildings"] as Long,
-    this["buildings_created"].toString().toLong(),
+    this["buildings"].toString().toDouble().toLong(),
+    this["buildings_created"].toString().toDouble().toLong(),
     this["buildings_modified"].toString().toLong(),
-    this["buildings_deleted"].toString().toLong(),
-    this["roads"] as Double,
+    this["buildings_deleted"].toString().toDouble().toLong(),
+    this["roads"].toString().toDouble(),
     this["roads_created"].toString().toDouble(),
     this["roads_modified_longer"].toString().toDouble(),
     this["roads_modified_shorter"].toString().toDouble(),

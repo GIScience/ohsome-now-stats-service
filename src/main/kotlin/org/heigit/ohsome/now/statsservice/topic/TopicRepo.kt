@@ -142,12 +142,12 @@ class TopicRepo {
 
 
     fun defaultTopicResultForMissingUser(userId: String, topicAggregationType: String): Map<String, Any> = mapOf(
-        "topic_result" to 0L,
-        "topic_result_created" to 0L,
+        "topic_result" to 0.0,
+        "topic_result_created" to 0.0,
         "topic_result_modified" to 0L,
-        "topic_result_deleted" to 0L,
-        "topic_result_modified_more" to 0L,
-        "topic_result_modified_less" to 0L,
+        "topic_result_deleted" to 0.0,
+        "topic_result_modified_more" to 0.0,
+        "topic_result_modified_less" to 0.0,
         "user_id" to userId.toInt(),
     )
 
