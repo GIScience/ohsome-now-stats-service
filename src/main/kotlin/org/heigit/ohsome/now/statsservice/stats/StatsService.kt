@@ -59,6 +59,14 @@ class StatsService {
 
     private fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
         .getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
+        .map {
+            it.toMutableMap()
+                .addStatsForTimeSpanBuildingsAndRoads(
+                    handler(it["hashtag"].toString()), startDate, endDate, CountryHandler(
+                        emptyList()
+                    )
+                )
+        }
         .toMultipleStatsResult()
 
 

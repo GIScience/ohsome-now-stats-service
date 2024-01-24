@@ -99,15 +99,15 @@ class SystemTests {
             doGetAndAssertThat(url)
                 .jsonPath("$.result.$hashtag1.changesets").isEqualTo(1)
                 .jsonPath("$.result.$hashtag1.users").isEqualTo(1)
-                .jsonPath("$.result.$hashtag1.roads").isEqualTo(-0.001)
+                .jsonPath("$.result.$hashtag1.roads").isEqualTo(0)
                 .jsonPath("$.result.$hashtag1.buildings").isEqualTo(0)
                 .jsonPath("$.result.$hashtag1.edits").isEqualTo(7)
                 .jsonPath("$.result.$hashtag1.latest").isEqualTo("2021-12-09T13:01:28")
 
                 .jsonPath("$.result.$hashtag2.changesets").isEqualTo(1)
                 .jsonPath("$.result.$hashtag2.users").isEqualTo(1)
-                .jsonPath("$.result.$hashtag2.roads").isEqualTo(-0.009)
-                .jsonPath("$.result.$hashtag2.buildings").isEqualTo(0)
+                .jsonPath("$.result.$hashtag2.roads").isEqualTo(-0.36)
+                .jsonPath("$.result.$hashtag2.buildings").isEqualTo(1)
                 .jsonPath("$.result.$hashtag2.edits").isEqualTo(0)
                 .jsonPath("$.result.$hashtag2.latest").isEqualTo("2017-12-19T00:52:03")
 
