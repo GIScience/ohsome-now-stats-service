@@ -490,6 +490,8 @@ class SystemTests {
                 .jsonPath("$.result.$topic1.value").isEqualTo(-1)
                 .jsonPath("$.result.$topic1.topic").isEqualTo("place")
                 .jsonPath("$.result.$topic2.value").isEqualTo(0)
+                .jsonPath("$.result.$topic2.value").isEqualTo(0)
+                .jsonPath("$.result.$topic2.modified.count_modified").isEqualTo(0)
                 .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
         }
 
