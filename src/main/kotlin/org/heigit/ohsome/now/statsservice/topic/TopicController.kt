@@ -3,17 +3,21 @@ package org.heigit.ohsome.now.statsservice.topic
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.validation.*
+import jakarta.validation.ConstraintViolationException
 import org.heigit.ohsome.now.statsservice.*
 import org.heigit.ohsome.now.statsservice.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
+import kotlin.reflect.KClass
 
 
 @CrossOrigin
 @RestController
+@Validated
 class TopicController {
 
     @Autowired
@@ -44,11 +48,10 @@ class TopicController {
 
         @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
+        @ValidTopics
         topics: List<String>
 
     ): OhsomeFormat<Map<String, TopicResult>> {
-
-        validateTopics(topics)
 
         val result = measure {
             topicService.getTopicStatsForTimeSpan(hashtag, startDate, endDate, countries!!, topics)
@@ -86,10 +89,10 @@ class TopicController {
 
         @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
+        @ValidTopics
         topics: List<String>
     ): OhsomeFormat<Map<String, List<TopicIntervalResult>>> {
 
-        validateTopics(topics)
         validateIntervalString(interval)
 
         val result = measure {
@@ -120,10 +123,9 @@ class TopicController {
 
         @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
+        @ValidTopics
         topics: List<String>
     ): OhsomeFormat<Map<String, List<TopicCountryResult>>> {
-
-        validateTopics(topics)
 
         val result = measure {
             topicService.getTopicStatsForTimeSpanCountry(hashtag, startDate, endDate, topics)
@@ -132,12 +134,29 @@ class TopicController {
         return buildOhsomeFormat(result, httpServletRequest)
     }
 
+    @Target(AnnotationTarget.VALUE_PARAMETER)
+    @Retention(AnnotationRetention.RUNTIME)
+    @Constraint(validatedBy = [ValidTopicsCheck::class])
+    annotation class ValidTopics(
+            val message: String = "Topic not valid",
+            val groups: Array<KClass<*>> = [],
+            val payload: Array<KClass<out Payload>> = []
+    )
 
-    //TODO: consider replacing with jakarta bean validation annotations instead of throwing exception
-    private fun validateTopics(topics: List<String>) {
-        if (!areTopicsValid(topics))
-            throw ResponseStatusException(BAD_REQUEST)
+    class ValidTopicsCheck : ConstraintValidator<ValidTopics?, List<String>> {
+        override fun isValid(topics: List<String>, context: ConstraintValidatorContext?): Boolean {
+            return areTopicsValid(topics)
+        }
     }
 
 
+    @ControllerAdvice
+    class YourControllerAdvice {
+        @ResponseBody
+        @ResponseStatus(BAD_REQUEST)
+        @ExceptionHandler(ConstraintViolationException::class)
+        fun handleConstraintViolationException() {
+            // Intentionally left blank
+        }
+    }
 }
