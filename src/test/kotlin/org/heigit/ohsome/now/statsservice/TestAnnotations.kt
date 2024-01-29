@@ -34,11 +34,15 @@ annotation class WithStatsData
         "/db_setup/topics/init_schema_healthcare_view.sql",
         "/db_setup/topics/init_schema_amenity_view.sql",
         "/db_setup/topics/init_schema_waterway_view.sql",
+        "/db_setup/topics/init_schema_building_view.sql",
+        "/db_setup/topics/init_schema_highway_view.sql",
 
         "/db_setup/topics/topic_place_40rows.sql",
         "/db_setup/topics/topic_healthcare_40rows.sql",
         "/db_setup/topics/topic_amenity_40rows.sql",
-        "/db_setup/topics/topic_waterway_40rows.sql"
+        "/db_setup/topics/topic_waterway_40rows.sql",
+        "/db_setup/topics/topic_building_20rows.sql",
+        "/db_setup/topics/topic_highway_40rows.sql"
     ]
 )
 annotation class WithTopicData

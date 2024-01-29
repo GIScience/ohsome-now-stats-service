@@ -247,7 +247,11 @@ class TopicRepoIntegrationTests {
 
     @Test
     fun `getStatsForUserIdForAllHotTMProjects returns stats for only one userid`() {
-        val result = this.repo.getTopicForUserIdForAllHotTMProjects("4362353", TopicHandler(topic))
+        val result = this.repo.getTopicForUserIdForAllHotTMProjects(
+            "4362353",
+            TopicHandler(topic),
+            HashtagHandler("hotosm-project-*")
+        )
         println(result)
         assertTrue(result is MutableMap<String, *>)
         assertEquals(-1L, result["topic_result"])
@@ -256,11 +260,28 @@ class TopicRepoIntegrationTests {
 
     @Test
     fun `getStatsForUserIdForAllHotTMProjects returns zeros for unavailable user id`() {
-        val result = this.repo.getTopicForUserIdForAllHotTMProjects("2381", TopicHandler(topic))
+        val result = this.repo.getTopicForUserIdForAllHotTMProjects(
+            "2381",
+            TopicHandler(topic),
+            HashtagHandler("hotosm-project-*")
+        )
         println(result)
         assertTrue(result is MutableMap<String, *>)
         assertEquals(2381, result["user_id"])
         assertEquals(0.0, result["topic_result"])
+    }
+
+    @Test
+    fun `getStatsForUserIdForAllHotTMProjects returns values for different hashtag`() {
+        val result = this.repo.getTopicForUserIdForAllHotTMProjects(
+            "6791950",
+            TopicHandler("building"),
+            HashtagHandler("&uganda")
+        )
+        println(result)
+        assertTrue(result is MutableMap<String, *>)
+        assertEquals(6791950, result["user_id"])
+        assertEquals(1L, result["topic_result"])
     }
 
 

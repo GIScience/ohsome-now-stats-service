@@ -127,7 +127,7 @@ class StatsRepo {
     private val statsForUserIdForHotOSMProjectSQL = """
         select
             count(map_feature_edit) as edits,
-            count(distinct changeset_id) as changesets,
+            count(distinct changeset_id) as changesets, 
             user_id
             FROM "stats_$schemaVersion"
             WHERE

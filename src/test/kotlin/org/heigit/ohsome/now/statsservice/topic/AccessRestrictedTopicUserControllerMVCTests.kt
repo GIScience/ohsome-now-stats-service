@@ -53,11 +53,18 @@ class AccessRestrictedTopicUserControllerMVCTests {
     @Test
     fun `statsHotTMUserStats returns stats for one user only`() {
 
-        Mockito.`when`(topicService.getTopicsForUserIdForAllHotTMProjects(this.userId, listOf(topics[0])))
+        Mockito.`when`(
+            topicService.getTopicsForUserIdForAllHotTMProjects(
+                this.userId,
+                listOf(topics[0]),
+                "hotosm-project-*"
+            )
+        )
             .thenReturn(fakeResult)
 
         val GET = MockMvcRequestBuilders.get("/hot-tm-user/topics/place")
             .queryParam("userId", userId)
+            .queryParam("hashtag", "hotosm-project-*")
             .header("Authorization", "Basic ${appProperties.token}")
 
 
@@ -73,7 +80,7 @@ class AccessRestrictedTopicUserControllerMVCTests {
 
         // service must never be called because auth happens before service invocation
         verify(topicService, never())
-            .getTopicsForUserIdForAllHotTMProjects(anyString(), anyList())
+            .getTopicsForUserIdForAllHotTMProjects(anyString(), anyList(), anyString())
 
 
         val GET = MockMvcRequestBuilders.get("/hot-tm-user/topics/place")
@@ -88,7 +95,7 @@ class AccessRestrictedTopicUserControllerMVCTests {
     fun `statsHotTMUserStats returns forbidden with wrong token`() {
         // service must never be called because auth happens before service invocation
         verify(topicService, never())
-            .getTopicsForUserIdForAllHotTMProjects(anyString(), anyList())
+            .getTopicsForUserIdForAllHotTMProjects(anyString(), anyList(), anyString())
 
         val GET = MockMvcRequestBuilders.get("/hot-tm-user/topics/place")
             .queryParam("userId", "12312")

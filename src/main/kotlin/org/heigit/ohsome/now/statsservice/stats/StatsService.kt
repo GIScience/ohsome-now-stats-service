@@ -168,7 +168,11 @@ class StatsService {
         .toUserResult()
 
     private fun MutableMap<String, Any>.addStatsForUserIdForAllHotTMProjectsBuildingsAndRoads(userId: String): Map<String, Any> {
-        val topicResults = topicService.getTopicsForUserIdForAllHotTMProjects(userId, listOf("building", "highway"))
+        val topicResults = topicService.getTopicsForUserIdForAllHotTMProjects(
+            userId,
+            listOf("building", "highway"),
+            "hotosm-project-*"
+        )
         this += topicResults["building"]!!
             .topicResultToNamedResult("buildings")
         this += topicResults["highway"]!!

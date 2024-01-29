@@ -42,14 +42,18 @@ class AccessRestrictedTopicUserController {
 
         @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
-        topics: List<String>
+        topics: List<String>,
+
+        @Parameter(description = "Hashtag which should be used for filtering")
+        @RequestParam(name = "hashtag", required = false, defaultValue = "hotosm-project-*")
+        hashtag: String
     ): OhsomeFormat<Map<String, UserTopicResult>> {
         if (authorization == null || authorization != "Basic ${appProperties.token}") {
             throw ResponseStatusException(HttpStatus.FORBIDDEN);
         }
-        
+
         val result = measure {
-            topicService.getTopicsForUserIdForAllHotTMProjects(userId, topics)
+            topicService.getTopicsForUserIdForAllHotTMProjects(userId, topics, hashtag)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)

@@ -71,7 +71,7 @@ class TopicRepoUnitTests {
 
         val expected = file("topic_place_by_userid")
 
-        val sql = repo.topicForUserIdForHotOSMProjectSQL(placeTopic)
+        val sql = repo.topicForUserIdForHotOSMProjectSQL(placeTopic, HashtagHandler("hotosm-project-*"))
         assertThat(sql).isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 

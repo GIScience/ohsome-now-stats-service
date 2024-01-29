@@ -122,7 +122,7 @@ class TopicRepo {
             country
         """.trimIndent()
 
-    fun topicForUserIdForHotOSMProjectSQL(topicHandler: TopicHandler) =
+    fun topicForUserIdForHotOSMProjectSQL(topicHandler: TopicHandler, hashtagHandler: HashtagHandler) =
         """        
         WITH
             ${topicHandler.valueLists()} 
@@ -135,8 +135,8 @@ class TopicRepo {
         user_id
         FROM topic_${topicHandler.topic}_$schemaVersion
         WHERE
-        user_id = :userId
-                and startsWith(hashtag, 'hotosm-project-')
+            user_id = :userId
+            and ${hashtagHandler.variableFilterSQL}(hashtag, '${hashtagHandler.hashtag}')
         group by user_id
         """
 
@@ -219,10 +219,14 @@ class TopicRepo {
 
     }
 
-    fun getTopicForUserIdForAllHotTMProjects(userId: String, topicHandler: TopicHandler): Map<String, Any> {
+    fun getTopicForUserIdForAllHotTMProjects(
+        userId: String,
+        topicHandler: TopicHandler,
+        hashtagHandler: HashtagHandler
+    ): Map<String, Any> {
         logger.info("Getting topic stats for user: $userId, topic: ${topicHandler.topic}")
         return query {
-            it.select(topicForUserIdForHotOSMProjectSQL(topicHandler))
+            it.select(topicForUserIdForHotOSMProjectSQL(topicHandler, hashtagHandler))
                 .bind("userId", userId)
                 .mapToMap()
                 .singleOrNull()
