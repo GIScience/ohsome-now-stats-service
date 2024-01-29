@@ -194,6 +194,9 @@ class TopicControllerMVCTests {
             .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
             .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
             .andExpect(jsonPath("$.metadata.requestUrl").value(expectedUrl))
+            .andExpect(jsonPath("$.query.topics").exists())
+            .andExpect(jsonPath("$.query.hashtag").exists())
+            .andExpect(jsonPath("$.query.countries").exists())
             .andExpect(jsonPath("$.result.$topic1.[0].value").value(1001))
     }
 

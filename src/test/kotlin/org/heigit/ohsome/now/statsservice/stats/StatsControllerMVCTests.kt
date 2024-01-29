@@ -100,6 +100,7 @@ class StatsControllerMVCTests {
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.result.$hashtag.roads").value(43534.5))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
+            .andExpect(jsonPath("$.query.hashtags").exists())
             .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/hashtags/$hashtag,hotosm*"))
     }
 
@@ -107,7 +108,15 @@ class StatsControllerMVCTests {
     @Test
     fun `stats per interval can be served with explicit start and end dates and without countries`() {
 
-        `when`(this.statsService.getStatsForTimeSpanInterval(anyString(), anyInstant(), anyInstant(), anyString(), anyList()))
+        `when`(
+            this.statsService.getStatsForTimeSpanInterval(
+                anyString(),
+                anyInstant(),
+                anyInstant(),
+                anyString(),
+                anyList()
+            )
+        )
             .thenReturn(listOf(exampleIntervalStats))
 
         val GET = get("/stats/$hashtag/interval")
@@ -138,7 +147,15 @@ class StatsControllerMVCTests {
     @Test
     fun `stats per interval can be served with explicit start and end dates and with countries`() {
 
-        `when`(this.statsService.getStatsForTimeSpanInterval(anyString(), anyInstant(), anyInstant(), anyString(), anyList()))
+        `when`(
+            this.statsService.getStatsForTimeSpanInterval(
+                anyString(),
+                anyInstant(),
+                anyInstant(),
+                anyString(),
+                anyList()
+            )
+        )
             .thenReturn(listOf(exampleIntervalStats))
 
         val GET = get("/stats/$hashtag/interval")

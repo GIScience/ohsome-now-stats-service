@@ -14,7 +14,11 @@ fun <T> buildOhsomeFormat(results: Measured<T>, httpServletRequest: HttpServletR
 )
 
 
-private fun <T> buildOhsomeFormat(results: T, executionTime: Long, httpServletRequest: HttpServletRequest): OhsomeFormat<T> {
+private fun <T> buildOhsomeFormat(
+    results: T,
+    executionTime: Long,
+    httpServletRequest: HttpServletRequest
+): OhsomeFormat<T> {
     val pathVariables = httpServletRequest
         .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as? Map<String, String>
 
@@ -24,8 +28,12 @@ private fun <T> buildOhsomeFormat(results: T, executionTime: Long, httpServletRe
             httpServletRequest.getParameter("enddate") ?: Instant.now().truncatedTo(ChronoUnit.SECONDS).toString(),
             httpServletRequest.getParameter("interval"),
         ),
-        pathVariables?.get("hashtag"),
+        pathVariables?.get("hashtag") ?: httpServletRequest.getParameter("hashtag"),
+        pathVariables?.get("hashtags")?.split(','),
         httpServletRequest.getParameter("limit")?.toInt(),
+        httpServletRequest.getParameter("countries")?.split(','),
+        pathVariables?.get("topics")?.split(','),
+        httpServletRequest.getParameter("userId")?.toInt(),
     )
 
     val metadata = Metadata(executionTime, makeUrl(httpServletRequest))
@@ -64,5 +72,9 @@ data class Timespan(
 data class QueryInfo(
     val timespan: Timespan,
     val hashtag: String?,
+    val hashtags: List<String>?,
     val limit: Int?,
+    val countries: List<String>?,
+    val topics: List<String>?,
+    val userId: Int?,
 )
