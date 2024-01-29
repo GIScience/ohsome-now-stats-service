@@ -30,6 +30,7 @@ class AccessRestrictedTopicUserController {
 
     @Operation(summary = "Returns aggregated HOT-TM-project topic statistics for a specific user.")
     @GetMapping("/topic/{topics}/user", produces = ["application/json"])
+    @Suppress("LongParameterList")
     fun topicHotTMUser(
         httpServletRequest: HttpServletRequest,
 

@@ -35,7 +35,6 @@ class StatsService {
             .toStatsResult()
 
 
-    @Suppress("LongMethod")
     fun MutableMap<String, Any>.addStatsForTimeSpanBuildingsAndRoads(
         hashtag: String,
         startDate: Instant?,
@@ -89,7 +88,7 @@ class StatsService {
         )
         .toIntervalStatsResult()
 
-    @Suppress("LongMethod", "LongParameterList")
+    @Suppress("LongParameterList")
     private fun List<Map<String, Any>>.addStatsForTimeSpanIntervalBuildingsAndRoads(
         hashtag: String,
         startDate: Instant?,
@@ -121,7 +120,6 @@ class StatsService {
         .toCountryStatsResult()
 
     // todo: write mocked repo unit test
-    @Suppress("LongMethod")
     private fun List<Map<String, Any>>.addStatsForTimeSpanCountriesBuildingsAndRoads(
         hashtag: String,
         startDate: Instant?,

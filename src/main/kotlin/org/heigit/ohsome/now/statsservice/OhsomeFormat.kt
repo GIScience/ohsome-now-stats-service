@@ -14,6 +14,7 @@ fun <T> buildOhsomeFormat(results: Measured<T>, httpServletRequest: HttpServletR
 )
 
 
+@Suppress("LongMethod", "ComplexMethod")
 private fun <T> buildOhsomeFormat(
     results: T,
     executionTime: Long,

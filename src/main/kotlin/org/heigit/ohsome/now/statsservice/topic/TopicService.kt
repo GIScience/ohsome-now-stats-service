@@ -59,7 +59,6 @@ class TopicService {
     }
 
 
-    @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpanCountry(
         hashtag: String,
         startDate: Instant?,
