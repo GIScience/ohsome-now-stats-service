@@ -82,29 +82,40 @@ class CachingTests {
 
 
 
+    //todo: add test for non-hotosm hashtags which should NOT be cached!
 
     @Test
     fun `stats are cached if hashtag matches 'hotosm-'`() {
 
-        `when`(this.statsRepo.getStatsForTimeSpan(hashtagHandler, null, null, noCountries))
-            .thenReturn(exampleStatsData)
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, buildingTopic))
-            .thenReturn(exampleTopicData)
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, highwayTopic))
-            .thenReturn(exampleTopicData)
+        setupMockingForRepo()
 
-        val result1 = this.statsService.getStatsForTimeSpan(hashtag, null, null, emptyList())
-        assertEquals("213124", result1.edits.toString())
-        verify(this.statsRepo, times(1))
-            .getStatsForTimeSpan(hashtagHandler, null, null, noCountries)
+        val serviceCall = { this.statsService.getStatsForTimeSpan(hashtag, null, null, emptyList()) }
 
-        //the second service call must be cached, hence the repo is not called again
-        val result2 = this.statsService.getStatsForTimeSpan(hashtag, null, null, emptyList())
-        assertEquals("213124", result2.edits.toString())
-        verify(this.statsRepo, times(1))
-            .getStatsForTimeSpan(hashtagHandler, null, null, noCountries)
+        assertTotalNumberOfCalls(serviceCall(), 1)
+
+        //the second service call must be cached, hence the total number of calls stays at 1
+        assertTotalNumberOfCalls(serviceCall(), 1)
 
     }
+
+
+    private fun setupMockingForRepo() {
+        `when`(this.statsRepo.getStatsForTimeSpan(hashtagHandler, null, null, noCountries))
+            .thenReturn(exampleStatsData)
+
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, buildingTopic))
+            .thenReturn(exampleTopicData)
+
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, highwayTopic))
+            .thenReturn(exampleTopicData)
+    }
+
+    private fun assertTotalNumberOfCalls(result1: StatsResult, callCount: Int) {
+        assertEquals("213124", result1.edits.toString())
+        verify(this.statsRepo, times(callCount))
+            .getStatsForTimeSpan(hashtagHandler, null, null, noCountries)
+    }
+
 
 
 }
