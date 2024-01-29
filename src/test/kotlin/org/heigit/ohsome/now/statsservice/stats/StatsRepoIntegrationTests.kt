@@ -313,8 +313,8 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getUniqueHashtags()
 
         assertEquals(
-            listOf("&group"),
-            result
+            listOf(mapOf("hashtag" to "&group", "count" to 13)).toString(),
+            result.toString()
         )
         println(result)
     }

@@ -191,6 +191,7 @@ class SystemTests {
             }
 
             doGetAndAssertThat(url)
+                .jsonPath("$.result[0].hashtag").isEqualTo("&group")
         }
 
 

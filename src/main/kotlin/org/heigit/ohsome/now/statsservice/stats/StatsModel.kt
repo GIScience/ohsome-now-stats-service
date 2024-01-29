@@ -141,10 +141,15 @@ data class UserResult(
 )
 
 
-fun List<String>.toUniqueHashtagsResult() = UniqueHashtagsResult(
-    this
-)
+fun List<Map<String, Any>>.toUniqueHashtagsResult(): List<UniqueHashtagsResult> = this.map {
+    UniqueHashtagsResult(
+        it["hashtag"].toString(),
+        it["count"].toString().toLong()
+    )
+}
+
 
 data class UniqueHashtagsResult(
-    val hashtags: List<String>
+    val hashtag: String,
+    val count: Long
 )

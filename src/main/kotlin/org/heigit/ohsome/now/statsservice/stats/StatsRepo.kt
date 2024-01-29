@@ -166,7 +166,7 @@ class StatsRepo {
 
 
     private val uniqueHashtagSQL = """
-        SELECT hashtag
+        SELECT hashtag, count(*) as count
         FROM "stats_$schemaVersion"
         WHERE 
             hashtag not like '% %' 
@@ -339,9 +339,9 @@ class StatsRepo {
 
     }
 
-    fun getUniqueHashtags(): List<String> {
+    fun getUniqueHashtags(): List<Map<String, Any>> {
         return query {
-            it.select(uniqueHashtagSQL).mapTo(String::class.java).list()
+            it.select(uniqueHashtagSQL).mapToMap().list()
         }
     }
 
