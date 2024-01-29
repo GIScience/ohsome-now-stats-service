@@ -27,6 +27,7 @@ class AccessRestrictedUserController {
 
 
     @Operation(summary = "Returns aggregated HOT-TM-project statistics for a specific user.")
+    @Deprecated("Users of this endpoint should switch to topic/{topics}/user.")
     @GetMapping("/hot-tm-user", produces = ["application/json"])
     fun statsHotTMUser(
         httpServletRequest: HttpServletRequest,
