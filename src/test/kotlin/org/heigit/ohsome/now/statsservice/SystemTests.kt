@@ -469,11 +469,11 @@ class SystemTests {
 
 
         @Test
-        @DisplayName("GET /hot-tm-user/topics/place,healthcare?userid=4362353")
+        @DisplayName("GET /topic/place,healthcare/user?userid=4362353")
         fun `get userstats topics with good token`() {
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
-                    .path("/hot-tm-user/topics/${topics.joinToString(separator = ",")}")
+                    .path("/topic/${topics.joinToString(separator = ",")}/user")
                     .queryParam("userId", "4362353")
                     .build()
             }

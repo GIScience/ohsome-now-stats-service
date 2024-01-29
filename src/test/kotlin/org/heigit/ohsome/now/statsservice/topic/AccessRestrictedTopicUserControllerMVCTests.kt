@@ -62,7 +62,7 @@ class AccessRestrictedTopicUserControllerMVCTests {
         )
             .thenReturn(fakeResult)
 
-        val GET = MockMvcRequestBuilders.get("/hot-tm-user/topics/place")
+        val GET = MockMvcRequestBuilders.get("/topic/place/user")
             .queryParam("userId", userId)
             .queryParam("hashtag", "hotosm-project-*")
             .header("Authorization", "Basic ${appProperties.token}")
@@ -83,7 +83,7 @@ class AccessRestrictedTopicUserControllerMVCTests {
             .getTopicsForUserIdForAllHotTMProjects(anyString(), anyList(), anyString())
 
 
-        val GET = MockMvcRequestBuilders.get("/hot-tm-user/topics/place")
+        val GET = MockMvcRequestBuilders.get("/topic/place/user")
             .queryParam("userId", "12312")
 
         this.mockMvc.perform(GET)
@@ -97,7 +97,7 @@ class AccessRestrictedTopicUserControllerMVCTests {
         verify(topicService, never())
             .getTopicsForUserIdForAllHotTMProjects(anyString(), anyList(), anyString())
 
-        val GET = MockMvcRequestBuilders.get("/hot-tm-user/topics/place")
+        val GET = MockMvcRequestBuilders.get("/topic/place/user")
             .queryParam("userId", "12312")
             .header("Authorization", "Basic badToken")
 
