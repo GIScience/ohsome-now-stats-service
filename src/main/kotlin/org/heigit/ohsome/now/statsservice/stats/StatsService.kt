@@ -4,6 +4,9 @@ import org.heigit.ohsome.now.statsservice.topic.*
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.Instant
 
@@ -17,6 +20,13 @@ class StatsService {
     @Autowired
     lateinit var topicService: TopicService
 
+    @CacheEvict(value = ["statsForTimeSpan"], allEntries = true)
+    @Scheduled(fixedRate = 20_000L)
+    fun clearCache() {
+    }
+
+
+    @Cacheable("statsForTimeSpan")
     fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
         this.repo
             .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))

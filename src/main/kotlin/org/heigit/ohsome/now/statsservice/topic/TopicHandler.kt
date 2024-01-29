@@ -4,7 +4,7 @@ import org.heigit.ohsome.now.statsservice.topic.BeforeOrCurrent.BEFORE
 import org.heigit.ohsome.now.statsservice.topic.BeforeOrCurrent.CURRENT
 
 
-class TopicHandler(val topic: String) {
+data class TopicHandler(val topic: String) {
 
     val definition = getTopicDefinitionByName(topic)
 
