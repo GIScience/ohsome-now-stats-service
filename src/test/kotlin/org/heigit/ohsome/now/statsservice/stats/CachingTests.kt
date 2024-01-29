@@ -6,6 +6,7 @@ import org.heigit.ohsome.now.statsservice.topic.TopicRepo
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,8 +17,13 @@ import org.springframework.boot.test.mock.mockito.MockBean
 @SpringBootTest
 class CachingTests {
 
-    val hashtag = "hotosm-"
-    val hashtagHandler = HashtagHandler(hashtag)
+    val hotosmHashtag = "hotosm-"
+    val hotosmHashtagHandler = HashtagHandler(hotosmHashtag)
+
+    val ugandaHashtag = "uganda"
+    val ugandaHashtagHandler = HashtagHandler(ugandaHashtag)
+
+
     val noCountries = CountryHandler(emptyList())
     val buildingTopic = TopicHandler("building")
     val highwayTopic = TopicHandler("highway")
@@ -25,7 +31,7 @@ class CachingTests {
 
 
     private val exampleTopicData: Map<String, Any> = mapOf(
-        "hashtag" to hashtag,
+        "hashtag" to hotosmHashtag,
         "topic_result" to UnsignedLong.valueOf(20L),
         "topic_result_modified" to UnsignedLong.valueOf(0L),
         "topic_result_created" to UnsignedLong.valueOf(20L),
@@ -62,7 +68,7 @@ class CachingTests {
         "changesets" to UnsignedLong.valueOf(2),
     )
 
-    private var exampleMultipleStatsData: Map<String, Any> = exampleStatsData + mapOf("hashtag" to hashtag)
+    private var exampleMultipleStatsData: Map<String, Any> = exampleStatsData + mapOf("hashtag" to hotosmHashtag)
 
     private var exampleStats: StatsResult = exampleStatsData.toStatsResult()
     private var exampleMultipleStats: StatsResult = exampleMultipleStatsData.toStatsResult()
@@ -82,38 +88,61 @@ class CachingTests {
 
 
 
-    //todo: add test for non-hotosm hashtags which should NOT be cached!
 
+    fun serviceCall(hashtag: String): () -> StatsResult = { statsService.getStatsForTimeSpan(hashtag, null, null, emptyList()) }
+
+
+    @Disabled("turn off caching for now")
     @Test
-    fun `stats are cached if hashtag matches 'hotosm-'`() {
+    fun `stats are cached iff hashtag matches 'hotosm-'`() {
 
         setupMockingForRepo()
 
-        val serviceCall = { this.statsService.getStatsForTimeSpan(hashtag, null, null, emptyList()) }
-
-        assertTotalNumberOfCalls(serviceCall(), 1)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1)
 
         //the second service call must be cached, hence the total number of calls stays at 1
-        assertTotalNumberOfCalls(serviceCall(), 1)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1)
+
+
+        //TODO: warum klappt das nicht?
+
+        //calls with non-hotosm hashtag must NEVER be cached
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 1)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 2)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 3)
 
     }
+
 
 
     private fun setupMockingForRepo() {
-        `when`(this.statsRepo.getStatsForTimeSpan(hashtagHandler, null, null, noCountries))
+
+        //hashtag hotosm
+        `when`(this.statsRepo.getStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries))
             .thenReturn(exampleStatsData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, buildingTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries, buildingTopic))
             .thenReturn(exampleTopicData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, highwayTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries, highwayTopic))
+            .thenReturn(exampleTopicData)
+
+        //hashtag uganda
+        `when`(this.statsRepo.getStatsForTimeSpan(ugandaHashtagHandler, null, null, noCountries))
+            .thenReturn(exampleStatsData)
+
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(ugandaHashtagHandler, null, null, noCountries, buildingTopic))
+            .thenReturn(exampleTopicData)
+
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(ugandaHashtagHandler, null, null, noCountries, highwayTopic))
             .thenReturn(exampleTopicData)
     }
 
-    private fun assertTotalNumberOfCalls(result1: StatsResult, callCount: Int) {
-        assertEquals("213124", result1.edits.toString())
+
+    private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int) {
+        assertEquals("213124", call().edits.toString())
         verify(this.statsRepo, times(callCount))
-            .getStatsForTimeSpan(hashtagHandler, null, null, noCountries)
+            .getStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries)
     }
 
 

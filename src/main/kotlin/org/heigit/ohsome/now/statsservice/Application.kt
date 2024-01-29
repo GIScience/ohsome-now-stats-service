@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Info
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.cache.annotation.EnableCaching
 
 
 @OpenAPIDefinition(
@@ -14,7 +13,7 @@ import org.springframework.cache.annotation.EnableCaching
         version = "v1"
     )
 )
-@EnableCaching
+//@EnableCaching
 @SpringBootApplication
 class Application
 
