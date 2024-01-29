@@ -17,7 +17,7 @@ ALTER TABLE int.stats_7 ADD PROJECTION user_id_projection_7 (
         building_edit,
         road_length_delta,
         map_feature_edit,
-        changeset_id,
+        changeset_id
     ORDER BY
         user_id,
         hashtag
