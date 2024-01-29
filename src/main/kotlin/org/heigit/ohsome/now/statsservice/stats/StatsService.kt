@@ -1,7 +1,6 @@
 package org.heigit.ohsome.now.statsservice.stats
 
-import org.heigit.ohsome.now.statsservice.topic.TopicHandler
-import org.heigit.ohsome.now.statsservice.topic.TopicRepo
+import org.heigit.ohsome.now.statsservice.topic.*
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,38 +15,32 @@ class StatsService {
     lateinit var repo: StatsRepo
 
     @Autowired
-    lateinit var topicRepo: TopicRepo
-
+    lateinit var topicService: TopicService
 
     fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
         this.repo
             .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
             .toMutableMap()
-            .addStatsForTimeSpanBuildingsAndRoads(handler(hashtag), startDate, endDate, handler(countries))
+            .addStatsForTimeSpanBuildingsAndRoads(hashtag, startDate, endDate, countries)
             .toStatsResult()
+
 
     @Suppress("LongMethod")
     fun MutableMap<String, Any>.addStatsForTimeSpanBuildingsAndRoads(
-        hashtagHandler: HashtagHandler,
+        hashtag: String,
         startDate: Instant?,
         endDate: Instant?,
-        countryHandler: CountryHandler
+        countries: List<String>
     ): Map<String, Any> {
-        this["buildings"] = topicRepo.getTopicStatsForTimeSpan(
-            hashtagHandler,
+        val topicResults = topicService.getTopicStatsForTimeSpan(
+            hashtag,
             startDate,
             endDate,
-            countryHandler,
-            TopicHandler("building")
-        )["topic_result"].toString().toDouble().toLong()
-
-        this["roads"] = topicRepo.getTopicStatsForTimeSpan(
-            hashtagHandler,
-            startDate,
-            endDate,
-            countryHandler,
-            TopicHandler("highway")
-        )["topic_result"].toString().toDouble()
+            countries,
+            listOf("building", "highway")
+        )
+        this["buildings"] = topicResults["building"]!!.value.toLong()
+        this["roads"] = topicResults["highway"]!!.value
 
         return this
     }
@@ -62,9 +55,7 @@ class StatsService {
         .map {
             it.toMutableMap()
                 .addStatsForTimeSpanBuildingsAndRoads(
-                    handler(it["hashtag"].toString()), startDate, endDate, CountryHandler(
-                        emptyList()
-                    )
+                    it["hashtag"].toString(), startDate, endDate, emptyList()
                 )
         }
         .toMultipleStatsResult()
@@ -89,36 +80,25 @@ class StatsService {
         .toIntervalStatsResult()
 
     @Suppress("LongMethod", "LongParameterList")
-    fun List<Map<String, Any>>.addStatsForTimeSpanIntervalBuildingsAndRoads(
+    private fun List<Map<String, Any>>.addStatsForTimeSpanIntervalBuildingsAndRoads(
         hashtag: String,
         startDate: Instant?,
         endDate: Instant?,
         interval: String,
         countries: List<String>
     ): List<Map<String, Any>> {
-        var zipped: List<Map<String, Any>>
-        val buildings = topicRepo.getTopicStatsForTimeSpanInterval(
-            handler(hashtag),
+        val topicResults = topicService.getTopicStatsForTimeSpanInterval(
+            hashtag,
             startDate,
             endDate,
             interval,
-            handler(countries),
-            TopicHandler("building")
+            countries,
+            listOf("building", "highway")
         )
-        zipped = this.zip(buildings) { a, b -> a.plus("buildings" to b["topic_result"].toString().toDouble().toLong()) }
+        val zipped =
+            this.zip(topicResults["building"]!!) { a, b -> a + ("buildings" to b.value.toLong()) }
 
-        val roads = topicRepo.getTopicStatsForTimeSpanInterval(
-            handler(hashtag),
-            startDate,
-            endDate,
-            interval,
-            handler(countries),
-            TopicHandler("highway")
-        )
-        zipped = zipped.zip(roads) { a, b -> a.plus("roads" to b["topic_result"].toString().toDouble()) }
-
-        return zipped
-
+        return zipped.zip(topicResults["highway"]!!) { a, b -> a + ("roads" to b.value) }
     }
 
     fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
@@ -130,45 +110,32 @@ class StatsService {
         )
         .toCountryStatsResult()
 
+    // todo: write mocked repo unit test
     @Suppress("LongMethod")
-    fun List<Map<String, Any>>.addStatsForTimeSpanCountriesBuildingsAndRoads(
+    private fun List<Map<String, Any>>.addStatsForTimeSpanCountriesBuildingsAndRoads(
         hashtag: String,
         startDate: Instant?,
         endDate: Instant?,
     ): List<Map<String, Any>> {
-        var zipped: List<Map<String, Any>>
-        val buildings = topicRepo.getTopicStatsForTimeSpanCountry(
-            handler(hashtag),
+        val topicResults = topicService.getTopicStatsForTimeSpanCountry(
+            hashtag,
             startDate,
             endDate,
-            TopicHandler("building")
+            listOf("building", "highway")
         )
-        zipped = this.map {
-            it.plus("buildings" to buildings
-                .find { iter -> iter["country"] == it["country"] }
-                ?.get("topic_result").toString().nullToZero().toDouble().toLong())
-
+        val enrichedCountryList = this.map {
+            it + ("buildings" to topicResults["building"]!!.matchCountryValue(it).toLong())
         }
 
-        val roads = topicRepo.getTopicStatsForTimeSpanCountry(
-            handler(hashtag),
-            startDate,
-            endDate,
-            TopicHandler("highway")
-        )
-        zipped = zipped.map {
-            it.plus(
-                "roads" to roads
-                    .find { iter -> iter["country"] == it["country"] }
-                    ?.get("topic_result").toString().nullToZero().toDouble()
-            )
+        return enrichedCountryList.map {
+            it + ("roads" to topicResults["highway"]!!.matchCountryValue(it))
         }
-        return zipped
     }
 
-    fun String.nullToZero(): String {
-        return if (this != "null") this else "0"
-    }
+    private fun List<TopicCountryResult>.matchCountryValue(countryMap: Map<String, Any>) =
+        (this.find { it.country == countryMap["country"] }
+            ?.value ?: 0.0)
+
 
     fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) = this.repo
         .getMostUsedHashtags(startDate, endDate, limit)
@@ -190,28 +157,26 @@ class StatsService {
         .addStatsForUserIdForAllHotTMProjectsBuildingsAndRoads(userId)
         .toUserResult()
 
-    fun MutableMap<String, Any>.addStatsForUserIdForAllHotTMProjectsBuildingsAndRoads(userId: String): Map<String, Any> {
-        this += topicRepo
-            .getTopicForUserIdForAllHotTMProjects(userId, TopicHandler("building"))
+    private fun MutableMap<String, Any>.addStatsForUserIdForAllHotTMProjectsBuildingsAndRoads(userId: String): Map<String, Any> {
+        val topicResults = topicService.getTopicsForUserIdForAllHotTMProjects(userId, listOf("building", "highway"))
+        this += topicResults["building"]!!
             .topicResultToNamedResult("buildings")
-        this += topicRepo
-            .getTopicForUserIdForAllHotTMProjects(userId, TopicHandler("highway"))
+        this += topicResults["highway"]!!
             .topicResultToNamedResult("roads")
-        println(this)
         return this
     }
 
-    fun Map<String, Any>.topicResultToNamedResult(name: String): Map<String, Any> {
+    private fun UserTopicResult.topicResultToNamedResult(name: String): Map<String, Any> {
         val renamed = mutableMapOf(
-            "$name" to this["topic_result"]!!,
-            "${name}_created" to this["topic_result_created"]!!,
-            "${name}_deleted" to this["topic_result_deleted"]!!,
-            "${name}_modified" to this["topic_result_modified"]!!
+            name to this.value,
+            "${name}_created" to this.added,
+            "${name}_deleted" to this.deleted,
+            "${name}_modified" to this.modified.count_modified
         )
         if (name == "roads") {
             renamed += mapOf(
-                "${name}_modified_longer" to this["topic_result_modified_more"]!!,
-                "${name}_modified_shorter" to this["topic_result_modified_less"]!!
+                "${name}_modified_longer" to this.modified.unit_more!!,
+                "${name}_modified_shorter" to this.modified.unit_less!!
             )
         }
         return renamed
