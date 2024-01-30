@@ -16,15 +16,17 @@ import org.springframework.boot.test.mock.mockito.MockBean
 @SpringBootTest
 class CachingTests {
 
-    val hotosmHashtag = "hotosm-"
-    val hotosmHashtagHandler = HashtagHandler(hotosmHashtag)
 
+    final val ugandaHashtag = "uganda"
+    val ugandaHashtagHandler = HashtagHandler(ugandaHashtag)
+
+    final val hotosmHashtag = "hotosm-"
+    val hotosmHashtagHandler = HashtagHandler(hotosmHashtag)
 
 
     val noCountries = CountryHandler(emptyList())
     val buildingTopic = TopicHandler("building")
     val highwayTopic = TopicHandler("highway")
-
 
 
     private val exampleTopicData: Map<String, Any> = mapOf(
@@ -46,7 +48,6 @@ class CachingTests {
 
     @Autowired
     private lateinit var statsService: StatsService
-
 
 
     private var exampleStatsData: Map<String, Any> = mapOf(
@@ -74,6 +75,18 @@ class CachingTests {
     }
 
 
+    @Test
+    fun `stats are NOT cached if hashtag does NOT match 'hotosm-'`() {
+
+        setupMockingForRepo(ugandaHashtagHandler)
+
+        //calls with non-hotosm hashtag must NEVER be cached
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 1, ugandaHashtagHandler)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 2, ugandaHashtagHandler)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 3, ugandaHashtagHandler)
+
+    }
+
 
     private fun setupMockingForRepo(hashtagHandler: HashtagHandler) {
 
@@ -95,7 +108,6 @@ class CachingTests {
         verify(this.statsRepo, times(callCount))
             .getStatsForTimeSpan(hashtagHandler, null, null, noCountries)
     }
-
 
 
 }
