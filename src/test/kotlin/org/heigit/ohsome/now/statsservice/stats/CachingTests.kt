@@ -20,7 +20,7 @@ class CachingTests {
     final val ugandaHashtag = "uganda"
     val ugandaHashtagHandler = HashtagHandler(ugandaHashtag)
 
-    final val hotosmHashtag = "hotosm-"
+    final val hotosmHashtag = "hotosm-project-*"
     val hotosmHashtagHandler = HashtagHandler(hotosmHashtag)
 
 
@@ -64,7 +64,7 @@ class CachingTests {
 
 
     @Test
-    fun `stats are cached if hashtag matches 'hotosm-'`() {
+    fun `stats are cached if hashtag matches 'hotosm-project-*'`() {
 
         setupMockingForRepo(hotosmHashtagHandler)
 
