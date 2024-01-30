@@ -11,11 +11,14 @@ import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import java.time.Instant
+import java.time.Instant.now
 
 
 @SpringBootTest
 class CachingTests {
 
+    val now = now()
 
     final val ugandaHashtag = "uganda"
     val ugandaHashtagHandler = HashtagHandler(ugandaHashtag)
@@ -60,11 +63,12 @@ class CachingTests {
     )
 
 
-    fun serviceCall(hashtag: String): () -> StatsResult = { statsService.getStatsForTimeSpan(hashtag, null, null, emptyList()) }
+    fun serviceCall(hashtag: String, date: Instant? = null): () -> StatsResult = { statsService.getStatsForTimeSpan(hashtag, date, null, emptyList()) }
 
 
     @Test
-    fun `stats are cached if hashtag matches 'hotosm-project-*'`() {
+    @Suppress("DANGEROUS_CHARACTERS")
+    fun `stats are cached if hashtag matches 'hotosm-project-*' and both dates are NULL`() {
 
         setupMockingForRepo(hotosmHashtagHandler)
 
@@ -72,6 +76,17 @@ class CachingTests {
 
         //the second service call must be cached, hence the total number of calls stays at 1
         assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1, hotosmHashtagHandler)
+    }
+
+
+    @Test
+    fun `stats are NOT cached if hashtag matches 'hotosm-project-*' but not all dates are NULL`() {
+
+        setupMockingForRepo(hotosmHashtagHandler, this.now)
+
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag, this.now), 1, hotosmHashtagHandler, this.now)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag, this.now), 2, hotosmHashtagHandler, this.now)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag, this.now), 3, hotosmHashtagHandler, this.now)
     }
 
 
@@ -88,25 +103,25 @@ class CachingTests {
     }
 
 
-    private fun setupMockingForRepo(hashtagHandler: HashtagHandler) {
+    private fun setupMockingForRepo(hashtagHandler: HashtagHandler, date: Instant? = null) {
 
         //hashtag hotosm
-        `when`(this.statsRepo.getStatsForTimeSpan(hashtagHandler, null, null, noCountries))
+        `when`(this.statsRepo.getStatsForTimeSpan(hashtagHandler, date, null, noCountries))
             .thenReturn(exampleStatsData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, buildingTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, date, null, noCountries, buildingTopic))
             .thenReturn(exampleTopicData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, highwayTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, date, null, noCountries, highwayTopic))
             .thenReturn(exampleTopicData)
 
     }
 
 
-    private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int, hashtagHandler: HashtagHandler) {
+    private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int, hashtagHandler: HashtagHandler, date: Instant? = null) {
         assertEquals("213124", call().edits.toString())
         verify(this.statsRepo, times(callCount))
-            .getStatsForTimeSpan(hashtagHandler, null, null, noCountries)
+            .getStatsForTimeSpan(hashtagHandler, date, null, noCountries)
     }
 
 

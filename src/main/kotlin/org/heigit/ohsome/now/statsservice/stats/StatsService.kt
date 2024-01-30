@@ -29,7 +29,7 @@ class StatsService {
     }
 
 
-    @Cacheable("statsForTimeSpan", condition="#hashtag=='hotosm-project-*'")
+    @Cacheable("statsForTimeSpan", condition="#hashtag=='hotosm-project-*' && #startDate==null && #endDate==null")
     fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
         this.repo
             .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
