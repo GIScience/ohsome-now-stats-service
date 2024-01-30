@@ -24,7 +24,7 @@ class StatsService {
 
 
     @CacheEvict(value = ["statsForTimeSpan"], allEntries = true)
-    @Scheduled(fixedRate = 20_000L)
+    @Scheduled(fixedDelay = 60 * 60 * 1000L)
     fun clearCache() {
     }
 
