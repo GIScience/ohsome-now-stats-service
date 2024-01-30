@@ -14,10 +14,8 @@ import org.springframework.boot.test.mock.mockito.MockBean
 
 
 @SpringBootTest
-class Caching__2__Tests {
+class NotCachingTests {
 
-    val hotosmHashtag = "hotosm-"
-    val hotosmHashtagHandler = HashtagHandler(hotosmHashtag)
 
     val ugandaHashtag = "uganda"
     val ugandaHashtagHandler = HashtagHandler(ugandaHashtag)
@@ -30,20 +28,13 @@ class Caching__2__Tests {
 
 
     private val exampleTopicData: Map<String, Any> = mapOf(
-        "hashtag" to hotosmHashtag,
+        "hashtag" to ugandaHashtag,
         "topic_result" to UnsignedLong.valueOf(20L),
         "topic_result_modified" to UnsignedLong.valueOf(0L),
         "topic_result_created" to UnsignedLong.valueOf(20L),
         "topic_result_deleted" to UnsignedLong.valueOf(0L)
     )
 
-    val expected = mapOf(
-        "topic_result" to 5,
-        "topic_result_created" to 9,
-        "topic_result_modified" to 16,
-        "topic_result_deleted" to 4,
-        "hashtag" to "hotmicrogrant"
-    )
 
 
     @MockBean
@@ -66,26 +57,6 @@ class Caching__2__Tests {
         "latest" to "20.05.2053",
         "changesets" to UnsignedLong.valueOf(2),
     )
-
-    private var exampleMultipleStatsData: Map<String, Any> = exampleStatsData + mapOf("hashtag" to hotosmHashtag)
-
-    private var exampleStats: StatsResult = exampleStatsData.toStatsResult()
-    private var exampleMultipleStats: StatsResult = exampleMultipleStatsData.toStatsResult()
-
-
-    private var exampleIntervalStatsData = mapOf(
-        "users" to UnsignedLong.valueOf(1001L),
-        "roads" to 43534.5,
-        "buildings" to 123L,
-        "edits" to UnsignedLong.valueOf(213124L),
-        "startDate" to "20.05.2053",
-        "endDate" to "20.05.2067",
-        "changesets" to UnsignedLong.valueOf(2)
-    )
-
-    private var exampleIntervalStats = statsIntervalResult(exampleIntervalStatsData)
-
-
 
 
     fun serviceCall(hashtag: String): () -> StatsResult = { statsService.getStatsForTimeSpan(hashtag, null, null, emptyList()) }
