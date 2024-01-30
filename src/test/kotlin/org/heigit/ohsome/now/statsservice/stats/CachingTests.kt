@@ -65,35 +65,35 @@ class CachingTests {
     @Test
     fun `stats are cached if hashtag matches 'hotosm-'`() {
 
-        setupMockingForRepo()
+        setupMockingForRepo(hotosmHashtagHandler)
 
-        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1, hotosmHashtagHandler)
 
         //the second service call must be cached, hence the total number of calls stays at 1
-        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1, hotosmHashtagHandler)
     }
 
 
 
-    private fun setupMockingForRepo() {
+    private fun setupMockingForRepo(hashtagHandler: HashtagHandler) {
 
         //hashtag hotosm
-        `when`(this.statsRepo.getStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries))
+        `when`(this.statsRepo.getStatsForTimeSpan(hashtagHandler, null, null, noCountries))
             .thenReturn(exampleStatsData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries, buildingTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, buildingTopic))
             .thenReturn(exampleTopicData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries, highwayTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, highwayTopic))
             .thenReturn(exampleTopicData)
 
     }
 
 
-    private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int) {
+    private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int, hashtagHandler: HashtagHandler) {
         assertEquals("213124", call().edits.toString())
         verify(this.statsRepo, times(callCount))
-            .getStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries)
+            .getStatsForTimeSpan(hashtagHandler, null, null, noCountries)
     }
 
 

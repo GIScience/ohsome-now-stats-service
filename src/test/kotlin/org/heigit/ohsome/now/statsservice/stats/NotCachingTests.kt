@@ -65,35 +65,35 @@ class NotCachingTests {
     @Test
     fun `stats are NOT cached if hashtag does NOT match 'hotosm-'`() {
 
-        setupMockingForRepo()
+        setupMockingForRepo(ugandaHashtagHandler)
 
         //calls with non-hotosm hashtag must NEVER be cached
-        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 1)
-        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 2)
-        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 3)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 1, ugandaHashtagHandler)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 2, ugandaHashtagHandler)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 3, ugandaHashtagHandler)
 
     }
 
 
 
-    private fun setupMockingForRepo() {
+    private fun setupMockingForRepo(hashtagHandler: HashtagHandler) {
 
         //hashtag uganda
-        `when`(this.statsRepo.getStatsForTimeSpan(ugandaHashtagHandler, null, null, noCountries))
+        `when`(this.statsRepo.getStatsForTimeSpan(hashtagHandler, null, null, noCountries))
             .thenReturn(exampleStatsData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(ugandaHashtagHandler, null, null, noCountries, buildingTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, buildingTopic))
             .thenReturn(exampleTopicData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(ugandaHashtagHandler, null, null, noCountries, highwayTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, highwayTopic))
             .thenReturn(exampleTopicData)
     }
 
 
-    private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int) {
+    private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int, hashtagHandler: HashtagHandler) {
         assertEquals("213124", call().edits.toString())
         verify(this.statsRepo, times(callCount))
-            .getStatsForTimeSpan(ugandaHashtagHandler, null, null, noCountries)
+            .getStatsForTimeSpan(hashtagHandler, null, null, noCountries)
     }
 
 
