@@ -80,6 +80,7 @@ class CachingTests {
 
 
     @Test
+    @Suppress("DANGEROUS_CHARACTERS")
     fun `stats are NOT cached if hashtag matches 'hotosm-project-*' but not all dates are NULL`() {
 
         setupMockingForRepo(hotosmHashtagHandler, this.now)
