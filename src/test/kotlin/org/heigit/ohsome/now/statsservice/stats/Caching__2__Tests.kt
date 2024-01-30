@@ -14,7 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 
 
 @SpringBootTest
-class CachingTests {
+class Caching__2__Tests {
 
     val hotosmHashtag = "hotosm-"
     val hotosmHashtagHandler = HashtagHandler(hotosmHashtag)
@@ -91,40 +91,21 @@ class CachingTests {
     fun serviceCall(hashtag: String): () -> StatsResult = { statsService.getStatsForTimeSpan(hashtag, null, null, emptyList()) }
 
 
-//    @Disabled("turn off caching for now")
     @Test
-    fun `stats are cached iff hashtag matches 'hotosm-'`() {
+    fun `stats are NOT cached if hashtag does NOT match 'hotosm-'`() {
 
         setupMockingForRepo()
 
-        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1)
-
-        //the second service call must be cached, hence the total number of calls stays at 1
-        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1)
-
-
-        //TODO: warum klappt das nicht?
-
         //calls with non-hotosm hashtag must NEVER be cached
-//        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 1)
-//        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 2)
-//        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 3)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 1)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 2)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 3)
 
     }
 
 
 
     private fun setupMockingForRepo() {
-
-        //hashtag hotosm
-        `when`(this.statsRepo.getStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries))
-            .thenReturn(exampleStatsData)
-
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries, buildingTopic))
-            .thenReturn(exampleTopicData)
-
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries, highwayTopic))
-            .thenReturn(exampleTopicData)
 
         //hashtag uganda
         `when`(this.statsRepo.getStatsForTimeSpan(ugandaHashtagHandler, null, null, noCountries))
@@ -141,7 +122,7 @@ class CachingTests {
     private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int) {
         assertEquals("213124", call().edits.toString())
         verify(this.statsRepo, times(callCount))
-            .getStatsForTimeSpan(hotosmHashtagHandler, null, null, noCountries)
+            .getStatsForTimeSpan(ugandaHashtagHandler, null, null, noCountries)
     }
 
 

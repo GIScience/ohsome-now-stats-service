@@ -22,6 +22,7 @@ class StatsService {
     @Autowired
     lateinit var topicService: TopicService
 
+
     @CacheEvict(value = ["statsForTimeSpan"], allEntries = true)
     @Scheduled(fixedRate = 20_000L)
     fun clearCache() {
@@ -29,10 +30,6 @@ class StatsService {
 
 
     @Cacheable("statsForTimeSpan", condition="#hashtag=='hotosm-'")
-//    @CachePut("statsForTimeSpan", condition="#hashtag.startsWith('hotosm')")
-//    @Cacheable("statsForTimeSpan", condition="#hashtag.startsWith('hotosm')")
-//    @Cacheable("statsForTimeSpan", condition="true")
-//    @Cacheable("statsForTimeSpan", condition="false")
     fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
         this.repo
             .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
