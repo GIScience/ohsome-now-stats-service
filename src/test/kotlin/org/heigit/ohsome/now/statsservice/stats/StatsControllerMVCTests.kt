@@ -74,18 +74,18 @@ class StatsControllerMVCTests {
     @Test
     fun `stats can be served without explicit timespans and a country filter`() {
 
-        `when`(this.statsService.getStatsForTimeSpan("*", null, null, listOf("UGA", "DE")))
+        `when`(this.statsService.getStatsForTimeSpan("h*", null, null, listOf("UGA", "DE")))
             .thenReturn(exampleStats)
 
         this.mockMvc
             .perform(
-                get("/stats/*").queryParam("countries", "UGA,DE")
+                get("/stats/h*").queryParam("countries", "UGA,DE")
             )
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.result.buildings").value(123))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
-            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/*?countries=UGA,DE"))
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/h*?countries=UGA,DE"))
     }
 
 
@@ -204,6 +204,17 @@ class StatsControllerMVCTests {
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "PT1S")
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isBadRequest)
+    }
+
+
+    @Test
+    @Suppress("DANGEROUS_CHARACTERS")
+    fun `stats with '*' hashtag throws error`() {
+
+        val GET = get("/stats/*")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)

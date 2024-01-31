@@ -8,12 +8,17 @@ import org.heigit.ohsome.now.statsservice.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
 
+//TODO: apply hashtag validation to all endpoints AND all controllers
+//TODO: make sure error messages are correct
+
 @CrossOrigin
 @RestController
+@Validated
 class StatsController {
 
     @Autowired
@@ -28,6 +33,7 @@ class StatsController {
 
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
+        @ValidHashtag
         hashtag: String,
 
         @StartDateConfig
