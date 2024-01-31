@@ -4,7 +4,7 @@ import io.gatling.javaapi.core.CoreDsl.*
 import io.gatling.javaapi.core.Simulation
 import io.gatling.javaapi.http.HttpDsl.http
 
-class endPointsSimulation : Simulation() {
+class EndPointsSimulation : Simulation() {
 
     val userPerSecodn = 10
     val rampUpDuration = 60
@@ -66,7 +66,7 @@ class endPointsSimulation : Simulation() {
 
     val MostUsedHashtagsScenario = scenario("Most Used Hashtags Scenario")
         .feed(feeder).exec(
-            http("Most Used Hashtags").get("/mostUsedHashtags")
+            http("Most Used Hashtags").get("/most-used-hashtags")
                 .queryParam("startdate", "#{startdate}")
                 .queryParam("enddate", "#{enddate}")
         )
@@ -86,7 +86,7 @@ class endPointsSimulation : Simulation() {
                 .queryParam("startdate", "#{startdate}")
                 .queryParam("enddate", "#{enddate}")
         ).exec(
-            http("Most Used Hashtags").get("/mostUsedHashtags")
+            http("Most Used Hashtags").get("/most-used-hashtags")
                 .queryParam("startdate", "#{startdate}")
                 .queryParam("enddate", "#{enddate}")
         )
