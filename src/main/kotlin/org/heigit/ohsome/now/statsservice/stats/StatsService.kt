@@ -104,10 +104,15 @@ class StatsService {
             countries,
             listOf("building", "highway")
         )
-        val zipped =
-            this.zip(topicResults["building"]!!) { a, b -> a + ("buildings" to b.value.toLong()) }
+        val buildings = topicResults["building"]!!
+        val roads = topicResults["highway"]!!
 
-        return zipped.zip(topicResults["highway"]!!) { a, b -> a + ("roads" to b.value) }
+        return this.mapIndexed { i, statsMap ->
+            statsMap + mapOf(
+                "buildings" to buildings[i].value.toLong(),
+                "roads" to roads[i].value
+            )
+        }
     }
 
     fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
