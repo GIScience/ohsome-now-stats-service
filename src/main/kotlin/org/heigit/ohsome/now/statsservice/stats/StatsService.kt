@@ -91,7 +91,7 @@ class StatsService {
         )
         .toIntervalStatsResult()
 
-    @Suppress("LongParameterList, LongMethod")
+    @Suppress("LongParameterList", "LongMethod")
     private fun List<Map<String, Any>>.addStatsForTimeSpanIntervalBuildingsAndRoads(
         hashtag: String,
         startDate: Instant?,
