@@ -156,10 +156,10 @@ class SystemTests {
 
 
         @Test
-        @DisplayName("GET /stats/*/country")
+        @DisplayName("GET /stats/&*/country")
         fun `get stats grouped by country`() {
 
-            val hashtag = "*"
+            val hashtag = "&*"
 
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
