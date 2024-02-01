@@ -40,7 +40,7 @@ class AccessRestrictedUserController {
         authorization: String?
     ): OhsomeFormat<UserResult> {
         if (authorization == null || authorization != "Basic ${appProperties.token}") {
-            throw ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid Token");
         }
 
         val result = measure {
