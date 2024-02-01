@@ -4,8 +4,9 @@ import io.gatling.javaapi.core.CoreDsl.*
 import io.gatling.javaapi.core.Simulation
 import io.gatling.javaapi.http.HttpDsl.http
 
-class StatsSimulation : Simulation() {
-    private val hashtags = listOf("hotosm-project-*")
+
+class StatsEndPointsSimulation : Simulation() {
+    private val hashtags = listOf("missingmaps", "visa")
 
     private val feeder = listFeeder(
         startDateList.indices.flatMap { index ->
@@ -18,19 +19,32 @@ class StatsSimulation : Simulation() {
             }
         }
     ).random()
+    
 
-    private val statsScenario = scenario("Stats Scenario")
-        .feed(feeder)
-        .exec(
+    //combination of all the scenarios without pauses
+    val DashBoardScenario = scenario("Dashboard Scenario")
+        .feed(feeder).exec(
             http("Stats").get("/stats/#{hashtag}")
+                .queryParam("startdate", "#{startdate}")
+                .queryParam("enddate", "#{enddate}")
+        ).exec(
+            http("Stats Interval").get("/stats/#{hashtag}/interval")
+                .queryParam("startdate", "#{startdate}")
+                .queryParam("enddate", "#{enddate}")
+        ).exec(
+            http("Stats Country").get("/stats/#{hashtag}/country")
+                .queryParam("startdate", "#{startdate}")
+                .queryParam("enddate", "#{enddate}")
+        ).exec(
+            http("Most Used Hashtags").get("/most-used-hashtags")
                 .queryParam("startdate", "#{startdate}")
                 .queryParam("enddate", "#{enddate}")
         )
 
-    private val httpProtocol = http
-        .baseUrl("https://int-stats.now.ohsome.org/api/")
 
-    private val scenarios = listOf(statsScenario)
+    private val scenarios = listOf(
+        DashBoardScenario
+    )
 
     init {
         val injections = scenarios.map { scenario ->
