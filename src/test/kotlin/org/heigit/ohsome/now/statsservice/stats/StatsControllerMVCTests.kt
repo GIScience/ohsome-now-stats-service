@@ -90,7 +90,7 @@ class StatsControllerMVCTests {
 
 
     @Test
-    fun `stats_hashtags can be served with multiple hashtags`() {
+    fun `stats for multiple hashtags can be served`() {
         `when`(this.statsService.getStatsForTimeSpanAggregate(anyList(), any(), any()))
             .thenReturn(mapOf(this.hashtag to exampleStats))
 
