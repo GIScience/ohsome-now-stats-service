@@ -3,6 +3,8 @@ package org.heigit.ohsome.now.statsservice.stats
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.anyInstant
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -56,6 +58,28 @@ class StatsControllerMVCTests {
     private var exampleIntervalStats = statsIntervalResult(exampleIntervalStatsData)
 
 
+
+    @Suppress("DANGEROUS_CHARACTERS")
+    @ParameterizedTest
+    @ValueSource(strings = [
+        "/stats/*",
+        "/stats/hashtags/*,hotosm*",
+        "/stats/hashtags/hotosm*,*",
+        "/stats/hashtags/a,*,b",
+        "/stats/*/interval?interval=P1M",
+        "/stats/*/country"
+    ])
+    fun `all requests with '*' hashtag throw error`(url: String) {
+
+        val GET = get(url)
+
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isBadRequest)
+    }
+
+
+
     @Test
     fun `stats can be served without explicit timespans`() {
         `when`(this.statsService.getStatsForTimeSpan(matches(hashtag), any(), any(), anyList()))
@@ -74,23 +98,23 @@ class StatsControllerMVCTests {
     @Test
     fun `stats can be served without explicit timespans and a country filter`() {
 
-        `when`(this.statsService.getStatsForTimeSpan("*", null, null, listOf("UGA", "DE")))
+        `when`(this.statsService.getStatsForTimeSpan("h*", null, null, listOf("UGA", "DE")))
             .thenReturn(exampleStats)
 
         this.mockMvc
             .perform(
-                get("/stats/*").queryParam("countries", "UGA,DE")
+                get("/stats/h*").queryParam("countries", "UGA,DE")
             )
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.result.buildings").value(123))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
-            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/*?countries=UGA,DE"))
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/h*?countries=UGA,DE"))
     }
 
 
     @Test
-    fun `stats_hashtags can be served with multiple hashtags`() {
+    fun `stats for multiple hashtags can be served`() {
         `when`(this.statsService.getStatsForTimeSpanAggregate(anyList(), any(), any()))
             .thenReturn(mapOf(this.hashtag to exampleStats))
 

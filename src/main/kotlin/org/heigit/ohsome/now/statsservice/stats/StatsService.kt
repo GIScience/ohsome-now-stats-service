@@ -1,6 +1,8 @@
 package org.heigit.ohsome.now.statsservice.stats
 
-import org.heigit.ohsome.now.statsservice.topic.*
+import org.heigit.ohsome.now.statsservice.topic.TopicCountryResult
+import org.heigit.ohsome.now.statsservice.topic.TopicService
+import org.heigit.ohsome.now.statsservice.topic.UserTopicResult
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,13 +22,14 @@ class StatsService {
     @Autowired
     lateinit var topicService: TopicService
 
+
     @CacheEvict(value = ["statsForTimeSpan"], allEntries = true)
-    @Scheduled(fixedRate = 20_000L)
+    @Scheduled(fixedDelay = 60 * 60 * 1000L)
     fun clearCache() {
     }
 
 
-    @Cacheable("statsForTimeSpan")
+    @Cacheable("statsForTimeSpan", condition="#hashtag=='hotosm-project-*' && #startDate==null && #endDate==null")
     fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
         this.repo
             .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))

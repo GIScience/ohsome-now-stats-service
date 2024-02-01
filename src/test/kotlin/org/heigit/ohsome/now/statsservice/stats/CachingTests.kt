@@ -11,34 +11,35 @@ import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import java.time.Instant
+import java.time.Instant.now
 
 
 @SpringBootTest
 class CachingTests {
 
-    val hashtag = "hotosm-"
-    val hashtagHandler = HashtagHandler(hashtag)
+    val now = now()
+
+    final val ugandaHashtag = "uganda"
+    val ugandaHashtagHandler = HashtagHandler(ugandaHashtag)
+
+    final val hotosmHashtag = "hotosm-project-*"
+    val hotosmHashtagHandler = HashtagHandler(hotosmHashtag)
+
+
     val noCountries = CountryHandler(emptyList())
     val buildingTopic = TopicHandler("building")
     val highwayTopic = TopicHandler("highway")
 
 
-
     private val exampleTopicData: Map<String, Any> = mapOf(
-        "hashtag" to hashtag,
+        "hashtag" to hotosmHashtag,
         "topic_result" to UnsignedLong.valueOf(20L),
         "topic_result_modified" to UnsignedLong.valueOf(0L),
         "topic_result_created" to UnsignedLong.valueOf(20L),
         "topic_result_deleted" to UnsignedLong.valueOf(0L)
     )
 
-    val expected = mapOf(
-        "topic_result" to 5,
-        "topic_result_created" to 9,
-        "topic_result_modified" to 16,
-        "topic_result_deleted" to 4,
-        "hashtag" to "hotmicrogrant"
-    )
 
 
     @MockBean
@@ -52,7 +53,6 @@ class CachingTests {
     private lateinit var statsService: StatsService
 
 
-
     private var exampleStatsData: Map<String, Any> = mapOf(
         "users" to UnsignedLong.valueOf(1001L),
         "roads" to 43534.5,
@@ -62,60 +62,68 @@ class CachingTests {
         "changesets" to UnsignedLong.valueOf(2),
     )
 
-    private var exampleMultipleStatsData: Map<String, Any> = exampleStatsData + mapOf("hashtag" to hashtag)
 
-    private var exampleStats: StatsResult = exampleStatsData.toStatsResult()
-    private var exampleMultipleStats: StatsResult = exampleMultipleStatsData.toStatsResult()
+    fun serviceCall(hashtag: String, date: Instant? = null): () -> StatsResult = { statsService.getStatsForTimeSpan(hashtag, date, null, emptyList()) }
 
-
-    private var exampleIntervalStatsData = mapOf(
-        "users" to UnsignedLong.valueOf(1001L),
-        "roads" to 43534.5,
-        "buildings" to 123L,
-        "edits" to UnsignedLong.valueOf(213124L),
-        "startDate" to "20.05.2053",
-        "endDate" to "20.05.2067",
-        "changesets" to UnsignedLong.valueOf(2)
-    )
-
-    private var exampleIntervalStats = statsIntervalResult(exampleIntervalStatsData)
-
-
-
-    //todo: add test for non-hotosm hashtags which should NOT be cached!
 
     @Test
-    fun `stats are cached if hashtag matches 'hotosm-'`() {
+    @Suppress("DANGEROUS_CHARACTERS")
+    fun `stats are cached if hashtag matches 'hotosm-project-*' and both dates are NULL`() {
 
-        setupMockingForRepo()
+        setupMockingForRepo(hotosmHashtagHandler)
 
-        val serviceCall = { this.statsService.getStatsForTimeSpan(hashtag, null, null, emptyList()) }
-
-        assertTotalNumberOfCalls(serviceCall(), 1)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1, hotosmHashtagHandler)
 
         //the second service call must be cached, hence the total number of calls stays at 1
-        assertTotalNumberOfCalls(serviceCall(), 1)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1, hotosmHashtagHandler)
+    }
+
+
+    @Test
+    @Suppress("DANGEROUS_CHARACTERS")
+    fun `stats are NOT cached if hashtag matches 'hotosm-project-*' but not all dates are NULL`() {
+
+        setupMockingForRepo(hotosmHashtagHandler, this.now)
+
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag, this.now), 1, hotosmHashtagHandler, this.now)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag, this.now), 2, hotosmHashtagHandler, this.now)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag, this.now), 3, hotosmHashtagHandler, this.now)
+    }
+
+
+    @Test
+    fun `stats are NOT cached if hashtag does NOT match 'hotosm-'`() {
+
+        setupMockingForRepo(ugandaHashtagHandler)
+
+        //calls with non-hotosm hashtag must NEVER be cached
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 1, ugandaHashtagHandler)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 2, ugandaHashtagHandler)
+        assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 3, ugandaHashtagHandler)
 
     }
 
 
-    private fun setupMockingForRepo() {
-        `when`(this.statsRepo.getStatsForTimeSpan(hashtagHandler, null, null, noCountries))
+    private fun setupMockingForRepo(hashtagHandler: HashtagHandler, date: Instant? = null) {
+
+        //hashtag hotosm
+        `when`(this.statsRepo.getStatsForTimeSpan(hashtagHandler, date, null, noCountries))
             .thenReturn(exampleStatsData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, buildingTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, date, null, noCountries, buildingTopic))
             .thenReturn(exampleTopicData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, null, null, noCountries, highwayTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, date, null, noCountries, highwayTopic))
             .thenReturn(exampleTopicData)
+
     }
 
-    private fun assertTotalNumberOfCalls(result1: StatsResult, callCount: Int) {
-        assertEquals("213124", result1.edits.toString())
+
+    private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int, hashtagHandler: HashtagHandler, date: Instant? = null) {
+        assertEquals("213124", call().edits.toString())
         verify(this.statsRepo, times(callCount))
-            .getStatsForTimeSpan(hashtagHandler, null, null, noCountries)
+            .getStatsForTimeSpan(hashtagHandler, date, null, noCountries)
     }
-
 
 
 }
