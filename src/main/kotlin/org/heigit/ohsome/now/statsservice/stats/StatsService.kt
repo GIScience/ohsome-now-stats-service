@@ -29,7 +29,7 @@ class StatsService {
     }
 
 
-    @Cacheable("statsForTimeSpan", condition="#hashtag=='hotosm-project-*' && #startDate==null && #endDate==null")
+    @Cacheable("statsForTimeSpan", condition = "#hashtag=='hotosm-project-*' && #startDate==null && #endDate==null")
     fun getStatsForTimeSpan(hashtag: String, startDate: Instant?, endDate: Instant?, countries: List<String>) =
         this.repo
             .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
@@ -91,7 +91,7 @@ class StatsService {
         )
         .toIntervalStatsResult()
 
-    @Suppress("LongParameterList")
+    @Suppress("LongParameterList, LongMethod")
     private fun List<Map<String, Any>>.addStatsForTimeSpanIntervalBuildingsAndRoads(
         hashtag: String,
         startDate: Instant?,
@@ -109,7 +109,6 @@ class StatsService {
         )
         val buildings = topicResults["building"]!!
         val roads = topicResults["highway"]!!
-
         return this.mapIndexed { i, statsMap ->
             statsMap + mapOf(
                 "buildings" to buildings[i].value.toLong(),
