@@ -92,6 +92,7 @@ class StatsController {
 
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
+        @ValidHashtag
         hashtag: String,
 
         @StartDateConfig

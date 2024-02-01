@@ -216,7 +216,10 @@ class StatsControllerMVCTests {
     @ParameterizedTest
     @ValueSource(strings = [
         "/stats/*",
-        "/stats/hashtags/*,hotosm*"
+        "/stats/hashtags/*,hotosm*",
+        "/stats/hashtags/hotosm*,*",
+        "/stats/hashtags/a,*,b",
+        "/stats/*/interval?interval=P1M"
     ])
     fun `all requests with '*' hashtag throw error`(url: String) {
 
