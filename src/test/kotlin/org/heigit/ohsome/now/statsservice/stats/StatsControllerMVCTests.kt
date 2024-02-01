@@ -216,7 +216,20 @@ class StatsControllerMVCTests {
 
         val GET = get("/stats/*")
 
-        this.mockMvc.perform(GET)
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isBadRequest)
+    }
+
+
+    @Test
+    @Suppress("DANGEROUS_CHARACTERS")
+    fun `stats for multiple hashtags throws error if one hashtag is '*'`() {
+
+        val GET = get("/stats/hashtags/*,hotosm*")
+
+        this.mockMvc
+            .perform(GET)
             .andExpect(status().isBadRequest)
     }
 

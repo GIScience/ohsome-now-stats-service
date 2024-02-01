@@ -7,7 +7,7 @@ import jakarta.validation.Payload
 import kotlin.reflect.KClass
 
 
-@Target(AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.RUNTIME)
 @Constraint(validatedBy = [HashtagValidator::class])
 annotation class ValidHashtag(

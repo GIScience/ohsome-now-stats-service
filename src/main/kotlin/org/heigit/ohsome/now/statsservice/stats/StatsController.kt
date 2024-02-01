@@ -63,9 +63,9 @@ class StatsController {
     fun statsHashtags(
         httpServletRequest: HttpServletRequest,
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @Parameter(description = "the hashtags to query for - case-insensitive and without the leading '#'")
         @PathVariable
-        hashtags: List<String>,
+        hashtags: List<@ValidHashtag String>,
 
         @StartDateConfig
         @RequestParam("startdate", required = false)
