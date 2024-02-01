@@ -58,6 +58,28 @@ class StatsControllerMVCTests {
     private var exampleIntervalStats = statsIntervalResult(exampleIntervalStatsData)
 
 
+
+    @Suppress("DANGEROUS_CHARACTERS")
+    @ParameterizedTest
+    @ValueSource(strings = [
+        "/stats/*",
+        "/stats/hashtags/*,hotosm*",
+        "/stats/hashtags/hotosm*,*",
+        "/stats/hashtags/a,*,b",
+        "/stats/*/interval?interval=P1M",
+        "/stats/*/country"
+    ])
+    fun `all requests with '*' hashtag throw error`(url: String) {
+
+        val GET = get(url)
+
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isBadRequest)
+    }
+
+
+
     @Test
     fun `stats can be served without explicit timespans`() {
         `when`(this.statsService.getStatsForTimeSpan(matches(hashtag), any(), any(), anyList()))
@@ -208,25 +230,6 @@ class StatsControllerMVCTests {
             .queryParam("interval", "PT1S")
 
         this.mockMvc.perform(GET)
-            .andExpect(status().isBadRequest)
-    }
-
-
-    @Suppress("DANGEROUS_CHARACTERS")
-    @ParameterizedTest
-    @ValueSource(strings = [
-        "/stats/*",
-        "/stats/hashtags/*,hotosm*",
-        "/stats/hashtags/hotosm*,*",
-        "/stats/hashtags/a,*,b",
-        "/stats/*/interval?interval=P1M"
-    ])
-    fun `all requests with '*' hashtag throw error`(url: String) {
-
-        val GET = get(url)
-
-        this.mockMvc
-            .perform(GET)
             .andExpect(status().isBadRequest)
     }
 
