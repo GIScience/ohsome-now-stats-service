@@ -3,6 +3,8 @@ package org.heigit.ohsome.now.statsservice.stats
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.anyInstant
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -210,23 +212,15 @@ class StatsControllerMVCTests {
     }
 
 
-    @Test
     @Suppress("DANGEROUS_CHARACTERS")
-    fun `stats with '*' hashtag throws error`() {
+    @ParameterizedTest
+    @ValueSource(strings = [
+        "/stats/*",
+        "/stats/hashtags/*,hotosm*"
+    ])
+    fun `all requests with '*' hashtag throw error`(url: String) {
 
-        val GET = get("/stats/*")
-
-        this.mockMvc
-            .perform(GET)
-            .andExpect(status().isBadRequest)
-    }
-
-
-    @Test
-    @Suppress("DANGEROUS_CHARACTERS")
-    fun `stats for multiple hashtags throws error if one hashtag is '*'`() {
-
-        val GET = get("/stats/hashtags/*,hotosm*")
+        val GET = get(url)
 
         this.mockMvc
             .perform(GET)
