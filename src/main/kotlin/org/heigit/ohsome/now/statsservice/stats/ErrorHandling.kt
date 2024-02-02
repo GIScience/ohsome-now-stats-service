@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 
 // see https://reflectoring.io/bean-validation-with-spring-boot/#handling-validation-errors
-class ValidationErrorResponse(val violations: List<Violation>)
+//class ValidationErrorResponse(val violations: List<Violation>)
+
 class Violation(
     val message: String,
     val invalidValue: String
@@ -24,7 +25,7 @@ internal class ErrorHandlingControllerAdvice {
     fun onConstraintValidationException(validationError: ConstraintViolationException) = validationError
         .constraintViolations
         .map { Violation(it.message, it.invalidValue.toString()) }
-        .let { ValidationErrorResponse(it) }
+//        .let { ValidationErrorResponse(it) }
 
 }
 

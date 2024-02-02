@@ -71,7 +71,7 @@ class StatsControllerMVCTests {
     ])
     fun `all requests with '*' hashtag throw error`(url: String) {
 
-        val expectedErrorMessage = """{"violations":[{"message":"Hashtag must not be '*'","invalidValue":"*"}]}"""
+        val expectedErrorMessage = """[{"message":"Hashtag must not be '*'","invalidValue":"*"}]"""
 
         val GET = get(url)
 
