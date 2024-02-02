@@ -3,6 +3,8 @@ package org.heigit.ohsome.now.statsservice.topic
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.anyInstant
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -50,6 +52,21 @@ class TopicControllerMVCTests {
     )
 
     private val exampleTopicStats = topicIntervalResult(exampleTopicIntervalStatsData, "place")
+
+
+    @Suppress("DANGEROUS_CHARACTERS")
+    @ParameterizedTest
+    @ValueSource(strings = [
+        "/topic/highway,healthcare?hashtag=*",
+    ])
+    fun `all requests with '*' hashtag throw error`(url: String) {
+
+        val GET = get(url)
+
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isBadRequest)
+    }
 
 
     @Test

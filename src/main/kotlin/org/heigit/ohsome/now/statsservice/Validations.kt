@@ -1,4 +1,4 @@
-package org.heigit.ohsome.now.statsservice.stats
+package org.heigit.ohsome.now.statsservice
 
 import jakarta.validation.Constraint
 import jakarta.validation.ConstraintValidator
