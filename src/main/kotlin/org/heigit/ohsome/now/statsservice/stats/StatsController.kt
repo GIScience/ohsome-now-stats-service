@@ -3,41 +3,14 @@ package org.heigit.ohsome.now.statsservice.stats
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.validation.ConstraintViolationException
 import org.heigit.ohsome.now.statsservice.*
 import org.heigit.ohsome.now.statsservice.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
-import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
-
-
-// see https://reflectoring.io/bean-validation-with-spring-boot/#handling-validation-errors
-class ValidationErrorResponse(val violations: List<Violation>)
-class Violation(
-    val message: String,
-    val invalidValue: String
-)
-
-@ControllerAdvice
-internal class ErrorHandlingControllerAdvice {
-
-    @ExceptionHandler(ConstraintViolationException::class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    fun onConstraintValidationException(e: ConstraintViolationException): ValidationErrorResponse {
-
-        val violations = e.constraintViolations.map {
-            Violation(it.message, it.invalidValue.toString())
-        }
-
-        return ValidationErrorResponse(violations)
-    }
-
-}
 
 
 // TODO: consider using this class instead of simple string to prevent primitive obsession
