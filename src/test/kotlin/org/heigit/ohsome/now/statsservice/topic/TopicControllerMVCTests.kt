@@ -58,6 +58,8 @@ class TopicControllerMVCTests {
     @ParameterizedTest
     @ValueSource(strings = [
         "/topic/highway,healthcare?hashtag=*",
+        "/topic/highway,healthcare/interval?hashtag=*&interval=P1M",
+        "/topic/highway,healthcare/country?hashtag=*",
     ])
     fun `all requests with '*' hashtag throw error`(url: String) {
 
@@ -115,11 +117,11 @@ class TopicControllerMVCTests {
 
 
     @Test
-    fun `stats can be served without explicit timespans and a country filter`() {
+    fun `topic can be served without explicit timespans and a country filter`() {
 
         `when`(
             this.topicService.getTopicStatsForTimeSpan(
-                "*", null, null, listOf("UGA", "DE"),
+                "m*", null, null, listOf("UGA", "DE"),
                 topics
             )
         )
@@ -128,7 +130,7 @@ class TopicControllerMVCTests {
         this.mockMvc
             .perform(
                 get("/topic/${topics.joinToString()}")
-                    .queryParam("hashtag", "*")
+                    .queryParam("hashtag", "m*")
                     .queryParam("countries", "UGA,DE")
             )
             .andExpect(status().isOk)
@@ -137,7 +139,7 @@ class TopicControllerMVCTests {
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
             .andExpect(
                 jsonPath("$.metadata.requestUrl")
-                    .value("/topic/place?hashtag=*&countries=UGA,DE")
+                    .value("/topic/place?hashtag=m*&countries=UGA,DE")
             )
     }
 

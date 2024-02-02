@@ -444,7 +444,7 @@ class SystemTests {
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
                     .path("/topic/${topics.joinToString(separator = ",")}/country")
-                    .queryParam("hashtag", "*")
+                    .queryParam("hashtag", "h*")
                     .queryParam("startdate", "1970-01-01T00:00:00Z")
                     .queryParam("enddate", "2024-01-01T00:00:00Z")
                     .build()
@@ -455,12 +455,12 @@ class SystemTests {
                 .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
                 .jsonPath("$.result.$topic2[0].topic").isEqualTo("healthcare")
                 .jsonPath("$.result.$topic1[0].country").isEqualTo("BOL")
-                .jsonPath("$.result.$topic2[0].country").isEqualTo("BEL")
+                .jsonPath("$.result.$topic2[0].country").isEqualTo("BRA")
 
                 .jsonPath("$.result.$topic1[1].value").isEqualTo(2)
                 .jsonPath("$.result.$topic1[1].topic").isEqualTo("place")
                 .jsonPath("$.result.$topic1[1].country").isEqualTo("BRA")
-                .jsonPath("$.result.$topic2[1].country").isEqualTo("BRA")
+                .jsonPath("$.result.$topic2[1].country").isEqualTo("FRA")
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()

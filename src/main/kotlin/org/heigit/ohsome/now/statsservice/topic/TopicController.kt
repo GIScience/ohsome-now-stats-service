@@ -3,11 +3,7 @@ package org.heigit.ohsome.now.statsservice.topic
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.validation.Constraint
-import jakarta.validation.ConstraintValidator
-import jakarta.validation.ConstraintValidatorContext
-import jakarta.validation.ConstraintViolationException
-import jakarta.validation.Payload
+import jakarta.validation.*
 import org.heigit.ohsome.now.statsservice.*
 import org.heigit.ohsome.now.statsservice.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
@@ -73,6 +69,7 @@ class TopicController {
 
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @RequestParam("hashtag")
+        @ValidHashtag
         hashtag: String,
 
         @StartDateConfig
@@ -115,6 +112,7 @@ class TopicController {
 
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @RequestParam("hashtag")
+        @ValidHashtag
         hashtag: String,
 
         @StartDateConfig
