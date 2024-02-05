@@ -110,7 +110,7 @@ class StatsController {
         @Parameter(description = "A comma separated list of countries, can also only be one country")
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>?
-    ): OhsomeFormat<List<StatsIntervalResult>> {
+    ): OhsomeFormat<StatsIntervalResult> {
 
         validateIntervalString(interval)
 

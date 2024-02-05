@@ -8,11 +8,6 @@ import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.junit.jupiter.api.Test
 
 
-//TODO: fix test
-//TODO: fix test
-//TODO: fix test
-//TODO: fix test
-
 class StatsRepoUnitTests {
 
     private val repo = StatsRepo()
@@ -22,7 +17,6 @@ class StatsRepoUnitTests {
 
     private val allCountries = CountryHandler(emptyList())
     private val bolivia = CountryHandler(listOf("BOL"))
-
 
 
     @Test

@@ -41,8 +41,8 @@ class TopicService {
         interval: String,
         countries: List<String>,
         topics: List<String>
-    ): Map<String, List<TopicIntervalResult>> {
-        val topicResults = mutableMapOf<String, List<TopicIntervalResult>>()
+    ): Map<String, TopicIntervalResult> {
+        val topicResults = mutableMapOf<String, TopicIntervalResult>()
         for (topic in topics) {
             topicResults[topic] = this.repo
                 .getTopicStatsForTimeSpanInterval(

@@ -91,7 +91,7 @@ class TopicController {
         @PathVariable
         @ValidTopics
         topics: List<String>
-    ): OhsomeFormat<Map<String, List<TopicIntervalResult>>> {
+    ): OhsomeFormat<Map<String, TopicIntervalResult>> {
 
         validateIntervalString(interval)
 
@@ -138,9 +138,9 @@ class TopicController {
     @Retention(AnnotationRetention.RUNTIME)
     @Constraint(validatedBy = [ValidTopicsCheck::class])
     annotation class ValidTopics(
-            val message: String = "Topic not valid",
-            val groups: Array<KClass<*>> = [],
-            val payload: Array<KClass<out Payload>> = []
+        val message: String = "Topic not valid",
+        val groups: Array<KClass<*>> = [],
+        val payload: Array<KClass<out Payload>> = []
     )
 
     class ValidTopicsCheck : ConstraintValidator<ValidTopics?, List<String>> {

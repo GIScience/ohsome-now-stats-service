@@ -73,31 +73,40 @@ class StatsRepo {
     //language=sql
     fun statsFromTimeSpanIntervalSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
     SELECT
-        count(distinct changeset_id) as changesets,
-        count(distinct user_id) as users,
-        count(map_feature_edit) as edits,
-        toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
-        (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
-        FROM "stats_$schemaVersion"
-    WHERE
-        ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
-        AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
-        AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
-        ${countryHandler.optionalFilterSQL}
-    GROUP BY
-        startdate
-    ORDER BY startdate ASC
-    WITH FILL
-        FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
-        TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
-    STEP INTERVAL :interval Interpolate (
-        enddate as (
-            if (
-                startdate != parseDateTimeBestEffort('1970-01-01 00:00:00'), -- condition
-                ((startdate + INTERVAL :interval) + INTERVAL :interval), 			 -- then
-                (toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval) -- else
+        groupArray(changesets)as changesets,	
+        groupArray(users)as users,
+        groupArray(edits)as edits,
+        groupArray(startdate)as startdate,
+        groupArray(enddate)as enddate
+    FROM
+    (    
+        SELECT
+            count(distinct changeset_id) as changesets,
+            count(distinct user_id) as users,
+            count(map_feature_edit) as edits,
+            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
+            (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
+            FROM "stats_$schemaVersion"
+        WHERE
+            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
+            AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
+            AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
+            ${countryHandler.optionalFilterSQL}
+        GROUP BY
+            startdate
+        ORDER BY startdate ASC
+        WITH FILL
+            FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
+            TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
+        STEP INTERVAL :interval Interpolate (
+            enddate as (
+                if (
+                    startdate != parseDateTimeBestEffort('1970-01-01 00:00:00'), -- condition
+                    ((startdate + INTERVAL :interval) + INTERVAL :interval), 			 -- then
+                    (toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval) -- else
+                )
             )
-	    )
+        )
     )
     """.trimIndent()
 
@@ -248,7 +257,7 @@ class StatsRepo {
         endDate: Instant?,
         interval: String,
         countryHandler: CountryHandler
-    ): List<Map<String, Any>> {
+    ): Map<String, Any> {
 
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
 
@@ -259,7 +268,7 @@ class StatsRepo {
                 .bind("enddate", endDate ?: now())
                 .bind("hashtag", hashtagHandler.hashtag)
                 .mapToMap()
-                .list()
+                .single()
         }
     }
 

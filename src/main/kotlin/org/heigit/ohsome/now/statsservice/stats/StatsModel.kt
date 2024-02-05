@@ -19,18 +19,16 @@ fun List<Map<String, Any>>.toMultipleStatsResult() = this.associate {
 }
 
 
-fun List<Map<String, Any>>.toIntervalStatsResult() = this.map(::statsIntervalResult)
-
-
-fun statsIntervalResult(data: Map<String, Any>) = StatsIntervalResult(
-    (data["changesets"] as UnsignedLong).toLong(),
-    (data["users"] as UnsignedLong).toLong(),
-    data["roads"] as Double,
-    data["buildings"] as Long,
-    (data["edits"] as UnsignedLong).toLong(),
-    data["startdate"].toString(),
-    data["enddate"].toString(),
-)
+fun Map<String, Any>.toIntervalStatsResult() =
+    StatsIntervalResult(
+        this["changesets"] as LongArray,
+        this["users"] as LongArray,
+        this["roads"] as DoubleArray,
+        this["buildings"] as LongArray,
+        this["edits"] as LongArray,
+        this["startdate"] as Array<String>,
+        this["enddate"] as Array<String>,
+    )
 
 
 fun List<Map<String, Any>>.toCountryStatsResult() = this.map(::countryStatsResult)
@@ -60,13 +58,13 @@ open class StatsResult(
 
 @Suppress("LongParameterList")
 open class StatsIntervalResult(
-    open val changesets: Long,
-    open val users: Long,
-    open val roads: Double,
-    open val buildings: Long,
-    open val edits: Long,
-    open val startDate: String,
-    open val endDate: String
+    open val changesets: LongArray,
+    open val users: LongArray,
+    open val roads: DoubleArray,
+    open val buildings: LongArray,
+    open val edits: LongArray,
+    open val startDate: Array<String>,
+    open val endDate: Array<String>
 )
 
 @Suppress("LongParameterList")

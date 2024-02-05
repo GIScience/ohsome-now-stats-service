@@ -52,22 +52,34 @@ fun lengthOrAreaAggregation(type: String, divideBy: Int): String {
     """
 }
 
+const val arraySQLBase = """
+    groupArray(topicResult) as topic_result,
+    groupArray(topic_result_created) as topic_result_created,
+    groupArray(topic_result_modified) as topic_result_modified,
+    groupArray(topic_result_deleted) as topic_result_deleted,
+"""
+const val arraySQLDetail = """
+    groupArray(topic_result_modified_more) as topic_result_modified_more,
+    groupArray(topic_result_modified_less) as topic_result_modified_less
+"""
 
-enum class AggregationStrategy(val sql: String) {
+enum class AggregationStrategy(val sql: String, val arraySql: String) {
     COUNT(
         """
             ifNull(sum(edit), 0) as topic_result,
             ifNull(sum(if(edit = 1, 1, 0)), 0) as topic_result_created,
             ifNull(sum(if(edit = 0, 1, 0)), 0) as topic_result_modified,
             ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted
-        """
-
+        """,
+        arraySQLBase
     ),
     LENGTH(
-        lengthOrAreaAggregation("length", 1000)
+        lengthOrAreaAggregation("length", 1000),
+        arraySQLBase + arraySQLDetail
     ),
     AREA(
-        lengthOrAreaAggregation("area", 1000000)
+        lengthOrAreaAggregation("area", 1000000),
+        arraySQLBase + arraySQLDetail
     )
 }
 
@@ -88,6 +100,8 @@ class TopicDefinition(
     fun keys() = matchers.map { it.key }
 
     fun defineTopicResult() = aggregationStrategy.sql
+
+    fun defineTopicArrayResult() = aggregationStrategy.arraySql
 
 
     fun buildValueLists() = matchers

@@ -29,34 +29,39 @@ data class ModifiedSection(
     val unit_less: Double?,
 )
 
-@Suppress("LongParameterList")
-open class TopicIntervalResult(
-    topic: String,
-    added: Double,
-    modified: ModifiedSection,
-    deleted: Double,
-    value: Double,
-    open val startDate: String,
-    open val endDate: String
-) : TopicResult(topic, added, modified, deleted, value)
-
-
-fun List<Map<String, Any>>.toTopicIntervalResult(topic: String) = this.map { topicIntervalResult(it, topic) }
-
-
-fun topicIntervalResult(data: Map<String, Any>, topic: String) = TopicIntervalResult(
-    topic,
-    (data["topic_result_created"].toString()).toDouble(),
-    ModifiedSection(
-        (data["topic_result_modified"].toString()).toDouble().toLong(),
-        (data["topic_result_modified_more"]?.toString())?.toDouble(),
-        (data["topic_result_modified_less"]?.toString())?.toDouble(),
-    ),
-    (data["topic_result_deleted"].toString()).toDouble(),
-    (data["topic_result"].toString()).toDouble(),
-    data["startdate"].toString(),
-    data["enddate"].toString(),
+data class ModifiedArraySection(
+    val count_modified: LongArray,
+    val unit_more: DoubleArray?,
+    val unit_less: DoubleArray?,
 )
+
+@Suppress("LongParameterList")
+class TopicIntervalResult(
+    val topic: String,
+    val added: DoubleArray,
+    val modified: ModifiedArraySection,
+    val deleted: DoubleArray,
+    val value: DoubleArray,
+    val startDate: Array<String>,
+    val endDate: Array<String>
+)
+
+
+fun Map<String, Any>.toTopicIntervalResult(topic: String) =
+    TopicIntervalResult(
+        topic,
+        this["topic_result_created"] as DoubleArray,
+        ModifiedArraySection(
+            this["topic_result_modified"] as LongArray,
+            this["topic_result_modified_more"] as DoubleArray,
+            this["topic_result_modified_less"] as DoubleArray
+        ),
+        this["topic_result_deleted"] as DoubleArray,
+        this["topic_result"] as DoubleArray,
+        this["startdate"] as Array<String>,
+        this["enddate"] as Array<String>,
+    )
+
 
 @Suppress("LongParameterList")
 open class TopicCountryResult(

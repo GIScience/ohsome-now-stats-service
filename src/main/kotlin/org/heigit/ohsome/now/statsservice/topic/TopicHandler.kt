@@ -11,8 +11,9 @@ data class TopicHandler(val topic: String) {
 
     fun valueLists() = this.definition.buildValueLists()
     fun topicResult() = this.definition.defineTopicResult()
-
-    fun beforeCurrent() = this.definition.beforeCurrentCondition(BEFORE) + this.definition.beforeCurrentCondition(CURRENT)
+    fun topicArrayResult() = this.definition.defineTopicArrayResult()
+    fun beforeCurrent() =
+        this.definition.beforeCurrentCondition(BEFORE) + this.definition.beforeCurrentCondition(CURRENT)
 
 
 }

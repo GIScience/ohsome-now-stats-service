@@ -91,14 +91,14 @@ class StatsService {
         )
         .toIntervalStatsResult()
 
-    @Suppress("LongParameterList", "LongMethod")
-    private fun List<Map<String, Any>>.addStatsForTimeSpanIntervalBuildingsAndRoads(
+    @Suppress("LongParameterList")
+    private fun Map<String, Any>.addStatsForTimeSpanIntervalBuildingsAndRoads(
         hashtag: String,
         startDate: Instant?,
         endDate: Instant?,
         interval: String,
         countries: List<String>
-    ): List<Map<String, Any>> {
+    ): Map<String, Any> {
         val topicResults = topicService.getTopicStatsForTimeSpanInterval(
             hashtag,
             startDate,
@@ -107,14 +107,12 @@ class StatsService {
             countries,
             listOf("building", "highway")
         )
-        val buildings = topicResults["building"]!!
-        val roads = topicResults["highway"]!!
-        return this.mapIndexed { i, statsMap ->
-            statsMap + mapOf(
-                "buildings" to buildings[i].value.toLong(),
-                "roads" to roads[i].value
+        return this.plus(
+            mapOf(
+                "buildings" to topicResults["building"]!!.value,
+                "roads" to topicResults["highway"]!!.value,
             )
-        }
+        )
     }
 
     fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo

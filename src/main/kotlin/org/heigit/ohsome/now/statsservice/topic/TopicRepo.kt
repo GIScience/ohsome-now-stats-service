@@ -57,7 +57,12 @@ class TopicRepo {
         countryHandler: CountryHandler,
         topicHandler: TopicHandler
     ) = """
-
+    SELECT
+        ${topicHandler.topicArrayResult()},
+        groupArray(startdate) as startdate,
+        groupArray(enddate ) as enddate
+    FROM
+    (
         WITH
             ${topicHandler.valueLists()} 
             
@@ -90,6 +95,7 @@ class TopicRepo {
                )
            )
        )
+    )
         """.trimIndent()
 
 
@@ -183,19 +189,21 @@ class TopicRepo {
         interval: String,
         countryHandler: CountryHandler,
         topicHandler: TopicHandler
-    ): List<Map<String, Any>> {
+    ): Map<String, Any> {
 
         logger.info("Getting topic stats by interval for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval, , topic: ${topicHandler.topic}")
 
-        return query {
+        val result = query {
             it.select(topicStatsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler, topicHandler))
                 .bind("interval", getGroupbyInterval(interval))
                 .bind("startdate", startDate ?: EPOCH)
                 .bind("enddate", endDate ?: now())
                 .bind("hashtag", hashtagHandler.hashtag)
                 .mapToMap()
-                .list()
+                .single()
         }
+        println(result)
+        return result
     }
 
 
