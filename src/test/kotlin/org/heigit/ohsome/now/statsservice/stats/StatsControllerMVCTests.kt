@@ -72,11 +72,14 @@ class StatsControllerMVCTests {
     )
     fun `all requests with '*' hashtag throw error`(url: String) {
 
+        val expectedErrorMessage = """[{"message":"Hashtag must not be '*'","invalidValue":"*"}]"""
+
         val GET = get(url)
 
         this.mockMvc
             .perform(GET)
             .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
     }
 
 

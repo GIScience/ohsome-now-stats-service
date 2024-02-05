@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
 
-//TODO: apply hashtag validation to all endpoints AND all controllers
-//TODO: make sure error messages are correct
+// TODO: consider using this class instead of simple string to prevent primitive obsession
+// @Schema(type = "string")
+// class Hashtag(@get:ValidHashtag val value: String)
 
 @CrossOrigin
 @RestController
@@ -31,8 +32,10 @@ class StatsController {
     fun stats(
         httpServletRequest: HttpServletRequest,
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'" )
         @PathVariable
+//        @Valid
+//        hashtag: Hashtag,
         @ValidHashtag
         hashtag: String,
 
@@ -66,6 +69,7 @@ class StatsController {
         @Parameter(description = "the hashtags to query for - case-insensitive and without the leading '#'")
         @PathVariable
         hashtags: List<@ValidHashtag String>,
+//        hashtags: List<@Valid Hashtag>,
 
         @StartDateConfig
         @RequestParam("startdate", required = false)
