@@ -179,7 +179,7 @@ class TopicControllerMVCTests {
             .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
             .andExpect(jsonPath("$.metadata.requestUrl").value(expectedUrl))
             .andExpect(jsonPath("$.query.timespan.interval").value("P1M"))
-            .andExpect(jsonPath("$.result.$topic1.[0].value").value(1001))
+            .andExpect(jsonPath("$.result.$topic1.value[0]").value(1001))
     }
 
 
