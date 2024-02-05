@@ -15,7 +15,7 @@ import java.time.Instant.EPOCH
 import java.time.Instant.now
 import javax.sql.DataSource
 
-
+@Suppress("LargeClass")
 @Component
 class TopicRepo {
 
