@@ -1,8 +1,8 @@
 SELECT
-	groupArray(topic_result) as topic_result,
-	groupArray(topic_result_created) as topic_result_created,
+	groupArray(toFloat64(topic_result)) as topic_result,
+	groupArray(toFloat64(topic_result_created)) as topic_result_created,
 	groupArray(topic_result_modified) as topic_result_modified,
-	groupArray(topic_result_deleted) as topic_result_deleted,
+	groupArray(toFloat64(topic_result_deleted)) as topic_result_deleted,
 	groupArray(startdate) as startdate,
 	groupArray(enddate ) as enddate
 FROM

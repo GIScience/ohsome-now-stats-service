@@ -1,5 +1,7 @@
 package org.heigit.ohsome.now.statsservice.topic
 
+import java.time.LocalDateTime
+
 
 fun Map<String, Any>.toTopicResult(topic: String) = TopicResult(
     topic,
@@ -42,8 +44,8 @@ class TopicIntervalResult(
     val modified: ModifiedArraySection,
     val deleted: DoubleArray,
     val value: DoubleArray,
-    val startDate: Array<String>,
-    val endDate: Array<String>
+    val startDate: Array<LocalDateTime>,
+    val endDate: Array<LocalDateTime>
 )
 
 
@@ -53,13 +55,13 @@ fun Map<String, Any>.toTopicIntervalResult(topic: String) =
         this["topic_result_created"] as DoubleArray,
         ModifiedArraySection(
             this["topic_result_modified"] as LongArray,
-            this["topic_result_modified_more"] as DoubleArray,
-            this["topic_result_modified_less"] as DoubleArray
+            this["topic_result_modified_more"] as? DoubleArray,
+            this["topic_result_modified_less"] as? DoubleArray
         ),
         this["topic_result_deleted"] as DoubleArray,
         this["topic_result"] as DoubleArray,
-        this["startdate"] as Array<String>,
-        this["enddate"] as Array<String>,
+        this["startdate"] as Array<LocalDateTime>,
+        this["enddate"] as Array<LocalDateTime>,
     )
 
 

@@ -134,18 +134,18 @@ class SystemTests {
             doGetAndAssertThat(url)
 
                 // no results in 1970
-                .jsonPath("$.result[0].changesets").isEqualTo(0)
-                .jsonPath("$.result[0].users").isEqualTo(0)
-                .jsonPath("$.result[0].roads").isEqualTo(0)
-                .jsonPath("$.result[0].buildings").isEqualTo(0)
-                .jsonPath("$.result[0].edits").isEqualTo(0)
+                .jsonPath("$.result.changesets[0]").isEqualTo(0)
+                .jsonPath("$.result.users[0]").isEqualTo(0)
+                .jsonPath("$.result.roads[0]").isEqualTo(0)
+                .jsonPath("$.result.buildings[0]").isEqualTo(0)
+                .jsonPath("$.result.edits[0]").isEqualTo(0)
 
                 // some results in 2021
-                .jsonPath("$.result[51].changesets").isEqualTo(1)
-                .jsonPath("$.result[51].users").isEqualTo(1)
-                .jsonPath("$.result[51].roads").isEqualTo(0)
-                .jsonPath("$.result[51].buildings").isEqualTo(0)
-                .jsonPath("$.result[51].edits").isEqualTo(7)
+                .jsonPath("$.result.changesets[51]").isEqualTo(1)
+                .jsonPath("$.result.users[51]").isEqualTo(1)
+                .jsonPath("$.result.roads[51]").isEqualTo(0)
+                .jsonPath("$.result.buildings[51]").isEqualTo(0)
+                .jsonPath("$.result.edits[51]").isEqualTo(7)
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
@@ -341,20 +341,20 @@ class SystemTests {
             }
 
             doGetAndAssertThat(url)
-                .jsonPath("$.result.$topic1[0].value").isEqualTo(3)
-                .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1[0].startDate").isEqualTo("2015-01-01T00:00")
-                .jsonPath("$.result.$topic1[0].endDate").isEqualTo("2015-02-01T00:00")
-                .jsonPath("$.result.$topic2[0].startDate").isEqualTo("2015-01-01T00:00")
-                .jsonPath("$.result.$topic2[0].endDate").isEqualTo("2015-02-01T00:00")
+                .jsonPath("$.result.$topic1.value[0]").isEqualTo(3)
+                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+                .jsonPath("$.result.$topic1.startDate[0]").isEqualTo("2015-01-01T00:00:00")
+                .jsonPath("$.result.$topic1.endDate[0]").isEqualTo("2015-02-01T00:00:00")
+                .jsonPath("$.result.$topic2.startDate[0]").isEqualTo("2015-01-01T00:00:00")
+                .jsonPath("$.result.$topic2.endDate[0]").isEqualTo("2015-02-01T00:00:00")
 
-                .jsonPath("$.result.$topic1[35].value").isEqualTo(2)
-                .jsonPath("$.result.$topic2[35].value").isEqualTo(0)
-                .jsonPath("$.result.$topic1[35].topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1[35].startDate").isEqualTo("2017-12-01T00:00")
-                .jsonPath("$.result.$topic1[35].endDate").isEqualTo("2018-01-01T00:00")
-                .jsonPath("$.result.$topic2[35].startDate").isEqualTo("2017-12-01T00:00")
-                .jsonPath("$.result.$topic2[35].endDate").isEqualTo("2018-01-01T00:00")
+                .jsonPath("$.result.$topic1.value[35]").isEqualTo(2)
+                .jsonPath("$.result.$topic2.value[35]").isEqualTo(0)
+                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+                .jsonPath("$.result.$topic1.startDate[35]").isEqualTo("2017-12-01T00:00:00")
+                .jsonPath("$.result.$topic1.endDate[35]").isEqualTo("2018-01-01T00:00:00")
+                .jsonPath("$.result.$topic2.startDate[35]").isEqualTo("2017-12-01T00:00:00")
+                .jsonPath("$.result.$topic2.endDate[35]").isEqualTo("2018-01-01T00:00:00")
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
@@ -377,28 +377,27 @@ class SystemTests {
             }
 
             doGetAndAssertThat(url)
-                .jsonPath("$.result.$topic1[0].value").isEqualTo(0)
-                .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1[0].startDate").isEqualTo("2015-01-01T00:00")
-                .jsonPath("$.result.$topic1[0].endDate").isEqualTo("2015-02-01T00:00")
-                .jsonPath("$.result.$topic2[0].startDate").isEqualTo("2015-01-01T00:00")
-                .jsonPath("$.result.$topic2[0].endDate").isEqualTo("2015-02-01T00:00")
+                .jsonPath("$.result.$topic1.value[0]").isEqualTo(0)
+                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+                .jsonPath("$.result.$topic1.startDate[0]").isEqualTo("2015-01-01T00:00:00")
+                .jsonPath("$.result.$topic1.endDate[0]").isEqualTo("2015-02-01T00:00:00")
+                .jsonPath("$.result.$topic2.startDate[0]").isEqualTo("2015-01-01T00:00:00")
+                .jsonPath("$.result.$topic2.endDate[0]").isEqualTo("2015-02-01T00:00:00")
 
-                .jsonPath("$.result.$topic1[35].value").isEqualTo(2)
-                .jsonPath("$.result.$topic1[35].modified.unit_more").doesNotExist()
-                .jsonPath("$.result.$topic1[35].topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1[35].startDate").isEqualTo("2017-12-01T00:00")
-                .jsonPath("$.result.$topic1[35].endDate").isEqualTo("2018-01-01T00:00")
+                .jsonPath("$.result.$topic1.value[35]").isEqualTo(2)
+                .jsonPath("$.result.$topic1.modified.unit_more").doesNotExist()
+                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+                .jsonPath("$.result.$topic1.startDate[35]").isEqualTo("2017-12-01T00:00:00")
+                .jsonPath("$.result.$topic1.endDate[35]").isEqualTo("2018-01-01T00:00:00")
 
-                .jsonPath("$.result.$topic4[35].value").isEqualTo(0)
-                .jsonPath("$.result.$topic4[35].modified.unit_more").isEqualTo(0.0)
-                .jsonPath("$.result.$topic4[35].topic").isEqualTo("waterway")
-                .jsonPath("$.result.$topic4[35].startDate").isEqualTo("2017-12-01T00:00")
-                .jsonPath("$.result.$topic4[35].endDate").isEqualTo("2018-01-01T00:00")
+                .jsonPath("$.result.$topic4.value[35]").isEqualTo(0)
+                .jsonPath("$.result.$topic4.modified.unit_more[35]").isEqualTo(0.0)
+                .jsonPath("$.result.$topic4.topic").isEqualTo("waterway")
+                .jsonPath("$.result.$topic4.startDate[35]").isEqualTo("2017-12-01T00:00:00")
+                .jsonPath("$.result.$topic4.endDate[35]").isEqualTo("2018-01-01T00:00:00")
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
-
         }
 
 
@@ -416,24 +415,23 @@ class SystemTests {
             }
 
             doGetAndAssertThat(url)
-                .jsonPath("$.result.$topic1[0].value").isEqualTo(0)
-                .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1[0].startDate").isEqualTo("1970-01-01T00:00")
-                .jsonPath("$.result.$topic1[0].endDate").isEqualTo("1971-01-01T00:00")
+                .jsonPath("$.result.$topic1.value[0]").isEqualTo(0)
+                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+                .jsonPath("$.result.$topic1.startDate[0]").isEqualTo("1970-01-01T00:00:00")
+                .jsonPath("$.result.$topic1.endDate[0]").isEqualTo("1971-01-01T00:00:00")
 
-                .jsonPath("$.result.$topic1[45].value").isEqualTo(3)
-                .jsonPath("$.result.$topic1[45].topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1[45].startDate").isEqualTo("2015-01-01T00:00")
-                .jsonPath("$.result.$topic1[45].endDate").isEqualTo("2016-01-01T00:00")
+                .jsonPath("$.result.$topic1.value[45]").isEqualTo(3)
+                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+                .jsonPath("$.result.$topic1.startDate[45]").isEqualTo("2015-01-01T00:00:00")
+                .jsonPath("$.result.$topic1.endDate[45]").isEqualTo("2016-01-01T00:00:00")
 
-                .jsonPath("$.result.$topic1[47].value").isEqualTo(2)
-                .jsonPath("$.result.$topic1[47].topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1[47].startDate").isEqualTo("2017-01-01T00:00")
-                .jsonPath("$.result.$topic1[47].endDate").isEqualTo("2018-01-01T00:00")
+                .jsonPath("$.result.$topic1.value[47]").isEqualTo(2)
+                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
+                .jsonPath("$.result.$topic1.startDate[47]").isEqualTo("2017-01-01T00:00:00")
+                .jsonPath("$.result.$topic1.endDate[47]").isEqualTo("2018-01-01T00:00:00")
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
-
         }
 
 
@@ -464,7 +462,6 @@ class SystemTests {
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
-
         }
 
 
@@ -495,7 +492,6 @@ class SystemTests {
                 .jsonPath("$.result.$topic2.modified.count_modified").isEqualTo(0)
                 .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
         }
-
     }
 
 

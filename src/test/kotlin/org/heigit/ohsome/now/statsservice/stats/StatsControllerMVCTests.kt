@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.time.LocalDateTime
 
 
 @WebMvcTest(StatsController::class)
@@ -46,16 +47,16 @@ class StatsControllerMVCTests {
 
 
     private var exampleIntervalStatsData = mapOf(
-        "users" to UnsignedLong.valueOf(1001L),
-        "roads" to 43534.5,
-        "buildings" to 123L,
-        "edits" to UnsignedLong.valueOf(213124L),
-        "startDate" to "20.05.2053",
-        "endDate" to "20.05.2067",
-        "changesets" to UnsignedLong.valueOf(2)
+        "users" to longArrayOf(1001L),
+        "roads" to doubleArrayOf(43534.5),
+        "buildings" to doubleArrayOf(123.0),
+        "edits" to longArrayOf(213124L),
+        "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+        "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+        "changesets" to longArrayOf(2)
     )
 
-    //private var exampleIntervalStats = statsIntervalResult(exampleIntervalStatsData)
+    private var exampleIntervalStats = exampleIntervalStatsData.toIntervalStatsResult()
 
 
     @Suppress("DANGEROUS_CHARACTERS")
@@ -134,7 +135,7 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats per interval can be served with explicit start and end dates and without countries`() {
-        /*todo:
+
         `when`(
             this.statsService.getStatsForTimeSpanInterval(
                 anyString(),
@@ -144,7 +145,17 @@ class StatsControllerMVCTests {
                 anyList()
             )
         )
-            .thenReturn(StatsIntervalResult(1, 2, 2.0, 2, 2, "", ""))
+            .thenReturn(
+                StatsIntervalResult(
+                    longArrayOf(1),
+                    longArrayOf(2),
+                    doubleArrayOf(1.0),
+                    doubleArrayOf(2.0),
+                    longArrayOf(2),
+                    arrayOf(LocalDateTime.parse("2017-10-01T04:00:00")),
+                    arrayOf(LocalDateTime.parse("2020-10-01T04:00:00"))
+                )
+            )
 
         val GET = get("/stats/$hashtag/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
@@ -163,19 +174,17 @@ class StatsControllerMVCTests {
                     .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M")
             )
             .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
-            .andExpect(jsonPath("$.result.[0].changesets").value(2))
-            .andExpect(jsonPath("$.result.[0].users").value(1001))
-            .andExpect(jsonPath("$.result.[0].roads").value(43534.5))
-            .andExpect(jsonPath("$.result.[0].buildings").value(123))
-            .andExpect(jsonPath("$.result.[0].edits").value(213124))
-
-         */
+            .andExpect(jsonPath("$.result.changesets[0]").value(1))
+            .andExpect(jsonPath("$.result.users[0]").value(2))
+            .andExpect(jsonPath("$.result.roads[0]").value(1.0))
+            .andExpect(jsonPath("$.result.buildings[0]").value(2.0))
+            .andExpect(jsonPath("$.result.edits[0]").value(2))
     }
 
 
     @Test
     fun `stats per interval can be served with explicit start and end dates and with countries`() {
-        /*todo:
+
         `when`(
             this.statsService.getStatsForTimeSpanInterval(
                 anyString(),
@@ -204,12 +213,11 @@ class StatsControllerMVCTests {
                     .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M&countries=UGA,DE")
             )
             .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
-            .andExpect(jsonPath("$.result.[0].changesets").value(2))
-            .andExpect(jsonPath("$.result.[0].users").value(1001))
-            .andExpect(jsonPath("$.result.[0].roads").value(43534.5))
-            .andExpect(jsonPath("$.result.[0].buildings").value(123))
-            .andExpect(jsonPath("$.result.[0].edits").value(213124))
-         */
+            .andExpect(jsonPath("$.result.changesets[0]").value(2))
+            .andExpect(jsonPath("$.result.users[0]").value(1001))
+            .andExpect(jsonPath("$.result.roads[0]").value(43534.5))
+            .andExpect(jsonPath("$.result.buildings[0]").value(123))
+            .andExpect(jsonPath("$.result.edits[0]").value(213124))
     }
 
 

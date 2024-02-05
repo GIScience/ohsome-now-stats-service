@@ -1,7 +1,7 @@
 package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
-import java.util.*
+import java.time.LocalDateTime
 
 
 fun Map<String, Any>.toStatsResult() = StatsResult(
@@ -24,10 +24,10 @@ fun Map<String, Any>.toIntervalStatsResult() =
         this["changesets"] as LongArray,
         this["users"] as LongArray,
         this["roads"] as DoubleArray,
-        this["buildings"] as LongArray,
+        this["buildings"] as DoubleArray,
         this["edits"] as LongArray,
-        this["startdate"] as Array<String>,
-        this["enddate"] as Array<String>,
+        this["startdate"] as Array<LocalDateTime>,
+        this["enddate"] as Array<LocalDateTime>,
     )
 
 
@@ -57,14 +57,14 @@ open class StatsResult(
 
 
 @Suppress("LongParameterList")
-open class StatsIntervalResult(
-    open val changesets: LongArray,
-    open val users: LongArray,
-    open val roads: DoubleArray,
-    open val buildings: LongArray,
-    open val edits: LongArray,
-    open val startDate: Array<String>,
-    open val endDate: Array<String>
+data class StatsIntervalResult(
+    val changesets: LongArray,
+    val users: LongArray,
+    val roads: DoubleArray,
+    val buildings: DoubleArray,
+    val edits: LongArray,
+    val startDate: Array<LocalDateTime>,
+    val endDate: Array<LocalDateTime>
 )
 
 @Suppress("LongParameterList")

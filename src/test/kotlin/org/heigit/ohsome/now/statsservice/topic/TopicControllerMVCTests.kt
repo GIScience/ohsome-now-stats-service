@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.time.LocalDateTime
 
 
 @WebMvcTest(TopicController::class)
@@ -43,24 +44,26 @@ class TopicControllerMVCTests {
 
 
     private val exampleTopicIntervalStatsData = mapOf(
-        "topic_result" to UnsignedLong.valueOf(1001L),
-        "topic_result_modified" to UnsignedLong.valueOf(0L),
-        "topic_result_created" to UnsignedLong.valueOf(1001L),
-        "topic_result_deleted" to UnsignedLong.valueOf(0L),
-        "startDate" to "20.05.2053",
-        "endDate" to "20.05.2067",
+        "topic_result" to doubleArrayOf(1001.0),
+        "topic_result_modified" to longArrayOf(0L),
+        "topic_result_created" to doubleArrayOf(1001.0),
+        "topic_result_deleted" to doubleArrayOf(0.0),
+        "startdate" to arrayOf(LocalDateTime.parse("2053-05-20T00:00:00")),
+        "enddate" to arrayOf(LocalDateTime.parse("2067-05-20T00:00:00")),
     )
 
-    //private val exampleTopicStats = topicIntervalResult(exampleTopicIntervalStatsData, "place")
+    private val exampleTopicStats = exampleTopicIntervalStatsData.toTopicIntervalResult("place")
 
 
     @Suppress("DANGEROUS_CHARACTERS")
     @ParameterizedTest
-    @ValueSource(strings = [
-        "/topic/highway,healthcare?hashtag=*",
-        "/topic/highway,healthcare/interval?hashtag=*&interval=P1M",
-        "/topic/highway,healthcare/country?hashtag=*",
-    ])
+    @ValueSource(
+        strings = [
+            "/topic/highway,healthcare?hashtag=*",
+            "/topic/highway,healthcare/interval?hashtag=*&interval=P1M",
+            "/topic/highway,healthcare/country?hashtag=*",
+        ]
+    )
     fun `all requests with '*' hashtag throw error`(url: String) {
 
         val GET = get(url)
@@ -146,44 +149,6 @@ class TopicControllerMVCTests {
 
     @Test
     fun `topic stats per interval can be served with explicit start and end dates and without countries`() {
-        /*todo:
-                `when`(
-                    this.topicService.getTopicStatsForTimeSpanInterval(
-                        anyString(),
-                        anyInstant(),
-                        anyInstant(),
-                        anyString(),
-                        anyList(),
-                        anyList()
-                    )
-                ).thenReturn(mapOf(topic1 to listOf(exampleTopicStats)))
-
-
-                val GET = get("/topic/${topics.joinToString()}/interval")
-                    .queryParam("startdate", "2017-10-01T04:00:00Z")
-                    .queryParam("enddate", "2020-10-01T04:00:00Z")
-                    .queryParam("interval", "P1M")
-                    .queryParam("hashtag", hashtag)
-
-                val expectedUrl =
-                    "/topic/place/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M&hashtag=%26uganda"
-
-                this.mockMvc.perform(GET)
-                    .andDo(print())
-                    .andExpect(status().isOk)
-                    .andExpect(content().contentType(APPLICATION_JSON))
-
-                    .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
-                    .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
-                    .andExpect(jsonPath("$.metadata.requestUrl").value(expectedUrl))
-                    .andExpect(jsonPath("$.query.timespan.interval").value("P1M"))
-                    .andExpect(jsonPath("$.result.$topic1.[0].value").value(1001))*/
-    }
-
-
-    @Test
-    fun `topic stats per interval can be served with explicit start and end dates and with countries`() {
-        /*todo:
         `when`(
             this.topicService.getTopicStatsForTimeSpanInterval(
                 anyString(),
@@ -193,7 +158,44 @@ class TopicControllerMVCTests {
                 anyList(),
                 anyList()
             )
-        ).thenReturn(mapOf(topic1 to listOf(exampleTopicStats)))
+        ).thenReturn(mapOf(topic1 to exampleTopicStats))
+
+
+        val GET = get("/topic/${topics.joinToString()}/interval")
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+            .queryParam("interval", "P1M")
+            .queryParam("hashtag", hashtag)
+
+        val expectedUrl =
+            "/topic/place/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M&hashtag=%26uganda"
+
+        this.mockMvc.perform(GET)
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+
+            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.metadata.requestUrl").value(expectedUrl))
+            .andExpect(jsonPath("$.query.timespan.interval").value("P1M"))
+            .andExpect(jsonPath("$.result.$topic1.[0].value").value(1001))
+    }
+
+
+    @Test
+    fun `topic stats per interval can be served with explicit start and end dates and with countries`() {
+
+        `when`(
+            this.topicService.getTopicStatsForTimeSpanInterval(
+                anyString(),
+                anyInstant(),
+                anyInstant(),
+                anyString(),
+                anyList(),
+                anyList()
+            )
+        ).thenReturn(mapOf(topic1 to exampleTopicStats))
 
         val GET = get("/topic/${topics.joinToString()}/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
@@ -216,14 +218,12 @@ class TopicControllerMVCTests {
             .andExpect(jsonPath("$.query.topics").exists())
             .andExpect(jsonPath("$.query.hashtag").exists())
             .andExpect(jsonPath("$.query.countries").exists())
-            .andExpect(jsonPath("$.result.$topic1.[0].value").value(1001))
-         */
+            .andExpect(jsonPath("$.result.$topic1.value[0]").value(1001))
     }
 
 
     @Test
     fun `topic stats per interval throws error for invalid interval string`() {
-        /*
         val GET = get("/topic/${topics.joinToString()}/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
@@ -231,8 +231,6 @@ class TopicControllerMVCTests {
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)
-
-         */
     }
 
 
@@ -276,6 +274,4 @@ class TopicControllerMVCTests {
             .andExpect(jsonPath("$.metadata.requestUrl").value(expectedURL))
             .andExpect(jsonPath("$.result.$topic1.[0].country").value("BOL"))
     }
-
-
 }

@@ -53,14 +53,14 @@ fun lengthOrAreaAggregation(type: String, divideBy: Int): String {
 }
 
 const val arraySQLBase = """
-    groupArray(topicResult) as topic_result,
-    groupArray(topic_result_created) as topic_result_created,
+    groupArray(toFloat64(topic_result)) as topic_result,
+    groupArray(toFloat64(topic_result_created)) as topic_result_created,
     groupArray(topic_result_modified) as topic_result_modified,
-    groupArray(topic_result_deleted) as topic_result_deleted,
+    groupArray(toFloat64(topic_result_deleted)) as topic_result_deleted,
 """
 const val arraySQLDetail = """
     groupArray(topic_result_modified_more) as topic_result_modified_more,
-    groupArray(topic_result_modified_less) as topic_result_modified_less
+    groupArray(topic_result_modified_less) as topic_result_modified_less,
 """
 
 enum class AggregationStrategy(val sql: String, val arraySql: String) {

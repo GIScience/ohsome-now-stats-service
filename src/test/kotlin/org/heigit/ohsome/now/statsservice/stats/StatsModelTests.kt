@@ -3,6 +3,7 @@ package org.heigit.ohsome.now.statsservice.stats
 import com.clickhouse.data.value.UnsignedLong
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 
 
 class StatsModelTests {
@@ -24,6 +25,26 @@ class StatsModelTests {
         "latest" to "20.05.2053",
     )
 
+    private val intervalMap = mapOf(
+        "changesets" to longArrayOf(2L),
+        "users" to longArrayOf(1001L),
+        "roads" to doubleArrayOf(43534.5),
+        "buildings" to doubleArrayOf(123.0),
+        "edits" to longArrayOf(213124L),
+        "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+        "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+    )
+
+    private var exampleIntervalStatsData = StatsIntervalResult(
+        intervalMap["changesets"] as LongArray,
+        intervalMap["users"] as LongArray,
+        intervalMap["roads"] as DoubleArray,
+        intervalMap["buildings"] as DoubleArray,
+        intervalMap["edits"] as LongArray,
+        intervalMap["startdate"] as Array<LocalDateTime>,
+        intervalMap["enddate"] as Array<LocalDateTime>
+    )
+
 
     @Test
     fun toStatsResult() {
@@ -36,7 +57,6 @@ class StatsModelTests {
         assertThat(result.buildings).isEqualTo(123L)
         assertThat(result.edits).isEqualTo(213124L)
         assertThat(result.latest).isEqualTo("20.05.2053")
-
     }
 
 
@@ -58,18 +78,11 @@ class StatsModelTests {
 
     @Test
     fun toIntervalStatsResult() {
-        //Todo:
-        /*val maps = listOf(this.map1, this.map2)
-        val result = maps.toIntervalStatsResult()
+        val result = intervalMap.toIntervalStatsResult()
 
-        assertThat(result[0])
+        assertThat(result)
             .usingRecursiveComparison()
-            .isEqualTo(statsIntervalResult(map1))
-
-        assertThat(result[1])
-            .usingRecursiveComparison()
-            .isEqualTo(statsIntervalResult(map2))
-        */
+            .isEqualTo(exampleIntervalStatsData)
     }
 
 
@@ -86,7 +99,6 @@ class StatsModelTests {
         assertThat(result[1])
             .usingRecursiveComparison()
             .isEqualTo(countryStatsResult(map2))
-
     }
 
 
@@ -103,7 +115,6 @@ class StatsModelTests {
             "number_of_users" to UnsignedLong.valueOf(3),
         )
 
-
         val maps = listOf(map3, map4)
         val result = maps.toHashtagResult()
 
@@ -114,8 +125,5 @@ class StatsModelTests {
         assertThat(result[1])
             .usingRecursiveComparison()
             .isEqualTo(hashtagResult(map4))
-
     }
-
-
 }

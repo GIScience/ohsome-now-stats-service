@@ -58,7 +58,7 @@ class TopicRepo {
         topicHandler: TopicHandler
     ) = """
     SELECT
-        ${topicHandler.topicArrayResult()},
+        ${topicHandler.topicArrayResult()}
         groupArray(startdate) as startdate,
         groupArray(enddate ) as enddate
     FROM

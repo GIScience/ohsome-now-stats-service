@@ -13,6 +13,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import java.time.Instant
+import java.time.LocalDateTime
 
 
 @SpringTestWithClickhouse
@@ -126,7 +127,7 @@ class TopicRepoIntegrationTests {
 
     @Test
     fun `getTopicStatsForTimeSpanInterval returns partial topic data in time span for start and end date with hashtag aggregated by month without countries`() {
-        /*todo:
+
         val startDate = Instant.ofEpochSecond(1420991470)
 
         val endDate = Instant.ofEpochSecond(1640054890)
@@ -141,20 +142,19 @@ class TopicRepoIntegrationTests {
         )
 
         println(result)
-        assertEquals(84, result.size)
-        assertEquals(6, result[0].size)
-        assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
+        assertEquals(6, result.size)
+        assertEquals(84, (result["topic_result"] as DoubleArray).size)
+        assertEquals("2015-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
 
         // 3 new places at the beginning of the interval
-        assertEquals("3", result[0]["topic_result"].toString())
-        assertEquals("2", result[35]["topic_result"].toString())
-         */
+        assertEquals("3.0", (result["topic_result"] as DoubleArray)[0].toString())
+        assertEquals("2.0", (result["topic_result"] as DoubleArray)[35].toString())
     }
 
 
     @Test
     fun `getTopicStatsForTimeSpanInterval returns partial topic data in time span for start and end date with hashtag aggregated by month with 1 country`() {
-        /*todo:
+
         val startDate = Instant.ofEpochSecond(1420991470)
 
         val endDate = Instant.ofEpochSecond(1640054890)
@@ -169,20 +169,19 @@ class TopicRepoIntegrationTests {
         )
 
         println(result)
-        assertEquals(84, result.size)
-        assertEquals(6, result[0].size)
-        assertEquals("2015-01-01T00:00", result[0]["startdate"].toString())
+        assertEquals(6, result.size)
+        assertEquals(84, (result["topic_result"] as DoubleArray).size)
+
+        assertEquals("2015-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
 
         // 3 new places in 'BRA' at the beginning of the interval but countries are restricted to 'BOL'
-        assertEquals("0", result[0]["topic_result"].toString())
-        assertEquals("2", result[35]["topic_result"].toString())
-     */
+        assertEquals("0.0", (result["topic_result"] as DoubleArray)[0].toString())
+        assertEquals("2.0", (result["topic_result"] as DoubleArray)[35].toString())
     }
 
 
     @Test
     fun `getTopicStatsForTimeSpanInterval returns all data when nothing is supplied as startdate`() {
-        /*todo:
         val startDate = null
 
         val endDate = Instant.ofEpochSecond(1639054888)
@@ -197,19 +196,18 @@ class TopicRepoIntegrationTests {
         )
 
         println(result)
-        assertEquals(624, result.size)
-        assertEquals(6, result[0].size)
-        assertEquals("1970-01-01T00:00", result[0]["startdate"].toString())
+        assertEquals(6, result.size)
+        assertEquals(624, (result["topic_result"] as DoubleArray).size)
+        assertEquals("1970-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
 
-        assertEquals("3", result[540]["topic_result"].toString())
-        assertEquals("2", result[575]["topic_result"].toString())
-         */
+        assertEquals("3.0", (result["topic_result"] as DoubleArray)[540].toString())
+        assertEquals("2.0", (result["topic_result"] as DoubleArray)[575].toString())
     }
 
 
     @Test
     fun `getTopicStatsForTimeSpanInterval fills data between two dates with zeros`() {
-        /*todo:
+
         val startDate = Instant.ofEpochSecond(1503644723)
 
         val endDate = Instant.ofEpochSecond(1640486233)
@@ -223,18 +221,16 @@ class TopicRepoIntegrationTests {
             TopicHandler(topic)
         )
 
-        println(result)
-        result.forEachIndexed { counter, it -> println(" $counter $it") }
 
-        assertEquals(53, result.size)
-        assertEquals(6, result[0].size)
+        assertEquals(6, result.size)
+        assertEquals(53, (result["startdate"] as Array<LocalDateTime>).size)
 
-        result.forEach() {
-            assertNotNull(it["topic_result"])
+
+        (result["topic_result"] as DoubleArray).forEach() {
+            assertNotNull(it)
         }
 
-        assertEquals("2017-08-01T00:00", result[0]["startdate"].toString())
-             */
+        assertEquals("2017-08-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
     }
 
 
@@ -295,8 +291,6 @@ class TopicRepoIntegrationTests {
         assertEquals(6791950, result["user_id"])
         assertEquals(1L, result["topic_result"])
     }
-
-
 }
 
 
