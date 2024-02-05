@@ -3,15 +3,12 @@ package org.heigit.ohsome.now.statsservice.topic
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.validation.*
 import org.heigit.ohsome.now.statsservice.*
 import org.heigit.ohsome.now.statsservice.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
-import kotlin.reflect.KClass
 
 
 @CrossOrigin
@@ -136,29 +133,5 @@ class TopicController {
         return buildOhsomeFormat(result, httpServletRequest)
     }
 
-    @Target(AnnotationTarget.VALUE_PARAMETER)
-    @Retention(AnnotationRetention.RUNTIME)
-    @Constraint(validatedBy = [ValidTopicsCheck::class])
-    annotation class ValidTopics(
-        val message: String = "Topic not valid",
-        val groups: Array<KClass<*>> = [],
-        val payload: Array<KClass<out Payload>> = []
-    )
 
-    class ValidTopicsCheck : ConstraintValidator<ValidTopics?, List<String>> {
-        override fun isValid(topics: List<String>, context: ConstraintValidatorContext?): Boolean {
-            return areTopicsValid(topics)
-        }
-    }
-
-
-    @ControllerAdvice
-    class YourControllerAdvice {
-        @ResponseBody
-        @ResponseStatus(BAD_REQUEST)
-        @ExceptionHandler(ConstraintViolationException::class)
-        fun handleConstraintViolationException() {
-            // Intentionally left blank
-        }
-    }
 }
