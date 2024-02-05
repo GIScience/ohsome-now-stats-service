@@ -7,20 +7,21 @@ import jakarta.validation.Payload
 import kotlin.reflect.KClass
 
 
-@Target(AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.RUNTIME)
 @Constraint(validatedBy = [ValidTopicsCheck::class])
-annotation class ValidTopics(
+annotation class ValidTopic(
     val message: String = "Topic not valid",
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<out Payload>> = []
 )
 
 
-class ValidTopicsCheck : ConstraintValidator<ValidTopics?, List<String>> {
-    override fun isValid(topics: List<String>, context: ConstraintValidatorContext?): Boolean {
-        return areTopicsValid(topics)
-    }
+class ValidTopicsCheck : ConstraintValidator<ValidTopic?, String> {
+
+    override fun isValid(topic: String, context: ConstraintValidatorContext?) =
+        areTopicsValid(listOf(topic))
+
 }
 
 

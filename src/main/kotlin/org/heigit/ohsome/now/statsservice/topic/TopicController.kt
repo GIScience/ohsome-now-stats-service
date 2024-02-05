@@ -45,8 +45,7 @@ class TopicController {
 
         @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
-        @ValidTopics
-        topics: List<String>
+        topics: List<@ValidTopic String>
 
     ): OhsomeFormat<Map<String, TopicResult>> {
 
@@ -87,8 +86,7 @@ class TopicController {
 
         @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
-        @ValidTopics
-        topics: List<String>
+        topics: List<@ValidTopic String>
     ): OhsomeFormat<Map<String, TopicIntervalResult>> {
 
         validateIntervalString(interval)
@@ -122,8 +120,7 @@ class TopicController {
 
         @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
-        @ValidTopics
-        topics: List<String>
+        topics: List<@ValidTopic String>
     ): OhsomeFormat<Map<String, List<TopicCountryResult>>> {
 
         val result = measure {

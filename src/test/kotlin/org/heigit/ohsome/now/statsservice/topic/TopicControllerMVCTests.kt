@@ -78,6 +78,31 @@ class TopicControllerMVCTests {
     }
 
 
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "/topic/badtopic?hashtag=whatever",
+            "/topic/healthcare,badtopic?hashtag=whatever",
+            "/topic/badtopic/interval?hashtag=whatever&interval=P1M",
+            "/topic/badtopic,healthcare/interval?hashtag=whatever&interval=P1M",
+            "/topic/badtopic/country?hashtag=whatever",
+            "/topic/highway,badtopic/country?hashtag=whatever",
+        ]
+    )
+    fun `all requests for invalid topics throw error`(url: String) {
+
+        val expectedErrorMessage = """[{"message":"Topic not valid","invalidValue":"badtopic"}]"""
+
+        val GET = get(url)
+
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
+
+    }
+
+
     @Test
     fun `topic can be served without explicit timespans`() {
 
