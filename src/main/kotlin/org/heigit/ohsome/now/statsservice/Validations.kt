@@ -4,6 +4,7 @@ import jakarta.validation.Constraint
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
 import jakarta.validation.Payload
+import org.heigit.ohsome.now.statsservice.utils.isLessThanOneMinute
 import org.heigit.ohsome.now.statsservice.utils.isParseableISO8601String
 import kotlin.annotation.AnnotationRetention.RUNTIME
 import kotlin.annotation.AnnotationTarget.TYPE
@@ -41,6 +42,22 @@ annotation class ParseableInterval(
 class ISO8601StringIntervalValidator : ConstraintValidator<ParseableInterval, String> {
 
     override fun isValid(interval: String, context: ConstraintValidatorContext?) = isParseableISO8601String(interval)
+
+}
+
+
+@Target(VALUE_PARAMETER, TYPE)
+@Retention(RUNTIME)
+@Constraint(validatedBy = [AtLeastOneMinuteIntervalValidator::class])
+annotation class AtLeastOneMinuteInterval(
+    val message: String = "Interval must not be under 1 minute.",
+    val groups: Array<KClass<*>> = [],
+    val payload: Array<KClass<out Payload>> = []
+)
+
+class AtLeastOneMinuteIntervalValidator : ConstraintValidator<AtLeastOneMinuteInterval, String> {
+
+    override fun isValid(interval: String, context: ConstraintValidatorContext?) = ! isLessThanOneMinute(interval)
 
 }
 

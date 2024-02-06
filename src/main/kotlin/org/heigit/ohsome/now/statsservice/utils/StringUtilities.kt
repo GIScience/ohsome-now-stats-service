@@ -34,8 +34,10 @@ fun String.replaceTime() = this
     .replace("M", " MINUTE")
 
 
+
+@Deprecated("is handled via jakarta bean validation annotations now")
 fun validateIntervalString(interval: String) {
-//    checkIfStringIsParsable(interval)
+    checkIfStringIsParsable(interval)
     checkIfDurationIsBiggerThanOneMinute(interval)
 }
 
@@ -51,9 +53,12 @@ fun isParseableISO8601String(interval: String) = interval
     .matches(Regex("^P(?!\$)(\\d+Y)?(\\d+M)?(\\d+W)?(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+S)?)?\$"))
 
 
-//TODO: consider replacing with jakarta bean validation annotations instead of throwing exception
+@Deprecated("is handled via jakarta bean validation annotations now")
 fun checkIfDurationIsBiggerThanOneMinute(interval: String) {
-    if (interval.startsWith("PT") && Duration.parseIsoString(interval) < Duration.parseIsoString("PT1M")) {
+    if (isLessThanOneMinute(interval)) {
         throw ISO8601TooSmallException()
     }
 }
+
+fun isLessThanOneMinute(interval: String) = interval.startsWith("PT") &&
+        Duration.parseIsoString(interval) < Duration.parseIsoString("PT1M")
