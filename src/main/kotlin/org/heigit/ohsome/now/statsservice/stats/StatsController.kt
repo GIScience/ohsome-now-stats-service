@@ -152,7 +152,7 @@ class StatsController {
         return buildOhsomeFormat(result, httpServletRequest)
     }
 
-
+    @Suppress("LongParameterList")
     @Operation(summary = "Returns the most used Hashtag by user count in a given timeperiod")
     @GetMapping("/most-used-hashtags", produces = ["application/json"])
     fun mostUsedHashtags(
