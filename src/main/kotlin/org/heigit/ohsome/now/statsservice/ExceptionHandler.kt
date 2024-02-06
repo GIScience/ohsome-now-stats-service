@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 
 
+@Deprecated("is handled via jakarta bean validation annotations now")
 data class UnparsableISO8601StringException(override val message: String? = null) : Exception(message)
+
 data class ISO8601TooSmallException(override val message: String? = null) : Exception(message)
 
 @ControllerAdvice

@@ -83,6 +83,24 @@ class StatsControllerMVCTests {
             .andExpect(content().string(expectedErrorMessage))
     }
 
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "/stats/missingmaps/interval?interval=bad_interval"
+        ]
+    )
+    fun `all requests with bad ISO interval throw error`(url: String) {
+
+        val expectedErrorMessage = """[{"message":"Invalid ISO8601 string as interval.","invalidValue":"bad_interval"}]"""
+
+        val GET = get(url)
+
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
+    }
+
 
     @Test
     fun `stats can be served without explicit timespans`() {
