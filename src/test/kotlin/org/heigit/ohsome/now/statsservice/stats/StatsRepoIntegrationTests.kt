@@ -300,8 +300,9 @@ class StatsRepoIntegrationTests {
     fun `getMostUsedHashtags returns empty list when out of time bounds`() {
         val startDate = Instant.ofEpochSecond(1020991470)
         val endDate = Instant.ofEpochSecond(1019054890)
-        val result = this.repo.getMostUsedHashtags(startDate, endDate, 10)
+        val result = this.repo.getMostUsedHashtags(startDate, endDate, 10, CountryHandler(emptyList()))
         println(result)
+        assertEquals(emptyList<String>(), result)
     }
 
     @Test
