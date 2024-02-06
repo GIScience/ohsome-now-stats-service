@@ -284,7 +284,7 @@ class StatsControllerMVCTests {
         val data = hashtagResult(mapOf("hashtag" to "testtag", "number_of_users" to UnsignedLong.valueOf(242L)))
 
 
-        `when`(this.statsService.getMostUsedHashtags(anyInstant(), anyInstant(), anyInt()))
+        `when`(this.statsService.getMostUsedHashtags(anyInstant(), anyInstant(), anyInt(), anyList()))
             .thenReturn(listOf(data))
 
         val GET = get("/most-used-hashtags")
@@ -302,7 +302,7 @@ class StatsControllerMVCTests {
     @Test
     fun `most-used-hashtags does not throw an error for out of timeline`() {
 
-        `when`(this.statsService.getMostUsedHashtags(anyInstant(), anyInstant(), anyInt()))
+        `when`(this.statsService.getMostUsedHashtags(anyInstant(), anyInstant(), anyInt(), anyList()))
             .thenReturn(listOf())
 
         val GET = get("/most-used-hashtags")

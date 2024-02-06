@@ -150,8 +150,8 @@ class StatsService {
             ?.value ?: 0.0)
 
 
-    fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?) = this.repo
-        .getMostUsedHashtags(startDate, endDate, limit)
+    fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?, countries: List<String>) = this.repo
+        .getMostUsedHashtags(startDate, endDate, limit, handler(countries))
         .toHashtagResult()
 
 

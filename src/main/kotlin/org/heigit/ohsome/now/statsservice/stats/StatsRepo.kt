@@ -148,13 +148,14 @@ class StatsRepo {
 
 
     //language=sql
-    private val mostUsedHashtagsSQL = """
+    private fun mostUsedHashtagsSQL(countryHandler: CountryHandler) = """
         SELECT 
             hashtag, COUNT(DISTINCT user_id) as number_of_users
         FROM "stats_$schemaVersion"
         WHERE
             changeset_timestamp > parseDateTimeBestEffort(:startDate) and 
             changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            ${countryHandler.optionalFilterSQL}
         GROUP BY
             hashtag
         ORDER BY
@@ -332,13 +333,14 @@ class StatsRepo {
     fun getMostUsedHashtags(
         startDate: Instant? = EPOCH,
         endDate: Instant? = now().truncatedTo(ChronoUnit.SECONDS),
-        limit: Int? = 10
+        limit: Int? = 10,
+        countryHandler: CountryHandler
     ): List<Map<String, Any>> {
 
         logger.info("Getting trending hashtags startDate: $startDate, endDate: $endDate, limit: $limit")
 
         return query {
-            it.select(mostUsedHashtagsSQL)
+            it.select(mostUsedHashtagsSQL(countryHandler))
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
                 .bind("limit", limit)

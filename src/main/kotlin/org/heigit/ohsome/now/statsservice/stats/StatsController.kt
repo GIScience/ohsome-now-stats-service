@@ -32,7 +32,7 @@ class StatsController {
     fun stats(
         httpServletRequest: HttpServletRequest,
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'" )
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
         @PathVariable
 //        @Valid
 //        hashtag: Hashtag,
@@ -172,11 +172,15 @@ class StatsController {
 
         @Parameter(description = "the number of hashtags to return")
         @RequestParam(name = "limit", required = false, defaultValue = "10")
-        limit: Int?
+        limit: Int?,
+
+        @Parameter(description = "A comma separated list of countries, can also only be one country")
+        @RequestParam("countries", required = false, defaultValue = "")
+        countries: List<String>?
     ): OhsomeFormat<List<HashtagResult>> {
 
         val result = measure {
-            statsService.getMostUsedHashtags(startDate, endDate, limit)
+            statsService.getMostUsedHashtags(startDate, endDate, limit, countries!!)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
@@ -185,7 +189,9 @@ class StatsController {
 
     @Operation(summary = "Returns all hashtags with at least 10 contributions contained in the database")
     @GetMapping("/hashtags", produces = ["application/json"])
-    fun hashtags(httpServletRequest: HttpServletRequest): OhsomeFormat<List<UniqueHashtagsResult>> {
+    fun hashtags(
+        httpServletRequest: HttpServletRequest
+    ): OhsomeFormat<List<UniqueHashtagsResult>> {
 
         val result = measure {
             statsService.getUniqueHashtags()
