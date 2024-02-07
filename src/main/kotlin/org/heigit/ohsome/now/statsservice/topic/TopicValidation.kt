@@ -4,11 +4,14 @@ import jakarta.validation.Constraint
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
 import jakarta.validation.Payload
+import kotlin.annotation.AnnotationRetention.RUNTIME
+import kotlin.annotation.AnnotationTarget.TYPE
+import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
 import kotlin.reflect.KClass
 
 
-@Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE)
-@Retention(AnnotationRetention.RUNTIME)
+@Target(VALUE_PARAMETER, TYPE)
+@Retention(RUNTIME)
 @Constraint(validatedBy = [ValidTopicsCheck::class])
 annotation class ValidTopic(
     val message: String = "Topic not valid",
@@ -17,10 +20,9 @@ annotation class ValidTopic(
 )
 
 
-class ValidTopicsCheck : ConstraintValidator<ValidTopic?, String> {
+class ValidTopicsCheck : ConstraintValidator<ValidTopic, String> {
 
-    override fun isValid(topic: String, context: ConstraintValidatorContext?) =
-        areTopicsValid(listOf(topic))
+    override fun isValid(topic: String, context: ConstraintValidatorContext?) = areTopicsValid(listOf(topic))
 
 }
 

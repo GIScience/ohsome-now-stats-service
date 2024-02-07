@@ -224,18 +224,25 @@ class StatsControllerMVCTests {
     @Test
     fun `stats per interval throws error for invalid interval string`() {
 
+        val expectedErrorMessage = """[{"message":"Invalid ISO8601 string as interval.","invalidValue":"bad_interval"}]"""
+
         val GET = get("/stats/$hashtag/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
-            .queryParam("interval", "ErrorString")
+            .queryParam("interval", "bad_interval")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
+
     }
 
 
     @Test
     fun `stats per interval throws error for interval under one Minute`() {
+
+        val expectedErrorMessage = """[{"message":"Interval must not be under 1 minute.","invalidValue":"PT1S"}]"""
+
 
         val GET = get("/stats/$hashtag/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
@@ -244,6 +251,8 @@ class StatsControllerMVCTests {
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
+
     }
 
 

@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.statsservice.*
-import org.heigit.ohsome.now.statsservice.utils.validateIntervalString
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -78,6 +77,8 @@ class TopicController {
 
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
+        @ParseableInterval
+        @AtLeastOneMinuteInterval
         interval: String,
 
         @Parameter(description = "A comma separated list of countries, can also only be one country")
@@ -88,8 +89,6 @@ class TopicController {
         @PathVariable
         topics: List<@ValidTopic String>
     ): OhsomeFormat<Map<String, TopicIntervalResult>> {
-
-        validateIntervalString(interval)
 
         val result = measure {
             topicService.getTopicStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!, topics)
