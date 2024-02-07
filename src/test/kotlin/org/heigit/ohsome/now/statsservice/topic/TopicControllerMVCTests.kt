@@ -253,18 +253,29 @@ class TopicControllerMVCTests {
 
     @Test
     fun `topic stats per interval throws error for invalid interval string`() {
+
+        val expectedErrorMessage = """[{"message":"Invalid ISO8601 string as interval.","invalidValue":"bad_interval"}]"""
+
+
         val GET = get("/topic/${topics.joinToString()}/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
-            .queryParam("interval", "ErrorString")
+            .queryParam("interval", "bad_interval")
+            .queryParam("hashtag", "missingmaps")
+
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
     }
 
 
+    //TODO: check error message
     @Test
     fun `topic stats per interval throws error for interval under one Minute`() {
+
+        val expectedErrorMessage = """[{"message":"Interval must not be under 1 minute.","invalidValue":"PT1S"}]"""
+
 
         val GET = get("/topic/${topics.joinToString()}/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
@@ -273,6 +284,8 @@ class TopicControllerMVCTests {
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
+
     }
 
 
