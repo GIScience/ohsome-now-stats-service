@@ -78,7 +78,7 @@ class TopicController {
         @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
         @RequestParam(name = "interval", defaultValue = "P1M", required = false)
         @ParseableInterval
-//        @AtLeastOneMinuteInterval
+        @AtLeastOneMinuteInterval
         interval: String,
 
         @Parameter(description = "A comma separated list of countries, can also only be one country")

@@ -270,7 +270,6 @@ class TopicControllerMVCTests {
     }
 
 
-    //TODO: check error message
     @Test
     fun `topic stats per interval throws error for interval under one Minute`() {
 
@@ -281,6 +280,8 @@ class TopicControllerMVCTests {
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "PT1S")
+            .queryParam("hashtag", "missingmaps")
+
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)
