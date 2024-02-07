@@ -117,9 +117,6 @@ class StatsController {
         countries: List<String>?
     ): OhsomeFormat<StatsIntervalResult> {
 
-        println("##########################   :" + interval)
-
-//        validateIntervalString(interval)
 
         val result = measure {
             statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!)
