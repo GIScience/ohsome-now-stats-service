@@ -18,8 +18,8 @@ class TopicEndPointsSimulation : Simulation() {
                         "hashtag" to hashtag,
                         "topic" to topic
                     )
-                }.reduce { a, b -> a + b }
-            }
+                }
+            }.flatten()
         }
     ).random()
 
