@@ -56,7 +56,6 @@ data class OhsomeFormat<T>(
 data class Metadata(
     val executionTime: Long,
     val requestUrl: String,
-    val apiVersion: String = "0.1"
 )
 
 data class Attribution(
