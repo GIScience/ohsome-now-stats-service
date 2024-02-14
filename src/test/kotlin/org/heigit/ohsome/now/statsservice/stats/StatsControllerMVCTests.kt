@@ -84,6 +84,29 @@ class StatsControllerMVCTests {
     }
 
 
+    //TODO: cover all other urls supporting start/end dates
+    @Disabled("disabled for now, as the validation with proper error messaging is not yet implemented")
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "/stats/missingmaps?startdate=xxxxx&enddate=2020-10-01T04:00:00Z",
+            "/stats/missingmaps?startdate=2020-10-01T04:00:00Z&enddate=xxxxx"
+        ]
+    )
+    fun `all requests with bad dates throw error`(url: String) {
+
+        val expectedErrorMessage = """[{"message":"xxxxxxx","invalidValue":"xxxxx"}]"""
+
+        val GET = get(url)
+
+
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
+    }
+
+
     @Test
     fun `stats can be served without explicit timespans`() {
         `when`(this.statsService.getStatsForTimeSpan(matches(hashtag), any(), any(), anyList()))
