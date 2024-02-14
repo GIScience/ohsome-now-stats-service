@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.anyInstant
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
