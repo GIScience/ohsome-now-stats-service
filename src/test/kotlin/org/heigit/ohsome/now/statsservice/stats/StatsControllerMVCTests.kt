@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.anyInstant
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -76,6 +77,29 @@ class StatsControllerMVCTests {
         val expectedErrorMessage = """[{"message":"Hashtag must not be '*'","invalidValue":"*"}]"""
 
         val GET = get(url)
+
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
+    }
+
+
+    //TODO: cover all other urls supporting start/end dates
+    @Disabled("disabled for now, as the validation with proper error messaging is not yet implemented")
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "/stats/missingmaps?startdate=xxxxx&enddate=2020-10-01T04:00:00Z",
+            "/stats/missingmaps?startdate=2020-10-01T04:00:00Z&enddate=xxxxx"
+        ]
+    )
+    fun `all requests with bad dates throw error`(url: String) {
+
+        val expectedErrorMessage = """[{"message":"xxxxxxx","invalidValue":"xxxxx"}]"""
+
+        val GET = get(url)
+
 
         this.mockMvc
             .perform(GET)

@@ -9,14 +9,16 @@ CREATE TABLE IF NOT EXISTS stats_2
 
     -- map feature stats
     `map_feature_edit` Nullable(Int8), -- -1, 0, 1, NULL
+
     -- building stats
-    `building_area` Int64,
-    `building_area_delta` Int64,
-    `building_edit` Nullable(Int8), -- -1, 0, 1, NULL
+--     `building_area` Int64,
+--     `building_area_delta` Int64,
+--     `building_edit` Nullable(Int8), -- -1, 0, 1, NULL
+
     -- road stats
-    `road_length` Int64,
-    `road_length_delta` Int64,
-    `road_edit` Nullable(Int8), -- -1, 0, 1, NULL
+--     `road_length` Int64,
+--     `road_length_delta` Int64,
+--     `road_edit` Nullable(Int8), -- -1, 0, 1, NULL
 
     `country_iso_a3` Array(String)
 )
