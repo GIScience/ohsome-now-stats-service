@@ -22,8 +22,6 @@ fun createStatsTableProjections(stage: String, schemaVersion: String) = """
         SELECT
             user_id,
             hashtag,
-            building_edit,
-            road_length_delta,
             map_feature_edit,
             changeset_id
         ORDER BY
