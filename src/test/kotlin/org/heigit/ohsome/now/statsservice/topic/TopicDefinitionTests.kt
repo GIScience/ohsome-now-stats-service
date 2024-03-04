@@ -51,16 +51,20 @@ class TopicDefinitionTests {
     ) as topic_result_created,
     
     ifNull(
-        sum(
-            if(edit = -1, - length + length_delta, 0)
-        ) / 1000,
+        abs(
+            sum(
+                if(edit = -1, - length + length_delta, 0)
+            ) / 1000
+        ),
         0
     ) as topic_result_deleted,
     
     ifNull(
-        sum(
-            if(edit = 0 and length_delta < 0, length_delta, 0)
-        ) / 1000,
+        abs(
+            sum(
+                if(edit = 0 and length_delta < 0, length_delta, 0)
+            ) / 1000
+        ),
         0
     ) as topic_result_modified_less, 
     
@@ -108,16 +112,20 @@ class TopicDefinitionTests {
     ) as topic_result_created,
     
     ifNull(
-        sum(
-            if(edit = -1, - area + area_delta, 0)
-        ) / 1000000,
+        abs(
+            sum(
+                if(edit = -1, - area + area_delta, 0)
+            ) / 1000000
+        ),
         0
     ) as topic_result_deleted,
     
     ifNull(
-        sum(
-            if(edit = 0 and area_delta < 0, area_delta, 0)
-        ) / 1000000,
+        abs(
+            sum(
+                if(edit = 0 and area_delta < 0, area_delta, 0)
+            ) / 1000000
+        ),
         0
     ) as topic_result_modified_less, 
     
