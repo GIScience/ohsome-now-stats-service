@@ -23,16 +23,20 @@ fun lengthOrAreaAggregation(type: String, divideBy: Int): String {
     ) as topic_result_created,
     
     ifNull(
-        sum(
-            if(edit = -1, - ${type} + ${type}_delta, 0)
-        ) / ${divideBy},
+        abs(
+            sum(
+                if(edit = -1, - ${type} + ${type}_delta, 0)
+            ) / ${divideBy}
+        ),
         0
     ) as topic_result_deleted,
     
     ifNull(
-        sum(
-            if(edit = 0 and ${type}_delta < 0, ${type}_delta, 0)
-        ) / ${divideBy},
+        abs(
+            sum(
+                if(edit = 0 and ${type}_delta < 0, ${type}_delta, 0)
+            ) / ${divideBy}
+        ),
         0
     ) as topic_result_modified_less, 
     
