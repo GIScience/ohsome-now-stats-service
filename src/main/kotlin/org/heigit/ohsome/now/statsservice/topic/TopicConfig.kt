@@ -23,6 +23,11 @@ private val topics = listOf(
         listOf(KeyOnlyMatcher("amenity"))
     ),
 
+    TopicDefinition(
+        "body_of_water",
+        listOf(KeyValueMatcher("water", listOf("pond", "lake", "reservoir", "basin", "oxbow", "lagoon", "fishpond")))
+    ),
+
 
     TopicDefinition(
         "building",
