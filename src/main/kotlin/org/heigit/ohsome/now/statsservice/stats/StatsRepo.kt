@@ -76,37 +76,28 @@ class StatsRepo {
         groupArray(changesets)as changesets,	
         groupArray(users)as users,
         groupArray(edits)as edits,
-        groupArray(startdate)as startdate,
-        groupArray(enddate)as enddate
+        groupArray(inner_startdate)as startdate,
+        groupArray(inner_startdate + INTERVAL :interval)as enddate
     FROM
     (    
         SELECT
             count(distinct changeset_id) as changesets,
             count(distinct user_id) as users,
             count(map_feature_edit) as edits,
-            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
-            (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
-            FROM "stats_$schemaVersion"
+            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
+        FROM "stats_$schemaVersion"
         WHERE
             ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
             AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
             AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
             ${countryHandler.optionalFilterSQL}
         GROUP BY
-            startdate
-        ORDER BY startdate ASC
+            inner_startdate
+        ORDER BY inner_startdate ASC
         WITH FILL
             FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
             TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
-        STEP INTERVAL :interval Interpolate (
-            enddate as (
-                if (
-                    startdate != parseDateTimeBestEffort('1970-01-01 00:00:00'), -- condition
-                    ((startdate + INTERVAL :interval) + INTERVAL :interval), 			 -- then
-                    (toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval) -- else
-                )
-            )
-        )
+        STEP INTERVAL :interval 
     )
     """.trimIndent()
 

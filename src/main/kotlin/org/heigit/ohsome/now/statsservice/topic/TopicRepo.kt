@@ -59,8 +59,8 @@ class TopicRepo {
     ) = """
     SELECT
         ${topicHandler.topicArrayResult()}
-        groupArray(startdate) as startdate,
-        groupArray(enddate ) as enddate
+        groupArray(inner_startdate) as startdate,
+        groupArray(inner_startdate + INTERVAL :interval) as enddate
     FROM
     (
         WITH
@@ -71,8 +71,7 @@ class TopicRepo {
             
        SELECT 
            ${topicHandler.topicResult()},
-           toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
-           (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
+           toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
 
        FROM topic_${topicHandler.topic}_$schemaVersion
        WHERE
@@ -81,20 +80,12 @@ class TopicRepo {
            AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
            ${countryHandler.optionalFilterSQL}
        GROUP BY
-           startdate
-       ORDER BY startdate ASC
+           inner_startdate
+       ORDER BY inner_startdate ASC
        WITH FILL
            FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
            TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
-       STEP INTERVAL :interval Interpolate (
-           enddate as (
-               if (
-                   startdate != parseDateTimeBestEffort('1970-01-01 00:00:00'), -- condition
-                   ((startdate + INTERVAL :interval) + INTERVAL :interval), 			 -- then
-                   (toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval) -- else
-               )
-           )
-       )
+       STEP INTERVAL :interval
     )
         """.trimIndent()
 

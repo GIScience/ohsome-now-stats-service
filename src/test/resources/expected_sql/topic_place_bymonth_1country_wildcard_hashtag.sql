@@ -3,8 +3,8 @@ SELECT
 	groupArray(toFloat64(topic_result_created)) as topic_result_created,
 	groupArray(topic_result_modified) as topic_result_modified,
 	groupArray(toFloat64(topic_result_deleted)) as topic_result_deleted,
-	groupArray(startdate) as startdate,
-	groupArray(enddate ) as enddate
+	groupArray(inner_startdate) as startdate,
+	groupArray(inner_startdate + INTERVAL :interval) as enddate
 FROM
 (
     WITH
@@ -18,8 +18,7 @@ FROM
            ifNull(sum(if(edit = 1, 1, 0)), 0) as topic_result_created,
            ifNull(sum(if(edit = 0, 1, 0)), 0) as topic_result_modified,
            ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted,
-        toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as startdate,
-        (toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime + INTERVAL :interval) as enddate
+        toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
 
     FROM topic_place_2
     WHERE
@@ -28,18 +27,11 @@ FROM
       AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
       AND hasAny(country_iso_a3, ['BOL'])
     GROUP BY
-        startdate
-    ORDER BY startdate ASC
+        inner_startdate
+    ORDER BY inner_startdate ASC
     WITH FILL
              FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
                TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
-           STEP INTERVAL :interval Interpolate (
-               enddate as (
-                   if (
-                       startdate != parseDateTimeBestEffort('1970-01-01 00:00:00'), -- condition
-                       ((startdate + INTERVAL :interval) + INTERVAL :interval), 			 -- then
-                       (toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval) + INTERVAL :interval) -- else
-                   )
-               )
-           )
+           STEP INTERVAL :interval
+
 )

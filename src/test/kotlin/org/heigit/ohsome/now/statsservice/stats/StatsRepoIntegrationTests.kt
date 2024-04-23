@@ -328,7 +328,6 @@ class StatsRepoIntegrationTests {
         println(result)
         assertEquals(LocalDateTime.parse("2009-04-22T22:00"), result["min_timestamp"])
     }
-
 }
 
 
