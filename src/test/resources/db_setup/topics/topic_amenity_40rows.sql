@@ -1,42 +1,45 @@
 
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'place_of_worship', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'school', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'sacco', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'pharmacy', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'fast_food', 'fast_food');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], '', 'device_charging_station');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'fuel', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'drinking_water', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'toilets', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'water_point', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'fast_food', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'cafe', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'studio', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'waste_disposal', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'recycling', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], '', 'veterinary');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], '', 'school');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'toilets', 'toilets');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 16:38:01', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'toilets', 'toilets');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 18:47:24', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'marketplace', 'marketplace');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 19:41:36', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'school', 'school');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-03 19:41:36', 'hotosm-project-osmliberia', 3243541, ['LBR'], '', 'school');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], '', 'police');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'community_centre', 'community_centre');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'toilets', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'townhall', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'drinking_water', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'social_facility', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'community_centre', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'restaurant', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'parking', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'police', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'college', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'fast_food', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 18:20:41', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'police', 'police');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-04 18:20:41', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'police', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-05 10:56:23', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'toilets', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-05 10:56:23', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'drinking_water', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-05 10:56:23', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'water_point', '');
-INSERT INTO topic_amenity_2 (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`) VALUES ('2017-06-05 15:44:38', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'place_of_worship', '')       ;
+INSERT INTO topic_amenity_2
+    (`changeset_timestamp`, `hashtag`, `user_id`, `country_iso_a3`, `amenity_current`, `amenity_before`)
+VALUES
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'place_of_worship', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'school', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'sacco', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'pharmacy', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'fast_food', 'fast_food'),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], '', 'device_charging_station'),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'fuel', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'drinking_water', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'toilets', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'water_point', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'fast_food', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'cafe', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'studio', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'waste_disposal', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'recycling', ''),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], '', 'veterinary'),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], '', 'school'),
+    ('2017-06-03 14:22:11', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'toilets', 'toilets'),
+    ('2017-06-03 16:38:01', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'toilets', 'toilets'),
+    ('2017-06-03 18:47:24', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'marketplace', 'marketplace'),
+    ('2017-06-03 19:41:36', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'school', 'school'),
+    ('2017-06-03 19:41:36', 'hotosm-project-osmliberia', 3243541, ['LBR'], '', 'school'),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], '', 'police'),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'community_centre', 'community_centre'),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'toilets', ''),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'townhall', ''),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'drinking_water', ''),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'social_facility', ''),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'community_centre', ''),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'restaurant', ''),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'parking', ''),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'police', ''),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'college', ''),
+    ('2017-06-04 17:31:12', 'hotosm-project-osmliberia', 2695612, ['LBR'], 'fast_food', ''),
+    ('2017-06-04 18:20:41', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'police', 'police'),
+    ('2017-06-04 18:20:41', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'police', ''),
+    ('2017-06-05 10:56:23', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'toilets', ''),
+    ('2017-06-05 10:56:23', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'drinking_water', ''),
+    ('2017-06-05 10:56:23', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'water_point', ''),
+    ('2017-06-05 15:44:38', 'hotosm-project-osmliberia', 3243541, ['LBR'], 'place_of_worship', '');
 

@@ -1,4 +1,4 @@
-DROP table IF EXISTS topic_place_2;
+DROP TABLE IF EXISTS topic_place_2;
 
 CREATE TABLE IF NOT EXISTS topic_place_2
 (
@@ -8,8 +8,6 @@ CREATE TABLE IF NOT EXISTS topic_place_2
     `country_iso_a3`      Array(String),
     `place_current`       String,
     `place_before`        String
-
 )
 ENGINE = MergeTree
-order by (`hashtag`, `changeset_timestamp`)
-;
+ORDER BY (`hashtag`, `changeset_timestamp`);

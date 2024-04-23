@@ -1,4 +1,4 @@
-DROP table IF EXISTS topic_waterway_2;
+DROP TABLE IF EXISTS topic_waterway_2;
 
 CREATE TABLE IF NOT EXISTS topic_waterway_2
 (
@@ -12,5 +12,4 @@ CREATE TABLE IF NOT EXISTS topic_waterway_2
     `length_delta`        Int64
 )
 ENGINE = MergeTree
-order by (`hashtag`, `changeset_timestamp`)
-;
+ORDER BY (`hashtag`, `changeset_timestamp`);
