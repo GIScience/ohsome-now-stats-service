@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import java.time.Instant
 import java.time.Instant.now
+import java.util.concurrent.TimeUnit
 
 
 @SpringBootTest
@@ -41,7 +42,6 @@ class CachingTests {
     )
 
 
-
     @MockBean
     private lateinit var statsRepo: StatsRepo
 
@@ -63,7 +63,8 @@ class CachingTests {
     )
 
 
-    fun serviceCall(hashtag: String, date: Instant? = null): () -> StatsResult = { statsService.getStatsForTimeSpan(hashtag, date, null, emptyList()) }
+    fun serviceCall(hashtag: String, date: Instant? = null): () -> StatsResult =
+        { statsService.getStatsForTimeSpan(hashtag, date, null, emptyList()) }
 
 
     @Test
@@ -73,6 +74,7 @@ class CachingTests {
         setupMockingForRepo(hotosmHashtagHandler)
 
         assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1, hotosmHashtagHandler)
+        TimeUnit.MILLISECONDS.sleep(2)
 
         //the second service call must be cached, hence the total number of calls stays at 1
         assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1, hotosmHashtagHandler)
@@ -100,7 +102,15 @@ class CachingTests {
         assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 1, ugandaHashtagHandler)
         assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 2, ugandaHashtagHandler)
         assertTotalNumberOfCallsToRepo(serviceCall(ugandaHashtag), 3, ugandaHashtagHandler)
+    }
 
+    @Test
+    @Suppress("DANGEROUS_CHARACTERS")
+    fun `cache gets cleared on schedule`() {
+        setupMockingForRepo(hotosmHashtagHandler)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1, hotosmHashtagHandler)
+        TimeUnit.MILLISECONDS.sleep(2)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1, hotosmHashtagHandler)
     }
 
 
@@ -119,7 +129,12 @@ class CachingTests {
     }
 
 
-    private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int, hashtagHandler: HashtagHandler, date: Instant? = null) {
+    private fun assertTotalNumberOfCallsToRepo(
+        call: () -> StatsResult,
+        callCount: Int,
+        hashtagHandler: HashtagHandler,
+        date: Instant? = null
+    ) {
         assertEquals("213124", call().edits.toString())
         verify(this.statsRepo, times(callCount))
             .getStatsForTimeSpan(hashtagHandler, date, null, noCountries)

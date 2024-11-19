@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.Instant
 
+const val DELAY = 1L//60 * 60 * 1000L
 
 @Service
 class StatsService {
@@ -24,7 +25,7 @@ class StatsService {
 
 
     @CacheEvict(value = ["statsForTimeSpan"], allEntries = true)
-    @Scheduled(fixedDelay = 60 * 60 * 1000L)
+    @Scheduled(fixedDelay = DELAY)
     fun clearCache() {
     }
 
