@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.info.Info
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
+import org.springframework.scheduling.annotation.EnableScheduling
 
 
 @OpenAPIDefinition(
@@ -15,6 +16,7 @@ import org.springframework.cache.annotation.EnableCaching
     )
 )
 @EnableCaching
+@EnableScheduling
 @SpringBootApplication
 class Application
 
