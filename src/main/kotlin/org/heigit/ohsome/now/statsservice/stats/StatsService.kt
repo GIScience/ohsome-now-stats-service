@@ -24,7 +24,7 @@ class StatsService {
 
 
     @CacheEvict(value = ["statsForTimeSpan"], allEntries = true)
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "\${ohsome.contribution.stats.service.cache.invalidation.cron}")
     fun clearCache() {
     }
 
