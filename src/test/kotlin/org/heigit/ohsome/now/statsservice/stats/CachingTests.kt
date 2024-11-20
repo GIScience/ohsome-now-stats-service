@@ -11,9 +11,18 @@ import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.annotation.DirtiesContext
 import java.time.Instant
 import java.time.Instant.now
+import java.util.concurrent.TimeUnit.SECONDS
 
+
+// please note: there is a theoretical possibility that tests in this class fail
+// due to a race condition where the (once-per-second) cache invalidation
+// happens right between 2 subsequent calls to the mocked repo.
+// This is very unlikely to happen at all
+// and could be fixed by using the once-per-second cron for the cache invalidation test only,
+// by, e.g. moving it to its own class.
 
 @SpringBootTest
 class CachingTests {
@@ -66,6 +75,20 @@ class CachingTests {
     fun serviceCall(hashtag: String, date: Instant? = null): () -> StatsResult = { statsService.getStatsForTimeSpan(hashtag, date, null, emptyList()) }
 
 
+    @DirtiesContext
+    @Test
+    @Suppress("DANGEROUS_CHARACTERS")
+    fun `cache gets cleared on schedule`() {
+        setupMockingForRepo(hotosmHashtagHandler)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 1, hotosmHashtagHandler)
+
+        //give the cache invalidation time to happen (it is scheduled at every second for tests)
+        SECONDS.sleep(2)
+        assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 2, hotosmHashtagHandler)
+    }
+
+
+    @DirtiesContext
     @Test
     @Suppress("DANGEROUS_CHARACTERS")
     fun `stats are cached if hashtag matches 'hotosm-project-*' and both dates are NULL`() {
@@ -79,6 +102,7 @@ class CachingTests {
     }
 
 
+    @DirtiesContext
     @Test
     @Suppress("DANGEROUS_CHARACTERS")
     fun `stats are NOT cached if hashtag matches 'hotosm-project-*' but not all dates are NULL`() {
@@ -91,6 +115,7 @@ class CachingTests {
     }
 
 
+    @DirtiesContext
     @Test
     fun `stats are NOT cached if hashtag does NOT match 'hotosm-'`() {
 
