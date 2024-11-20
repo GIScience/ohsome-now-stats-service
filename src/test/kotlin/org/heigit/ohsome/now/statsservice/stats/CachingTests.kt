@@ -17,13 +17,6 @@ import java.time.Instant.now
 import java.util.concurrent.TimeUnit.SECONDS
 
 
-// please note: there is a theoretical possibility that tests in this class fail
-// due to a race condition where the (once-per-second) cache invalidation
-// happens right between 2 subsequent calls to the mocked repo.
-// This is very unlikely to happen at all
-// and could be fixed by using the once-per-second cron for the cache invalidation test only,
-// by, e.g. moving it to its own class.
-
 @SpringBootTest
 class CachingTests {
 
@@ -87,6 +80,13 @@ class CachingTests {
         assertTotalNumberOfCallsToRepo(serviceCall(hotosmHashtag), 2, hotosmHashtagHandler)
     }
 
+
+    // please note: there is a theoretical possibility that the following test fails
+    // due to a race condition where the (once-per-second) cache invalidation
+    // happens right between 2 subsequent calls to the mocked repo.
+    // This is very unlikely to happen at all
+    // and could be fixed by using the once-per-second cron for the cache invalidation test only,
+    // by, e.g. moving it to its own class.
 
     @DirtiesContext
     @Test
