@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.statsservice.topic
 
 import org.assertj.core.api.Assertions.assertThat
 import org.heigit.ohsome.now.statsservice.file
+import org.heigit.ohsome.now.statsservice.schemaVersion
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.junit.jupiter.api.Test
@@ -29,6 +30,7 @@ class TopicRepoUnitTests {
 
         val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, amenityTopic)
         assertThat(sql)
+            .contains("_$schemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
@@ -40,6 +42,7 @@ class TopicRepoUnitTests {
 
         val sql = repo.topicStatsFromTimeSpanIntervalSQL(wildcardHashtag, bolivia, placeTopic)
         assertThat(sql)
+            .contains("_$schemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
@@ -51,6 +54,7 @@ class TopicRepoUnitTests {
 
         val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, healthcareTopic)
         assertThat(sql)
+            .contains("_$schemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
@@ -62,6 +66,7 @@ class TopicRepoUnitTests {
 
         val sql = repo.topicStatsFromTimeSpanCountrySQL(wildcardHashtag, placeTopic)
         assertThat(sql)
+            .contains("_$schemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
@@ -72,7 +77,9 @@ class TopicRepoUnitTests {
         val expected = file("topic_place_by_userid")
 
         val sql = repo.topicForUserIdForHotOSMProjectSQL(placeTopic, HashtagHandler("hotosm-project-*"))
-        assertThat(sql).isEqualToNormalizingPunctuationAndWhitespace(expected)
+        assertThat(sql)
+            .contains("_$schemaVersion")
+            .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
 }
