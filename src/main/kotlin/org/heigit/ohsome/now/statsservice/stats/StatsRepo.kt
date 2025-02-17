@@ -45,8 +45,8 @@ class StatsRepo {
             max(changeset_timestamp) as latest
         FROM "stats_$statsSchemaVersion"
         WHERE
-            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
-            and changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+        and changeset_timestamp > parseDateTimeBestEffort(:startDate)
             and changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
         """.trimIndent()
@@ -59,10 +59,10 @@ class StatsRepo {
             count(distinct user_id) as users,
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest,
-            hashtag
+            arrayJoin(hashtags) as hashtag
         FROM "stats_$statsSchemaVersion"
         WHERE
-            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
+            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
             and changeset_timestamp > parseDateTimeBestEffort(:startDate) 
             and changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY hashtag
@@ -87,7 +87,7 @@ class StatsRepo {
             toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
         FROM "stats_$statsSchemaVersion"
         WHERE
-            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
+            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
             AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
             AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
             ${countryHandler.optionalFilterSQL}
@@ -114,7 +114,7 @@ class StatsRepo {
             FROM "stats_$statsSchemaVersion"
         ARRAY JOIN country_iso_a3
         WHERE
-            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
+            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
             and changeset_timestamp > parseDateTimeBestEffort(:startDate)
             and changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY
@@ -131,8 +131,8 @@ class StatsRepo {
             user_id
             FROM "stats_$statsSchemaVersion"
             WHERE
-            user_id = :userId
-            and startsWith(hashtag, 'hotosm-project-')
+                user_id = :userId AND
+                arrayExists(hashtag -> startsWith(hashtag, 'hotosm-project-'), hashtags)        
         group by user_id
 
     """.trimIndent()
@@ -141,7 +141,8 @@ class StatsRepo {
     //language=sql
     private fun mostUsedHashtagsSQL(countryHandler: CountryHandler) = """
         SELECT 
-            hashtag, COUNT(DISTINCT user_id) as number_of_users
+            arrayJoin(hashtags) as hashtag, 
+            COUNT(DISTINCT user_id) as number_of_users
         FROM "stats_$statsSchemaVersion"
         WHERE
             changeset_timestamp > parseDateTimeBestEffort(:startDate) and 
@@ -166,8 +167,11 @@ class StatsRepo {
     """.trimIndent()
 
 
+    // TODO: should we port this to `arrayExists` with lambdas?
     private val uniqueHashtagSQL = """
-        SELECT hashtag, count(*) as count
+        SELECT 
+            arrayJoin(hashtags) as hashtag, 
+            count(*) as count
         FROM "stats_$statsSchemaVersion"
         WHERE 
             hashtag not like '% %' 

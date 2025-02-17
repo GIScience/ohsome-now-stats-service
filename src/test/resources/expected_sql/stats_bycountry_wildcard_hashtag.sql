@@ -7,9 +7,9 @@ SELECT
 FROM "stats_3"
     ARRAY JOIN country_iso_a3
 WHERE
-    startsWith(hashtag, :hashtag)
-  and changeset_timestamp > parseDateTimeBestEffort(:startDate)
-  and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+    arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
+    and changeset_timestamp > parseDateTimeBestEffort(:startDate)
+    and changeset_timestamp < parseDateTimeBestEffort(:endDate)
 GROUP BY
     country
 ORDER BY country

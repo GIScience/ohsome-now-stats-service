@@ -5,7 +5,7 @@ SELECT
    max(changeset_timestamp) as latest
 FROM "stats_3"
 WHERE
-   equals(hashtag, :hashtag)
- and changeset_timestamp > parseDateTimeBestEffort(:startDate)
- and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+   arrayExists(hashtag -> equals(hashtag, :hashtag), hashtags)
+   and changeset_timestamp > parseDateTimeBestEffort(:startDate)
+   and changeset_timestamp < parseDateTimeBestEffort(:endDate)
 

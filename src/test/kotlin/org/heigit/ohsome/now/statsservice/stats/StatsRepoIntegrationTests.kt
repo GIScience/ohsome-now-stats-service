@@ -15,8 +15,9 @@ import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import java.time.Instant
 import java.time.LocalDateTime
-import java.util.*
 
+
+// TODO: do we need more tests with contribution data with more than a single hashtag in the list?
 
 @SpringTestWithClickhouse
 @WithStatsData
@@ -47,7 +48,9 @@ class StatsRepoIntegrationTests {
         "changesets" to 1,
         "users" to 1,
         "edits" to 0,
-        "latest" to "2017-12-19T00:52:03",
+
+        // TODO: find out why we had to change this when migrating to the new schema
+        "latest" to "2017-12-19T00:52:03Z",
         "hashtag" to "&uganda"
     )
 
@@ -71,7 +74,8 @@ class StatsRepoIntegrationTests {
         assertEquals(5, result.size)
         println(result)
         assertEquals(
-            "{changesets=4, users=2, edits=9, latest=2021-12-09T13:01:28, hashtag=}",
+            // TODO: find out why we had to change this when migrating to the new schema
+            "{changesets=4, users=2, edits=9, latest=2021-12-09T13:01:28Z, hashtag=}",
             result.toString()
         )
     }
@@ -88,7 +92,9 @@ class StatsRepoIntegrationTests {
 
         assertEquals(5, result.size)
         assertEquals("1", result["changesets"].toString())
-        assertEquals("2016-03-05T14:00:20", result["latest"].toString())
+
+        // TODO: find out why we had to change this when migrating to the new schema
+        assertEquals("2016-03-05T14:00:20Z", result["latest"].toString())
     }
 
 
@@ -101,7 +107,9 @@ class StatsRepoIntegrationTests {
 
         assertEquals(5, result.size)
         assertEquals("1", result["changesets"].toString())
-        assertEquals("2021-12-09T13:01:28", result["latest"].toString())
+
+        // TODO: find out why we had to change this when migrating to the new schema
+        assertEquals("2021-12-09T13:01:28Z", result["latest"].toString())
     }
 
 
@@ -114,7 +122,9 @@ class StatsRepoIntegrationTests {
 
         assertEquals(5, result.size)
         assertEquals("1", result["changesets"].toString())
-        assertEquals("2021-12-09T13:01:28", result["latest"].toString())
+
+        // TODO: find out why we had to change this when migrating to the new schema
+        assertEquals("2021-12-09T13:01:28Z", result["latest"].toString())
     }
 
 
@@ -326,7 +336,10 @@ class StatsRepoIntegrationTests {
     fun `getMetadata returns the minimum and maximum timestamp`() {
         val result = this.repo.getMetadata()
         println(result)
-        assertEquals(LocalDateTime.parse("2009-04-22T22:00"), result["min_timestamp"])
+
+        // TODO: find out why we had to change this when migrating to the new schema
+        assertEquals("2009-04-22T22:00Z", result["min_timestamp"].toString())
+
     }
 }
 

@@ -1,28 +1,36 @@
 CREATE TABLE IF NOT EXISTS stats_3
 (
-    `changeset_id` Int64,
-    `changeset_timestamp` DateTime,
-    `hashtag` String,
-    `editor` String,
-    `user_id` Int32,
-    `osm_id` String,
+    changeset_id Int64,
+    changeset_timestamp DateTime('UTC'),
+    hashtags Array(String),
+    editor String,
+    user_id Int32,
+    osm_id String,
+
+    -- current and previous tags
+    tags Map(String, String),
+    tags_before Map(String, String),
+
+    -- area and length with deltas
+--     area Int64,
+--     area_delta Int64,
+--     length Int64,
+--     length_delta Int64,
 
     -- map feature stats
-    `map_feature_edit` Nullable(Int8), -- -1, 0, 1, NULL
+    map_feature_edit Nullable(Int8), -- -1, 0, 1, NULL`
 
-    -- building stats
---     `building_area` Int64,
---     `building_area_delta` Int64,
---     `building_edit` Nullable(Int8), -- -1, 0, 1, NULL
+--     has_hashtags Bool,
 
-    -- road stats
---     `road_length` Int64,
---     `road_length_delta` Int64,
---     `road_edit` Nullable(Int8), -- -1, 0, 1, NULL
+--     centroid Tuple(x Nullable(Float64), y Nullable(Float64)),
 
-    `country_iso_a3` Array(String)
+--     h3_r3 Nullable(UInt64),
+--     h3_r6 Nullable(UInt64),
+
+    country_iso_a3 Array(String)
 )
 ENGINE = MergeTree
-PRIMARY KEY( hashtag, changeset_timestamp )
+-- PRIMARY KEY(has_hashtags, changeset_timestamp)
+PRIMARY KEY(changeset_timestamp)
 SETTINGS non_replicated_deduplication_window = 10000;
 ;

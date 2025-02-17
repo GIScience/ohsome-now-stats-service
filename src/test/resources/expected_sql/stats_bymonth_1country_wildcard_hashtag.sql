@@ -13,7 +13,7 @@ FROM
        toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
     FROM "stats_3"
     WHERE
-       startsWith(hashtag, :hashtag)
+        arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
      AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
      AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
      AND hasAny(country_iso_a3, ['BOL'])
