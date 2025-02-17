@@ -32,35 +32,35 @@ class SqlGenerator {
 
     @Test
     fun `create projections SQL for both stages`() {
-        this.writeProjections("int", currentStatsSchemaVersion)
-        this.writeProjections("prod", currentStatsSchemaVersion)
+        this.writeProjections("int")
+        this.writeProjections("prod")
     }
 
 
     private fun writeTopicSql(definition: TopicDefinition) {
-        writeDDLs(definition, "int", currentStatsSchemaVersion)
-        writeInserts(definition, "int", currentStatsSchemaVersion)
+        writeDDLs(definition, "int", currentStatsSchemaVersion, currentTopicSchemaVersion)
+        writeInserts(definition, "int", currentStatsSchemaVersion, currentTopicSchemaVersion)
 
-        writeDDLs(definition, "prod", currentStatsSchemaVersion)
-        writeInserts(definition, "prod", currentStatsSchemaVersion)
+        writeDDLs(definition, "prod", currentStatsSchemaVersion, currentTopicSchemaVersion)
+        writeInserts(definition, "prod", currentStatsSchemaVersion, currentTopicSchemaVersion)
     }
 
 
-    private fun writeDDLs(definition: TopicDefinition, stage: String, statsSchemaVersion: String) =
+    private fun writeDDLs(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
         writeSqlToFile("DDL", title(definition), stage) {
-            createDDLCommands(definition, stage, statsSchemaVersion)
+            createDDLCommands(definition, stage, statsSchemaVersion, topicSchemaVersion)
         }
 
 
-    private fun writeInserts(definition: TopicDefinition, stage: String, statsSchemaVersion: String) =
+    private fun writeInserts(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
         writeSqlToFile("INSERT", title(definition), stage) {
-            createInsertCommands(definition, stage, statsSchemaVersion)
+            createInsertCommands(definition, stage, statsSchemaVersion, topicSchemaVersion)
         }
 
 
-    private fun writeProjections(stage: String, statsSchemaVersion: String) =
+    private fun writeProjections(stage: String) =
         writeSqlToFile("PROJECTIONS", "for_stats_table", stage) {
-            createProjections(stage, statsSchemaVersion)
+            createProjections(stage, currentStatsSchemaVersion)
         }
 
 
@@ -69,14 +69,14 @@ class SqlGenerator {
         .writeText(command())
 
 
-    private fun createDDLCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String) =
+    private fun createDDLCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
         comment() +
-                createTableDDL(definition, stage, statsSchemaVersion) + "\n\n" +
-                createMvDdl(definition, fourHoursLater, stage, statsSchemaVersion, currentTopicSchemaVersion)
+                createTableDDL(definition, stage, topicSchemaVersion) + "\n\n" +
+                createMvDdl(definition, fourHoursLater, stage, statsSchemaVersion, topicSchemaVersion)
 
 
-    private fun createInsertCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String) =
-        comment() + createInsertStatement(definition, fourHoursLater, stage, statsSchemaVersion, currentTopicSchemaVersion)
+    private fun createInsertCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
+        comment() + createInsertStatement(definition, fourHoursLater, stage, statsSchemaVersion, topicSchemaVersion)
 
 
     private fun createProjections(stage: String, statsSchemaVersion: String) =
