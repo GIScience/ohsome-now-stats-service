@@ -1,6 +1,6 @@
 package org.heigit.ohsome.now.statsservice
 
 
-
-const val schemaVersion = "2"
+const val statsSchemaVersion = "3"
+const val topicSchemaVersion = "2"
 

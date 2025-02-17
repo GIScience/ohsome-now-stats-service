@@ -1,4 +1,4 @@
-INSERT into int.topic_amenity_7
+INSERT into int.topic_amenity_6
 SELECT changeset_timestamp,
        hashtag,
        user_id,

@@ -50,9 +50,10 @@ fun createInsertStatement(
     definition: TopicDefinition,
     dateTime: String,
     stage: String,
-    schemaVersion: String
+    statsSchemaVersion: String,
+    topicSchemaVersion: String
 ) = """
-    INSERT into $stage.topic_${definition.topicName}_${schemaVersion}
+    INSERT into $stage.topic_${definition.topicName}_${topicSchemaVersion}
     SELECT
         changeset_timestamp,
         hashtag,
@@ -61,7 +62,7 @@ fun createInsertStatement(
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)} 
     FROM
-        $stage.stats_${schemaVersion}
+        $stage.stats_${statsSchemaVersion}
     WHERE
         changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
         AND
@@ -72,10 +73,16 @@ fun createInsertStatement(
 
 
 @Suppress("LongMethod")
-fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, schemaVersion: String) =
+fun createMvDdl(
+    definition: TopicDefinition,
+    dateTime: String,
+    stage: String,
+    statsSchemaVersion: String,
+    topicSchemaVersion: String
+) =
     """
-    CREATE MATERIALIZED VIEW $stage.mv__stats_${schemaVersion}_to_topic_${definition.topicName}_${schemaVersion}
-    TO $stage.topic_${definition.topicName}_${schemaVersion}
+    CREATE MATERIALIZED VIEW $stage.mv__stats_${statsSchemaVersion}_to_topic_${definition.topicName}_${topicSchemaVersion}
+    TO $stage.topic_${definition.topicName}_${topicSchemaVersion}
     AS SELECT
         `changeset_timestamp`,
         `hashtag`,
@@ -83,7 +90,7 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, sc
         `country_iso_a3`,
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)}
-    FROM $stage.stats_${schemaVersion}
+    FROM $stage.stats_${statsSchemaVersion}
     WHERE
         changeset_timestamp > parseDateTimeBestEffort('$dateTime')
         AND
@@ -94,9 +101,10 @@ fun createMvDdl(definition: TopicDefinition, dateTime: String, stage: String, sc
     """.trimIndent().trimMargin()
 
 
+// TODO: remove 'statsSchemaVersion'
 @Suppress("LongMethod")
-fun createTableDDL(definition: TopicDefinition, stage: String, schemaVersion: String) = """
-        CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}_${schemaVersion}
+fun createTableDDL(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) = """
+        CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}_${topicSchemaVersion}
         (
             `changeset_timestamp` DateTime,
             `hashtag`             String,

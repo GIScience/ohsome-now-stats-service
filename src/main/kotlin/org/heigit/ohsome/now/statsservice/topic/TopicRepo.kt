@@ -1,6 +1,6 @@
 package org.heigit.ohsome.now.statsservice.topic
 
-import org.heigit.ohsome.now.statsservice.schemaVersion
+import org.heigit.ohsome.now.statsservice.topicSchemaVersion
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.heigit.ohsome.now.statsservice.utils.getGroupbyInterval
@@ -40,7 +40,7 @@ class TopicRepo {
 
         SELECT ${topicHandler.topicResult()}
         
-        FROM topic_${topicHandler.topic}_$schemaVersion
+        FROM topic_${topicHandler.topic}_$topicSchemaVersion
         WHERE
             ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
             and changeset_timestamp > parseDateTimeBestEffort(:startDate)
@@ -73,7 +73,7 @@ class TopicRepo {
            ${topicHandler.topicResult()},
            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
 
-       FROM topic_${topicHandler.topic}_$schemaVersion
+       FROM topic_${topicHandler.topic}_$topicSchemaVersion
        WHERE
            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
                AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
@@ -107,7 +107,7 @@ class TopicRepo {
             ${topicHandler.topicResult()},
             country_iso_a3 as country
 
-        FROM topic_${topicHandler.topic}_$schemaVersion
+        FROM topic_${topicHandler.topic}_$topicSchemaVersion
         ARRAY JOIN country_iso_a3
         WHERE
             ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
@@ -130,7 +130,7 @@ class TopicRepo {
         SELECT 
             ${topicHandler.topicResult()},
         user_id
-        FROM topic_${topicHandler.topic}_$schemaVersion
+        FROM topic_${topicHandler.topic}_$topicSchemaVersion
         WHERE
             user_id = :userId
             and ${hashtagHandler.variableFilterSQL}(hashtag, '${hashtagHandler.hashtag}')

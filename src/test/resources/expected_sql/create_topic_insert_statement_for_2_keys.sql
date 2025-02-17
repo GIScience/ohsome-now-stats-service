@@ -1,4 +1,4 @@
-INSERT into int.topic_healthcare_7
+INSERT into int.topic_healthcare_6
 SELECT changeset_timestamp,
        hashtag,
        user_id,

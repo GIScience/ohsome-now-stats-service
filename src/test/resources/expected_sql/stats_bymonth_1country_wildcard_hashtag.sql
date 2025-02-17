@@ -11,7 +11,7 @@ FROM
        count(distinct user_id) as users,
        count(map_feature_edit) as edits,
        toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
-    FROM "stats_2"
+    FROM "stats_3"
     WHERE
        startsWith(hashtag, :hashtag)
      AND changeset_timestamp > parseDateTimeBestEffort(:startdate)

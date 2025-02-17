@@ -2,7 +2,7 @@ package org.heigit.ohsome.now.statsservice.stats
 
 import org.assertj.core.api.Assertions.assertThat
 import org.heigit.ohsome.now.statsservice.file
-import org.heigit.ohsome.now.statsservice.schemaVersion
+import org.heigit.ohsome.now.statsservice.statsSchemaVersion
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.junit.jupiter.api.Test
@@ -27,7 +27,7 @@ class StatsRepoUnitTests {
         val sql = repo.statsFromTimeSpanSQL(fixedHashtag, allCountries)
 
         assertThat(sql)
-            .contains("stats_$schemaVersion")
+            .contains("stats_$statsSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
@@ -40,7 +40,7 @@ class StatsRepoUnitTests {
         val sql = repo.statsFromTimeSpanIntervalSQL(wildcardHashtag, bolivia)
 
         assertThat(sql)
-            .contains("stats_$schemaVersion")
+            .contains("stats_$statsSchemaVersion")
             .isEqualToIgnoringWhitespace(expected)
     }
 
@@ -53,7 +53,7 @@ class StatsRepoUnitTests {
         val sql = repo.statsFromTimeSpanCountrySQL(wildcardHashtag)
 
         assertThat(sql)
-            .contains("stats_$schemaVersion")
+            .contains("stats_$statsSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 

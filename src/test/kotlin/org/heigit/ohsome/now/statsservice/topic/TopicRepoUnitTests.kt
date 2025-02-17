@@ -2,7 +2,7 @@ package org.heigit.ohsome.now.statsservice.topic
 
 import org.assertj.core.api.Assertions.assertThat
 import org.heigit.ohsome.now.statsservice.file
-import org.heigit.ohsome.now.statsservice.schemaVersion
+import org.heigit.ohsome.now.statsservice.topicSchemaVersion
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.junit.jupiter.api.Test
@@ -30,7 +30,7 @@ class TopicRepoUnitTests {
 
         val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, amenityTopic)
         assertThat(sql)
-            .contains("_$schemaVersion")
+            .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
@@ -42,7 +42,7 @@ class TopicRepoUnitTests {
 
         val sql = repo.topicStatsFromTimeSpanIntervalSQL(wildcardHashtag, bolivia, placeTopic)
         assertThat(sql)
-            .contains("_$schemaVersion")
+            .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
@@ -54,7 +54,7 @@ class TopicRepoUnitTests {
 
         val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, healthcareTopic)
         assertThat(sql)
-            .contains("_$schemaVersion")
+            .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
@@ -66,7 +66,7 @@ class TopicRepoUnitTests {
 
         val sql = repo.topicStatsFromTimeSpanCountrySQL(wildcardHashtag, placeTopic)
         assertThat(sql)
-            .contains("_$schemaVersion")
+            .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
@@ -78,7 +78,7 @@ class TopicRepoUnitTests {
 
         val sql = repo.topicForUserIdForHotOSMProjectSQL(placeTopic, HashtagHandler("hotosm-project-*"))
         assertThat(sql)
-            .contains("_$schemaVersion")
+            .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
