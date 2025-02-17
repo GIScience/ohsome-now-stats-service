@@ -45,7 +45,7 @@ fun createStatsTableProjections(stage: String, schemaVersion: String) = """
     """.trimIndent().trimMargin()
 
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 fun createInsertStatement(
     definition: TopicDefinition,
     dateTime: String,
@@ -72,7 +72,7 @@ fun createInsertStatement(
     """.trimIndent().trimMargin()
 
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 fun createMvDdl(
     definition: TopicDefinition,
     dateTime: String,
