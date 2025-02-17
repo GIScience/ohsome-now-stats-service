@@ -18,10 +18,12 @@ import java.time.temporal.ChronoUnit
 import javax.sql.DataSource
 
 
+// TODO: find out where to use `has_hashtags=true` in SQL queries to speed up performance
+
+
 @Suppress("LargeClass")
 @Component
 class StatsRepo {
-    //please add valuable docs here
 
     @Autowired
     lateinit var dataSource: DataSource

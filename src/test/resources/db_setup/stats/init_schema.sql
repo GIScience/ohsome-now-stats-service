@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS stats_3
     -- map feature stats
     map_feature_edit Nullable(Int8), -- -1, 0, 1, NULL`
 
---     has_hashtags Bool,
+    has_hashtags Bool,
 
 --     centroid Tuple(x Nullable(Float64), y Nullable(Float64)),
 
@@ -30,7 +30,6 @@ CREATE TABLE IF NOT EXISTS stats_3
     country_iso_a3 Array(String)
 )
 ENGINE = MergeTree
--- PRIMARY KEY(has_hashtags, changeset_timestamp)
-PRIMARY KEY(changeset_timestamp)
-SETTINGS non_replicated_deduplication_window = 10000;
+PRIMARY KEY(has_hashtags, changeset_timestamp)
+SETTINGS non_replicated_deduplication_window = 10000
 ;
