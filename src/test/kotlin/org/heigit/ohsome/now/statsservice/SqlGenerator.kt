@@ -71,7 +71,7 @@ class SqlGenerator {
 
     private fun createDDLCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String) =
         comment() +
-                createTableDDL(definition, stage, statsSchemaVersion, currentTopicSchemaVersion) + "\n\n" +
+                createTableDDL(definition, stage, statsSchemaVersion) + "\n\n" +
                 createMvDdl(definition, fourHoursLater, stage, statsSchemaVersion, currentTopicSchemaVersion)
 
 

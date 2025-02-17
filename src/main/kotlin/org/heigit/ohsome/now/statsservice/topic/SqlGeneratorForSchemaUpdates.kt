@@ -101,9 +101,8 @@ fun createMvDdl(
     """.trimIndent().trimMargin()
 
 
-// TODO: remove 'statsSchemaVersion'
 @Suppress("LongMethod")
-fun createTableDDL(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) = """
+fun createTableDDL(definition: TopicDefinition, stage: String, topicSchemaVersion: String) = """
         CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}_${topicSchemaVersion}
         (
             `changeset_timestamp` DateTime,

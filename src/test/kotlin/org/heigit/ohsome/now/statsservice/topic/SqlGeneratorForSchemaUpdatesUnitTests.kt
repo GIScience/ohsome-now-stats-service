@@ -60,7 +60,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createTableDDL(definition, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTableDDL(definition, stage, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
         }
@@ -72,7 +72,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
             val definition = TopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
 
 
-            val sql = createTableDDL(definition, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTableDDL(definition, stage, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
         }
@@ -83,7 +83,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createTableDDL(definition, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTableDDL(definition, stage, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable2Keys)
         }
