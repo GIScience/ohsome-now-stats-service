@@ -27,7 +27,7 @@ class StatsRepoUnitTests {
         val sql = repo.statsFromTimeSpanSQL(fixedHashtag, allCountries)
 
         assertThat(sql)
-            .contains("stats_$statsSchemaVersion")
+            .contains("all_stats_$statsSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 
@@ -40,7 +40,7 @@ class StatsRepoUnitTests {
         val sql = repo.statsFromTimeSpanIntervalSQL(wildcardHashtag, bolivia)
 
         assertThat(sql)
-            .contains("stats_$statsSchemaVersion")
+            .contains("all_stats_$statsSchemaVersion")
             .isEqualToIgnoringWhitespace(expected)
     }
 
@@ -53,7 +53,7 @@ class StatsRepoUnitTests {
         val sql = repo.statsFromTimeSpanCountrySQL(wildcardHashtag)
 
         assertThat(sql)
-            .contains("stats_$statsSchemaVersion")
+            .contains("all_stats_$statsSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
 

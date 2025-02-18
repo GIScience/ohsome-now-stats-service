@@ -45,7 +45,7 @@ class StatsRepo {
             count(distinct user_id) as users,
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest
-        FROM "stats_$statsSchemaVersion"
+        FROM "all_stats_$statsSchemaVersion"
         WHERE
             arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
         and changeset_timestamp > parseDateTimeBestEffort(:startDate)
@@ -62,7 +62,7 @@ class StatsRepo {
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest,
             arrayJoin(hashtags) as hashtag
-        FROM "stats_$statsSchemaVersion"
+        FROM "all_stats_$statsSchemaVersion"
         WHERE
             arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
             and changeset_timestamp > parseDateTimeBestEffort(:startDate) 
@@ -87,7 +87,7 @@ class StatsRepo {
             count(distinct user_id) as users,
             count(map_feature_edit) as edits,
             toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
-        FROM "stats_$statsSchemaVersion"
+        FROM "all_stats_$statsSchemaVersion"
         WHERE
             arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
             AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
@@ -113,7 +113,7 @@ class StatsRepo {
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest,
             country_iso_a3 as country
-            FROM "stats_$statsSchemaVersion"
+            FROM "all_stats_$statsSchemaVersion"
         ARRAY JOIN country_iso_a3
         WHERE
             arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
@@ -131,7 +131,7 @@ class StatsRepo {
             count(map_feature_edit) as edits,
             count(distinct changeset_id) as changesets, 
             user_id
-            FROM "stats_$statsSchemaVersion"
+            FROM "all_stats_$statsSchemaVersion"
             WHERE
                 user_id = :userId AND
                 arrayExists(hashtag -> startsWith(hashtag, 'hotosm-project-'), hashtags)        
@@ -145,7 +145,7 @@ class StatsRepo {
         SELECT 
             arrayJoin(hashtags) as hashtag, 
             COUNT(DISTINCT user_id) as number_of_users
-        FROM "stats_$statsSchemaVersion"
+        FROM "all_stats_$statsSchemaVersion"
         WHERE
             changeset_timestamp > parseDateTimeBestEffort(:startDate) and 
             changeset_timestamp < parseDateTimeBestEffort(:endDate)
@@ -163,7 +163,7 @@ class StatsRepo {
         SELECT 
             max(changeset_timestamp) as max_timestamp,
             min(changeset_timestamp) as min_timestamp
-        FROM "stats_$statsSchemaVersion"
+        FROM "all_stats_$statsSchemaVersion"
         WHERE changeset_timestamp > now() - toIntervalMonth(1) 
         OR changeset_timestamp < parseDateTimeBestEffort('2009-04-23T00:00:00.000000Z')
     """.trimIndent()
@@ -174,7 +174,7 @@ class StatsRepo {
         SELECT 
             arrayJoin(hashtags) as hashtag, 
             count(*) as count
-        FROM "stats_$statsSchemaVersion"
+        FROM "all_stats_$statsSchemaVersion"
         WHERE 
             hashtag not like '% %' 
             and hashtag not like '%﻿%' 
