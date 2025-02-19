@@ -48,8 +48,6 @@ class StatsRepoIntegrationTests {
         "changesets" to 1,
         "users" to 1,
         "edits" to 0,
-
-        // TODO: find out why we had to change this when migrating to the new schema
         "latest" to "2017-12-19T00:52:03Z",
         "hashtag" to "&uganda"
     )
@@ -74,7 +72,6 @@ class StatsRepoIntegrationTests {
         assertEquals(5, result.size)
         println(result)
         assertEquals(
-            // TODO: find out why we had to change this when migrating to the new schema
             "{changesets=4, users=2, edits=9, latest=2021-12-09T13:01:28Z, hashtag=}",
             result.toString()
         )
@@ -92,8 +89,6 @@ class StatsRepoIntegrationTests {
 
         assertEquals(5, result.size)
         assertEquals("1", result["changesets"].toString())
-
-        // TODO: find out why we had to change this when migrating to the new schema
         assertEquals("2016-03-05T14:00:20Z", result["latest"].toString())
     }
 
@@ -107,8 +102,6 @@ class StatsRepoIntegrationTests {
 
         assertEquals(5, result.size)
         assertEquals("1", result["changesets"].toString())
-
-        // TODO: find out why we had to change this when migrating to the new schema
         assertEquals("2021-12-09T13:01:28Z", result["latest"].toString())
     }
 
@@ -122,8 +115,6 @@ class StatsRepoIntegrationTests {
 
         assertEquals(5, result.size)
         assertEquals("1", result["changesets"].toString())
-
-        // TODO: find out why we had to change this when migrating to the new schema
         assertEquals("2021-12-09T13:01:28Z", result["latest"].toString())
     }
 
@@ -336,8 +327,6 @@ class StatsRepoIntegrationTests {
     fun `getMetadata returns the minimum and maximum timestamp`() {
         val result = this.repo.getMetadata()
         println(result)
-
-        // TODO: find out why we had to change this when migrating to the new schema
         assertEquals("2009-04-22T22:00Z", result["min_timestamp"].toString())
 
     }

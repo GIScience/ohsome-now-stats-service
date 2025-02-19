@@ -74,8 +74,6 @@ class SystemTests {
                 .jsonPath("$.result.roads").isEqualTo(1.059)
                 .jsonPath("$.result.buildings").isEqualTo(1)
                 .jsonPath("$.result.edits").isEqualTo(0)
-
-                // TODO: find out why we had to change this when migrating to the new schema
                 .jsonPath("$.result.latest").isEqualTo("2017-12-19T00:52:03Z")
 
                 .jsonPath("$.query.timespan.startDate").isEqualTo(startDate)
@@ -104,8 +102,6 @@ class SystemTests {
                 .jsonPath("$.result.$hashtag1.roads").isEqualTo(0)
                 .jsonPath("$.result.$hashtag1.buildings").isEqualTo(0)
                 .jsonPath("$.result.$hashtag1.edits").isEqualTo(7)
-
-                // TODO: find out why we had to change this when migrating to the new schema
                 .jsonPath("$.result.$hashtag1.latest").isEqualTo("2021-12-09T13:01:28Z")
 
                 .jsonPath("$.result.$hashtag2.changesets").isEqualTo(1)
@@ -114,7 +110,6 @@ class SystemTests {
                 .jsonPath("$.result.$hashtag2.buildings").isEqualTo(1)
                 .jsonPath("$.result.$hashtag2.edits").isEqualTo(0)
 
-                // TODO: find out why we had to change this when migrating to the new schema
                 .jsonPath("$.result.$hashtag2.latest").isEqualTo("2017-12-19T00:52:03Z")
 
                 .jsonPath("$.query.timespan.startDate").exists()
@@ -180,7 +175,6 @@ class SystemTests {
                 .jsonPath("$.result[0].buildings").isEqualTo(0)
                 .jsonPath("$.result[0].edits").isEqualTo(1)
 
-                // TODO: find out why we had to change this when migrating to the new schema
                 .jsonPath("$.result[0].latest").isEqualTo("2021-12-09T13:01:28Z")
                 .jsonPath("$.result[0].country").isEqualTo("BEL")
 
