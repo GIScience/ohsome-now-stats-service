@@ -4,7 +4,6 @@ import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.AREA
 import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 
 
-@Suppress("LongMethod")
 fun createStatsTableProjections(stage: String, schemaVersion: String) = """
     -- for metadata endpoint
     ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION timestamp_projection_${schemaVersion} (
@@ -15,33 +14,6 @@ fun createStatsTableProjections(stage: String, schemaVersion: String) = """
     );
     
     ALTER TABLE ${stage}.stats_${schemaVersion} MATERIALIZE PROJECTION timestamp_projection_${schemaVersion};
-    
-    
-    -- for hot-tm-user endpoint 
-    ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION user_id_projection_${schemaVersion} (
-        SELECT
-            user_id,
-            hashtag,
-            map_feature_edit,
-            changeset_id
-        ORDER BY
-            user_id,
-            hashtag
-    );
-    
-    ALTER TABLE ${stage}.stats_${schemaVersion} MATERIALIZE PROJECTION user_id_projection_${schemaVersion};
-    
-    
-    -- for hashtags endpoint
-    ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION hashtag_aggregation_projection_${schemaVersion}
-    (
-        SELECT 
-            hashtag,
-            count(*)
-        GROUP BY hashtag
-    );
-    
-    ALTER TABLE ${stage}.stats_${schemaVersion} MATERIALIZE PROJECTION hashtag_aggregation_projection_${schemaVersion};
     """.trimIndent().trimMargin()
 
 
