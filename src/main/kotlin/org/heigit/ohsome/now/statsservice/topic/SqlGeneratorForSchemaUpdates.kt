@@ -6,14 +6,14 @@ import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 
 fun createStatsTableProjections(stage: String, schemaVersion: String) = """
     -- for metadata endpoint
-    ALTER TABLE ${stage}.stats_${schemaVersion} ADD PROJECTION timestamp_projection_${schemaVersion} (
+    ALTER TABLE ${stage}.all_stats_${schemaVersion} ADD PROJECTION timestamp_projection_${schemaVersion} (
         SELECT
             changeset_timestamp
         ORDER BY
             changeset_timestamp
     );
     
-    ALTER TABLE ${stage}.stats_${schemaVersion} MATERIALIZE PROJECTION timestamp_projection_${schemaVersion};
+    ALTER TABLE ${stage}.all_stats_${schemaVersion} MATERIALIZE PROJECTION timestamp_projection_${schemaVersion};
     """.trimIndent().trimMargin()
 
 
@@ -35,7 +35,7 @@ fun createInsertStatement(
         ${optionalAreaOrLengthColumnNames(definition)}, 
         has_hashtags
     FROM
-        $stage.stats_${statsSchemaVersion}
+        $stage.all_stats_${statsSchemaVersion}
     WHERE
         changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
         AND
@@ -65,7 +65,7 @@ fun createMvDdl(
         ${optionalAreaOrLengthColumnNames(definition)},
         
         `has_hashtags`
-    FROM $stage.stats_${statsSchemaVersion}
+    FROM $stage.all_stats_${statsSchemaVersion}
     WHERE
         changeset_timestamp > parseDateTimeBestEffort('$dateTime')
         AND
