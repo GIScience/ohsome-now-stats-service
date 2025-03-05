@@ -77,7 +77,7 @@ fun createMvDdl(
 fun createTableDDL(definition: TopicDefinition, stage: String, topicSchemaVersion: String) = """
         CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}_${topicSchemaVersion}
         (
-            `changeset_timestamp` DateTime,
+            `changeset_timestamp` DateTime('UTC'),
             `hashtag`             String,
             `user_id`             Int32,
             `country_iso_a3`      Array(String),

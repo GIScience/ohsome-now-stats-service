@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS int.topic_amenity_6
 (
-    `changeset_timestamp` DateTime,
+    `changeset_timestamp` DateTime('UTC'),
     `hashtag`             String,
     `user_id`             Int32,
     `country_iso_a3`      Array(String),
