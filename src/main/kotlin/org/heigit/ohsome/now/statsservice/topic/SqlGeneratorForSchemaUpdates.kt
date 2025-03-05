@@ -28,11 +28,12 @@ fun createInsertStatement(
     INSERT into $stage.topic_${definition.topicName}_${topicSchemaVersion}
     SELECT
         changeset_timestamp,
-        hashtag,
+        hashtags,
         user_id,
         country_iso_a3,
         ${keyColumns(definition)}
-        ${optionalAreaOrLengthColumnNames(definition)} 
+        ${optionalAreaOrLengthColumnNames(definition)}, 
+        has_hashtags
     FROM
         $stage.stats_${statsSchemaVersion}
     WHERE
