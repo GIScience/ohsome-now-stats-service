@@ -57,11 +57,13 @@ fun createMvDdl(
     TO $stage.topic_${definition.topicName}_${topicSchemaVersion}
     AS SELECT
         `changeset_timestamp`,
-        `hashtag`,
+        `hashtags`,
         `user_id`,
         `country_iso_a3`,
         ${keyColumns(definition)}
-        ${optionalAreaOrLengthColumnNames(definition)}
+        ${optionalAreaOrLengthColumnNames(definition)},
+        
+        not(empty(hashtags))   as `has_hashtags`
     FROM $stage.stats_${statsSchemaVersion}
     WHERE
         changeset_timestamp > parseDateTimeBestEffort('$dateTime')
