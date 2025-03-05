@@ -63,7 +63,7 @@ fun createMvDdl(
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)},
         
-        not(empty(hashtags))   as `has_hashtags`
+        `has_hashtags`
     FROM $stage.stats_${statsSchemaVersion}
     WHERE
         changeset_timestamp > parseDateTimeBestEffort('$dateTime')
