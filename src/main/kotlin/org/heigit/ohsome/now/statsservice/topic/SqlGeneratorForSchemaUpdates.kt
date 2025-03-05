@@ -78,14 +78,15 @@ fun createTableDDL(definition: TopicDefinition, stage: String, topicSchemaVersio
         CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}_${topicSchemaVersion}
         (
             `changeset_timestamp` DateTime('UTC'),
-            `hashtag`             String,
+            `hashtags`            Array(String),
             `user_id`             Int32,
             `country_iso_a3`      Array(String),
             ${keyColumnDefinitions(definition)}
-            ${optionalAreaOrLengthColumns(definition)}
+            ${optionalAreaOrLengthColumns(definition)},
+            `has_hashtags`        Bool
         )
             ENGINE = MergeTree
-            PRIMARY KEY( hashtag, changeset_timestamp)
+            PRIMARY KEY(has_hashtags, changeset_timestamp)
         ;
     """.trimIndent()
 
