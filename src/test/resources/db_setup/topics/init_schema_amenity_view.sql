@@ -1,13 +1,18 @@
-DROP TABLE IF EXISTS topic_amenity_2;
+DROP TABLE IF EXISTS topic_amenity_3;
 
-CREATE TABLE IF NOT EXISTS topic_amenity_2
+
+CREATE TABLE topic_amenity_3
 (
-    `changeset_timestamp` DateTime,
-    `hashtag`             String,
+    `changeset_timestamp` DateTime('UTC'),
+    `hashtags`            Array(String),
     `user_id`             Int32,
     `country_iso_a3`      Array(String),
-    `amenity_current`       String,
-    `amenity_before`        String
+
+    `amenity_current`      String,
+    `amenity_before`       String
+    ,
+    `has_hashtags`        Bool
 )
-ENGINE = MergeTree
-ORDER BY (`hashtag`, `changeset_timestamp`);
+    ENGINE = MergeTree
+             PRIMARY KEY(has_hashtags, changeset_timestamp)
+;

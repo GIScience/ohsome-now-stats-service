@@ -20,9 +20,9 @@ FROM
            ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted,
         toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
 
-    FROM topic_place_2
+    FROM topic_place_3
     WHERE
-        startsWith(hashtag, :hashtag)
+        arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
       AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
       AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
       AND hasAny(country_iso_a3, ['BOL'])

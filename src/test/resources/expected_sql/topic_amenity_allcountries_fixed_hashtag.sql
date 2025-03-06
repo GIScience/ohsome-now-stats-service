@@ -9,9 +9,9 @@ SELECT ifNull(sum(edit), 0) as topic_result,
        ifNull(sum(if(edit = 0, 1, 0)), 0) as topic_result_modified,
        ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted
 
-FROM topic_amenity_2
+FROM topic_amenity_3
 WHERE
-    equals(hashtag, :hashtag) 
-    and changeset_timestamp > parseDateTimeBestEffort(:startDate)
-    and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+    arrayExists(hashtag -> equals(hashtag, :hashtag), hashtags)
+    AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
+    AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
 ;

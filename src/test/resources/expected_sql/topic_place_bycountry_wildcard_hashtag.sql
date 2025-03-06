@@ -11,13 +11,13 @@ SELECT ifNull(sum(edit), 0) as topic_result,
        ifNull(sum(if(edit = 0, 1, 0)), 0) as topic_result_modified,
        ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted,
        country_iso_a3 as country
-FROM topic_place_2
+FROM topic_place_3
 
     ARRAY JOIN country_iso_a3
 WHERE
-    startsWith(hashtag, :hashtag)
-  and changeset_timestamp > parseDateTimeBestEffort(:startDate)
-  and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+  arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
+  AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
+  AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
 GROUP BY
     country
 ORDER BY

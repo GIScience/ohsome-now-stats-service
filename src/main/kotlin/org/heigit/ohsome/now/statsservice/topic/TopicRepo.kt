@@ -42,9 +42,9 @@ class TopicRepo {
         
         FROM topic_${topicHandler.topic}_$topicSchemaVersion
         WHERE
-            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag) 
-            and changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+            AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
         ;
         """.trimIndent()
@@ -75,8 +75,8 @@ class TopicRepo {
 
        FROM topic_${topicHandler.topic}_$topicSchemaVersion
        WHERE
-           ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
-               AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
+           arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)
+           AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
            AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
            ${countryHandler.optionalFilterSQL}
        GROUP BY
@@ -110,9 +110,9 @@ class TopicRepo {
         FROM topic_${topicHandler.topic}_$topicSchemaVersion
         ARRAY JOIN country_iso_a3
         WHERE
-            ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag)
-            and changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)
+            AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY
             country
         ORDER BY
@@ -133,8 +133,8 @@ class TopicRepo {
         FROM topic_${topicHandler.topic}_$topicSchemaVersion
         WHERE
             user_id = :userId
-            and ${hashtagHandler.variableFilterSQL}(hashtag, '${hashtagHandler.hashtag}')
-        group by user_id
+            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+        GROUP BY user_id
         """
 
 
@@ -226,6 +226,7 @@ class TopicRepo {
         logger.info("Getting topic stats for user: $userId, topic: ${topicHandler.topic}")
         return query {
             it.select(topicForUserIdForHotOSMProjectSQL(topicHandler, hashtagHandler))
+                .bind("hashtag", hashtagHandler.hashtag)
                 .bind("userId", userId)
                 .mapToMap()
                 .singleOrNull()

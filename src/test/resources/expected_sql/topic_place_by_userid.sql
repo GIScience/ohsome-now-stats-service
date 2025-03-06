@@ -12,8 +12,8 @@ SELECT ifNull(sum(edit), 0) as topic_result,
        ifNull(sum(if(edit = 0, 1, 0)), 0) as topic_result_modified,
        ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted,
     user_id
-FROM topic_place_2
+FROM topic_place_3
 WHERE
     user_id = :userId
-    and startsWith(hashtag, 'hotosm-project-')
-group by user_id
+    AND arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
+GROUP BY user_id
