@@ -1,4 +1,4 @@
-CREATE MATERIALIZED VIEW int.mv__stats_7_to_topic_healthcare_6 TO int.topic_healthcare_6
+CREATE MATERIALIZED VIEW int.mv__all_stats_7_to_topic_healthcare_6 TO int.topic_healthcare_6
 AS
 SELECT `changeset_timestamp`,
        `hashtags`,

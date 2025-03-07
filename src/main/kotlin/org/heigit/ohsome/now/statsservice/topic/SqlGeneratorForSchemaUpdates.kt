@@ -54,7 +54,7 @@ fun createMvDdl(
     topicSchemaVersion: String
 ) =
     """
-    CREATE MATERIALIZED VIEW $stage.mv__stats_${statsSchemaVersion}_to_topic_${definition.topicName}_${topicSchemaVersion}
+    CREATE MATERIALIZED VIEW $stage.mv__all_stats_${statsSchemaVersion}_to_topic_${definition.topicName}_${topicSchemaVersion}
     TO $stage.topic_${definition.topicName}_${topicSchemaVersion}
     AS SELECT
         `changeset_timestamp`,
