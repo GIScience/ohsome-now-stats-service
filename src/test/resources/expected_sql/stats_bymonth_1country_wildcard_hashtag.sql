@@ -13,10 +13,11 @@ FROM
        toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
     FROM "all_stats_3"
     WHERE
-        arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
-     AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
-     AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
-     AND hasAny(country_iso_a3, ['BOL'])
+        has_hashtags = true
+        AND arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
+        AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
+        AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
+        AND hasAny(country_iso_a3, ['BOL'])
     GROUP BY
        inner_startdate
     ORDER BY inner_startdate ASC
@@ -25,3 +26,4 @@ FROM
         TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
     STEP INTERVAL :interval
 )
+;

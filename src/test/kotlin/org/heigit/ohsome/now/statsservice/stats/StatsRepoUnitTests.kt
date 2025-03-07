@@ -28,7 +28,7 @@ class StatsRepoUnitTests {
 
         assertThat(sql)
             .contains("all_stats_$statsSchemaVersion")
-            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+            .isEqualToIgnoringWhitespace(expected)
     }
 
 
@@ -54,7 +54,7 @@ class StatsRepoUnitTests {
 
         assertThat(sql)
             .contains("all_stats_$statsSchemaVersion")
-            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+            .isEqualToIgnoringWhitespace(expected)
     }
 
 

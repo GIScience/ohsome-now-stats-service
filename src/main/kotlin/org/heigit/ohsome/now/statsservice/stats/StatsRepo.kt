@@ -18,8 +18,6 @@ import java.time.temporal.ChronoUnit
 import javax.sql.DataSource
 
 
-// TODO: find out where to use `has_hashtags=true` in SQL queries to speed up performance
-
 
 @Suppress("LargeClass")
 @Component
@@ -47,10 +45,12 @@ class StatsRepo {
             max(changeset_timestamp) as latest
         FROM "all_stats_$statsSchemaVersion"
         WHERE
-            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
-        and changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            has_hashtags = true
+            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+            AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
+            ;
         """.trimIndent()
 
 
@@ -89,7 +89,8 @@ class StatsRepo {
             toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
         FROM "all_stats_$statsSchemaVersion"
         WHERE
-            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+            has_hashtags = true
+            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
             AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
             AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
             ${countryHandler.optionalFilterSQL}
@@ -101,6 +102,7 @@ class StatsRepo {
             TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
         STEP INTERVAL :interval 
     )
+    ;
     """.trimIndent()
 
 
@@ -116,12 +118,14 @@ class StatsRepo {
             FROM "all_stats_$statsSchemaVersion"
         ARRAY JOIN country_iso_a3
         WHERE
-            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
-            and changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            has_hashtags = true
+            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+            AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY
             country
         ORDER BY country
+        ;
         """.trimIndent()
 
 
@@ -147,8 +151,9 @@ class StatsRepo {
             COUNT(DISTINCT user_id) as number_of_users
         FROM "all_stats_$statsSchemaVersion"
         WHERE
-            changeset_timestamp > parseDateTimeBestEffort(:startDate) and 
-            changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            has_hashtags = true
+            AND changeset_timestamp > parseDateTimeBestEffort(:startDate) 
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
         GROUP BY
             hashtag
@@ -169,19 +174,20 @@ class StatsRepo {
     """.trimIndent()
 
 
-    // TODO: should we port this to `arrayExists` with lambdas?
     private val uniqueHashtagSQL = """
         SELECT 
             arrayJoin(hashtags) as hashtag, 
             count(*) as count
         FROM "all_stats_$statsSchemaVersion"
-        WHERE 
-            hashtag not like '% %' 
-            and hashtag not like '%﻿%' 
-            and not match(hashtag, '^[0-9·-]*$')
-        group by hashtag
-        having count(*) > 10
-        order by hashtag
+        WHERE
+            has_hashtags = true
+            AND hashtag not like '% %' 
+            AND hashtag not like '%﻿%' 
+            AND not match(hashtag, '^[0-9·-]*$')
+        GROUP BY hashtag
+        HAVING count(*) > 10
+        ORDER BY hashtag
+        ;
     """.trimIndent()
 
     /**
