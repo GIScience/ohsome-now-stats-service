@@ -18,7 +18,8 @@ SELECT ifNull(sum(edit), 0) as topic_result,
 
 FROM topic_healthcare_3
 WHERE
-    arrayExists(hashtag -> equals(hashtag, :hashtag), hashtags)
+    has_hashtags = true
+    AND arrayExists(hashtag -> equals(hashtag, :hashtag), hashtags)
     AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
     AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
 ;

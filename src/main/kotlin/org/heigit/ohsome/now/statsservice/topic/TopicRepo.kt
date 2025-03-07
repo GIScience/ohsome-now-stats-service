@@ -42,7 +42,8 @@ class TopicRepo {
         
         FROM topic_${topicHandler.topic}_$topicSchemaVersion
         WHERE
-            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+            has_hashtags = true
+            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
             AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
@@ -75,7 +76,8 @@ class TopicRepo {
 
        FROM topic_${topicHandler.topic}_$topicSchemaVersion
        WHERE
-           arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)
+           has_hashtags = true
+           AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)
            AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
            AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
            ${countryHandler.optionalFilterSQL}
@@ -110,7 +112,8 @@ class TopicRepo {
         FROM topic_${topicHandler.topic}_$topicSchemaVersion
         ARRAY JOIN country_iso_a3
         WHERE
-            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)
+            has_hashtags = true
+            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)
             AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY
@@ -132,7 +135,8 @@ class TopicRepo {
         user_id
         FROM topic_${topicHandler.topic}_$topicSchemaVersion
         WHERE
-            user_id = :userId
+            has_hashtags = true
+            AND user_id = :userId
             AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
         GROUP BY user_id
         """

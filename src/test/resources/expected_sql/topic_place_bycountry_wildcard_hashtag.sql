@@ -15,7 +15,8 @@ FROM topic_place_3
 
     ARRAY JOIN country_iso_a3
 WHERE
-  arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
+  has_hashtags = true
+  AND arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
   AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
   AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
 GROUP BY

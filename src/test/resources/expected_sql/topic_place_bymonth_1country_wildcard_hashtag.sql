@@ -22,7 +22,8 @@ FROM
 
     FROM topic_place_3
     WHERE
-        arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
+      has_hashtags = true
+      AND arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
       AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
       AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
       AND hasAny(country_iso_a3, ['BOL'])
