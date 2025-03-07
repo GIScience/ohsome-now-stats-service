@@ -12,3 +12,4 @@ WHERE changeset_timestamp <= parseDateTimeBestEffort('2023-06-15 17:00:00')
   AND (
     amenity_current != '' OR amenity_before != ''
     )
+;

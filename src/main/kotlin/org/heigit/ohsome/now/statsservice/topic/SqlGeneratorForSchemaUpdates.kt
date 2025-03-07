@@ -42,6 +42,7 @@ fun createInsertStatement(
         (
             ${whereClause(definition)}
         )
+    ;
     """.trimIndent().trimMargin()
 
 
