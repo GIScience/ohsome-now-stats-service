@@ -64,9 +64,10 @@ class StatsRepo {
             arrayJoin(hashtags) as hashtag
         FROM "all_stats_$statsSchemaVersion"
         WHERE
-            arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
-            and changeset_timestamp > parseDateTimeBestEffort(:startDate) 
-            and changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            has_hashtags = true
+            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+            AND changeset_timestamp > parseDateTimeBestEffort(:startDate) 
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY hashtag
         """.trimIndent()
 
@@ -137,10 +138,11 @@ class StatsRepo {
             user_id
             FROM "all_stats_$statsSchemaVersion"
             WHERE
-                user_id = :userId AND
-                arrayExists(hashtag -> startsWith(hashtag, 'hotosm-project-'), hashtags)        
-        group by user_id
-
+                has_hashtags = true
+                AND user_id = :userId 
+                AND arrayExists(hashtag -> startsWith(hashtag, 'hotosm-project-'), hashtags)        
+        GROUP BY user_id
+        ;
     """.trimIndent()
 
 
