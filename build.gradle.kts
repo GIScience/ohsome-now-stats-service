@@ -91,10 +91,10 @@ publishing {
 
 configure<ReleaseExtension> {
 
-//    failOnUnversionedFiles.set(false)
-//    failOnUpdateNeeded.set(false)
-//    failOnCommitNeeded.set(false)
-//    failOnPublishNeeded.set(false)
+    failOnUnversionedFiles.set(false)
+    failOnUpdateNeeded.set(false)
+    failOnCommitNeeded.set(false)
+    failOnPublishNeeded.set(false)
 
 }
 
