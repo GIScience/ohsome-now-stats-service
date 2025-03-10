@@ -63,7 +63,7 @@ check [GIScience/ohsome-now-stats-frontend](https://github.com/GIScience/ohsome-
 
 ## Running the service
 
-The service can be run directly on the OS or within a docker image
+The service can be run directly with gradle
 
 ### Running Locally
 
@@ -87,30 +87,6 @@ Once the system has started,
 the API documentation including links to endpoints is available here:
 
 http://localhost:8080/doc.html
-
-### Running within Docker
-
-In order to run the service and a development database with dummy data within a Docker environment, run the following
-commands:
-
-```shell
-docker compose up -d
-```
-
-If you want to only run a development database in Docker and run the API natively (i.e. with gradle), run the following
-commands:
-
-```shell
-# start dev database
-docker compose up -d clickhouse-database
-# run API using the gradle wrapper
-./gradlew bootRun
-```
-
-This relies on the  [Dockerfile](./Dockerfile), in this repository.
-
-**Note:** The database credentials will be injected into the dockerized app via environment variables (soon). The Docker
-database setup currently relies on an empty password set in `secrets.properties` (see above).
 
 ## Release and artifact publication
 
