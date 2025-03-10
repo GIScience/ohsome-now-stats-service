@@ -122,6 +122,7 @@ class TopicRepo {
             country
         """.trimIndent()
 
+    @Suppress("LongMethod")
     fun topicForUserIdForHotOSMProjectSQL(topicHandler: TopicHandler, hashtagHandler: HashtagHandler) =
         """        
         WITH
