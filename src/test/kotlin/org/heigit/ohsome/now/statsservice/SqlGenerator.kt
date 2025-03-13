@@ -24,6 +24,11 @@ class SqlGenerator {
 
     private val path = "sql_generated/"
 
+    @Test
+    fun `create stats main table SQL for both stages`() {
+        writeStatsSql("int")
+        writeStatsSql("prod")
+    }
 
     @Test
     fun `create topic SQL for all topics and both stages`() = getAllTopicDefinitions()
@@ -36,6 +41,11 @@ class SqlGenerator {
         this.writeProjections("prod")
     }
 
+    private fun writeStatsSql(stage: String) {
+        writeSqlToFile("DDL", "stats_table", stage) {
+            createStatsTableDDLCommands(stage, currentStatsSchemaVersion)
+        }
+    }
 
     private fun writeTopicSql(definition: TopicDefinition) {
         writeDDLs(definition, "int", currentStatsSchemaVersion, currentTopicSchemaVersion)
@@ -68,6 +78,8 @@ class SqlGenerator {
         .getFile(prefix, title, stage)
         .writeText(command())
 
+    private fun createStatsTableDDLCommands(stage: String, statsSchemaVersion: String) =
+        comment() + createStatsTableDDL(stage, statsSchemaVersion)
 
     private fun createDDLCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
         comment() +

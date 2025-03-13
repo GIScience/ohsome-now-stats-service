@@ -19,7 +19,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
     val amenityMatcher = KeyValueMatcher("amenity", listOf("doctors", "clinic")) // values not important here
     val healthcareMatcher = KeyValueMatcher("healthcare", listOf("doctors", "clinic")) // values not important here
 
-
+    val expectedTableStats = file("create_stats_table")
     val expectedTable1Key = file("create_topic_table_for_1_key")
     val expectedTable2Keys = file("create_topic_table_for_2_keys")
 
@@ -32,6 +32,18 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
     val expectedProjections = file("add_projections_to_stats_table")
 
+    @Nested
+    @DisplayName("stats table DDL")
+    inner class StatsTableDDLTests {
+
+        @Test
+        fun `with correct schema`() {
+            val sql = createStatsTableDDL(stage, statsSchemaVersion)
+            assertThat(sql)
+                .isEqualToNormalizingWhitespace(expectedTableStats)
+        }
+
+    }
 
     @Nested
     @DisplayName("projections for stats table")

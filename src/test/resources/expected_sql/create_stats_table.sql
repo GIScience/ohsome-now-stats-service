@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS all_stats_3
+-- main stats table definition
+CREATE TABLE IF NOT EXISTS int.all_stats_7
 (
     `changeset_id`        Int64,
     `changeset_timestamp` DateTime('UTC'),
@@ -30,5 +31,6 @@ CREATE TABLE IF NOT EXISTS all_stats_3
     )
     ENGINE = MergeTree
     PRIMARY KEY (has_hashtags, changeset_timestamp)
+    SETTINGS non_replicated_deduplication_window = 20000
 ;
 
