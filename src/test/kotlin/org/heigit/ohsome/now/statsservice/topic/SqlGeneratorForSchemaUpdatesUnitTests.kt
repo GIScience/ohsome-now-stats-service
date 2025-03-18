@@ -19,7 +19,13 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
     val amenityMatcher = KeyValueMatcher("amenity", listOf("doctors", "clinic")) // values not important here
     val healthcareMatcher = KeyValueMatcher("healthcare", listOf("doctors", "clinic")) // values not important here
 
+    //stats
     val expectedTableStats = file("create_stats_table")
+    val expectedProjections = file("add_projections_to_stats_table")
+    val expectedMVHashtagAggregation = file("create_stats_table_for_hashtag_aggregation")
+
+
+    //topics
     val expectedTable1Key = file("create_topic_table_for_1_key")
     val expectedTable2Keys = file("create_topic_table_for_2_keys")
 
@@ -30,7 +36,6 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
     val expectedInsertStatement2Keys = file("create_topic_insert_statement_for_2_keys")
 
 
-    val expectedProjections = file("add_projections_to_stats_table")
 
     @Nested
     @DisplayName("stats table DDL")
@@ -51,11 +56,19 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
 
         @Test
-        fun `timestamp and user id projections for INT stage`() {
+        fun `timestamp projection for INT stage`() {
 
             val sql = createStatsTableProjections(stage, statsSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedProjections)
+        }
+
+        @Test
+        fun `materialized view for hashtag aggregation for INT stage`() {
+
+            val sql = createStatsTableMaterializedViewForHashtagAggregation(stage, statsSchemaVersion)
+            assertThat(sql)
+                .isEqualToNormalizingWhitespace(expectedMVHashtagAggregation)
         }
 
 

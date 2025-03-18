@@ -53,6 +53,18 @@ fun createStatsTableProjections(stage: String, schemaVersion: String) = """
     ALTER TABLE ${stage}.all_stats_${schemaVersion} MATERIALIZE PROJECTION timestamp_projection_${schemaVersion};
     """.trimIndent().trimMargin()
 
+fun createStatsTableMaterializedViewForHashtagAggregation(stage: String, schemaVersion: String) = """
+    -- for hashtags endpoint
+    CREATE TABLE IF NOT EXISTS ${stage}.hashtag_aggregation_${schemaVersion}
+    (
+        `hashtag`           String,
+        `count`             UInt64
+    )
+        ENGINE = MergeTree
+        PRIMARY KEY( count )
+    ;
+    """.trimIndent().trimMargin()
+
 
 @Suppress("LongMethod", "LongParameterList")
 fun createInsertStatement(
