@@ -46,7 +46,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
     }
 
     @Nested
-    @DisplayName("projections for stats table")
+    @DisplayName("stats projections/materialized views")
     inner class StatsProjectionTests {
 
 
