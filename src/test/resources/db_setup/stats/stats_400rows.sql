@@ -1,3 +1,5 @@
+TRUNCATE all_stats_3;
+
 INSERT INTO all_stats_3 (
   "changeset_id",
   "changeset_timestamp",
