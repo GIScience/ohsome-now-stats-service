@@ -3,6 +3,8 @@ package org.heigit.ohsome.now.statsservice.topic
 import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.AREA
 import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 
+
+@Suppress("LongMethod")
 fun createStatsTableDDL(stage: String, schemaVersion: String) = """
    -- main stats table definition
    CREATE TABLE IF NOT EXISTS $stage.all_stats_${schemaVersion}
