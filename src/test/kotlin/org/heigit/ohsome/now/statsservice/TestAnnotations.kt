@@ -16,7 +16,7 @@ annotation class SpringTestWithClickhouse
 @Retention(RUNTIME)
 @Sql(
     *[
-        "/db_setup/stats/init_schema.sql",
+        "/db_setup/stats/init_stats_schema.sql",
         "/db_setup/stats/stats_400rows.sql",
         "/db_setup/topics/init_schema_building_view.sql",
         "/db_setup/topics/init_schema_highway_view.sql",
