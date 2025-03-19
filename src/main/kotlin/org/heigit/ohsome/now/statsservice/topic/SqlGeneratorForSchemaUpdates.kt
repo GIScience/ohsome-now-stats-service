@@ -67,6 +67,24 @@ fun createStatsTableMaterializedViewForHashtagAggregation(stage: String, schemaV
     ;
     """.trimIndent().trimMargin()
 
+fun createStatsMaterializedViewForHashtagAggregation(stage: String, schemaVersion: String) = """
+-- needed for version 24.9.2.42 - obsolete in version 25.1.3.23
+SET allow_experimental_refreshable_materialized_view=true;
+
+-- we have to refresh the whole table periodically
+-- because the count is *not* an incremental operation
+CREATE MATERIALIZED VIEW ${stage}.mv__all_stats_${schemaVersion}_to_hashtag_aggregation_${schemaVersion}
+REFRESH EVERY 1 MINUTE
+TO ${stage}.hashtag_aggregation_${schemaVersion}
+AS
+SELECT
+    arrayJoin(hashtags) AS hashtag,
+    count(*) as count
+FROM ${stage}.all_stats_${schemaVersion}
+GROUP BY hashtag
+;    
+""".trimIndent().trimMargin()
+
 
 @Suppress("LongMethod", "LongParameterList")
 fun createInsertStatement(
