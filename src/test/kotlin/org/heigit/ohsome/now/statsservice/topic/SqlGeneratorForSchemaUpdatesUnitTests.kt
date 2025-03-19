@@ -22,7 +22,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
     //stats
     val expectedTableStats = file("create_stats_table")
     val expectedProjections = file("add_projections_to_stats_table")
-    val expectedMVHashtagAggregation = file("create_stats_table_for_hashtag_aggregation")
+    val expectedTableForHashtagAggregation = file("create_stats_table_for_hashtag_aggregation")
 
 
     //topics
@@ -64,11 +64,11 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         }
 
         @Test
-        fun `materialized view for hashtag aggregation for INT stage`() {
+        fun `hashtag aggregation table DDL`() {
 
             val sql = createStatsTableMaterializedViewForHashtagAggregation(stage, statsSchemaVersion)
             assertThat(sql)
-                .isEqualToNormalizingWhitespace(expectedMVHashtagAggregation)
+                .isEqualToNormalizingWhitespace(expectedTableForHashtagAggregation)
         }
 
 
