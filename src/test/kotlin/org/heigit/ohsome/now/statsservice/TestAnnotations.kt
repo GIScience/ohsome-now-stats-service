@@ -17,7 +17,10 @@ annotation class SpringTestWithClickhouse
 @Sql(
     *[
         "/db_setup/stats/init_stats_schema.sql",
+        "/db_setup/stats/init_hashtag_aggregation_schema.sql",
         "/db_setup/stats/stats_400rows.sql",
+        "/db_setup/stats/hashtag_aggregation_rows.sql",
+
         "/db_setup/topics/init_schema_building_view.sql",
         "/db_setup/topics/init_schema_highway_view.sql",
         "/db_setup/topics/topic_building_20rows.sql",

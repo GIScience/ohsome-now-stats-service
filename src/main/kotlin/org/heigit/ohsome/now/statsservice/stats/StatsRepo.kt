@@ -177,18 +177,16 @@ class StatsRepo {
 
 
     private val uniqueHashtagSQL = """
-        SELECT 
-            arrayJoin(hashtags) as hashtag, 
-            count(*) as count
-        FROM "all_stats_$statsSchemaVersion"
+        SELECT
+            hashtag,
+            count
+        FROM "hashtag_aggregation_$statsSchemaVersion"
         WHERE
-            has_hashtags = true
-            AND hashtag not like '% %' 
-            AND hashtag not like '%﻿%' 
+            count > 10
+            AND hashtag not like '% %'
+            AND hashtag not like '%﻿%'
             AND not match(hashtag, '^[0-9·-]*$')
-        GROUP BY hashtag
-        HAVING count(*) > 10
-        ORDER BY hashtag
+        ORDER BY hashtag;
         ;
     """.trimIndent()
 
