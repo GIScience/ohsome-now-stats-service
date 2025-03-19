@@ -31,15 +31,14 @@ class SqlGenerator {
     }
 
     @Test
-    fun `create topic SQL for all topics and both stages`() = getAllTopicDefinitions()
-        .forEach(::writeTopicSql)
-
-
-    @Test
-    fun `create projections SQL for both stages`() {
+    fun `create stats projection SQL for both stages`() {
         this.writeProjections("int")
         this.writeProjections("prod")
     }
+
+    @Test
+    fun `create topic SQL for all topics and both stages`() = getAllTopicDefinitions()
+        .forEach(::writeTopicSql)
 
     private fun writeStatsSql(stage: String) {
         writeSqlToFile("DDL", "stats_table", stage) {
