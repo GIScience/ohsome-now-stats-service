@@ -67,6 +67,7 @@ fun createStatsTableMaterializedViewForHashtagAggregation(stage: String, schemaV
     ;
     """.trimIndent().trimMargin()
 
+@Suppress("LongMethod")
 fun createStatsMaterializedViewForHashtagAggregation(stage: String, schemaVersion: String) = """
 -- needed for version 24.9.2.42 - obsolete in version 25.1.3.23
 SET allow_experimental_refreshable_materialized_view=true;
