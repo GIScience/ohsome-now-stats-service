@@ -26,7 +26,8 @@ class TopicServiceIntegrationTests {
 
         @JvmStatic
         @Container
-        private val clickHouse = ClickHouseContainer("clickhouse/clickhouse-server:24.9.2.42")
+        private val clickHouse = ClickHouseContainer("clickhouse/clickhouse-server:25.3.1.2703")
+            .withEnv("CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT", "1")
 
 
         @JvmStatic
