@@ -11,7 +11,6 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.util.UriBuilder
-import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 import java.net.URI
 
@@ -36,8 +35,7 @@ class SystemTests {
 
         @JvmStatic
         @Container
-        private val clickHouse = ClickHouseContainer("clickhouse/clickhouse-server:25.3.1.2703")
-            .withEnv("CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT", "1")
+        private val clickHouse = createClickhouseContainer()
 
 
 

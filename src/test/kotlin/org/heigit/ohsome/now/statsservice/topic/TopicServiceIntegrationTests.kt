@@ -3,13 +3,13 @@ package org.heigit.ohsome.now.statsservice.topic
 import org.assertj.core.api.Assertions.assertThat
 import org.heigit.ohsome.now.statsservice.SpringTestWithClickhouse
 import org.heigit.ohsome.now.statsservice.WithTopicData
+import org.heigit.ohsome.now.statsservice.createClickhouseContainer
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
-import org.testcontainers.containers.ClickHouseContainer
 import org.testcontainers.junit.jupiter.Container
 
 
@@ -26,8 +26,7 @@ class TopicServiceIntegrationTests {
 
         @JvmStatic
         @Container
-        private val clickHouse = ClickHouseContainer("clickhouse/clickhouse-server:25.3.1.2703")
-            .withEnv("CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT", "1")
+        private val clickHouse = createClickhouseContainer()
 
 
         @JvmStatic
