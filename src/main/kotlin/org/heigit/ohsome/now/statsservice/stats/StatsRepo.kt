@@ -171,8 +171,7 @@ class StatsRepo {
             max(changeset_timestamp) as max_timestamp,
             min(changeset_timestamp) as min_timestamp
         FROM "all_stats_$statsSchemaVersion"
-        WHERE changeset_timestamp > now() - toIntervalMonth(1) 
-        OR changeset_timestamp < parseDateTimeBestEffort('2009-04-23T00:00:00.000000Z')
+        ;
     """.trimIndent()
 
 
@@ -186,7 +185,7 @@ class StatsRepo {
             AND hashtag not like '% %'
             AND hashtag not like '%﻿%'
             AND not match(hashtag, '^[0-9·-]*$')
-        ORDER BY hashtag;
+        ORDER BY hashtag
         ;
     """.trimIndent()
 
