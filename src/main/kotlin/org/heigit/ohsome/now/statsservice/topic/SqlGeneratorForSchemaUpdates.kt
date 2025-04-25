@@ -35,7 +35,9 @@ fun createStatsTableDDL(stage: String, schemaVersion: String) = """
     `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
     `h3_r3`               Nullable(UInt64),
     `h3_r6`               Nullable(UInt64),
-    `country_iso_a3`      Array(String)
+    `country_iso_a3`      Array(String),
+    INDEX all_stats_${schemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
+    INDEX all_stats_${schemaVersion}_skip_user_id_ix user_id TYPE bloom_filter(0.25) GRANULARITY 1
     )
     ENGINE = MergeTree
     PRIMARY KEY (has_hashtags, changeset_timestamp)
