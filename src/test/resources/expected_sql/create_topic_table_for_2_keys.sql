@@ -8,8 +8,19 @@ CREATE TABLE IF NOT EXISTS int.topic_healthcare_6
     `healthcare_before`   String,
     `amenity_current`     String,
     `amenity_before`      String,
-    `has_hashtags`        Bool
+    `has_hashtags`        Bool,
+    INDEX topic_healthcare_6_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
+    INDEX topic_healthcare_6_skip_user_id_ix user_id TYPE bloom_filter(0.25) GRANULARITY 1
 )
-    ENGINE = MergeTree
-    PRIMARY KEY(has_hashtags, changeset_timestamp)
+ENGINE = MergeTree
+PRIMARY KEY (
+             has_hashtags,
+             toStartOfDay(changeset_timestamp)
+            )
+ORDER BY (
+          has_hashtags,
+          toStartOfDay(changeset_timestamp),
+          geohashEncode(coalesce(centroid.x, 0), coalesce(centroid.y, 0), 2),
+          changeset_timestamp
+         )
 ;

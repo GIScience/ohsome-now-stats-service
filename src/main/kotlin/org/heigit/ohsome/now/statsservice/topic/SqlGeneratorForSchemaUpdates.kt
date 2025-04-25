@@ -6,9 +6,9 @@ import org.heigit.ohsome.now.statsservice.topic.AggregationStrategy.LENGTH
 
 @Suppress("LongMethod")
 fun createStatsTableDDL(stage: String, schemaVersion: String) = """
-   -- main stats table definition
-   CREATE TABLE IF NOT EXISTS $stage.all_stats_${schemaVersion}
-        (
+    -- main stats table definition
+    CREATE TABLE IF NOT EXISTS $stage.all_stats_${schemaVersion}
+    (
     `changeset_id`        Int64,
     `changeset_timestamp` DateTime('UTC'),
 
@@ -40,7 +40,16 @@ fun createStatsTableDDL(stage: String, schemaVersion: String) = """
     INDEX all_stats_${schemaVersion}_skip_user_id_ix user_id TYPE bloom_filter(0.25) GRANULARITY 1
     )
     ENGINE = MergeTree
-    PRIMARY KEY (has_hashtags, changeset_timestamp)
+    PRIMARY KEY (
+        has_hashtags,
+        toStartOfDay(changeset_timestamp)
+    )
+    ORDER BY (
+        has_hashtags,
+        toStartOfDay(changeset_timestamp),
+        geohashEncode(coalesce(centroid.x, 0), coalesce(centroid.y, 0), 2),
+        changeset_timestamp
+    )
     SETTINGS non_replicated_deduplication_window = 20000
     ;
    """.trimIndent().trimMargin()
@@ -48,10 +57,9 @@ fun createStatsTableDDL(stage: String, schemaVersion: String) = """
 fun createStatsTableProjections(stage: String, schemaVersion: String) = """
     -- for metadata endpoint
     ALTER TABLE ${stage}.all_stats_${schemaVersion} ADD PROJECTION timestamp_projection_${schemaVersion} (
-        SELECT
-            changeset_timestamp
-        ORDER BY
-            changeset_timestamp
+    SELECT
+        min(changeset_timestamp),
+        max(changeset_timestamp)
     );
     
     ALTER TABLE ${stage}.all_stats_${schemaVersion} MATERIALIZE PROJECTION timestamp_projection_${schemaVersion};
@@ -156,10 +164,21 @@ fun createTableDDL(definition: TopicDefinition, stage: String, topicSchemaVersio
             `country_iso_a3`      Array(String),
             ${keyColumnDefinitions(definition)}
             ${optionalAreaOrLengthColumns(definition)},
-            `has_hashtags`        Bool
+            `has_hashtags`        Bool,
+            INDEX topic_${definition.topicName}_${topicSchemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
+            INDEX topic_${definition.topicName}_${topicSchemaVersion}_skip_user_id_ix user_id TYPE bloom_filter(0.25) GRANULARITY 1
         )
             ENGINE = MergeTree
-            PRIMARY KEY(has_hashtags, changeset_timestamp)
+            PRIMARY KEY (
+                         has_hashtags,
+                         toStartOfDay(changeset_timestamp)
+                        )
+            ORDER BY (
+                      has_hashtags,
+                      toStartOfDay(changeset_timestamp),
+                      geohashEncode(coalesce(centroid.x, 0), coalesce(centroid.y, 0), 2),
+                      changeset_timestamp
+                     )
         ;
     """.trimIndent()
 

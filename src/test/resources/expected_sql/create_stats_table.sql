@@ -30,9 +30,17 @@ CREATE TABLE IF NOT EXISTS int.all_stats_7
     `country_iso_a3`      Array(String),
     INDEX all_stats_7_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
     INDEX all_stats_7_skip_user_id_ix user_id TYPE bloom_filter(0.25) GRANULARITY 1
-    )
-    ENGINE = MergeTree
-    PRIMARY KEY (has_hashtags, changeset_timestamp)
-    SETTINGS non_replicated_deduplication_window = 20000
+)
+ENGINE = MergeTree
+PRIMARY KEY (
+    has_hashtags,
+    toStartOfDay(changeset_timestamp)
+)
+ORDER BY (
+    has_hashtags,
+    toStartOfDay(changeset_timestamp),
+    geohashEncode(coalesce(centroid.x, 0), coalesce(centroid.y, 0), 2),
+    changeset_timestamp
+)
+SETTINGS non_replicated_deduplication_window = 20000
 ;
-
