@@ -5,7 +5,7 @@ pipeline {
     label 'worker'
   }
   tools {
-    gradle 'Gradle 7'
+    gradle 'Gradle 8'
   }
 
   environment {
