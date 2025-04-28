@@ -4,23 +4,23 @@ import java.net.URI
 
 
 plugins {
-    id("org.springframework.boot") version "3.0.5"
-    id("io.spring.dependency-management") version "1.1.0"
-    kotlin("jvm") version "1.8.10"
-    kotlin("plugin.spring") version "1.8.10"
+    id("org.springframework.boot") version "3.4.5"
+    id("io.spring.dependency-management") version "1.1.7"
+    kotlin("jvm") version "2.0.21"
+    kotlin("plugin.spring") version "2.0.21"
 
-    id("io.gitlab.arturbosch.detekt") version "1.21.0"
-    id("org.jetbrains.kotlinx.kover") version "0.6.1"
-    id("io.gatling.gradle") version "3.9.5.1"
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
+    id("org.jetbrains.kotlinx.kover") version "0.9.1"
+    id("io.gatling.gradle") version "3.13.5.4"
 
 
     // manages releases, i.e. maven version number and git tags (not artifact publication)
-    id("net.researchgate.release") version "3.0.2"
+    id("net.researchgate.release") version "3.1.0"
 
     // manages publication of snapshot and release artifacts to respective maven repos (not release management)
     `maven-publish`
 
-    id("org.sonarqube") version "4.3.1.3277"
+    id("org.sonarqube") version "6.1.0.5360"
 }
 
 group = "org.heigit.ohsome.now.stats"
@@ -100,21 +100,13 @@ configure<ReleaseExtension> {
 
 
 kover {
-
-    htmlReport {
-        onCheck.set(true)
-    }
-
-    verify {
-        onCheck.set(true)
-        rule {
-            isEnabled = true
-            bound {
-                minValue = 80
+    reports {
+        verify {
+            rule {
+                minBound(80)
             }
         }
     }
-
 }
 
 

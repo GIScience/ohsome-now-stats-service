@@ -30,7 +30,7 @@ complexity:
   ComplexCondition:
     active: true
     threshold: 3
-  ComplexMethod:
+  CyclomaticComplexMethod:
     active: true
     threshold: 4
     ignoreSingleWhenExpression: false
