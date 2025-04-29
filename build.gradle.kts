@@ -1,4 +1,5 @@
 import net.researchgate.release.ReleaseExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
 
@@ -38,7 +39,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.clickhouse:clickhouse-jdbc:0.7.2")
     implementation("org.jdbi:jdbi3-core:3.48.0")
@@ -52,9 +53,9 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict", "-Xemit-jvm-type-annotations")
-        jvmTarget = "17"
+    compilerOptions {
+        freeCompilerArgs.set(listOf("-Xjsr305=strict", "-Xemit-jvm-type-annotations"))
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
