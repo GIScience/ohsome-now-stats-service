@@ -118,7 +118,11 @@ Please note:
 
 * This plugin is not intended to be started locally, but runs in the CI server. 
 
+### Update the gradle verification-metadata.xml when changing dependencies
 
+```
+./gradlew --write-verification-metadata sha256
+```
 
 
 
