@@ -110,7 +110,8 @@ fun createInsertStatement(
         country_iso_a3,
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)}, 
-        has_hashtags
+        has_hashtags,
+        centroid
     FROM
         $stage.all_stats_${statsSchemaVersion}
     WHERE
@@ -142,7 +143,8 @@ fun createMvDdl(
         ${keyColumns(definition)}
         ${optionalAreaOrLengthColumnNames(definition)},
         
-        `has_hashtags`
+        `has_hashtags`,
+        `centroid`
     FROM $stage.all_stats_${statsSchemaVersion}
     WHERE
         changeset_timestamp > parseDateTimeBestEffort('$dateTime')
@@ -165,6 +167,7 @@ fun createTableDDL(definition: TopicDefinition, stage: String, topicSchemaVersio
             ${keyColumnDefinitions(definition)}
             ${optionalAreaOrLengthColumns(definition)},
             `has_hashtags`        Bool,
+            `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
             INDEX topic_${definition.topicName}_${topicSchemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
             INDEX topic_${definition.topicName}_${topicSchemaVersion}_skip_user_id_ix user_id TYPE bloom_filter(0.25) GRANULARITY 1
         )

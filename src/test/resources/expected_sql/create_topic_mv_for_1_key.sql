@@ -8,7 +8,8 @@ SELECT `changeset_timestamp`,
        tags['amenity']        as `amenity_current`,
        tags_before['amenity'] as `amenity_before`,
 
-       `has_hashtags`
+       `has_hashtags`,
+       `centroid`
 
 FROM int.all_stats_7
 WHERE changeset_timestamp > parseDateTimeBestEffort('2023-06-15 17:00:00')

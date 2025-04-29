@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS int.topic_healthcare_6
     `amenity_current`     String,
     `amenity_before`      String,
     `has_hashtags`        Bool,
+    `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
     INDEX topic_healthcare_6_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
     INDEX topic_healthcare_6_skip_user_id_ix user_id TYPE bloom_filter(0.25) GRANULARITY 1
 )
