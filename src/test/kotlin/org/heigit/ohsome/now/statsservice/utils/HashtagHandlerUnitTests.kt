@@ -11,9 +11,13 @@ class HashtagHandlerUnitTests {
     fun `check if normal hashtag is wildcard`() {
 
         val hashtagHandler = HashtagHandler("normalHashtag")
+        val expectedFilterSQL = """
+                has_hashtags = true
+                AND has(hashtags, :hashtag)
+                AND """.trimIndent()
 
         assertEquals("normalhashtag", hashtagHandler.hashtag)
-        assertEquals("equals", hashtagHandler.variableFilterSQL)
+        assertEquals(expectedFilterSQL, hashtagHandler.optionalFilterSQL)
     }
 
 
@@ -21,9 +25,22 @@ class HashtagHandlerUnitTests {
     fun `check if wildcard hashtag is wildcard`() {
 
         val hashtagHandler = HashtagHandler("wildcardHashtag*")
+        val expectedFilterSQL = """
+                has_hashtags = true
+                AND arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
+                AND """.trimIndent()
 
         assertEquals("wildcardhashtag", hashtagHandler.hashtag)
-        assertEquals("startsWith", hashtagHandler.variableFilterSQL)
+        assertEquals(expectedFilterSQL, hashtagHandler.optionalFilterSQL)
+    }
+
+    @Test
+    fun `can handle empty hashtag`() {
+        val hashtagHandler = HashtagHandler("")
+        val expectedFilterSQL = ""
+
+        assertEquals("", hashtagHandler.hashtag)
+        assertEquals(expectedFilterSQL, hashtagHandler.optionalFilterSQL)
     }
 
 

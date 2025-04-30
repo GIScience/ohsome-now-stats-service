@@ -9,8 +9,8 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
@@ -24,7 +24,7 @@ class StatsControllerMVCTests {
     private val hashtag = "&uganda"
 
 
-    @MockBean
+    @MockitoBean
     private lateinit var statsService: StatsService
 
 
@@ -64,6 +64,7 @@ class StatsControllerMVCTests {
     @ParameterizedTest
     @ValueSource(
         strings = [
+            "/stats?hashtag=*",
             "/stats/*",
             "/stats/hashtags/*,hotosm*",
             "/stats/hashtags/hotosm*,*",
@@ -120,6 +121,14 @@ class StatsControllerMVCTests {
             .andExpect(jsonPath("$.result.buildings").value(123))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
             .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/&uganda"))
+
+        this.mockMvc
+            .perform(get("/stats").queryParam("hashtag", hashtag))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.result.buildings").value(123))
+            .andExpect(jsonPath("$.query.timespan.endDate").exists())
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats?hashtag=%26uganda"))
     }
 
 
@@ -138,6 +147,16 @@ class StatsControllerMVCTests {
             .andExpect(jsonPath("$.result.buildings").value(123))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
             .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/h*?countries=UGA,DE"))
+
+        this.mockMvc
+            .perform(
+                get("/stats?hashtag=h*").queryParam("countries", "UGA,DE")
+            )
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.result.buildings").value(123))
+            .andExpect(jsonPath("$.query.timespan.endDate").exists())
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats?hashtag=h*&countries=UGA,DE"))
     }
 
 

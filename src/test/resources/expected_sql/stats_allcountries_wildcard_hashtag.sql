@@ -6,7 +6,7 @@ SELECT
 FROM "all_stats_3"
 WHERE
    has_hashtags = true
-   AND has(hashtags, :hashtag)
+   AND arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
    AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
    AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
 ;

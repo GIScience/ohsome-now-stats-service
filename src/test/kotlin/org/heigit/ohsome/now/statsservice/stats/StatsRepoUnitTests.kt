@@ -12,12 +12,24 @@ class StatsRepoUnitTests {
 
     private val repo = StatsRepo()
 
+    private val noHashtag = HashtagHandler("")
     private val fixedHashtag = HashtagHandler("hotmicrogrant")
     private val wildcardHashtag = HashtagHandler("hotmicrogrant*")
 
     private val allCountries = CountryHandler(emptyList())
     private val bolivia = CountryHandler(listOf("BOL"))
 
+    @Test
+    fun `can create stats SQL for all countries & no hashtag`() {
+
+        val expected = file("stats_allcountries_no_hashtag")
+
+        val sql = repo.statsFromTimeSpanSQL(noHashtag, allCountries)
+
+        assertThat(sql)
+            .contains("all_stats_$statsSchemaVersion")
+            .isEqualToIgnoringWhitespace(expected)
+    }
 
     @Test
     fun `can create stats SQL for all countries & non-wildcard hashtag`() {
@@ -25,6 +37,18 @@ class StatsRepoUnitTests {
         val expected = file("stats_allcountries_fixed_hashtag")
 
         val sql = repo.statsFromTimeSpanSQL(fixedHashtag, allCountries)
+
+        assertThat(sql)
+            .contains("all_stats_$statsSchemaVersion")
+            .isEqualToIgnoringWhitespace(expected)
+    }
+
+    @Test
+    fun `can create stats SQL for all countries & wildcard hashtag`() {
+
+        val expected = file("stats_allcountries_wildcard_hashtag")
+
+        val sql = repo.statsFromTimeSpanSQL(wildcardHashtag, allCountries)
 
         assertThat(sql)
             .contains("all_stats_$statsSchemaVersion")

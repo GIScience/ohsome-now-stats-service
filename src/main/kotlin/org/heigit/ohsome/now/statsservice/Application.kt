@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @OpenAPIDefinition(
     info = Info(
-        title = "ohsome Contribution Stats Service: OpenAPI definition",
+        title = "ohsomeNow Stats Service: OpenAPI definition",
         description = "This document describes the REST endpoints for OSM contribution statistics.",
         version = "v1"
     )

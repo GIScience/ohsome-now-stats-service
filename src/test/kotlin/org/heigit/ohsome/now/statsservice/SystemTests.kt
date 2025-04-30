@@ -5,14 +5,21 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.util.UriBuilder
+import org.springframework.web.util.UriComponentsBuilder
 import org.testcontainers.junit.jupiter.Container
 import java.net.URI
+import java.util.Optional
+import java.util.stream.Stream
 
 
 @SpringTestWithClickhouse
@@ -38,7 +45,6 @@ class SystemTests {
         private val clickHouse = createClickhouseContainer()
 
 
-
         @JvmStatic
         @DynamicPropertySource
         fun clickhouseUrl(registry: DynamicPropertyRegistry) =
@@ -47,9 +53,66 @@ class SystemTests {
 
 
     @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("for stats queries")
     @WithStatsData
     inner class StatsTests {
+
+        val normalHashtag = "&uganda"
+        val wildcardHashtag = "hotosm-project-*"
+
+        fun hashtagProvider(): Stream<Arguments> = Stream.of(
+            Arguments.of(null, 4, 4, 0.0, 0, 3, "2017-12-19T00:52:03Z"),
+            Arguments.of("", 4, 4, 0.0, 0, 3, "2017-12-19T00:52:03Z"),
+            Arguments.of(normalHashtag, 1, 1, 1.059, 1, 0, "2017-12-19T00:52:03Z"),
+            Arguments.of(wildcardHashtag, 1, 1, 0.0, 0, 1, "2016-03-05T14:00:20Z")
+        )
+
+        @ParameterizedTest(name = "Test GET /stats with hashtag = {0}")
+        @MethodSource("hashtagProvider")
+        @DisplayName("GET /stats with different hashtags types")
+        fun `get stats for different hashtags`(
+            hashtag: String?,
+            expectedChangesets: Int,
+            expectedUsers: Int,
+            expectedRoads: Double,
+            expectedBuildings: Int,
+            expectedEdits: Int,
+            expectedLatest: String
+        ) {
+
+            val startDate = "2015-01-01T00:00:00Z"
+            val endDate = "2018-01-01T00:00:00Z"
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats")
+                    .queryParamIfPresent("hashtag", Optional.ofNullable(hashtag))
+                    .queryParam("startdate", startDate)
+                    .queryParam("enddate", endDate)
+                    .build()
+            }
+
+            println("Test URL: " + url(UriComponentsBuilder.newInstance()))
+
+            val result = doGetAndAssertThat(url)
+
+            result
+                .jsonPath("$.result.changesets").isEqualTo(expectedChangesets)
+                .jsonPath("$.result.users").isEqualTo(expectedUsers)
+                .jsonPath("$.result.roads").isEqualTo(expectedRoads)
+                .jsonPath("$.result.buildings").isEqualTo(expectedBuildings)
+                .jsonPath("$.result.edits").isEqualTo(expectedEdits)
+                .jsonPath("$.result.latest").isEqualTo(expectedLatest)
+                .jsonPath("$.query.timespan.startDate").isEqualTo(startDate)
+                .jsonPath("$.query.timespan.endDate").isEqualTo(endDate)
+
+            if (hashtag.isNullOrBlank()) {
+                result.jsonPath("$.query.hashtag").isEmpty()
+            } else {
+                result.jsonPath("$.query.hashtag").isEqualTo(hashtag)
+            }
+        }
 
 
         @Test

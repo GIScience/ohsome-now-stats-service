@@ -54,6 +54,17 @@ class StatsRepoIntegrationTests {
 
     private val emptyListCountryHandler = CountryHandler(emptyList())
 
+    @Test
+    fun `getStatsForTimeSpan should return all data when using no hashtag, no time span and null-list of countries`() {
+        val hashtagHandler = HashtagHandler("")
+        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler)
+        assertEquals(5, result.size)
+        println(result)
+        assertEquals(
+            "{changesets=7, users=5, edits=16, latest=2023-06-29T12:48:45Z, hashtag=}",
+            result.toString()
+        )
+    }
 
     @Test
     fun `getStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
@@ -161,6 +172,9 @@ class StatsRepoIntegrationTests {
     @Test
     fun `getStatsForTimeSpan returns all data on everything with only wildcard character`() {
         // wasn't sure about the sql behavior of startWith(""), but it seems that it selects everything like expected
+        // as of schema verison 3 startsWith("") counts all contributions which have hashtags
+        // querying only "*" in currently prohoboted by HashtagValidator
+        // if we want this behaviour, it could be optimized in HashtagHandler by filtering on has_hashtags
         val hashtagHandlerWildcard = HashtagHandler("*")
         val resultWildCard = this.repo.getStatsForTimeSpan(hashtagHandlerWildcard, null, null, emptyListCountryHandler)
 

@@ -26,9 +26,40 @@ class StatsController {
 
 
     @Suppress("LongParameterList")
-    @Operation(summary = "Returns live summary statistics for one hashtag")
-    @GetMapping("/stats/{hashtag}", produces = ["application/json"])
+    @Operation(summary = "Returns live summary statistics for all contributions optionally filtered by one hashtag")
+    @GetMapping("/stats", produces = ["application/json"])
     fun stats(
+        httpServletRequest: HttpServletRequest,
+
+
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @RequestParam("hashtag", required = false, defaultValue = "")
+        @ValidHashtag
+        hashtag: String,
+
+        @StartDateConfig
+        @RequestParam("startdate", required = false)
+        startDate: Instant?,
+
+        @EndDateConfig
+        @RequestParam("enddate", required = false)
+        endDate: Instant?,
+
+        @Parameter(description = "A comma separated list of countries, can also only be one country")
+        @RequestParam("countries", required = false, defaultValue = "")
+        countries: List<String>,
+    ): OhsomeFormat<StatsResult> {
+        val result = measure {
+            statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries)
+        }
+
+        return buildOhsomeFormat(result, httpServletRequest)
+    }
+
+    @Suppress("LongParameterList")
+    @Operation(summary = "Returns live summary statistics for one hashtag", deprecated = true)
+    @GetMapping("/stats/{hashtag}", produces = ["application/json"])
+    fun stats_(
         httpServletRequest: HttpServletRequest,
 
         @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")

@@ -45,9 +45,8 @@ class StatsRepo {
             max(changeset_timestamp) as latest
         FROM "all_stats_$statsSchemaVersion"
         WHERE
-            has_hashtags = true
-            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
-            AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            ${hashtagHandler.optionalFilterSQL}        
+            changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
             ;
