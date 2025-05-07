@@ -325,7 +325,6 @@ class StatsRepo {
     /**
      * Retrieves the most used Hashtags in the selected Timeperiod.
      *
-     * @param hashtag The hashtag to retrieve statistics for.
      * @param startDate The start date of the time span.
      * @param endDate The end date of the time span.
      * @return A list of maps containing the statistics for each interval.
