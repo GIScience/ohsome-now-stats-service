@@ -1,6 +1,7 @@
 package org.heigit.ohsome.now.statsservice.stats
 
 import org.heigit.ohsome.now.statsservice.topic.TopicCountryResult
+import org.heigit.ohsome.now.statsservice.topic.TopicResult
 import org.heigit.ohsome.now.statsservice.topic.TopicService
 import org.heigit.ohsome.now.statsservice.topic.UserTopicResult
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
@@ -62,16 +63,64 @@ class StatsService {
         .reduce { m1, m2 -> m1 + m2 }
 
 
-    private fun getStatsForTimeSpanAggregate(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
-        .getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
-        .map {
-            it.toMutableMap()
-                .addStatsForTimeSpanBuildingsAndRoads(
-                    it["hashtag"].toString(), startDate, endDate, emptyList()
-                )
-        }
-        .toMultipleStatsResult()
+    private fun getStatsForTimeSpanAggregate(
+        hashtag: String,
+        startDate: Instant?,
+        endDate: Instant?
+    ): Map<String, StatsResult> {
+        val statsResult = this.repo
+            .getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
 
+        val topicResults = this.topicService.getTopicStatsForTimeSpanAggregate(
+            hashtag, startDate, endDate, listOf("building", "highway")
+        )
+
+        return statsResult
+            .mergeTopicIntoStatsAggregateResults(
+                "buildings", topicResults.getOrDefault("building", emptyList())
+            )
+            .mergeTopicIntoStatsAggregateResults(
+                "roads", topicResults.getOrDefault("highway", emptyList())
+            )
+            .toMultipleStatsResult()
+    }
+
+    // this currently is only meant to be used with topics "roads" and "buildings" since these
+    // are the only ones displayed on the missing maps partner pages
+    @Suppress("CyclomaticComplexMethod")
+    private fun List<MutableMap<String, Any>>.mergeTopicIntoStatsAggregateResults(
+        resultObjectKey: String,
+        topicResults: List<Pair<String, TopicResult>>
+    ): List<MutableMap<String, Any>> {
+        val defaultZero = getDefaultZero(resultObjectKey)
+
+        if (topicResults.isEmpty()) {
+            this.forEach { it[resultObjectKey] = defaultZero }
+            return this
+        }
+
+        var topicIndex = 0
+        this.forEach { result ->
+            if (topicResults[topicIndex].first == result["hashtag"]) {
+                result[resultObjectKey] = getTopicResultInCorrectDataType(resultObjectKey, topicResults, topicIndex++)
+            } else {
+                result[resultObjectKey] = defaultZero
+            }
+        }
+        return this
+    }
+
+    private fun getDefaultZero(resultObjectKey: String): Any =
+        if (resultObjectKey == "roads") 0.toDouble() else 0.toLong()
+
+    private fun getTopicResultInCorrectDataType(
+        resultObjectKey: String,
+        topicResults: List<Pair<String, TopicResult>>,
+        topicIndex: Int
+    ): Any = if (resultObjectKey == "roads")
+        topicResults[topicIndex].second.value
+    else
+        topicResults[topicIndex].second.value.toLong()
 
     @Suppress("LongParameterList")
     fun getStatsForTimeSpanInterval(

@@ -18,7 +18,6 @@ import java.time.temporal.ChronoUnit
 import javax.sql.DataSource
 
 
-
 @Suppress("LargeClass")
 @Component
 class StatsRepo {
@@ -60,7 +59,7 @@ class StatsRepo {
             count(distinct user_id) as users,
             count(map_feature_edit) as edits,
             max(changeset_timestamp) as latest,
-            arrayJoin(hashtags) as hashtag
+            arrayJoin(arrayFilter(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)) as hashtag
         FROM "all_stats_$statsSchemaVersion"
         WHERE
             has_hashtags = true
@@ -68,6 +67,7 @@ class StatsRepo {
             AND changeset_timestamp > parseDateTimeBestEffort(:startDate) 
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY hashtag
+        ORDER BY hashtag
         """.trimIndent()
 
 
@@ -228,7 +228,7 @@ class StatsRepo {
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?
-    ): List<Map<String, Any>> {
+    ): List<MutableMap<String, Any>> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         return query {
@@ -239,7 +239,6 @@ class StatsRepo {
                 .mapToMap()
                 .list()
         }
-
     }
 
 

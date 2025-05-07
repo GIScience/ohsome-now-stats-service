@@ -33,6 +33,21 @@ class TopicService {
         return topicResults
     }
 
+    fun getTopicStatsForTimeSpanAggregate(
+        hashtag: String,
+        startDate: Instant?,
+        endDate: Instant?,
+        topics: List<String>,
+    ): Map<String, List<Pair<String, TopicResult>>> {
+        val topicResults = mutableMapOf<String, List<Pair<String, TopicResult>>>()
+        for (topic in topics) {
+            topicResults[topic] = this.repo
+                .getTopicStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate, TopicHandler(topic))
+                .map { Pair(it["hashtag"].toString(), it.toTopicResult(topic)) }
+        }
+        return topicResults
+    }
+
     @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpanInterval(
         hashtag: String,
@@ -100,6 +115,4 @@ class TopicService {
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)
     private fun handler(countries: List<String>) = CountryHandler(countries)
-
-
 }

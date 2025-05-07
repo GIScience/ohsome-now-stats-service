@@ -52,6 +52,32 @@ class TopicRepo {
 
 
     @Suppress("LongMethod")
+    fun topicStatsFromTimeSpanAggregateSQL(
+        hashtagHandler: HashtagHandler,
+        topicHandler: TopicHandler
+    ) = """
+        WITH
+            ${topicHandler.valueLists()} 
+            
+            ${topicHandler.beforeCurrent()} 
+            if ((current = 0) AND (before = 0), NULL, current - before) as edit
+
+        SELECT 
+            ${topicHandler.topicResult()}, 
+            arrayJoin(arrayFilter(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)) as hashtag
+
+        FROM topic_${topicHandler.topic}_$topicSchemaVersion
+        WHERE
+            has_hashtags = true
+            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+            AND changeset_timestamp > parseDateTimeBestEffort(:startDate) 
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+        GROUP BY hashtag
+        ORDER BY hashtag
+    """.trimIndent()
+
+
+    @Suppress("LongMethod")
     //language=sql
     fun topicStatsFromTimeSpanIntervalSQL(
         hashtagHandler: HashtagHandler,
@@ -242,4 +268,22 @@ class TopicRepo {
 
     private fun <T> query(queryFunction: (handle: Handle) -> T) = create(dataSource)
         .withHandle<T, RuntimeException>(queryFunction)
+
+    fun getTopicStatsForTimeSpanAggregate(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant?,
+        endDate: Instant?,
+        topicHandler: TopicHandler
+    ): List<Map<String, Any>> {
+        logger.info("Getting aggregated topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, topic: ${topicHandler.topic}")
+
+        return query {
+            it.select(topicStatsFromTimeSpanAggregateSQL(hashtagHandler, topicHandler))
+                .bind("hashtag", hashtagHandler.hashtag)
+                .bind("startDate", startDate ?: EPOCH)
+                .bind("endDate", endDate ?: now())
+                .mapToMap()
+                .list()
+        }
+    }
 }
