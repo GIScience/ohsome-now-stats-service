@@ -22,6 +22,7 @@ plugins {
     `maven-publish`
 
     id("org.sonarqube") version "6.1.0.5360"
+    id("jacoco")
 }
 
 group = "org.heigit.ohsome.now.stats"
