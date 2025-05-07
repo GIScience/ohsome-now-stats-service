@@ -22,7 +22,6 @@ plugins {
     `maven-publish`
 
     id("org.sonarqube") version "6.1.0.5360"
-    id("jacoco")
 }
 
 group = "org.heigit.ohsome.now.stats"
@@ -73,6 +72,31 @@ tasks.named<Jar>("jar") {
     enabled = false
 }
 
+tasks {
+    koverXmlReport {
+        check(true)
+    }
+    koverHtmlReport {
+        check(true)
+    }
+    koverVerify {
+        kover {
+            reports {
+                verify {
+                    rule {
+                        // Minimal line coverage in %
+                        minBound(80)
+                    }
+                }
+            }
+        }
+    }
+}
+
+tasks.named("test") {
+    finalizedBy(tasks.named("koverXmlReport"))
+    finalizedBy(tasks.named("koverHtmlReport"))
+}
 
 publishing {
     publications {
@@ -99,17 +123,6 @@ configure<ReleaseExtension> {
     failOnCommitNeeded.set(false)
     failOnPublishNeeded.set(false)
 
-}
-
-
-kover {
-    reports {
-        verify {
-            rule {
-                minBound(80)
-            }
-        }
-    }
 }
 
 
