@@ -12,7 +12,7 @@ activity in OpenStreetMap (OSM).
 The ohsomeNow stats API builds upon a ClickHouse DB which contains all OSM edits for which a changeset hashtag has been
 used. The REST service allows you to get insights into the number of contributors, total map edits, added buildings and
 added road length for a given time range and OSM changesets hashtag filter. Additional topic statistics, e.g. the length
-of added waterways, or the amount of added healthcare facilities. You can use the REST service to report mapping
+of added waterways, or the number of added healthcare facilities. You can use the REST service to report mapping
 statistics for any time range starting from 2009-04-21 when the OSM-API version 0.6 introduced changesets.
 
 Check out the [API documentation](https://stats.now.ohsome.org/api/swagger-ui/index.html#/) get in contact with us in
@@ -47,8 +47,8 @@ check [GIScience/ohsome-now-stats-frontend](https://github.com/GIScience/ohsome-
 
 * JVM: Java 17
 * Base framework: Spring Boot 3
-* Build tool: Gradle 7.6
-* Implementation language: Kotlin 1.8
+* Build tool: Gradle 8.14
+* Implementation language: Kotlin 2.0.21
 * Test Framework: JUnit Jupiter 5.9
 * additional HTTP integration and performance tests: Hurl 1.8
 * API documentation: OpenAPI / Swagger
@@ -71,7 +71,7 @@ The service can be run directly with gradle
 
 The service can be run on every machine with a Java Runtime (JDK 17 or higher.)
 
-To do so run the following start script (on *nix systems):
+To do so, run the following start script (on *nix systems):
 
 ```shell
 ./gradlew bootRun   
@@ -99,7 +99,7 @@ These steps are achieved by the following 2 plugins:
 
 This plugin is used to:
 
-* check for a clean workspace and assure that the local and remote git repos are in sync
+* check for a clean workspace and ensure that the local and remote git repos are in sync
 * read current (snapshot) version from [./gradle.properties](./gradle.properties)
 * create a git tag for this version (by removing the `-SNAPSHOT` postfix)
 * set the next (snapshot) version in [./gradle.properties](./gradle.properties)
@@ -108,7 +108,7 @@ The plugin is run locally via the command line:
 
 `./gradlew release`
 
-The version scheme defaults can be overridden interactively if neccessary.
+The version scheme defaults can be overridden interactively if necessary.
 
 ### Maven-publish plugin
 
@@ -116,7 +116,7 @@ This plugin publishes all *release* and *snapshot* artifacts to the respective A
 
 Please note:
 
-* This plugin is not intended to be started locally, but runs in the CI server. 
+* This plugin is not intended to be started locally, but runs in the CI server.
 
 ### Update the gradle verification-metadata.xml when changing dependencies
 
