@@ -149,8 +149,8 @@ class TopicRepo {
         """.trimIndent()
 
     @Suppress("LongMethod")
-    fun topicForUserIdForHotOSMProjectSQL(topicHandler: TopicHandler, hashtagHandler: HashtagHandler) =
-        """        
+    fun topicByUserIdSQL(topicHandler: TopicHandler, hashtagHandler: HashtagHandler) =
+        """
         WITH
             ${topicHandler.valueLists()} 
             
@@ -249,14 +249,14 @@ class TopicRepo {
 
     }
 
-    fun getTopicForUserIdForAllHotTMProjects(
+    fun getTopicbyUserId(
         userId: String,
         topicHandler: TopicHandler,
         hashtagHandler: HashtagHandler
     ): Map<String, Any> {
         logger.info("Getting topic stats for user: $userId, topic: ${topicHandler.topic}")
         return query {
-            it.select(topicForUserIdForHotOSMProjectSQL(topicHandler, hashtagHandler))
+            it.select(topicByUserIdSQL(topicHandler, hashtagHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("userId", userId)
                 .mapToMap()

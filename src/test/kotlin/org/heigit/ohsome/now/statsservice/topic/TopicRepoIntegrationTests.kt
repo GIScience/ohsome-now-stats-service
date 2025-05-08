@@ -255,7 +255,7 @@ class TopicRepoIntegrationTests {
 
     @Test
     fun `getStatsForUserIdForAllHotTMProjects returns stats for only one userid`() {
-        val result = this.repo.getTopicForUserIdForAllHotTMProjects(
+        val result = this.repo.getTopicbyUserId(
             "4362353",
             TopicHandler(topic),
             HashtagHandler("hotosm-project-*")
@@ -268,7 +268,7 @@ class TopicRepoIntegrationTests {
 
     @Test
     fun `getStatsForUserIdForAllHotTMProjects returns zeros for unavailable user id`() {
-        val result = this.repo.getTopicForUserIdForAllHotTMProjects(
+        val result = this.repo.getTopicbyUserId(
             "2381",
             TopicHandler(topic),
             HashtagHandler("hotosm-project-*")
@@ -281,7 +281,7 @@ class TopicRepoIntegrationTests {
 
     @Test
     fun `getStatsForUserIdForAllHotTMProjects returns values for different hashtag`() {
-        val result = this.repo.getTopicForUserIdForAllHotTMProjects(
+        val result = this.repo.getTopicbyUserId(
             "6791950",
             TopicHandler("building"),
             HashtagHandler("&uganda")

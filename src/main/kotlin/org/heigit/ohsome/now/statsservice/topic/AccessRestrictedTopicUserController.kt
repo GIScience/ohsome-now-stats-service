@@ -28,7 +28,7 @@ class AccessRestrictedTopicUserController {
     lateinit var appProperties: AppProperties
 
 
-    @Operation(summary = "Returns aggregated HOT-TM-project topic statistics for a specific user.")
+    @Operation(summary = "Returns aggregated topic statistics for a specific user.")
     @GetMapping("/topic/{topics}/user", produces = ["application/json"])
     @Suppress("LongParameterList")
     fun topicHotTMUser(
@@ -54,7 +54,7 @@ class AccessRestrictedTopicUserController {
         }
 
         val result = measure {
-            topicService.getTopicsForUserIdForAllHotTMProjects(userId, topics, hashtag)
+            topicService.getTopicsByUserId(userId, topics, hashtag)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)

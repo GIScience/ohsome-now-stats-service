@@ -19,8 +19,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @SpringBootTest
 @AutoConfigureMockMvc
 class AccessRestrictedUserControllerMVCTests {
-
-
     @MockBean
     lateinit var statsService: StatsService
 
@@ -53,13 +51,13 @@ class AccessRestrictedUserControllerMVCTests {
 
 
     @Test
-    fun `statsHotTMUserStats returns stats for one user only`() {
+    fun `statsByUserId returns stats for one user only`() {
 
-        `when`(statsService.getStatsForUserIdForAllHotTMProjects(this.userId))
+        `when`(statsService.getStatsByUserId(this.userId, "hotosm-project-*"))
             .thenReturn(fakeResult)
 
-        val GET = get("/hot-tm-user")
-            .queryParam("userId", userId)
+        val GET = get("/stats/user/$userId")
+            .queryParam("hashtag", "hotosm-project-*")
             .header("Authorization", "Basic ${appProperties.token}")
 
 
@@ -71,15 +69,13 @@ class AccessRestrictedUserControllerMVCTests {
 
 
     @Test
-    fun `statsHotTMUserStats returns forbidden without token`() {
+    fun `statsByUserId returns forbidden without token`() {
 
         // service must never be called because auth happens before service invocation
         verify(statsService, never())
-            .getStatsForUserIdForAllHotTMProjects(anyString())
+            .getStatsByUserId(anyString(), anyString())
 
-
-        val GET = get("/hot-tm-user")
-            .queryParam("userId", "12312")
+        val GET = get("/stats/user/$userId").queryParam("hashtag", "hotosm-project-*")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isForbidden)
@@ -87,19 +83,17 @@ class AccessRestrictedUserControllerMVCTests {
 
 
     @Test
-    fun `statsHotTMUserStats returns forbidden with wrong token`() {
+    fun `statsByUserId returns forbidden with wrong token`() {
 
         // service must never be called because auth happens before service invocation
         verify(statsService, never())
-            .getStatsForUserIdForAllHotTMProjects(anyString())
+            .getStatsByUserId(anyString(), anyString())
 
-        val GET = get("/hot-tm-user")
-            .queryParam("userId", "12312")
+        val GET = get("/stats/user/12312")
+            .queryParam("hashtag", "hotosm-project-*")
             .header("Authorization", "Basic badToken")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isForbidden)
     }
-
-
 }

@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.Instant
 
-
+@Suppress("LargeClass")
 @Service
 class StatsService {
 
@@ -214,16 +214,19 @@ class StatsService {
         .toUniqueHashtagsResult()
 
 
-    fun getStatsForUserIdForAllHotTMProjects(userId: String) = this.repo
-        .getStatsForUserIdForAllHotTMProjects(userId)
-        .addStatsForUserIdForAllHotTMProjectsBuildingsAndRoads(userId)
+    fun getStatsByUserId(userId: String, hashtag: String) = this.repo
+        .getStatsByUserId(userId, HashtagHandler(hashtag))
+        .addStatsByUserIdForBuildingsAndRoads(userId, hashtag)
         .toUserResult()
 
-    private fun MutableMap<String, Any>.addStatsForUserIdForAllHotTMProjectsBuildingsAndRoads(userId: String): Map<String, Any> {
-        val topicResults = topicService.getTopicsForUserIdForAllHotTMProjects(
+    private fun MutableMap<String, Any>.addStatsByUserIdForBuildingsAndRoads(
+        userId: String,
+        hashtag: String
+    ): Map<String, Any> {
+        val topicResults = topicService.getTopicsByUserId(
             userId,
             listOf("building", "highway"),
-            "hotosm-project-*"
+            hashtag
         )
         this += topicResults["building"]!!
             .topicResultToNamedResult("buildings")
@@ -250,6 +253,4 @@ class StatsService {
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)
     private fun handler(countries: List<String>) = CountryHandler(countries)
-
-
 }

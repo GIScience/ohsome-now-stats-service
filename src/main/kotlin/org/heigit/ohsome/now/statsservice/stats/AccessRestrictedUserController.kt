@@ -3,10 +3,7 @@ package org.heigit.ohsome.now.statsservice.stats
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
-import org.heigit.ohsome.now.statsservice.AppProperties
-import org.heigit.ohsome.now.statsservice.OhsomeFormat
-import org.heigit.ohsome.now.statsservice.buildOhsomeFormat
-import org.heigit.ohsome.now.statsservice.measure
+import org.heigit.ohsome.now.statsservice.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -26,29 +23,31 @@ class AccessRestrictedUserController {
     lateinit var appProperties: AppProperties
 
 
-    @Operation(summary = "Returns aggregated HOT-TM-project statistics for a specific user.")
-    @Deprecated("Users of this endpoint should switch to topic/{topics}/user.")
-    @GetMapping("/hot-tm-user", produces = ["application/json"])
-    fun statsHotTMUser(
+    @Operation(summary = "Returns aggregated statistics for a specific user.")
+    @GetMapping("/stats/user/{userId}", produces = ["application/json"])
+    fun statsByUserId(
         httpServletRequest: HttpServletRequest,
 
         @Parameter(description = "OSM user id")
-        @RequestParam(name = "userId")
+        @PathVariable
         userId: String,
+
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @RequestParam("hashtag")
+        @ValidHashtag
+        hashtag: String,
 
         @RequestHeader(value = "Authorization", required = false)
         authorization: String?
     ): OhsomeFormat<UserResult> {
         if (authorization == null || authorization != "Basic ${appProperties.token}") {
-            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid Token");
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid Token")
         }
 
         val result = measure {
-            statsService.getStatsForUserIdForAllHotTMProjects(userId)
+            statsService.getStatsByUserId(userId, hashtag)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
     }
-
-
 }

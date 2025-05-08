@@ -94,8 +94,7 @@ class TopicService {
     }
 
 
-    //TODO: simplify impl
-    fun getTopicsForUserIdForAllHotTMProjects(
+    fun getTopicsByUserId(
         userId: String,
         topics: List<String>,
         hashtag: String
@@ -103,7 +102,7 @@ class TopicService {
         val topicResults = mutableMapOf<String, UserTopicResult>()
         for (topic in topics) {
             topicResults[topic] = this.repo
-                .getTopicForUserIdForAllHotTMProjects(
+                .getTopicbyUserId(
                     userId,
                     TopicHandler(topic),
                     HashtagHandler(hashtag)

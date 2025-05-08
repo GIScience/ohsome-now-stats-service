@@ -49,7 +49,7 @@ class TopicServiceIntegrationTests {
         val topics = listOf(topic1, topic2)
 
 
-        val result = this.service.getTopicsForUserIdForAllHotTMProjects(userId.toString(), topics, "hotosm-project-*")
+        val result = this.service.getTopicsByUserId(userId.toString(), topics, "hotosm-project-*")
 
         val placeResult = result[topic1]!!
         assertThat(placeResult.userId).isEqualTo(userId)
@@ -78,7 +78,7 @@ class TopicServiceIntegrationTests {
         val topic = "amenity"
 
         val result =
-            this.service.getTopicsForUserIdForAllHotTMProjects(userId.toString(), listOf(topic), "hotosm-project-*")
+            this.service.getTopicsByUserId(userId.toString(), listOf(topic), "hotosm-project-*")
 
         val amenityResult = result[topic]!!
         assertThat(amenityResult.userId).isEqualTo(userId)

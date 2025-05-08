@@ -130,7 +130,7 @@ class StatsRepo {
 
 
     //language=sql
-    private val statsForUserIdForHotOSMProjectSQL = """
+    fun statsByUserIdSQL(hashtagHandler: HashtagHandler) = """
         select
             count(map_feature_edit) as edits,
             count(distinct changeset_id) as changesets, 
@@ -139,7 +139,7 @@ class StatsRepo {
             WHERE
                 has_hashtags = true
                 AND user_id = :userId 
-                AND arrayExists(hashtag -> startsWith(hashtag, 'hotosm-project-'), hashtags)        
+                AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
         GROUP BY user_id
         ;
     """.trimIndent()
@@ -280,19 +280,20 @@ class StatsRepo {
      * @return A list of maps containing the statistics for all hotTM projects.
      */
     @Suppress("LongMethod")
-    fun getStatsForUserIdForAllHotTMProjects(
-        userId: String
+    fun getStatsByUserId(
+        userId: String,
+        hashtagHandler: HashtagHandler
     ): MutableMap<String, Any> {
-        logger.info("Getting HotOSM stats for user: ${userId}")
+        logger.info("Getting HotOSM stats for user: $userId")
 
         return query {
-            it.select(statsForUserIdForHotOSMProjectSQL)
+            it.select(statsByUserIdSQL(hashtagHandler))
                 .bind("userId", userId)
+                .bind("hashtag", hashtagHandler.hashtag)
                 .mapToMap()
                 .singleOrNull()
                 ?: defaultResultForMissingUser(userId)
         }
-
     }
 
 
@@ -369,6 +370,4 @@ class StatsRepo {
 
     private fun <T> query(queryFunction: (handle: Handle) -> T) = create(dataSource)
         .withHandle<T, RuntimeException>(queryFunction)
-
-
 }
