@@ -68,7 +68,7 @@ pipeline {
       steps {
         script {
           withSonarQubeEnv('sonarcloud GIScience/ohsome') {
-            SONAR_CLI_PARAMETER = "-Dsonar.coverageReportPaths=${env.WORKSPACE}/build/reports/kover/report.xml"
+            SONAR_CLI_PARAMETER = "-Dsonar.coverage.jacoco.xmlReportPaths=${env.WORKSPACE}/build/reports/kover/report.xml"
             if (env.CHANGE_ID) {
               SONAR_CLI_PARAMETER += " " +
                 "-Dsonar.pullrequest.key=${env.CHANGE_ID} " +
