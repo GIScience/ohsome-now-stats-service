@@ -16,7 +16,7 @@ class SqlGenerator {
     private val currentStatsSchemaVersion = statsSchemaVersion
     private val currentTopicSchemaVersion = topicSchemaVersion
 
-
+//    private val fourHoursLater = "2025-05-05T00:00:00Z"
     private val fourHoursLater = now()
         .plus(4, HOURS)
         .truncatedTo(SECONDS)
@@ -57,6 +57,20 @@ class SqlGenerator {
         }
     }
 
+
+
+//    @Test
+//    @Disabled
+//    fun `create topic DELETION-SQL for all topics and both stages`() = getAllTopicDefinitions()
+//        .forEach(::writeTopicDeleteSql)
+
+
+    private fun writeTopicDeleteSql(definition: TopicDefinition) {
+        writeDeletes(definition, "int", currentStatsSchemaVersion, currentTopicSchemaVersion)
+        writeDeletes(definition, "prod", currentStatsSchemaVersion, currentTopicSchemaVersion)
+    }
+
+
     private fun writeTopicSql(definition: TopicDefinition) {
         writeDDLs(definition, "int", currentStatsSchemaVersion, currentTopicSchemaVersion)
         writeInserts(definition, "int", currentStatsSchemaVersion, currentTopicSchemaVersion)
@@ -77,6 +91,10 @@ class SqlGenerator {
             createInsertCommands(definition, stage, statsSchemaVersion, topicSchemaVersion)
         }
 
+    private fun writeDeletes(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
+        writeSqlToFile("DELETE", title(definition), stage) {
+            createDeleteCommands(definition, stage, statsSchemaVersion, topicSchemaVersion)
+        }
 
     private fun writeProjections(stage: String) =
         writeSqlToFile("PROJECTIONS", "for_stats_table", stage) {
@@ -108,6 +126,8 @@ class SqlGenerator {
     private fun createInsertCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
         comment() + createInsertStatement(definition, fourHoursLater, stage, statsSchemaVersion, topicSchemaVersion)
 
+    private fun createDeleteCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
+        comment() + createDeleteStatement(definition, fourHoursLater, stage, statsSchemaVersion, topicSchemaVersion)
 
     private fun createProjections(stage: String, statsSchemaVersion: String) =
         comment() + createStatsTableProjections(stage, statsSchemaVersion)
