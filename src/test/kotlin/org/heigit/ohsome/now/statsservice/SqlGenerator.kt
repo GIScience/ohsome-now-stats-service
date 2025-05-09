@@ -66,8 +66,8 @@ class SqlGenerator {
 
 
     private fun writeTopicDeleteSql(definition: TopicDefinition) {
-        writeDeletes(definition, "int", currentStatsSchemaVersion, currentTopicSchemaVersion)
-        writeDeletes(definition, "prod", currentStatsSchemaVersion, currentTopicSchemaVersion)
+        writeDeletes(definition, "int", currentTopicSchemaVersion)
+        writeDeletes(definition, "prod", currentTopicSchemaVersion)
     }
 
 
@@ -91,9 +91,9 @@ class SqlGenerator {
             createInsertCommands(definition, stage, statsSchemaVersion, topicSchemaVersion)
         }
 
-    private fun writeDeletes(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
+    private fun writeDeletes(definition: TopicDefinition, stage: String, topicSchemaVersion: String) =
         writeSqlToFile("DELETE", title(definition), stage) {
-            createDeleteCommands(definition, stage, statsSchemaVersion, topicSchemaVersion)
+            createDeleteCommands(definition, stage, topicSchemaVersion)
         }
 
     private fun writeProjections(stage: String) =
@@ -126,8 +126,8 @@ class SqlGenerator {
     private fun createInsertCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
         comment() + createInsertStatement(definition, fourHoursLater, stage, statsSchemaVersion, topicSchemaVersion)
 
-    private fun createDeleteCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
-        comment() + createDeleteStatement(definition, fourHoursLater, stage, statsSchemaVersion, topicSchemaVersion)
+    private fun createDeleteCommands(definition: TopicDefinition, stage: String, topicSchemaVersion: String) =
+        comment() + createDeleteStatement(definition, fourHoursLater, stage, topicSchemaVersion)
 
     private fun createProjections(stage: String, statsSchemaVersion: String) =
         comment() + createStatsTableProjections(stage, statsSchemaVersion)

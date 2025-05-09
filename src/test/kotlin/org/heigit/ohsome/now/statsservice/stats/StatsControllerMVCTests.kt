@@ -12,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -200,28 +202,42 @@ class StatsControllerMVCTests {
                 )
             )
 
-        val GET = get("/stats/$hashtag/interval")
+        val GET_DEPRECATED = get("/stats/$hashtag/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "P1M")
 
-        this.mockMvc.perform(GET)
-            .andDo(print())
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.query.hashtag").value(hashtag))
-            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
-            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
-            .andExpect(
-                jsonPath("$.metadata.requestUrl")
-                    .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M")
-            )
-            .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
-            .andExpect(jsonPath("$.result.changesets[0]").value(1))
-            .andExpect(jsonPath("$.result.users[0]").value(2))
-            .andExpect(jsonPath("$.result.roads[0]").value(1.0))
-            .andExpect(jsonPath("$.result.buildings[0]").value(2.0))
-            .andExpect(jsonPath("$.result.edits[0]").value(2))
+        val GET = get("/stats/interval")
+            .queryParam("hashtag", hashtag)
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+            .queryParam("interval", "P1M")
+
+
+        fun performGetRequest(requestBuilder: MockHttpServletRequestBuilder): ResultActions {
+            val result = this.mockMvc.perform(requestBuilder)
+            result.andDo(print())
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.query.hashtag").value(hashtag))
+                .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
+                .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+                .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
+                .andExpect(jsonPath("$.result.changesets[0]").value(1))
+                .andExpect(jsonPath("$.result.users[0]").value(2))
+                .andExpect(jsonPath("$.result.roads[0]").value(1.0))
+                .andExpect(jsonPath("$.result.buildings[0]").value(2.0))
+                .andExpect(jsonPath("$.result.edits[0]").value(2))
+            return result
+        }
+
+        performGetRequest(GET_DEPRECATED)
+            .andExpect { jsonPath("$.metadata.requestUrl")
+                .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M") }
+
+        performGetRequest(GET)
+            .andExpect { jsonPath("$.metadata.requestUrl")
+                .value("/stats/interval?hashtag=&uganda&startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M") }
     }
 
 

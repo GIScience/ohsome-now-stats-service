@@ -61,7 +61,7 @@ class StatsRepoIntegrationTests {
         assertEquals(5, result.size)
         println(result)
         assertEquals(
-            "{changesets=7, users=5, edits=16, latest=2023-06-29T12:48:45Z, hashtag=}",
+            "{changesets=7, users=6, edits=16, latest=2023-06-29T12:48:45Z, hashtag=}",
             result.toString()
         )
     }
@@ -262,6 +262,24 @@ class StatsRepoIntegrationTests {
         assertEquals(5, result.size)
         assertEquals(624, (result["edits"] as LongArray).size)
         assertEquals("1970-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
+    }
+
+    @Test
+    fun `getStatsForTimeSpanInterval aggregates data from contribs with and without hashtags`() {
+        val startDate = Instant.ofEpochSecond(1672531200) // 2023-01-01Z
+        val endDate = Instant.ofEpochSecond(1704067200) // 2024-01-01Z
+        val hashtagHandler = HashtagHandler("")
+        val interval = "P1Y"
+        val result = this.repo.getStatsForTimeSpanInterval(
+            hashtagHandler,
+            startDate,
+            endDate,
+            interval,
+            this.emptyListCountryHandler
+        )
+
+        // year 2023 has 3 distinct userids with different and without hashtags
+        assertEquals(3, (result["users"] as LongArray)[0])
     }
 
 

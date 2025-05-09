@@ -8,8 +8,8 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 @WebMvcTest(TopicController::class)
 class TopicControllerMVCTests {
 
-    @MockBean
+    @MockitoBean
     private lateinit var topicService: TopicService
 
 
@@ -100,6 +100,26 @@ class TopicControllerMVCTests {
             .andExpect(status().isBadRequest)
             .andExpect(content().string(expectedErrorMessage))
 
+    }
+
+
+    @Test
+    fun `topic can be served without explicit hashtag`() {
+        `when`(this.topicService.getTopicStatsForTimeSpan(matches(""), any(), any(), anyList(), anyList()))
+            .thenReturn(exampleTopic)
+
+        this.mockMvc
+            .perform(
+                get("/topic/${topics.joinToString()}")
+                    .queryParam("hashtag", "")
+                    .queryParam("interval", "P1M")
+            )
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.result.$topic1.value").value(20))
+            .andExpect(jsonPath("$.result.$topic1.topic").value(topic1))
+            .andExpect(jsonPath("$.query.timespan.endDate").exists())
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/topic/place?hashtag=&interval=P1M"))
     }
 
 

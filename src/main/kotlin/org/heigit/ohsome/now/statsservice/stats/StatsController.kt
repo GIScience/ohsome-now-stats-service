@@ -32,7 +32,7 @@ class StatsController {
         httpServletRequest: HttpServletRequest,
 
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @HashtagConfig
         @RequestParam("hashtag", required = false, defaultValue = "")
         @ValidHashtag
         hashtag: String,
@@ -45,7 +45,7 @@ class StatsController {
         @RequestParam("enddate", required = false)
         endDate: Instant?,
 
-        @Parameter(description = "A comma separated list of countries, can also only be one country")
+        @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>,
     ): OhsomeFormat<StatsResult> {
@@ -62,10 +62,8 @@ class StatsController {
     fun stats_(
         httpServletRequest: HttpServletRequest,
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @HashtagConfig
         @PathVariable
-//        @Valid
-//        hashtag: Hashtag,
         @ValidHashtag
         hashtag: String,
 
@@ -77,7 +75,7 @@ class StatsController {
         @RequestParam("enddate", required = false)
         endDate: Instant?,
 
-        @Parameter(description = "A comma separated list of countries, can also only be one country")
+        @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>?,
     ): OhsomeFormat<StatsResult> {
@@ -117,14 +115,52 @@ class StatsController {
         return buildOhsomeFormat(result, httpServletRequest)
     }
 
-
-    @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval")
-    @GetMapping("/stats/{hashtag}/interval", produces = ["application/json"])
+    @Operation(summary = "Returns live summary statistics for all contributions, optionally filtered by one hashtag, grouped by a given time interval")
+    @GetMapping("/stats/interval", produces = ["application/json"])
     @Suppress("LongParameterList")
     fun statsInterval(
         httpServletRequest: HttpServletRequest,
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @HashtagConfig
+        @RequestParam("hashtag", required = false, defaultValue = "")
+        @ValidHashtag
+        hashtag: String,
+
+        @StartDateConfig
+        @RequestParam(name = "startdate", required = false)
+        startDate: Instant?,
+
+        @EndDateConfig
+        @RequestParam(name = "enddate", required = false)
+        endDate: Instant?,
+
+        @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
+        @RequestParam(name = "interval", defaultValue = "P1M", required = false)
+        @ParseableInterval
+        @AtLeastOneMinuteInterval
+        interval: String,
+
+        @CountriesConfig
+        @RequestParam("countries", required = false, defaultValue = "")
+        countries: List<String>?
+    ): OhsomeFormat<StatsIntervalResult> {
+
+
+        val result = measure {
+            statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!)
+        }
+
+        return buildOhsomeFormat(result, httpServletRequest)
+    }
+
+
+    @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval", deprecated = true)
+    @GetMapping("/stats/{hashtag}/interval", produces = ["application/json"])
+    @Suppress("LongParameterList")
+    fun statsInterval_(
+        httpServletRequest: HttpServletRequest,
+
+        @HashtagConfig
         @PathVariable
         @ValidHashtag
         hashtag: String,
@@ -143,7 +179,7 @@ class StatsController {
         @AtLeastOneMinuteInterval
         interval: String,
 
-        @Parameter(description = "A comma separated list of countries, can also only be one country")
+        @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>?
     ): OhsomeFormat<StatsIntervalResult> {
@@ -162,7 +198,7 @@ class StatsController {
     fun statsCountry(
         httpServletRequest: HttpServletRequest,
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @HashtagConfig
         @PathVariable
         @ValidHashtag
         hashtag: String,
@@ -205,7 +241,7 @@ class StatsController {
         @RequestParam(name = "limit", required = false, defaultValue = "10")
         limit: Int?,
 
-        @Parameter(description = "A comma separated list of countries, can also only be one country")
+        @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>?
     ): OhsomeFormat<List<HashtagResult>> {

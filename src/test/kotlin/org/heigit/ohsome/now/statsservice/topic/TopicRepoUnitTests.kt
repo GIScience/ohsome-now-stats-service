@@ -12,6 +12,7 @@ class TopicRepoUnitTests {
 
     private val repo = TopicRepo()
 
+    private val noHashtag = HashtagHandler("")
     private val fixedHashtag = HashtagHandler("hotmicrogrant")
     private val wildcardHashtag = HashtagHandler("hotmicrogrant*")
 
@@ -41,6 +42,18 @@ class TopicRepoUnitTests {
         val expected = file("topic_place_bymonth_1country_wildcard_hashtag")
 
         val sql = repo.topicStatsFromTimeSpanIntervalSQL(wildcardHashtag, bolivia, placeTopic)
+        assertThat(sql)
+            .contains("_$topicSchemaVersion")
+            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+    }
+
+
+    @Test
+    fun `can create SQL for topic 'place' by month, 1 country & no hashtag`() {
+
+        val expected = file("topic_place_bymonth_1country_no_hashtag")
+
+        val sql = repo.topicStatsFromTimeSpanIntervalSQL(noHashtag, bolivia, placeTopic)
         assertThat(sql)
             .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)

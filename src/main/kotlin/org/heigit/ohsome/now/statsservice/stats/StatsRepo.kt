@@ -89,9 +89,8 @@ class StatsRepo {
             toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
         FROM "all_stats_$statsSchemaVersion"
         WHERE
-            has_hashtags = true
-            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
-            AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
+            ${hashtagHandler.optionalFilterSQL}
+            changeset_timestamp > parseDateTimeBestEffort(:startdate)
             AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
             ${countryHandler.optionalFilterSQL}
         GROUP BY

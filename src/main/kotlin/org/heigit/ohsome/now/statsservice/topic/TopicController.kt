@@ -25,8 +25,8 @@ class TopicController {
     fun topic(
         httpServletRequest: HttpServletRequest,
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
-        @RequestParam("hashtag")
+        @HashtagConfig
+        @RequestParam("hashtag", required = false, defaultValue = "")
         @ValidHashtag
         hashtag: String,
 
@@ -38,7 +38,7 @@ class TopicController {
         @RequestParam("enddate", required = false)
         endDate: Instant?,
 
-        @Parameter(description = "A comma separated list of countries, can also only be one country")
+        @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>?,
 
@@ -62,8 +62,8 @@ class TopicController {
     fun topicInterval(
         httpServletRequest: HttpServletRequest,
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
-        @RequestParam("hashtag")
+        @HashtagConfig
+        @RequestParam("hashtag", required = false, defaultValue = "")
         @ValidHashtag
         hashtag: String,
 
@@ -81,7 +81,7 @@ class TopicController {
         @AtLeastOneMinuteInterval
         interval: String,
 
-        @Parameter(description = "A comma separated list of countries, can also only be one country")
+        @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>?,
 
@@ -104,7 +104,7 @@ class TopicController {
     fun topicCountry(
         httpServletRequest: HttpServletRequest,
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'")
+        @HashtagConfig
         @RequestParam("hashtag")
         @ValidHashtag
         hashtag: String,

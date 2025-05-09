@@ -127,7 +127,6 @@ fun createDeleteStatement (
     definition: TopicDefinition,
     dateTime: String,
     stage: String,
-    statsSchemaVersion: String,
     topicSchemaVersion: String
 ) = """DELETE FROM $stage.topic_${definition.topicName}_${topicSchemaVersion}
        WHERE changeset_timestamp <= parseDateTimeBestEffort('$dateTime');

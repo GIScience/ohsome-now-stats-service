@@ -206,6 +206,26 @@ class TopicRepoIntegrationTests {
 
 
     @Test
+    fun `getStatsForTimeSpanInterval aggregates data from contribs with and without hashtags`() {
+        val startDate = Instant.parse("2021-01-01T00:00:00Z")  // epoch seconds 1630486233 2021-09-01 08:50:33
+        val endDate = Instant.parse("2022-01-01T00:00:00Z")
+        val hashtagHandler = HashtagHandler("")
+        val interval = "P1Y"
+        val result = this.repo.getTopicStatsForTimeSpanInterval(
+            hashtagHandler,
+            startDate,
+            endDate,
+            interval,
+            this.emptyListCountryHandler,
+            TopicHandler(topic)
+        )
+
+        // year 2023 has 3 distinct userids with different and without hashtags
+        assertEquals(-1.0, (result["topic_result"] as DoubleArray)[0])
+    }
+
+
+    @Test
     fun `getTopicStatsForTimeSpanInterval fills data between two dates with zeros`() {
 
         val startDate = Instant.ofEpochSecond(1503644723)

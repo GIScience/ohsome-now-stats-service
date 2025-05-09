@@ -70,6 +70,19 @@ class StatsRepoUnitTests {
 
 
     @Test
+    fun `can create stats SQL by month, for 1 country & no hashtag`() {
+
+        val expected = file("stats_bymonth_1country_no_hashtag")
+
+        val sql = repo.statsFromTimeSpanIntervalSQL(noHashtag, bolivia)
+
+        assertThat(sql)
+            .contains("all_stats_$statsSchemaVersion")
+            .isEqualToIgnoringWhitespace(expected)
+    }
+
+
+    @Test
     fun `can create stats SQL by country for wildcard hashtag`() {
 
         val expected = file("stats_bycountry_wildcard_hashtag")

@@ -102,9 +102,8 @@ class TopicRepo {
 
        FROM topic_${topicHandler.topic}_$topicSchemaVersion
        WHERE
-           has_hashtags = true
-           AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)
-           AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
+           ${hashtagHandler.optionalFilterSQL}
+           changeset_timestamp > parseDateTimeBestEffort(:startdate)
            AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
            ${countryHandler.optionalFilterSQL}
        GROUP BY
@@ -213,7 +212,7 @@ class TopicRepo {
         topicHandler: TopicHandler
     ): Map<String, Any> {
 
-        logger.info("Getting topic stats by interval for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval, , topic: ${topicHandler.topic}")
+        logger.info("Getting topic stats by interval for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval, topic: ${topicHandler.topic}")
 
         val result = query {
             it.select(topicStatsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler, topicHandler))
