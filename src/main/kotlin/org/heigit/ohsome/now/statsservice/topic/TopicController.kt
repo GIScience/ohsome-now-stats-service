@@ -40,7 +40,7 @@ class TopicController {
 
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>?,
+        countries: List<String>,
 
         @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
@@ -49,7 +49,7 @@ class TopicController {
     ): OhsomeFormat<Map<String, TopicResult>> {
 
         val result = measure {
-            topicService.getTopicStatsForTimeSpan(hashtag, startDate, endDate, countries!!, topics)
+            topicService.getTopicStatsForTimeSpan(hashtag, startDate, endDate, countries, topics)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
@@ -83,7 +83,7 @@ class TopicController {
 
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>?,
+        countries: List<String>,
 
         @Parameter(description = "Topics for which stats are to be generated e.g. 'place'")
         @PathVariable
@@ -91,7 +91,7 @@ class TopicController {
     ): OhsomeFormat<Map<String, TopicIntervalResult>> {
 
         val result = measure {
-            topicService.getTopicStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries!!, topics)
+            topicService.getTopicStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries, topics)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
