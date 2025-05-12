@@ -43,5 +43,5 @@ VALUES
     (4362353, toDateTime(1630486233), ['BRA'], ['hotmicrogrants2019'], 'suburb', 'suburb', true),
     (4362353, toDateTime(1630486233), ['BRA'], ['hotmicrogrants2019'], 'hamlet', '', true),
     (4362353, toDateTime(1630486233), ['BRA'], ['hotmicrogrants2019'], 'hamlet', 'locality', true),
-    (4362353, toDateTime(1630486233), ['BRA'], [], '', 'locality', false),
+    (4362353, toDateTime(1630486233), ['BRA'], [], '', 'hamlet', false),
     (4362353, toDateTime(1630486233), ['BRA'], ['hotosm-project-4'], '', 'town', true);

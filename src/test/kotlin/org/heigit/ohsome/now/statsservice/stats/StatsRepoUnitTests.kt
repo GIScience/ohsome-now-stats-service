@@ -94,5 +94,17 @@ class StatsRepoUnitTests {
             .isEqualToIgnoringWhitespace(expected)
     }
 
+    @Test
+    fun `can create stats SQL by country without hashtag filter`() {
+
+        val expected = file("stats_bycountry_no_hashtag")
+
+        val sql = repo.statsFromTimeSpanCountrySQL(noHashtag)
+
+        assertThat(sql)
+            .contains("all_stats_$statsSchemaVersion")
+            .isEqualToIgnoringWhitespace(expected)
+    }
+
 
 }

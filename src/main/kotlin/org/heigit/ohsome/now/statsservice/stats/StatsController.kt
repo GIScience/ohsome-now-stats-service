@@ -195,9 +195,37 @@ class StatsController {
     }
 
 
-    @Operation(summary = "Returns live summary statistics for one hashtag grouped by country")
-    @GetMapping("/stats/{hashtag}/country", produces = ["application/json"])
+    @Operation(summary = "Returns live summary statistics for all contributions, optionally filtered by one hashtag, grouped by country")
+    @GetMapping("/stats/country", produces = ["application/json"])
     fun statsCountry(
+        httpServletRequest: HttpServletRequest,
+
+        @HashtagConfig
+        @RequestParam(name = "hashtag", required = false, defaultValue = "")
+        @ValidHashtag
+        hashtag: String,
+
+        @StartDateConfig
+        @RequestParam(name = "startdate", required = false)
+        startDate: Instant?,
+
+        @EndDateConfig
+        @RequestParam(name = "enddate", required = false)
+        endDate: Instant?
+    ): OhsomeFormat<List<CountryStatsResult>> {
+
+        val result = measure {
+            statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate)
+        }
+
+        return buildOhsomeFormat(result, httpServletRequest)
+    }
+
+
+    @Operation(summary = "Returns live summary statistics for one hashtag grouped by country", deprecated = true)
+    @Deprecated("Use the /stats/country endpoint with query parameters instead.", ReplaceWith("statsCountry"))
+    @GetMapping("/stats/{hashtag}/country", produces = ["application/json"])
+    fun statsCountryWithHashtagOnly(
         httpServletRequest: HttpServletRequest,
 
         @HashtagConfig

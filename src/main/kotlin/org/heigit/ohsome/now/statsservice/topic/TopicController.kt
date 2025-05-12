@@ -56,7 +56,7 @@ class TopicController {
     }
 
 
-    @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval for a list of topics")
+    @Operation(summary = "Returns live summary statistics for a list of topics, optionally filtered by one hashtag, grouped by a given time interval")
     @GetMapping("/topic/{topics}/interval", produces = ["application/json"])
     @Suppress("LongParameterList")
     fun topicInterval(
@@ -98,14 +98,14 @@ class TopicController {
     }
 
 
-    @Operation(summary = "Returns live summary statistics for one hashtag grouped by country for a list of topics")
+    @Operation(summary = "Returns live summary statistics for a list of topics, optionally filtered by one hashtag, grouped by country")
     @GetMapping("/topic/{topics}/country", produces = ["application/json"])
     @Suppress("LongParameterList")
     fun topicCountry(
         httpServletRequest: HttpServletRequest,
 
         @HashtagConfig
-        @RequestParam("hashtag")
+        @RequestParam("hashtag", required = false, defaultValue = "")
         @ValidHashtag
         hashtag: String,
 

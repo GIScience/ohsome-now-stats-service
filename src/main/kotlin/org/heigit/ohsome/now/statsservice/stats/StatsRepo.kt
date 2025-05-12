@@ -117,9 +117,8 @@ class StatsRepo {
             FROM "all_stats_$statsSchemaVersion"
         ARRAY JOIN country_iso_a3
         WHERE
-            has_hashtags = true
-            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
-            AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            ${hashtagHandler.optionalFilterSQL}
+            changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY
             country

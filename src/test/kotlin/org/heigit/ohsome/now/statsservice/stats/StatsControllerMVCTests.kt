@@ -130,7 +130,7 @@ class StatsControllerMVCTests {
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.result.buildings").value(123))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
-            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats?hashtag=%26uganda"))
+            .andExpect { jsonPath("$.metadata.requestUrl").value("/stats?hashtag=&uganda") }
     }
 
 
@@ -324,25 +324,61 @@ class StatsControllerMVCTests {
         `when`(this.statsService.getStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant()))
             .thenReturn(listOf(countryStatsResult(map)))
 
-        val GET = get("/stats/$hashtag/country")
+        val GET_DEPRECATED = get("/stats/$hashtag/country")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
 
-        this.mockMvc.perform(GET)
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.query.hashtag").value(hashtag))
-            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
-            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+        val GET = get("/stats/country")
+            .queryParam("hashtag", hashtag)
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+
+        fun performGetRequest(requestBuilder: MockHttpServletRequestBuilder): ResultActions {
+            val result = this.mockMvc.perform(requestBuilder)
+            result.andDo(print())
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.query.hashtag").value(hashtag))
+                .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
+                .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+                .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
+                .andExpect(jsonPath("$.result[0].country").value("xyz"))
+                .andExpect(jsonPath("$.result[0].changesets").value(2))
+                .andExpect(jsonPath("$.result[0].users").value(1001))
+                .andExpect(jsonPath("$.result[0].roads").value(43534.5))
+                .andExpect(jsonPath("$.result[0].buildings").value(123))
+                .andExpect(jsonPath("$.result[0].edits").value(213124))
+            return result
+        }
+
+        performGetRequest(GET_DEPRECATED)
             .andExpect(
                 jsonPath("$.metadata.requestUrl")
                     .value("/stats/&uganda/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z")
             )
-            .andExpect(
-                jsonPath("$.query.hashtag")
-                    .value("&uganda")
-            )
-            .andExpect(jsonPath("$.result.[0].country").value("xyz"))
+
+        performGetRequest(GET)
+            .andExpect {
+                jsonPath("$.metadata.requestUrl")
+                    .value("/stats/country?hashtag=&uganda&startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z")
+            }
+
+
+//        this.mockMvc.perform(GET)
+//            .andExpect(status().isOk)
+//            .andExpect(content().contentType(APPLICATION_JSON))
+//            .andExpect(jsonPath("$.query.hashtag").value(hashtag))
+//            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
+//            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+//            .andExpect(
+//                jsonPath("$.metadata.requestUrl")
+//                    .value("/stats/&uganda/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z")
+//            )
+//            .andExpect(
+//                jsonPath("$.query.hashtag")
+//                    .value("&uganda")
+//            )
+//            .andExpect(jsonPath("$.result.[0].country").value("xyz"))
     }
 
 

@@ -197,6 +197,42 @@ class TopicControllerMVCTests {
 
 
     @Test
+    fun `topic stats per interval can be served without explicit hashtag`() {
+        `when`(
+            this.topicService.getTopicStatsForTimeSpanInterval(
+                anyString(),
+                anyInstant(),
+                anyInstant(),
+                anyString(),
+                anyList(),
+                anyList()
+            )
+        ).thenReturn(mapOf(topic1 to exampleTopicStats.apply { hashtag to "" }))
+
+
+        val GET = get("/topic/${topics.joinToString()}/interval")
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+            .queryParam("interval", "P1M")
+            .queryParam("hashtag", "")
+
+        val expectedUrl =
+            "/topic/place/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M&hashtag="
+
+        this.mockMvc.perform(GET)
+            .andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+
+            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.metadata.requestUrl").value(expectedUrl))
+            .andExpect(jsonPath("$.query.timespan.interval").value("P1M"))
+            .andExpect(jsonPath("$.result.$topic1.value[0]").value(1001))
+    }
+
+
+    @Test
     fun `topic stats per interval can be served with explicit start and end dates and without countries`() {
         `when`(
             this.topicService.getTopicStatsForTimeSpanInterval(
@@ -327,6 +363,35 @@ class TopicControllerMVCTests {
         println("/topic/${topics.joinToString()}/country")
         val expectedURL =
             "/topic/place/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&hashtag=%26uganda"
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+
+            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.metadata.requestUrl").value(expectedURL))
+            .andExpect(jsonPath("$.result.$topic1.[0].country").value("BOL"))
+    }
+
+
+    @Test
+    fun `topic stats per country can be served without explicit hashtag`() {
+
+        val result1 = TopicCountryResult("place", 444.0, ModifiedSection(0L, null, null), 0.0, 444.0, "BOL")
+        val result2 = TopicCountryResult("place", 333.0, ModifiedSection(0L, null, null), 0.0, 333.0, "BRA")
+        val result = mapOf(topic1 to listOf(result1, result2))
+
+        `when`(this.topicService.getTopicStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant(), anyList()))
+            .thenReturn(result)
+
+        val GET = get("/topic/${topics.joinToString()}/country")
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+            .queryParam("hashtag", "")
+        println("/topic/${topics.joinToString()}/country")
+        val expectedURL =
+            "/topic/place/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&hashtag="
 
         this.mockMvc.perform(GET)
             .andExpect(status().isOk)

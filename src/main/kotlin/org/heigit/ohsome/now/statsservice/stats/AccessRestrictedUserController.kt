@@ -32,7 +32,7 @@ class AccessRestrictedUserController {
         @PathVariable
         userId: String,
 
-        @HashtagConfig
+        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'", example = "hotosm-project-*")
         @RequestParam("hashtag")
         @ValidHashtag
         hashtag: String,

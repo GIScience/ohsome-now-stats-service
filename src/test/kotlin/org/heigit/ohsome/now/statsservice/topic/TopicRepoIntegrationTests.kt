@@ -221,7 +221,7 @@ class TopicRepoIntegrationTests {
         )
 
         // year 2023 has 3 distinct userids with different and without hashtags
-        assertEquals(-1.0, (result["topic_result"] as DoubleArray)[0])
+        assertEquals(-2.0, (result["topic_result"] as DoubleArray)[0])
     }
 
 
@@ -255,10 +255,10 @@ class TopicRepoIntegrationTests {
 
 
     @Test
-    fun `getTopicStatsForTimeSpanCountry returns partial data in time span for start and end date with hashtag aggregated by month and country`() {
+    fun `getTopicStatsForTimeSpanCountry returns partial data in time span for start and end date without hashtag aggregated by country`() {
         val startDate = Instant.ofEpochSecond(0)
         val endDate = Instant.ofEpochSecond(1639054890)
-        val hashtagHandler = HashtagHandler("*")
+        val hashtagHandler = HashtagHandler("")
         val result = this.repo.getTopicStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, TopicHandler(topic))
 
         println(result)
@@ -269,8 +269,24 @@ class TopicRepoIntegrationTests {
         assertEquals(2L, result[0]["topic_result"])
         assertEquals("BOL", result[0]["country"])
 
-        assertEquals(2L, result[1]["topic_result"])
+        assertEquals(1L, result[1]["topic_result"])
         assertEquals("BRA", result[1]["country"])
+    }
+
+    @Test
+    fun `getTopicStatsForTimeSpanCountry returns partial data in time span for start and end date with hashtag aggregated by country`() {
+        val startDate = Instant.ofEpochSecond(0)
+        val endDate = Instant.ofEpochSecond(1639054890)
+        val hashtagHandler = HashtagHandler("hotmicrograntcovid19")
+        val result = this.repo.getTopicStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, TopicHandler(topic))
+
+        println(result)
+        result.forEachIndexed { counter, it -> println(" $counter $it") }
+        assertEquals(1, result.size)
+        assertEquals(5, result[0].size)
+
+        assertEquals(-1L, result[0]["topic_result"])
+        assertEquals("BRA", result[0]["country"])
     }
 
     @Test

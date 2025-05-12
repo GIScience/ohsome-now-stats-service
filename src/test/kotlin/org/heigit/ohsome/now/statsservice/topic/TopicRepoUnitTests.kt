@@ -85,6 +85,18 @@ class TopicRepoUnitTests {
 
 
     @Test
+    fun `can create SQL for topic 'place' by country & no hashtag`() {
+
+        val expected = file("topic_place_bycountry_no_hashtag")
+
+        val sql = repo.topicStatsFromTimeSpanCountrySQL(noHashtag, placeTopic)
+        assertThat(sql)
+            .contains("_$topicSchemaVersion")
+            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+    }
+
+
+    @Test
     fun `can create SQL for topic user endpoint`() {
 
         val expected = file("topic_place_by_userid")

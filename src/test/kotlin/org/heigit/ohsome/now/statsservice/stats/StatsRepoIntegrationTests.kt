@@ -265,7 +265,7 @@ class StatsRepoIntegrationTests {
     }
 
     @Test
-    fun `getStatsForTimeSpanInterval aggregates data from contribs with and without hashtags`() {
+    fun `getStatsForTimeSpanInterval aggregates data by year from all contributions with and without hashtags`() {
         val startDate = Instant.ofEpochSecond(1672531200) // 2023-01-01Z
         val endDate = Instant.ofEpochSecond(1704067200) // 2024-01-01Z
         val hashtagHandler = HashtagHandler("")
@@ -284,7 +284,7 @@ class StatsRepoIntegrationTests {
 
 
     @Test
-    fun `getStatsForTimeSpanCountry returns partial data in time span for start and end date with hashtag aggregated by month and country`() {
+    fun `getStatsForTimeSpanCountry returns partial data in time span for start and end date with hashtag aggregated by country`() {
         val startDate = Instant.ofEpochSecond(0)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("*")
@@ -292,6 +292,21 @@ class StatsRepoIntegrationTests {
         println(result)
         assertTrue(result is List)
         assertEquals(5, result[0].size)
+    }
+
+    @Test
+    fun `getStatsForTimeSpanCountry aggregates data by country from all contributions with and without hashtags`() {
+        val startDate = Instant.parse("2023-01-01T00:00:00Z")
+        val endDate = Instant.parse("2024-01-01T00:00:00Z")
+//        val startDate = Instant.ofEpochSecond(0)
+//        val endDate = Instant.ofEpochSecond(1639054890)
+        val hashtagHandler = HashtagHandler("")
+        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
+        println(result)
+        assertEquals(5, result[0].size)
+
+        // year 2023 has 3 distinct userids with different and without hashtags
+        assertEquals("3", result[0]["users"].toString())
     }
 
 
