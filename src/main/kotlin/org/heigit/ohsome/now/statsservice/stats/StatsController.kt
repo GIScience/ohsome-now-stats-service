@@ -16,6 +16,7 @@ import java.time.Instant
 // @Schema(type = "string")
 // class Hashtag(@get:ValidHashtag val value: String)
 
+@Suppress("LargeClass")
 @CrossOrigin
 @RestController
 @Validated
