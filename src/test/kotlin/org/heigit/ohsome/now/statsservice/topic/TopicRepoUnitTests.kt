@@ -37,6 +37,18 @@ class TopicRepoUnitTests {
 
 
     @Test
+    fun `can create SQL for topic 'amenity', all countries & no hashtag`() {
+
+        val expected = file("topic_amenity_allcountries_no_hashtag")
+
+        val sql = repo.topicStatsFromTimeSpanSQL(noHashtag, allCountries, amenityTopic)
+        assertThat(sql)
+            .contains("_$topicSchemaVersion")
+            .isEqualToNormalizingPunctuationAndWhitespace(expected)
+    }
+
+
+    @Test
     fun `can create SQL for topic 'place' by month, 1 country & wildcard hashtag`() {
 
         val expected = file("topic_place_bymonth_1country_wildcard_hashtag")

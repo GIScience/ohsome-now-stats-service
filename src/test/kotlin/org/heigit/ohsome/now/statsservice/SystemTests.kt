@@ -62,8 +62,8 @@ class SystemTests {
         val wildcardHashtag = "hotosm-project-*"
 
         fun hashtagProvider(): Stream<Arguments> = Stream.of(
-            Arguments.of(null, 4, 4, 0.0, 0, 3, "2017-12-19T00:52:03Z"),
-            Arguments.of("", 4, 4, 0.0, 0, 3, "2017-12-19T00:52:03Z"),
+            Arguments.of(null, 4, 4, 1.983, 2, 3, "2017-12-19T00:52:03Z"),
+            Arguments.of("", 4, 4, 1.983, 2, 3, "2017-12-19T00:52:03Z"),
             Arguments.of(normalHashtag, 1, 1, 1.059, 1, 0, "2017-12-19T00:52:03Z"),
             Arguments.of(wildcardHashtag, 1, 1, 0.0, 0, 1, "2016-03-05T14:00:20Z")
         )

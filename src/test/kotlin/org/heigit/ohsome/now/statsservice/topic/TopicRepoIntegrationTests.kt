@@ -44,13 +44,7 @@ class TopicRepoIntegrationTests {
     val topic = "place"
 
 
-    val expected = mapOf(
-        "topic_result" to 5,
-        "topic_result_created" to 9,
-        "topic_result_modified" to 16,
-        "topic_result_deleted" to 4,
-        "hashtag" to "hotmicrogrant"
-    )
+
 
 
     private val emptyListCountryHandler = CountryHandler(emptyList())
@@ -59,7 +53,33 @@ class TopicRepoIntegrationTests {
 
 
     @Test
-    fun `getTopicStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
+    fun `getTopicStatsForTimeSpan should return all data when using no hashtag, no time span and null-list of countries`() {
+        val expected = mapOf(
+            "topic_result" to 3,
+            "topic_result_created" to 9,
+            "topic_result_modified" to 16,
+            "topic_result_deleted" to 6,
+            "hashtag" to ""
+        )
+        val hashtagHandler = HashtagHandler("")
+        val result =
+            this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, TopicHandler(topic))
+
+        println(result)
+        assertEquals(5, result.size)
+        assertEquals(expected.toString(), result.toString())
+    }
+
+
+    @Test
+    fun `getTopicStatsForTimeSpan should return all data for wildcard hashtag when using no time span and null-list of countries`() {
+        val expected = mapOf(
+            "topic_result" to 5,
+            "topic_result_created" to 9,
+            "topic_result_modified" to 16,
+            "topic_result_deleted" to 4,
+            "hashtag" to "hotmicrogrant"
+        )
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
         val result =
             this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, TopicHandler(topic))
