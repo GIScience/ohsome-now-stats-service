@@ -217,6 +217,12 @@ private val topics = listOf(
 
 )
 
+fun buildTopicDefinitionMap(): Map<String, String> {
+    val topicDefinitionsMap = mutableMapOf<String, String>()
+    topics.forEach { topicDefinitionsMap[it.topicName] = it.buildTopicDefinitionString() }
+    return topicDefinitionsMap
+}
+
 
 private fun assertUniqueTopicsNames(definitions: List<TopicDefinition>) {
 
@@ -226,5 +232,4 @@ private fun assertUniqueTopicsNames(definitions: List<TopicDefinition>) {
         .size
 
     assert(definitions.size == uniqueCount) { "ERROR: topic names are not unique - please check the topic config!" }
-
 }

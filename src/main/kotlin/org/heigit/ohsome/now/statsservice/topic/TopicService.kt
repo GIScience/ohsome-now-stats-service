@@ -111,6 +111,14 @@ class TopicService {
         return topicResults
     }
 
+    fun getTopicDefinitions(topics: List<String>?): Map<String, String> {
+        val topicDefinitionMap = buildTopicDefinitionMap()
+        return if (topics.isNullOrEmpty()) {
+            topicDefinitionMap
+        } else {
+            topicDefinitionMap.filterKeys(topics::contains)
+        }
+    }
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)
     private fun handler(countries: List<String>) = CountryHandler(countries)

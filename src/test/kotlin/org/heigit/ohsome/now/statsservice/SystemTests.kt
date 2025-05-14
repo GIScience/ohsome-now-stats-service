@@ -1,11 +1,7 @@
 package org.heigit.ohsome.now.statsservice
 
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -18,7 +14,7 @@ import org.springframework.web.util.UriBuilder
 import org.springframework.web.util.UriComponentsBuilder
 import org.testcontainers.junit.jupiter.Container
 import java.net.URI
-import java.util.Optional
+import java.util.*
 import java.util.stream.Stream
 
 
@@ -527,6 +523,26 @@ class SystemTests {
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
+        }
+
+        @Test
+        @DisplayName("GET /topic/definition/ for place and healthcare")
+        fun `get topic definition for place and healthcare`() {
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/topic/definition")
+                    .queryParam("topics", topics.joinToString(separator = ","))
+                    .build()
+            }
+
+            doGetAndAssertThat(url)
+                .jsonPath("$.result").isMap
+                .jsonPath("$.result.$topic1").exists()
+                .jsonPath("$.result.$topic2").exists()
+                .jsonPath("$.result.lulc").doesNotExist()
+                .jsonPath("$.result.$topic1")
+                .isEqualTo("place in (country, state, region, province, district, county, municipality, city, borough, suburb, quarter, neighbourhood, town, village, hamlet, isolated_dwelling)")
         }
 
 

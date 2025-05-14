@@ -165,5 +165,9 @@ class TopicDefinitionTests {
                     "as before,\n",
             definition.beforeCurrentCondition(BeforeOrCurrent.BEFORE)
         )
+        assertEquals(
+            "landuse not in (trash)",
+            definition.buildTopicDefinitionString()
+        )
     }
 }

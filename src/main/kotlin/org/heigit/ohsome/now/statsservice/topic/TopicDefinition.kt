@@ -120,7 +120,10 @@ class TopicDefinition(
         .joinToString("OR ")
         .plus("as ${beforeOrCurrent.value},\n")
 
-
+    fun buildTopicDefinitionString() = matchers.joinToString(
+        " or ",
+        transform = TagMatcher::getDefinitionString
+    )
 }
 
 
@@ -129,6 +132,7 @@ interface TagMatcher {
     val key: String
     fun getSingleBeforeOrCurrentCondition(beforeOrCurrent: BeforeOrCurrent): String
     fun getSingleAllowedValuesList(): String
+    fun getDefinitionString(): String
 
 }
 
@@ -144,6 +148,7 @@ class KeyValueMatcher(override val key: String, private val allowedValues: List<
         .map { "'$it'" }
         .let { "${it} as ${this.key}_tags" }
 
+    override fun getDefinitionString() = "${this.key} in (${this.allowedValues.joinToString(", ")})"
 }
 
 class KeyNotValueMatcher(override val key: String, private val allowedValues: List<String>) : TagMatcher {
@@ -158,6 +163,8 @@ class KeyNotValueMatcher(override val key: String, private val allowedValues: Li
         .plus("''")
         .let { "${it} as ${this.key}_tags" }
 
+    override fun getDefinitionString() = "${this.key} not in (${this.allowedValues.joinToString(", ")})"
+
 }
 
 class KeyOnlyMatcher(override val key: String) : TagMatcher {
@@ -167,5 +174,6 @@ class KeyOnlyMatcher(override val key: String) : TagMatcher {
 
     override fun getSingleAllowedValuesList() = ""
 
+    override fun getDefinitionString() = "${this.key}=*"
 }
 

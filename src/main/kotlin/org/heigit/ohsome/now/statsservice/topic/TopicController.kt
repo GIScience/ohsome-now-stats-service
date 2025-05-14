@@ -130,4 +130,22 @@ class TopicController {
     }
 
 
+    @Operation(summary = "Return definition for a list of topics")
+    @GetMapping("/topic/definition", produces = ["application/json"])
+    fun topicDefinition(
+        @Parameter(
+            description = """
+                Topics for which definition is to be returned e.g. 'place'.
+                No input results in all available topic definitions
+            """
+        )
+        @RequestParam(name = "topics", required = false)
+        topics: List<@ValidTopic String>,
+        httpServletRequest: HttpServletRequest,
+    ): OhsomeFormat<Map<String, String>> {
+        val result = measure {
+            topicService.getTopicDefinitions(topics)
+        }
+        return buildOhsomeFormat(result, httpServletRequest)
+    }
 }
