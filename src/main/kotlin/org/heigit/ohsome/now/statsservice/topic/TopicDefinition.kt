@@ -110,15 +110,12 @@ class TopicDefinition(
 
     fun buildValueLists() = matchers
         .map(TagMatcher::getSingleAllowedValuesList)
-        .filter(String::isNotEmpty)
-        .map { "$it,\n" }
-        .joinToString("")
+        .filter(String::isNotEmpty).joinToString("") { "$it,\n" }
 
 
-    fun beforeCurrentCondition(beforeOrCurrent: BeforeOrCurrent) = this.matchers
-        .map { it.getSingleBeforeOrCurrentCondition(beforeOrCurrent) }
-        .joinToString("OR ")
-        .plus("as ${beforeOrCurrent.value},\n")
+    fun beforeCurrentCondition(beforeOrCurrent: BeforeOrCurrent) =
+        this.matchers.joinToString("OR ") { it.getSingleBeforeOrCurrentCondition(beforeOrCurrent) }
+            .plus("as ${beforeOrCurrent.value},\n")
 
     fun buildTopicDefinitionString() = matchers.joinToString(
         " or ",

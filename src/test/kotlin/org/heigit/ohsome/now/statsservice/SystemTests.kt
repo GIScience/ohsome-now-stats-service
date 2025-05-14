@@ -356,8 +356,7 @@ class SystemTests {
 
             doGetAndAssertThat(url)
                 .jsonPath("$.result.$topic3.value").isEqualTo(23)
-                .jsonPath("$.result.$topic3.topic").isEqualTo("$topic3")
-
+                .jsonPath("$.result.$topic3.topic").isEqualTo(topic3)
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
         }
