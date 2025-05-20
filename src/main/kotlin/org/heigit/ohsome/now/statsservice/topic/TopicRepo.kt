@@ -157,7 +157,7 @@ class TopicRepo {
         SELECT 
             ${topicHandler.topicResult()},
         user_id
-        FROM topic_${topicHandler.topic}_$topicSchemaVersion
+        FROM topic_user_${topicHandler.topic}_$topicSchemaVersion
         WHERE
             has_hashtags = true
             AND user_id = :userId

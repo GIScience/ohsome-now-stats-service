@@ -1,0 +1,35 @@
+CREATE TABLE IF NOT EXISTS all_stats_user_3
+(
+    changeset_id Int64,
+    changeset_timestamp DateTime('UTC'),
+    hashtags Array(String),
+    editor String,
+    user_id Int32,
+    osm_id String,
+
+    -- current and previous tags
+    tags Map(String, String),
+    tags_before Map(String, String),
+
+    -- area and length with deltas
+--     area Int64,
+--     area_delta Int64,
+--     length Int64,
+--     length_delta Int64,
+
+    -- map feature stats
+    map_feature_edit Nullable(Int8), -- -1, 0, 1, NULL`
+
+    has_hashtags Bool,
+
+--     centroid Tuple(x Nullable(Float64), y Nullable(Float64)),
+
+--     h3_r3 Nullable(UInt64),
+--     h3_r6 Nullable(UInt64),
+
+    country_iso_a3 Array(String)
+)
+ENGINE = MergeTree
+PRIMARY KEY(user_id, has_hashtags, changeset_timestamp)
+SETTINGS non_replicated_deduplication_window = 10000
+;

@@ -16,7 +16,7 @@ class SqlGenerator {
     private val currentStatsSchemaVersion = statsSchemaVersion
     private val currentTopicSchemaVersion = topicSchemaVersion
 
-//    private val fourHoursLater = "2025-05-05T00:00:00Z"
+    //    private val fourHoursLater = "2025-05-05T00:00:00Z"
     private val fourHoursLater = now()
         .plus(4, HOURS)
         .truncatedTo(SECONDS)
@@ -58,7 +58,6 @@ class SqlGenerator {
     }
 
 
-
 //    @Test
 //    @Disabled
 //    fun `create topic DELETION-SQL for all topics and both stages`() = getAllTopicDefinitions()
@@ -80,13 +79,23 @@ class SqlGenerator {
     }
 
 
-    private fun writeDDLs(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
+    private fun writeDDLs(
+        definition: TopicDefinition,
+        stage: String,
+        statsSchemaVersion: String,
+        topicSchemaVersion: String
+    ) =
         writeSqlToFile("DDL", title(definition), stage) {
             createDDLCommands(definition, stage, statsSchemaVersion, topicSchemaVersion)
         }
 
 
-    private fun writeInserts(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
+    private fun writeInserts(
+        definition: TopicDefinition,
+        stage: String,
+        statsSchemaVersion: String,
+        topicSchemaVersion: String
+    ) =
         writeSqlToFile("INSERT", title(definition), stage) {
             createInsertCommands(definition, stage, statsSchemaVersion, topicSchemaVersion)
         }
@@ -103,10 +112,9 @@ class SqlGenerator {
 
 
     private fun writeStatsMVSQL(stage: String) {
-        writeSqlToFile("DDL", "hashtag_aggregation_for_stats_table", stage) {
-            createStatsMVDDL(stage, currentStatsSchemaVersion)
+        writeSqlToFile("DDL", "stats_MVs", stage) {
+            createStatsMvDDL(stage, currentStatsSchemaVersion)
         }
-
     }
 
 
@@ -117,26 +125,57 @@ class SqlGenerator {
     private fun createStatsTableDDLCommands(stage: String, statsSchemaVersion: String) =
         comment() + createStatsTableDDL(stage, statsSchemaVersion)
 
-    private fun createDDLCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
+    private fun createDDLCommands(
+        definition: TopicDefinition,
+        stage: String,
+        statsSchemaVersion: String,
+        topicSchemaVersion: String
+    ) =
         comment() +
-                createTableDDL(definition, stage, topicSchemaVersion) + "\n\n" +
-                createMvDdl(definition, fourHoursLater, stage, statsSchemaVersion, topicSchemaVersion)
+                createTopicTableDDL(definition, stage, topicSchemaVersion) + "\n\n" +
+                createTopicMvDDL(definition, fourHoursLater, stage, statsSchemaVersion, topicSchemaVersion) +
+                "\n\n-- USER MV --\n\n" +
+                createTopicUserTableDDL(definition, stage, topicSchemaVersion) + "\n\n" +
+                createTopicUserMvDDL(definition, fourHoursLater, stage, topicSchemaVersion)
 
 
-    private fun createInsertCommands(definition: TopicDefinition, stage: String, statsSchemaVersion: String, topicSchemaVersion: String) =
-        comment() + createInsertStatement(definition, fourHoursLater, stage, statsSchemaVersion, topicSchemaVersion)
+    private fun createInsertCommands(
+        definition: TopicDefinition,
+        stage: String,
+        statsSchemaVersion: String,
+        topicSchemaVersion: String
+    ) =
+        comment() +
+                createTopicInsertStatement(
+                    definition,
+                    fourHoursLater,
+                    stage,
+                    statsSchemaVersion,
+                    topicSchemaVersion
+                ) +
+                "\n\n-- USER MV --\n\n" +
+                createTopicUserInsertStatement(
+                    definition,
+                    fourHoursLater,
+                    stage,
+                    topicSchemaVersion
+                )
+
 
     private fun createDeleteCommands(definition: TopicDefinition, stage: String, topicSchemaVersion: String) =
-        comment() + createDeleteStatement(definition, fourHoursLater, stage, topicSchemaVersion)
+        comment() + createTopicDeleteStatement(definition, fourHoursLater, stage, topicSchemaVersion)
 
     private fun createProjections(stage: String, statsSchemaVersion: String) =
         comment() + createStatsTableProjections(stage, statsSchemaVersion)
 
 
-    private fun createStatsMVDDL(stage: String, statsSchemaVersion: String) =
+    private fun createStatsMvDDL(stage: String, statsSchemaVersion: String) =
         comment() +
-                createStatsTableMaterializedViewForHashtagAggregation(stage, statsSchemaVersion) + "\n\n" +
-                createStatsMaterializedViewForHashtagAggregation(stage, statsSchemaVersion)
+                createStatsHashtagAggregationTable(stage, statsSchemaVersion) + "\n\n" +
+                createStatsMaterializedViewForHashtagAggregation(stage, statsSchemaVersion) +
+                "\n\n-- USER MV --\n\n" +
+                createStatsUserTable(stage, statsSchemaVersion) + "\n\n" +
+                createStatsMaterializedViewForUserTable(stage, statsSchemaVersion)
 
 
     private fun comment() = "-- generated by " + SqlGenerator::class.qualifiedName +

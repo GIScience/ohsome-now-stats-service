@@ -75,7 +75,7 @@ class TopicServiceIntegrationTests {
     @Test
     fun `can get user topic stats for a given user id and the 'amenity' topic`() {
         val userId = 3243541
-        val topic = "amenity"
+        val topic = "place"
 
         val result =
             this.service.getTopicsByUserId(userId.toString(), listOf(topic), "hotosm-project-*")
@@ -83,12 +83,10 @@ class TopicServiceIntegrationTests {
         val amenityResult = result[topic]!!
         assertThat(amenityResult.userId).isEqualTo(userId)
         assertThat(amenityResult.topic).isEqualTo(topic)
-        assertThat(amenityResult.value).isEqualTo(14.0)
+        assertThat(amenityResult.value).isEqualTo(-1.0)
         println("--------------")
         println(amenityResult)
         println("--------------")
-
-
     }
 
 

@@ -17,14 +17,20 @@ annotation class SpringTestWithClickhouse
 @Sql(
     *[
         "/db_setup/stats/init_stats_schema.sql",
+        "/db_setup/stats/init_stats_user_schema.sql",
         "/db_setup/stats/init_hashtag_aggregation_schema.sql",
         "/db_setup/stats/stats_400rows.sql",
+        "/db_setup/stats/stats_user_400rows.sql",
         "/db_setup/stats/hashtag_aggregation_rows.sql",
 
         "/db_setup/topics/init_schema_building_view.sql",
         "/db_setup/topics/init_schema_highway_view.sql",
+        "/db_setup/topics/init_schema_building_user_view.sql",
+        "/db_setup/topics/init_schema_highway_user_view.sql",
         "/db_setup/topics/topic_building_20rows.sql",
         "/db_setup/topics/topic_highway_40rows.sql",
+        "/db_setup/topics/topic_building_user_20rows.sql",
+        "/db_setup/topics/topic_highway_user_40rows.sql",
     ]
 )
 annotation class WithStatsData
@@ -45,7 +51,16 @@ annotation class WithStatsData
         "/db_setup/topics/topic_amenity_40rows.sql",
         "/db_setup/topics/topic_waterway_40rows.sql",
         "/db_setup/topics/topic_building_20rows.sql",
-        "/db_setup/topics/topic_highway_40rows.sql"
+        "/db_setup/topics/topic_highway_40rows.sql",
+
+        "/db_setup/topics/init_schema_building_user_view.sql",
+        "/db_setup/topics/init_schema_highway_user_view.sql",
+        "/db_setup/topics/init_schema_place_user_view.sql",
+        "/db_setup/topics/init_schema_healthcare_user_view.sql",
+        "/db_setup/topics/topic_building_user_20rows.sql",
+        "/db_setup/topics/topic_highway_user_40rows.sql",
+        "/db_setup/topics/topic_place_user_40rows.sql",
+        "/db_setup/topics/topic_healthcare_user_40rows.sql",
     ]
 )
 annotation class WithTopicData

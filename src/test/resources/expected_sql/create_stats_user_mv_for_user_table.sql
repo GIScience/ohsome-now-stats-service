@@ -1,0 +1,24 @@
+CREATE MATERIALIZED VIEW int.mv__all_stats_7_to_all_stats_user_7
+TO int.all_stats_user_7
+AS
+SELECT
+    `changeset_id`,
+    `changeset_timestamp`,
+    `hashtags`,
+    `editor`,
+    `user_id`,
+    `osm_id`,
+    `tags`,
+    `tags_before`,
+    `area`,
+    `area_delta`,
+    `length`,
+    `length_delta`,
+    `map_feature_edit`,
+    `has_hashtags`,
+    `centroid`,
+    `h3_r3`,
+    `h3_r6`,
+    `country_iso_a3`
+FROM int.all_stats_7
+;

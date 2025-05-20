@@ -570,7 +570,7 @@ class SystemTests {
         fun `get userstats topics with good token`() {
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
-                    .path("/topic/${topics.joinToString(separator = ",")}/user")
+                    .path("/topic/$topic1,$topic2/user")
                     .queryParam("userId", "4362353")
                     .build()
             }

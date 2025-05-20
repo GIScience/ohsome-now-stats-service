@@ -24,18 +24,23 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
     val expectedProjections = file("add_projections_to_stats_table")
     val expectedTableForHashtagAggregation = file("create_stats_table_for_hashtag_aggregation")
     val expectedMVForHashtagAggregation = file("create_stats_mv_for_hashtag_aggregation")
+    val expectedTableForStatsUser = file("create_stats_user_table")
+    val expectedMVForStatsUser = file("create_stats_user_mv_for_user_table")
 
 
     //topics
     val expectedTable1Key = file("create_topic_table_for_1_key")
     val expectedTable2Keys = file("create_topic_table_for_2_keys")
+    val expectedTableUser = file("create_topic_user_table")
+
 
     val expectedMV1Key = file("create_topic_mv_for_1_key")
     val expectedMV2Keys = file("create_topic_mv_for_2_keys")
+    val expectedMVUser = file("create_topic_user_mv")
 
     val expectedInsertStatement1Key = file("create_topic_insert_statement_for_1_key")
     val expectedInsertStatement2Keys = file("create_topic_insert_statement_for_2_keys")
-
+    val expectedInsertUser = file("create_topic_user_insert_statement")
 
 
     @Nested
@@ -67,9 +72,17 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `hashtag aggregation table DDL`() {
 
-            val sql = createStatsTableMaterializedViewForHashtagAggregation(stage, statsSchemaVersion)
+            val sql = createStatsHashtagAggregationTable(stage, statsSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedTableForHashtagAggregation)
+        }
+
+        @Test
+        fun `stats user table DDL`() {
+
+            val sql = createStatsUserTable(stage, statsSchemaVersion)
+            assertThat(sql)
+                .isEqualToNormalizingWhitespace(expectedTableForStatsUser)
         }
 
         @Test
@@ -80,6 +93,13 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
                 .isEqualToNormalizingWhitespace(expectedMVForHashtagAggregation)
         }
 
+        @Test
+        fun `stats user MV DDL`() {
+
+            val sql = createStatsMaterializedViewForUserTable(stage, statsSchemaVersion)
+            assertThat(sql)
+                .isEqualToNormalizingWhitespace(expectedMVForStatsUser)
+        }
 
     }
 
@@ -94,7 +114,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createTableDDL(definition, stage, topicSchemaVersion)
+            val sql = createTopicTableDDL(definition, stage, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
         }
@@ -106,7 +126,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
             val definition = TopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
 
 
-            val sql = createTableDDL(definition, stage, topicSchemaVersion)
+            val sql = createTopicTableDDL(definition, stage, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable1Key)
         }
@@ -117,10 +137,21 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createTableDDL(definition, stage, topicSchemaVersion)
+            val sql = createTopicTableDDL(definition, stage, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedTable2Keys)
         }
+
+        @Test
+        fun `for topic user INT stage`() {
+
+            val definition = TopicDefinition("amenity", listOf(amenityMatcher))
+
+            val sql = createTopicUserTableDDL(definition, stage, topicSchemaVersion)
+            assertThat(sql)
+                .isEqualToNormalizingPunctuationAndWhitespace(expectedTableUser)
+        }
+
 
     }
 
@@ -135,7 +166,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createMvDdl(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTopicMvDDL(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
         }
@@ -146,7 +177,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
 
-            val sql = createMvDdl(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTopicMvDDL(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
         }
@@ -157,9 +188,19 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createMvDdl(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTopicMvDDL(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedMV2Keys)
+        }
+
+        @Test
+        fun `for user table`() {
+
+            val definition = TopicDefinition("amenity", listOf(amenityMatcher))
+
+            val sql = createTopicUserMvDDL(definition, dateTime, stage, topicSchemaVersion)
+            assertThat(sql)
+                .isEqualToNormalizingWhitespace(expectedMVUser)
         }
 
     }
@@ -173,7 +214,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createInsertStatement(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTopicInsertStatement(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedInsertStatement1Key)
         }
@@ -184,7 +225,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
             val definition = TopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
 
 
-            val sql = createInsertStatement(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTopicInsertStatement(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedInsertStatement1Key)
         }
@@ -195,9 +236,19 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createInsertStatement(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTopicInsertStatement(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedInsertStatement2Keys)
+        }
+
+        @Test
+        fun `for user table`() {
+
+            val definition = TopicDefinition("amenity", listOf(amenityMatcher))
+
+            val sql = createTopicUserInsertStatement(definition, dateTime, stage, topicSchemaVersion)
+            assertThat(sql)
+                .isEqualToNormalizingWhitespace(expectedInsertUser)
         }
 
 

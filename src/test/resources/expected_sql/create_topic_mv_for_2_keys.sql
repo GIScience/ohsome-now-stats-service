@@ -9,10 +9,12 @@ SELECT `changeset_timestamp`,
        tags_before['healthcare'] as `healthcare_before`,
 
        tags['amenity']           as `amenity_current`,
-       tags_before['amenity']    as `amenity_before`
-       ,
+       tags_before['amenity']    as `amenity_before`,
+
        `has_hashtags`,
-       `centroid`
+       `centroid`,
+        `h3_r3`,
+        `h3_r6`
 
 FROM int.all_stats_7
 WHERE changeset_timestamp > parseDateTimeBestEffort('2023-06-15 17:00:00')

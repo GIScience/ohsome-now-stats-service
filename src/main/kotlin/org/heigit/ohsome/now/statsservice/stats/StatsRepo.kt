@@ -133,7 +133,7 @@ class StatsRepo {
             count(map_feature_edit) as edits,
             count(distinct changeset_id) as changesets, 
             user_id
-            FROM "all_stats_$statsSchemaVersion"
+            FROM "all_stats_user_$statsSchemaVersion"
             WHERE
                 has_hashtags = true
                 AND user_id = :userId 

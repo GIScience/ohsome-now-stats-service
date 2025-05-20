@@ -12,7 +12,7 @@ SELECT ifNull(sum(edit), 0) as topic_result,
        ifNull(sum(if(edit = 0, 1, 0)), 0) as topic_result_modified,
        ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted,
     user_id
-FROM topic_place_3
+FROM topic_user_place_3
 WHERE
     has_hashtags = true
     AND user_id = :userId
