@@ -257,11 +257,12 @@ class SystemTests {
 
 
         @Test
-        @DisplayName("GET /stats/user/2186388")
+        @DisplayName("GET /stats/user with good token")
         fun `get userstats with good token`() {
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
-                    .path("/stats/user/2186388")
+                    .path("/stats/user")
+                    .queryParam("userId", "2186388")
                     .queryParam("hashtag", "hotosm-project-*")
                     .build()
             }

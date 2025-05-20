@@ -24,15 +24,18 @@ class AccessRestrictedUserController {
 
 
     @Operation(summary = "Returns aggregated statistics for a specific user.")
-    @GetMapping("/stats/user/{userId}", produces = ["application/json"])
+    @GetMapping("/stats/user", produces = ["application/json"])
     fun statsByUserId(
         httpServletRequest: HttpServletRequest,
 
         @Parameter(description = "OSM user id")
-        @PathVariable
+        @RequestParam("userId")
         userId: String,
 
-        @Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'", example = "hotosm-project-*")
+        @Parameter(
+            description = "the hashtag to query for - case-insensitive and without the leading '#'",
+            example = "hotosm-project-*"
+        )
         @RequestParam("hashtag")
         @ValidHashtag
         hashtag: String,

@@ -56,7 +56,8 @@ class AccessRestrictedUserControllerMVCTests {
         `when`(statsService.getStatsByUserId(this.userId, "hotosm-project-*"))
             .thenReturn(fakeResult)
 
-        val GET = get("/stats/user/$userId")
+        val GET = get("/stats/user")
+            .queryParam("userId", userId)
             .queryParam("hashtag", "hotosm-project-*")
             .header("Authorization", "Basic ${appProperties.token}")
 
@@ -75,7 +76,9 @@ class AccessRestrictedUserControllerMVCTests {
         verify(statsService, never())
             .getStatsByUserId(anyString(), anyString())
 
-        val GET = get("/stats/user/$userId").queryParam("hashtag", "hotosm-project-*")
+        val GET = get("/stats/user")
+            .queryParam("userId", userId)
+            .queryParam("hashtag", "hotosm-project-*")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isForbidden)
@@ -89,7 +92,8 @@ class AccessRestrictedUserControllerMVCTests {
         verify(statsService, never())
             .getStatsByUserId(anyString(), anyString())
 
-        val GET = get("/stats/user/12312")
+        val GET = get("/stats/user")
+            .queryParam("userId", userId)
             .queryParam("hashtag", "hotosm-project-*")
             .header("Authorization", "Basic badToken")
 
