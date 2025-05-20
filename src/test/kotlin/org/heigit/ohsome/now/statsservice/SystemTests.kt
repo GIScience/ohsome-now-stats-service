@@ -544,6 +544,25 @@ class SystemTests {
                 .isEqualTo("place in (country, state, region, province, district, county, municipality, city, borough, suburb, quarter, neighbourhood, town, village, hamlet, isolated_dwelling)")
         }
 
+        @Test
+        @DisplayName("GET /topic/definition/ for all topics")
+        fun `get topic definition for all topics`() {
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/topic/definition")
+                    .build()
+            }
+
+            doGetAndAssertThat(url)
+                .jsonPath("$.result").isMap
+                .jsonPath("$.result.$topic1").exists()
+                .jsonPath("$.result.$topic2").exists()
+                .jsonPath("$.result.lulc").exists()
+                .jsonPath("$.result.$topic1")
+                .isEqualTo("place in (country, state, region, province, district, county, municipality, city, borough, suburb, quarter, neighbourhood, town, village, hamlet, isolated_dwelling)")
+        }
+
 
         @Test
         @DisplayName("GET /topic/place,healthcare/user?userid=4362353")

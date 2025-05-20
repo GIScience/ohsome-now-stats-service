@@ -140,7 +140,8 @@ class TopicController {
             """
         )
         @RequestParam(name = "topics", required = false)
-        topics: List<@ValidTopic String>,
+        topics: List<@ValidTopic String>?,
+        
         httpServletRequest: HttpServletRequest,
     ): OhsomeFormat<Map<String, String>> {
         val result = measure {
