@@ -9,34 +9,35 @@ fun createStatsTableDDL(stage: String, schemaVersion: String) = """
     -- main stats table definition
     CREATE TABLE IF NOT EXISTS $stage.all_stats_${schemaVersion}
     (
-    `changeset_id`        Int64,
-    `changeset_timestamp` DateTime('UTC'),
-
-    `hashtags`            Array(String),
-
-    `editor`              String,
-    `user_id`             Int32,
-    `osm_id`              String,
-    `tags`                Map(String, String),
-    `tags_before`         Map(String, String),
-
-    -- areas
-    `area`                Int64,
-    `area_delta`          Int64,
-
-    -- lengths
-    `length`              Int64,
-    `length_delta`        Int64,
-
-    -- map feature stats
-    `map_feature_edit`    Nullable(Int8), -- -1, 0, 1, NULL
-
-    `has_hashtags`        Bool,
-    `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
-    `h3_r3`               Nullable(UInt64),
-    `h3_r6`               Nullable(UInt64),
-    `country_iso_a3`      Array(String),
-    INDEX all_stats_${schemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1
+        `changeset_id`        Int64,
+        `changeset_timestamp` DateTime('UTC'),
+    
+        `hashtags`            Array(String),
+    
+        `editor`              String,
+        `user_id`             Int32,
+        `osm_id`              String,
+        `tags`                Map(String, String),
+        `tags_before`         Map(String, String),
+    
+        -- areas
+        `area`                Int64,
+        `area_delta`          Int64,
+    
+        -- lengths
+        `length`              Int64,
+        `length_delta`        Int64,
+    
+        -- map feature stats
+        `map_feature_edit`    Nullable(Int8), -- -1, 0, 1, NULL
+    
+        `has_hashtags`        Bool,
+        `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
+        `h3_r3`               Nullable(UInt64),
+        `h3_r6`               Nullable(UInt64),
+        `country_iso_a3`      Array(String),
+        INDEX all_stats_${schemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
+        INDEX all_stats_${schemaVersion}_skip_cts_ix country_iso_a3 TYPE set(0) GRANULARITY 1
     )
     ENGINE = MergeTree
     PRIMARY KEY (
@@ -96,48 +97,49 @@ GROUP BY hashtag
 fun createStatsUserTable(stage: String, schemaVersion: String) = """
     CREATE TABLE IF NOT EXISTS ${stage}.all_stats_user_${schemaVersion}
     (
-    `changeset_id`        Int64,
-    `changeset_timestamp` DateTime('UTC'),
-
-    `hashtags`            Array(String),
-
-    `editor`              String,
-    `user_id`             Int32,
-    `osm_id`              String,
-    `tags`                Map(String, String),
-    `tags_before`         Map(String, String),
-
-    -- areas
-    `area`                Int64,
-    `area_delta`          Int64,
-
-    -- lengths
-    `length`              Int64,
-    `length_delta`        Int64,
-
-    -- map feature stats
-    `map_feature_edit`    Nullable(Int8), -- -1, 0, 1, NULL
-
-    `has_hashtags`        Bool,
-    `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
-    `h3_r3`               Nullable(UInt64),
-    `h3_r6`               Nullable(UInt64),
-    `country_iso_a3`      Array(String),
-    INDEX all_stats_user_${schemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1
+        `changeset_id`        Int64,
+        `changeset_timestamp` DateTime('UTC'),
+    
+        `hashtags`            Array(String),
+    
+        `editor`              String,
+        `user_id`             Int32,
+        `osm_id`              String,
+        `tags`                Map(String, String),
+        `tags_before`         Map(String, String),
+    
+        -- areas
+        `area`                Int64,
+        `area_delta`          Int64,
+    
+        -- lengths
+        `length`              Int64,
+        `length_delta`        Int64,
+    
+        -- map feature stats
+        `map_feature_edit`    Nullable(Int8), -- -1, 0, 1, NULL
+    
+        `has_hashtags`        Bool,
+        `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
+        `h3_r3`               Nullable(UInt64),
+        `h3_r6`               Nullable(UInt64),
+        `country_iso_a3`      Array(String),
+        INDEX all_stats_user_${schemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
+        INDEX all_stats_user_${schemaVersion}_skip_cts_ix country_iso_a3 TYPE set(0) GRANULARITY 1
     )
-        ENGINE = MergeTree
-        PRIMARY KEY (
-            user_id,
-            has_hashtags,
-            toStartOfDay(changeset_timestamp)
-        )
-        ORDER BY (
-            user_id,
-            has_hashtags,
-            toStartOfDay(changeset_timestamp),
-            geohashEncode(coalesce(centroid.x, 0), coalesce(centroid.y, 0), 2),
-            changeset_timestamp
-        )
+    ENGINE = MergeTree
+    PRIMARY KEY (
+        user_id,
+        has_hashtags,
+        toStartOfDay(changeset_timestamp)
+    )
+    ORDER BY (
+        user_id,
+        has_hashtags,
+        toStartOfDay(changeset_timestamp),
+        geohashEncode(coalesce(centroid.x, 0), coalesce(centroid.y, 0), 2),
+        changeset_timestamp
+    )
     ;
     """.trimIndent().trimMargin()
 
@@ -204,7 +206,6 @@ fun createTopicInsertStatement(
 @Suppress("LongMethod", "LongParameterList")
 fun createTopicUserInsertStatement(
     definition: TopicDefinition,
-    dateTime: String,
     stage: String,
     topicSchemaVersion: String
 ) = """
@@ -222,12 +223,6 @@ fun createTopicUserInsertStatement(
         `h3_r6`
     FROM
         $stage.topic_${definition.topicName}_${topicSchemaVersion}
-    WHERE
-        changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
-        AND
-        (
-            ${whereClause(definition)}
-        )
     ;
     """.trimIndent().trimMargin()
 
@@ -276,7 +271,6 @@ fun createTopicMvDDL(
 @Suppress("LongMethod", "LongParameterList")
 fun createTopicUserMvDDL(
     definition: TopicDefinition,
-    dateTime: String,
     stage: String,
     topicSchemaVersion: String
 ) =
@@ -295,77 +289,73 @@ fun createTopicUserMvDDL(
         `h3_r3`,
         `h3_r6`
     FROM $stage.topic_${definition.topicName}_${topicSchemaVersion}
-    WHERE
-        changeset_timestamp > parseDateTimeBestEffort('$dateTime')
-        AND
-        (
-            ${whereClause(definition)}
-        )
     ;
     """.trimIndent().trimMargin()
 
 
 @Suppress("LongMethod")
 fun createTopicTableDDL(definition: TopicDefinition, stage: String, topicSchemaVersion: String) = """
-        CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}_${topicSchemaVersion}
-        (
-            `changeset_timestamp` DateTime('UTC'),
-            `hashtags`            Array(String),
-            `user_id`             Int32,
-            `country_iso_a3`      Array(String),
-            ${keyColumnDefinitions(definition)}
-            ${optionalAreaOrLengthColumns(definition)}
-            `has_hashtags`        Bool,
-            `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
-            `h3_r3`               Nullable(UInt64),
-            `h3_r6`               Nullable(UInt64),
-            INDEX topic_${definition.topicName}_${topicSchemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1
-        )
-            ENGINE = MergeTree
-            PRIMARY KEY (
-                         has_hashtags,
-                         toStartOfDay(changeset_timestamp)
-                        )
-            ORDER BY (
-                      has_hashtags,
-                      toStartOfDay(changeset_timestamp),
-                      geohashEncode(coalesce(centroid.x, 0), coalesce(centroid.y, 0), 2),
-                      changeset_timestamp
-                     )
-        ;
+    CREATE TABLE IF NOT EXISTS $stage.topic_${definition.topicName}_${topicSchemaVersion}
+    (
+        `changeset_timestamp` DateTime('UTC'),
+        `hashtags`            Array(String),
+        `user_id`             Int32,
+        `country_iso_a3`      Array(String),
+        ${keyColumnDefinitions(definition)}
+        ${optionalAreaOrLengthColumns(definition)}
+        `has_hashtags`        Bool,
+        `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
+        `h3_r3`               Nullable(UInt64),
+        `h3_r6`               Nullable(UInt64),
+        INDEX topic_${definition.topicName}_${topicSchemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
+        INDEX topic_${definition.topicName}_${topicSchemaVersion}_skip_cts_ix country_iso_a3 TYPE set(0) GRANULARITY 1
+    )
+    ENGINE = MergeTree
+    PRIMARY KEY (
+        has_hashtags,
+        toStartOfDay(changeset_timestamp)
+    )
+    ORDER BY (
+        has_hashtags,
+        toStartOfDay(changeset_timestamp),
+        geohashEncode(coalesce(centroid.x, 0), coalesce(centroid.y, 0), 2),
+        changeset_timestamp
+    )
+    ;
     """.trimIndent()
 
 
 @Suppress("LongMethod")
 fun createTopicUserTableDDL(definition: TopicDefinition, stage: String, topicSchemaVersion: String) = """
-        CREATE TABLE IF NOT EXISTS $stage.topic_user_${definition.topicName}_${topicSchemaVersion}
-        (
-            `changeset_timestamp` DateTime('UTC'),
-            `hashtags`            Array(String),
-            `user_id`             Int32,
-            `country_iso_a3`      Array(String),
-            ${keyColumnDefinitions(definition)}
-            ${optionalAreaOrLengthColumns(definition)}
-            `has_hashtags`        Bool,
-            `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
-            `h3_r3`               Nullable(UInt64),
-            `h3_r6`               Nullable(UInt64),
-            INDEX topic_user_${definition.topicName}_${topicSchemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1
-        )
-            ENGINE = MergeTree
-            PRIMARY KEY (
-                         user_id,
-                         has_hashtags,
-                         toStartOfDay(changeset_timestamp)
-                        )
-            ORDER BY (
-                      user_id,
-                      has_hashtags,
-                      toStartOfDay(changeset_timestamp),
-                      geohashEncode(coalesce(centroid.x, 0), coalesce(centroid.y, 0), 2),
-                      changeset_timestamp
-                     )
-        ;
+    CREATE TABLE IF NOT EXISTS $stage.topic_user_${definition.topicName}_${topicSchemaVersion}
+    (
+        `changeset_timestamp` DateTime('UTC'),
+        `hashtags`            Array(String),
+        `user_id`             Int32,
+        `country_iso_a3`      Array(String),
+        ${keyColumnDefinitions(definition)}
+        ${optionalAreaOrLengthColumns(definition)}
+        `has_hashtags`        Bool,
+        `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
+        `h3_r3`               Nullable(UInt64),
+        `h3_r6`               Nullable(UInt64),
+    INDEX topic_user_${definition.topicName}_${topicSchemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
+    INDEX topic_user_${definition.topicName}_${topicSchemaVersion}_skip_cts_ix country_iso_a3 TYPE set(0) GRANULARITY 1
+    )
+    ENGINE = MergeTree
+    PRIMARY KEY (
+        user_id,
+        has_hashtags,
+        toStartOfDay(changeset_timestamp)
+    )
+    ORDER BY (
+        user_id,
+        has_hashtags,
+        toStartOfDay(changeset_timestamp),
+        geohashEncode(coalesce(centroid.x, 0), coalesce(centroid.y, 0), 2),
+        changeset_timestamp
+    )
+    ;
     """.trimIndent()
 
 

@@ -198,7 +198,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createTopicUserMvDDL(definition, dateTime, stage, topicSchemaVersion)
+            val sql = createTopicUserMvDDL(definition, stage, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedMVUser)
         }
@@ -246,7 +246,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createTopicUserInsertStatement(definition, dateTime, stage, topicSchemaVersion)
+            val sql = createTopicUserInsertStatement(definition, stage, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedInsertUser)
         }

@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS int.topic_healthcare_6
     `h3_r3`               Nullable(UInt64),
     `h3_r6`               Nullable(UInt64),
     INDEX topic_healthcare_6_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
+    INDEX topic_healthcare_6_skip_cts_ix country_iso_a3 TYPE set(0) GRANULARITY 1
 )
 ENGINE = MergeTree
 PRIMARY KEY (

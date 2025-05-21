@@ -136,7 +136,7 @@ class SqlGenerator {
                 createTopicMvDDL(definition, fourHoursLater, stage, statsSchemaVersion, topicSchemaVersion) +
                 "\n\n-- USER MV --\n\n" +
                 createTopicUserTableDDL(definition, stage, topicSchemaVersion) + "\n\n" +
-                createTopicUserMvDDL(definition, fourHoursLater, stage, topicSchemaVersion)
+                createTopicUserMvDDL(definition, stage, topicSchemaVersion)
 
 
     private fun createInsertCommands(
@@ -156,7 +156,6 @@ class SqlGenerator {
                 "\n\n-- USER MV --\n\n" +
                 createTopicUserInsertStatement(
                     definition,
-                    fourHoursLater,
                     stage,
                     topicSchemaVersion
                 )

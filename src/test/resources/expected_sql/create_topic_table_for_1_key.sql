@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS int.topic_amenity_6
     `centroid`            Tuple(x Nullable(Float64), y Nullable(Float64)),
     `h3_r3`               Nullable(UInt64),
     `h3_r6`               Nullable(UInt64),
-    INDEX topic_amenity_6_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1
+    INDEX topic_amenity_6_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
+    INDEX topic_amenity_6_skip_cts_ix country_iso_a3 TYPE set(0) GRANULARITY 1
 )
 ENGINE = MergeTree
 PRIMARY KEY (

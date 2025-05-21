@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS int.all_stats_user_7
 `h3_r3`               Nullable(UInt64),
 `h3_r6`               Nullable(UInt64),
 `country_iso_a3`      Array(String),
-INDEX all_stats_user_7_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1
+INDEX all_stats_user_7_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
+INDEX all_stats_user_7_skip_cts_ix country_iso_a3 TYPE set(0) GRANULARITY 1
 )
     ENGINE = MergeTree
     PRIMARY KEY (
