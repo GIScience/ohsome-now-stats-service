@@ -15,6 +15,6 @@ SELECT ifNull(sum(edit), 0) as topic_result,
 FROM topic_user_place_3
 WHERE
     has_hashtags = true
-    AND user_id = :userId
     AND arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
+    AND user_id = :userId
 GROUP BY user_id

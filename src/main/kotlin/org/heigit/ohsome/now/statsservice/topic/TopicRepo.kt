@@ -159,9 +159,8 @@ class TopicRepo {
         user_id
         FROM topic_user_${topicHandler.topic}_$topicSchemaVersion
         WHERE
-            has_hashtags = true
-            AND user_id = :userId
-            AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+            ${hashtagHandler.optionalFilterSQL}
+            user_id = :userId
         GROUP BY user_id
         """
 

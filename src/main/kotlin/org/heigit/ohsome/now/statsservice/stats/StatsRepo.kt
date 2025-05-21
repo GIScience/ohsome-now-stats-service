@@ -129,15 +129,14 @@ class StatsRepo {
 
     //language=sql
     fun statsByUserIdSQL(hashtagHandler: HashtagHandler) = """
-        select
+        SELECT
             count(map_feature_edit) as edits,
             count(distinct changeset_id) as changesets, 
             user_id
-            FROM "all_stats_user_$statsSchemaVersion"
-            WHERE
-                has_hashtags = true
-                AND user_id = :userId 
-                AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
+        FROM "all_stats_user_$statsSchemaVersion"
+        WHERE
+            ${hashtagHandler.optionalFilterSQL}
+            user_id = :userId 
         GROUP BY user_id
         ;
     """.trimIndent()
