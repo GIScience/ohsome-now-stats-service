@@ -374,8 +374,8 @@ private fun createFromKeys(definition: TopicDefinition, transform: (String) -> S
 
 
 private fun columnDefinitions(key: String) = """
-            `${key}_current`      String, 
-            `${key}_before`       String,"""
+        `${key}_current`      String, 
+        `${key}_before`       String,"""
 
 
 private fun columnNamesFromTags(key: String) = """
@@ -392,12 +392,12 @@ private fun whereClauseParts(key: String) = """${key}_current  != '' OR ${key}_b
 
 fun optionalAreaOrLengthColumns(definition: TopicDefinition) = if (definition.aggregationStrategy == LENGTH) {
     """
-            `length`              Int64,
-            `length_delta`        Int64,"""
+        `length`              Int64,
+        `length_delta`        Int64,"""
 } else if (definition.aggregationStrategy == AREA) {
     """
-            `area`                Int64,
-            `area_delta`          Int64,"""
+        `area`                Int64,
+        `area_delta`          Int64,"""
 } else {
     ""
 }
