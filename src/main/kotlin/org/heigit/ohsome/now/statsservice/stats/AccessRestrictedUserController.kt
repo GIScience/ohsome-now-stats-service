@@ -23,7 +23,7 @@ class AccessRestrictedUserController {
     @Autowired
     lateinit var appProperties: AppProperties
 
-
+    @Suppress("LongParameterList")
     @Operation(summary = "Returns aggregated statistics for a specific user.")
     @GetMapping("/stats/user", produces = ["application/json"])
     fun statsByUserId(

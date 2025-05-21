@@ -93,7 +93,7 @@ GROUP BY hashtag
 ;    
 """.trimIndent().trimMargin()
 
-
+@Suppress("LongMethod")
 fun createStatsUserTable(stage: String, schemaVersion: String) = """
     CREATE TABLE IF NOT EXISTS ${stage}.all_stats_user_${schemaVersion}
     (
@@ -173,7 +173,7 @@ WHERE
 ;    
 """.trimIndent().trimMargin()
 
-
+@Suppress("LongMethod")
 fun createStatsUserTableInsert(
     stage: String, schemaVersion: String, dateTime: String
 ) = """
