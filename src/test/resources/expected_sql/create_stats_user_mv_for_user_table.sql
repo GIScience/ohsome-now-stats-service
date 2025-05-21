@@ -22,5 +22,5 @@ SELECT
     `country_iso_a3`
 FROM int.all_stats_7
 WHERE
-    changeset_timestamp <= parseDateTimeBestEffort('2023-06-15 17:00:00')
+    changeset_timestamp > parseDateTimeBestEffort('2023-06-15 17:00:00')
 ;

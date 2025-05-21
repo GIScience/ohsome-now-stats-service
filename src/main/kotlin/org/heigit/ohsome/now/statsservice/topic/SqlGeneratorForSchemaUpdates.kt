@@ -169,7 +169,7 @@ SELECT
     `country_iso_a3`
 FROM ${stage}.all_stats_${schemaVersion}
 WHERE
-    changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
+    changeset_timestamp > parseDateTimeBestEffort('$dateTime')
 ;    
 """.trimIndent().trimMargin()
 
@@ -199,7 +199,7 @@ SELECT
     `country_iso_a3`
 FROM ${stage}.all_stats_${schemaVersion}
 WHERE
-    changeset_timestamp > parseDateTimeBestEffort('$dateTime')
+    changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
 ;
 """.trimIndent().trimMargin()
 
