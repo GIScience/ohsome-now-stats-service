@@ -152,12 +152,6 @@ class SqlGenerator {
                     stage,
                     statsSchemaVersion,
                     topicSchemaVersion
-                ) +
-                "\n\n-- USER MV --\n\n" +
-                createTopicUserInsertStatement(
-                    definition,
-                    stage,
-                    topicSchemaVersion
                 )
 
 

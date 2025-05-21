@@ -40,7 +40,6 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
     val expectedInsertStatement1Key = file("create_topic_insert_statement_for_1_key")
     val expectedInsertStatement2Keys = file("create_topic_insert_statement_for_2_keys")
-    val expectedInsertUser = file("create_topic_user_insert_statement")
 
 
     @Nested
@@ -239,16 +238,6 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
             val sql = createTopicInsertStatement(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedInsertStatement2Keys)
-        }
-
-        @Test
-        fun `for user table`() {
-
-            val definition = TopicDefinition("amenity", listOf(amenityMatcher))
-
-            val sql = createTopicUserInsertStatement(definition, stage, topicSchemaVersion)
-            assertThat(sql)
-                .isEqualToNormalizingWhitespace(expectedInsertUser)
         }
 
 

@@ -203,29 +203,6 @@ fun createTopicInsertStatement(
     ;
     """.trimIndent().trimMargin()
 
-@Suppress("LongMethod", "LongParameterList")
-fun createTopicUserInsertStatement(
-    definition: TopicDefinition,
-    stage: String,
-    topicSchemaVersion: String
-) = """
-    INSERT into $stage.topic_user_${definition.topicName}_${topicSchemaVersion}
-    SELECT
-        `changeset_timestamp`,
-        `hashtags`,
-        `user_id`,
-        `country_iso_a3`,
-        ${keyColumns(definition)}
-        ${optionalAreaOrLengthColumns(definition)}
-        `has_hashtags`,
-        `centroid`,
-        `h3_r3`,
-        `h3_r6`
-    FROM
-        $stage.topic_${definition.topicName}_${topicSchemaVersion}
-    ;
-    """.trimIndent().trimMargin()
-
 
 fun createTopicDeleteStatement(
     definition: TopicDefinition,
