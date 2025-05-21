@@ -50,10 +50,10 @@ class StatsService {
             startDate,
             endDate,
             countries,
-            listOf("building", "highway")
+            listOf("building", "road")
         )
         this["buildings"] = topicResults["building"]!!.value.toLong()
-        this["roads"] = topicResults["highway"]!!.value
+        this["roads"] = topicResults["road"]!!.value
 
         return this
     }
@@ -72,7 +72,7 @@ class StatsService {
             .getStatsForTimeSpanAggregate(handler(hashtag), startDate, endDate)
 
         val topicResults = this.topicService.getTopicStatsForTimeSpanAggregate(
-            hashtag, startDate, endDate, listOf("building", "highway")
+            hashtag, startDate, endDate, listOf("building", "road")
         )
 
         return statsResult
@@ -80,7 +80,7 @@ class StatsService {
                 "buildings", topicResults.getOrDefault("building", emptyList())
             )
             .mergeTopicIntoStatsAggregateResults(
-                "roads", topicResults.getOrDefault("highway", emptyList())
+                "roads", topicResults.getOrDefault("road", emptyList())
             )
             .toMultipleStatsResult()
     }
@@ -154,12 +154,12 @@ class StatsService {
             endDate,
             interval,
             countries,
-            listOf("building", "highway")
+            listOf("building", "road")
         )
         return this.plus(
             mapOf(
                 "buildings" to topicResults["building"]!!.value,
-                "roads" to topicResults["highway"]!!.value,
+                "roads" to topicResults["road"]!!.value,
             )
         )
     }
@@ -183,14 +183,14 @@ class StatsService {
             hashtag,
             startDate,
             endDate,
-            listOf("building", "highway")
+            listOf("building", "road")
         )
         val enrichedCountryList = this.map {
             it + ("buildings" to topicResults["building"]!!.matchCountryValue(it).toLong())
         }
 
         return enrichedCountryList.map {
-            it + ("roads" to topicResults["highway"]!!.matchCountryValue(it))
+            it + ("roads" to topicResults["road"]!!.matchCountryValue(it))
         }
     }
 
@@ -225,12 +225,12 @@ class StatsService {
     ): Map<String, Any> {
         val topicResults = topicService.getTopicsByUserId(
             userId,
-            listOf("building", "highway"),
+            listOf("building", "road"),
             hashtag
         )
         this += topicResults["building"]!!
             .topicResultToNamedResult("buildings")
-        this += topicResults["highway"]!!
+        this += topicResults["road"]!!
             .topicResultToNamedResult("roads")
         return this
     }

@@ -31,7 +31,7 @@ class CachingTests {
 
     val noCountries = CountryHandler(emptyList())
     val buildingTopic = TopicHandler("building")
-    val highwayTopic = TopicHandler("highway")
+    val roadTopic = TopicHandler("road")
 
 
     private val exampleTopicData: Map<String, Any> = mapOf(
@@ -41,7 +41,6 @@ class CachingTests {
         "topic_result_created" to UnsignedLong.valueOf(20L),
         "topic_result_deleted" to UnsignedLong.valueOf(0L)
     )
-
 
 
     @MockitoBean
@@ -65,7 +64,8 @@ class CachingTests {
     )
 
 
-    fun serviceCall(hashtag: String, date: Instant? = null): () -> StatsResult = { statsService.getStatsForTimeSpan(hashtag, date, null, emptyList()) }
+    fun serviceCall(hashtag: String, date: Instant? = null): () -> StatsResult =
+        { statsService.getStatsForTimeSpan(hashtag, date, null, emptyList()) }
 
 
     @DirtiesContext
@@ -138,13 +138,18 @@ class CachingTests {
         `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, date, null, noCountries, buildingTopic))
             .thenReturn(exampleTopicData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, date, null, noCountries, highwayTopic))
+        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, date, null, noCountries, roadTopic))
             .thenReturn(exampleTopicData)
 
     }
 
 
-    private fun assertTotalNumberOfCallsToRepo(call: () -> StatsResult, callCount: Int, hashtagHandler: HashtagHandler, date: Instant? = null) {
+    private fun assertTotalNumberOfCallsToRepo(
+        call: () -> StatsResult,
+        callCount: Int,
+        hashtagHandler: HashtagHandler,
+        date: Instant? = null
+    ) {
         assertEquals("213124", call().edits.toString())
         verify(this.statsRepo, times(callCount))
             .getStatsForTimeSpan(hashtagHandler, date, null, noCountries)

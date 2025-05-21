@@ -150,7 +150,7 @@ private val topics = listOf(
 
 
     TopicDefinition(
-        "highway",
+        "road",
         listOf(
             KeyOnlyMatcher("highway")
         ),

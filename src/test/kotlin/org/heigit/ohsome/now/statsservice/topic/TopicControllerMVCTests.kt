@@ -59,9 +59,9 @@ class TopicControllerMVCTests {
     @ParameterizedTest
     @ValueSource(
         strings = [
-            "/topic/highway,healthcare?hashtag=*",
-            "/topic/highway,healthcare/interval?hashtag=*&interval=P1M",
-            "/topic/highway,healthcare/country?hashtag=*",
+            "/topic/road,healthcare?hashtag=*",
+            "/topic/road,healthcare/interval?hashtag=*&interval=P1M",
+            "/topic/road,healthcare/country?hashtag=*",
         ]
     )
     fun `all requests with '*' hashtag throw error`(url: String) {
@@ -86,7 +86,7 @@ class TopicControllerMVCTests {
             "/topic/badtopic/interval?hashtag=whatever&interval=P1M",
             "/topic/badtopic,healthcare/interval?hashtag=whatever&interval=P1M",
             "/topic/badtopic/country?hashtag=whatever",
-            "/topic/highway,badtopic/country?hashtag=whatever",
+            "/topic/road,badtopic/country?hashtag=whatever",
         ]
     )
     fun `all requests for invalid topics throw error`(url: String) {
@@ -310,7 +310,8 @@ class TopicControllerMVCTests {
     @Test
     fun `topic stats per interval throws error for invalid interval string`() {
 
-        val expectedErrorMessage = """[{"message":"Invalid ISO8601 string as interval.","invalidValue":"bad_interval"}]"""
+        val expectedErrorMessage =
+            """[{"message":"Invalid ISO8601 string as interval.","invalidValue":"bad_interval"}]"""
 
 
         val GET = get("/topic/${topics.joinToString()}/interval")

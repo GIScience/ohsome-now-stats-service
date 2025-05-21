@@ -7,7 +7,7 @@ import io.gatling.javaapi.http.HttpDsl.http
 
 class TopicEndPointsSimulation : Simulation() {
     private val hashtags = listOf("missingmaps", "hotosm-project-*")
-    private val topics = listOf("healthcare", "highway", "education", "waterway", "poi")
+    private val topics = listOf("healthcare", "road", "education", "waterway", "poi")
     private val feeder = listFeeder(
         startDateList.indices.flatMap { index ->
             hashtags.map { hashtag ->

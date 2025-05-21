@@ -1,4 +1,4 @@
-INSERT INTO topic_highway_3
+INSERT INTO topic_road_3
     (user_id, changeset_timestamp, country_iso_a3, hashtags, highway_current, highway_before, length, length_delta, has_hashtags)
 VALUES
     (4362353, toDateTime(1630486233), ['BRA'], ['hotmicrogrant2021'], 'primary', 'secondary', 512.3, 743, true),
