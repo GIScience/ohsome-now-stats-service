@@ -144,7 +144,7 @@ fun createStatsUserTable(stage: String, schemaVersion: String) = """
     """.trimIndent().trimMargin()
 
 @Suppress("LongMethod")
-fun createStatsMaterializedViewForUserTable(stage: String, schemaVersion: String) = """
+fun createStatsMaterializedViewForUserTable(stage: String, schemaVersion: String, dateTime: String) = """
 CREATE MATERIALIZED VIEW ${stage}.mv__all_stats_${schemaVersion}_to_all_stats_user_${schemaVersion}
 TO ${stage}.all_stats_user_${schemaVersion}
 AS
@@ -168,7 +168,39 @@ SELECT
     `h3_r6`,
     `country_iso_a3`
 FROM ${stage}.all_stats_${schemaVersion}
+WHERE
+    changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
 ;    
+""".trimIndent().trimMargin()
+
+
+fun createStatsUserTableInsert(
+    stage: String, schemaVersion: String, dateTime: String
+) = """
+INSERT INTO ${stage}.all_stats_user_${schemaVersion}
+SELECT
+    `changeset_id`,
+    `changeset_timestamp`,
+    `hashtags`,
+    `editor`,
+    `user_id`,
+    `osm_id`,
+    `tags`,
+    `tags_before`,
+    `area`,
+    `area_delta`,
+    `length`,
+    `length_delta`,
+    `map_feature_edit`,
+    `has_hashtags`,
+    `centroid`,
+    `h3_r3`,
+    `h3_r6`,
+    `country_iso_a3`
+FROM ${stage}.all_stats_${schemaVersion}
+WHERE
+    changeset_timestamp > parseDateTimeBestEffort('$dateTime')
+;
 """.trimIndent().trimMargin()
 
 

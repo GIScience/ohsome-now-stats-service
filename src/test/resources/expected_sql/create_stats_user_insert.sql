@@ -1,7 +1,5 @@
-CREATE MATERIALIZED VIEW int.mv__all_stats_7_to_all_stats_user_7
-TO int.all_stats_user_7
-AS
-SELECT
+INSERT INTO int.all_stats_user_7
+    SELECT
     `changeset_id`,
     `changeset_timestamp`,
     `hashtags`,
@@ -22,5 +20,5 @@ SELECT
     `country_iso_a3`
 FROM int.all_stats_7
 WHERE
-    changeset_timestamp <= parseDateTimeBestEffort('2023-06-15 17:00:00')
+    changeset_timestamp > parseDateTimeBestEffort('2023-06-15 17:00:00')
 ;
