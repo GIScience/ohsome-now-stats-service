@@ -35,15 +35,6 @@ class AccessRestrictedUserControllerMVCTests {
 
 
     val fakeResult = mutableMapOf(
-        "buildings" to 1L,
-        "buildings_created" to 1L,
-        "buildings_modified" to 1L,
-        "buildings_deleted" to 1L,
-        "roads" to 234.12,
-        "roads_created" to 234.12,
-        "roads_deleted" to 234.12,
-        "roads_modified_longer" to 234.12,
-        "roads_modified_shorter" to 234.12,
         "edits" to UnsignedLong.valueOf(34L),
         "changesets" to UnsignedLong.valueOf(2L),
         "user_id" to 4324
@@ -53,19 +44,19 @@ class AccessRestrictedUserControllerMVCTests {
     @Test
     fun `statsByUserId returns stats for one user only`() {
 
-        `when`(statsService.getStatsByUserId(this.userId, "hotosm-project-*"))
+        `when`(statsService.getStatsByUserId(this.userId, "hotosm-project-*", emptyList()))
             .thenReturn(fakeResult)
 
         val GET = get("/stats/user")
             .queryParam("userId", userId)
             .queryParam("hashtag", "hotosm-project-*")
+            .queryParam("topics", "building,road")
             .header("Authorization", "Basic ${appProperties.token}")
 
 
         this.mockMvc.perform(GET)
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.result.buildings").value(1))
     }
 
 
@@ -74,7 +65,7 @@ class AccessRestrictedUserControllerMVCTests {
 
         // service must never be called because auth happens before service invocation
         verify(statsService, never())
-            .getStatsByUserId(anyString(), anyString())
+            .getStatsByUserId(anyString(), anyString(), anyList())
 
         val GET = get("/stats/user")
             .queryParam("userId", userId)
@@ -90,7 +81,7 @@ class AccessRestrictedUserControllerMVCTests {
 
         // service must never be called because auth happens before service invocation
         verify(statsService, never())
-            .getStatsByUserId(anyString(), anyString())
+            .getStatsByUserId(anyString(), anyString(), anyList())
 
         val GET = get("/stats/user")
             .queryParam("userId", userId)

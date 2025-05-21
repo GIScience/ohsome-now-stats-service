@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.statsservice.*
+import org.heigit.ohsome.now.statsservice.topic.ValidTopic
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -36,19 +37,23 @@ class AccessRestrictedUserController {
             description = "the hashtag to query for - case-insensitive and without the leading '#'",
             example = "hotosm-project-*"
         )
-        @RequestParam("hashtag")
+        @RequestParam("hashtag", required = false, defaultValue = "")
         @ValidHashtag
         hashtag: String,
 
         @RequestHeader(value = "Authorization", required = false)
-        authorization: String?
+        authorization: String?,
+
+        @Parameter(description = "topics")
+        @RequestParam("topics", required = false, defaultValue = "")
+        topics: List<@ValidTopic String>
     ): OhsomeFormat<UserResult> {
         if (authorization == null || authorization != "Basic ${appProperties.token}") {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid Token")
         }
 
         val result = measure {
-            statsService.getStatsByUserId(userId, hashtag)
+            statsService.getStatsByUserId(userId, hashtag, topics)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)

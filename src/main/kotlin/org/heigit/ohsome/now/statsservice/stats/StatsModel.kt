@@ -1,6 +1,8 @@
 package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
+import org.heigit.ohsome.now.statsservice.topic.TopicResult
+import org.heigit.ohsome.now.statsservice.topic.UserTopicResult
 import java.time.LocalDateTime
 
 
@@ -108,15 +110,7 @@ data class MetadataResult(
 
 
 fun Map<String, Any>.toUserResult() = UserResult(
-    this["buildings"].toString().toDouble().toLong(),
-    this["buildings_created"].toString().toDouble().toLong(),
-    this["buildings_modified"].toString().toLong(),
-    this["buildings_deleted"].toString().toDouble().toLong(),
-    this["roads"].toString().toDouble(),
-    this["roads_created"].toString().toDouble(),
-    this["roads_modified_longer"].toString().toDouble(),
-    this["roads_modified_shorter"].toString().toDouble(),
-    this["roads_deleted"].toString().toDouble(),
+    this["topics"] as Map<String, UserTopicResult>?,
     (this["edits"] as UnsignedLong).toLong(),
     (this["changesets"] as UnsignedLong).toLong(),
     this["user_id"] as Int
@@ -124,15 +118,7 @@ fun Map<String, Any>.toUserResult() = UserResult(
 
 
 data class UserResult(
-    val buildings: Long,
-    val buildings_added: Long,
-    val buildings_modified: Long,
-    val buidlings_deleted: Long,
-    val roads: Double,
-    val roads_created_km: Double,
-    val roads_modified_longer_km: Double,
-    val roads_modified_shorter_km: Double,
-    val roads_deleted_km: Double,
+    val topics: Map<String, UserTopicResult>?,
     val edits: Long,
     val changesets: Long,
     val userId: Int

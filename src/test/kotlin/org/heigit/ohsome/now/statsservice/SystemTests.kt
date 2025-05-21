@@ -257,7 +257,7 @@ class SystemTests {
 
 
         @Test
-        @DisplayName("GET /stats/user with good token")
+        @DisplayName("GET /stats/user with good token and no topics")
         fun `get userstats with good token`() {
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
@@ -277,11 +277,38 @@ class SystemTests {
                 .expectBody()
 
             response
-                .jsonPath("$.result.roads_created_km").isEqualTo(0.0)
-                .jsonPath("$.result.roads_modified_longer_km").isEqualTo(0.0)
-                .jsonPath("$.result.buildings_added").isEqualTo(0.0)
+                .jsonPath("$.result.topics").doesNotExist()
+                .jsonPath("$.result.userId").exists()
+                .jsonPath("$.result.changesets").exists()
+                .jsonPath("$.result.edits").exists()
+
         }
 
+        @Test
+        @DisplayName("GET /stats/user with no hashtag")
+        fun `get userstats with no hashtag`() {
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/user")
+                    .queryParam("userId", "2186388")
+                    .queryParam("topics", listOf("road", "building"))
+                    .build()
+            }
+
+            val response = client()
+                .get()
+                .uri(url)
+                .header("Authorization", "Basic ${appProperties.token}")
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody()
+
+            response
+                .jsonPath("$.result.topics.road.value").isEqualTo(0.0)
+                .jsonPath("$.result.topics.road.modified.unit_more").isEqualTo(0.0)
+                .jsonPath("$.result.topics.building.added").isEqualTo(0.0)
+        }
     }
 
     @Nested

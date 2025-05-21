@@ -16,8 +16,6 @@ data class HashtagHandler(var hashtag: String) {
     var optionalFilterSQL: String = ""
 
     init {
-
-
         this.hashtag = this.hashtag.lowercase(Locale.getDefault())
         detectWildCard(hashtag)
 

@@ -3,7 +3,6 @@ package org.heigit.ohsome.now.statsservice.stats
 import org.heigit.ohsome.now.statsservice.topic.TopicCountryResult
 import org.heigit.ohsome.now.statsservice.topic.TopicResult
 import org.heigit.ohsome.now.statsservice.topic.TopicService
-import org.heigit.ohsome.now.statsservice.topic.UserTopicResult
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -214,41 +213,24 @@ class StatsService {
         .toUniqueHashtagsResult()
 
 
-    fun getStatsByUserId(userId: String, hashtag: String) = this.repo
+    fun getStatsByUserId(userId: String, hashtag: String, topics: List<String>) = this.repo
         .getStatsByUserId(userId, HashtagHandler(hashtag))
-        .addStatsByUserIdForBuildingsAndRoads(userId, hashtag)
+        .addTopicsByUserId(userId, hashtag, topics)
         .toUserResult()
 
-    private fun MutableMap<String, Any>.addStatsByUserIdForBuildingsAndRoads(
+    private fun MutableMap<String, Any>.addTopicsByUserId(
         userId: String,
-        hashtag: String
+        hashtag: String,
+        topics: List<String>
     ): Map<String, Any> {
-        val topicResults = topicService.getTopicsByUserId(
+        if (topics.isEmpty()) return this
+
+        this["topics"] = topicService.getTopicsByUserId(
             userId,
-            listOf("building", "road"),
+            topics,
             hashtag
         )
-        this += topicResults["building"]!!
-            .topicResultToNamedResult("buildings")
-        this += topicResults["road"]!!
-            .topicResultToNamedResult("roads")
         return this
-    }
-
-    private fun UserTopicResult.topicResultToNamedResult(name: String): Map<String, Any> {
-        val renamed = mutableMapOf(
-            name to this.value,
-            "${name}_created" to this.added,
-            "${name}_deleted" to this.deleted,
-            "${name}_modified" to this.modified.count_modified
-        )
-        if (name == "roads") {
-            renamed += mapOf(
-                "${name}_modified_longer" to this.modified.unit_more!!,
-                "${name}_modified_shorter" to this.modified.unit_less!!
-            )
-        }
-        return renamed
     }
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)
