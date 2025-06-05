@@ -157,7 +157,10 @@ class StatsController {
 
 
     @Suppress("LongParameterList")
-    @Operation(summary = "Returns live summary statistics for one hashtag grouped by a given time interval", deprecated = true)
+    @Operation(
+        summary = "Returns live summary statistics for one hashtag grouped by a given time interval",
+        deprecated = true
+    )
     @Deprecated("Use the /stats/interval endpoint with query parameters instead.", ReplaceWith("statsInterval"))
     @GetMapping("/stats/{hashtag}/interval", produces = ["application/json"])
     fun statsIntervalWithHashtagOnly(
@@ -248,6 +251,26 @@ class StatsController {
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
+    }
+
+
+    @Operation(summary = "Returns live summary statistics grouped into h3 cells")
+    @GetMapping("/stats/h3", produces = ["text/csv"])
+    fun statsByH3(
+        @HashtagConfig
+        @RequestParam(name = "hashtag", required = false, defaultValue = "")
+        @ValidHashtag
+        hashtag: String,
+
+        @StartDateConfig
+        @RequestParam(name = "startdate", required = false)
+        startDate: Instant?,
+
+        @EndDateConfig
+        @RequestParam(name = "enddate", required = false)
+        endDate: Instant?
+    ): String {
+        return statsService.getStatsByH3(hashtag, startDate, endDate)
     }
 
     @Suppress("LongParameterList")

@@ -126,6 +126,22 @@ class StatsRepo {
         ;
         """.trimIndent()
 
+    @Suppress("LongMethod")
+    //language=sql
+    private fun statsFromH3SQL(hashtagHandler: HashtagHandler) = """
+        SELECT
+            count(DISTINCT user_id) AS users,
+            count(map_feature_edit) AS edits,
+            h3ToString(h3_r3) as hex
+        FROM "all_stats_$statsSchemaVersion"
+        WHERE
+            ${hashtagHandler.optionalFilterSQL}
+            changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+        GROUP BY hex
+        FORMAT CSV
+    """.trimIndent()
+
 
     //language=sql
     fun statsByUserIdSQL(hashtagHandler: HashtagHandler) = """
@@ -317,6 +333,17 @@ class StatsRepo {
                 .list()
         }
 
+    }
+
+    fun getStatsByH3(hashtagHandler: HashtagHandler, startDate: Instant?, endDate: Instant?): String {
+        return "users,edits,hash\n" + query {
+            it.createQuery(statsFromH3SQL(hashtagHandler))
+                .bind("hashtag", hashtagHandler.hashtag)
+                .bind("startDate", startDate ?: EPOCH)
+                .bind("endDate", endDate ?: now())
+                .mapTo(String::class.java)
+                .reduce { a, b -> a + "\n" + b }
+        }
     }
 
 

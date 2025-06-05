@@ -294,6 +294,15 @@ class StatsRepoIntegrationTests {
         assertEquals(5, result[0].size)
     }
 
+
+    @Test
+    fun `getStatsByH3 returns data aggregated by h3`() {
+        val hashtagHandler = HashtagHandler("*")
+        val result = this.repo.getStatsByH3(hashtagHandler, null, null)
+        println(result)
+    }
+
+
     @Test
     fun `getStatsForTimeSpanCountry aggregates data by country from all contributions with and without hashtags`() {
         val startDate = Instant.parse("2023-01-01T00:00:00Z")

@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS all_stats_3
 
 --     centroid Tuple(x Nullable(Float64), y Nullable(Float64)),
 
---     h3_r3 Nullable(UInt64),
---     h3_r6 Nullable(UInt64),
+    h3_r3 Nullable(UInt64),
+    h3_r6 Nullable(UInt64),
 
     country_iso_a3 Array(String)
 )

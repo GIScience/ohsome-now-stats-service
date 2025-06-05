@@ -197,6 +197,8 @@ class StatsService {
         (this.find { it.country == countryMap["country"] }
             ?.value ?: 0.0)
 
+    fun getStatsByH3(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
+        .getStatsByH3(handler(hashtag), startDate, endDate)
 
     fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?, countries: List<String>) = this.repo
         .getMostUsedHashtags(startDate, endDate, limit, handler(countries))
