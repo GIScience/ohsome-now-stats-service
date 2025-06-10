@@ -7,8 +7,8 @@ fun getTopicDefinitionByName(name: String) = validDefinitions()
     .find { it.topicName == name }!!
 
 val statsTopics = mapOf(
-    "contributor" to " The number of distinct users that edited OSM data",
-    "edit" to " The number of all OSM edits to \"map features\"",
+    "contributor" to "The number of distinct users that edited OSM data",
+    "edit" to "The number of all OSM edits to \"map features\"",
     "changeset" to "The number of changesets containing the OSM edits to \"map features\""
 )
 
