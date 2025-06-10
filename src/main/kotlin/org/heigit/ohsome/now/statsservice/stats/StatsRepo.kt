@@ -128,10 +128,9 @@ class StatsRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun statsFromH3SQL(hashtagHandler: HashtagHandler) = """
+    private fun statsFromH3SQL(hashtagHandler: HashtagHandler, statsTopicHandler: StatsTopicsHandler) = """
         SELECT
-            count(DISTINCT user_id) AS users,
-            count(map_feature_edit) AS edits,
+            ${statsTopicHandler.statsTopicSQL},
             h3ToString(h3_r3) as hex
         FROM "all_stats_$statsSchemaVersion"
         WHERE
@@ -335,9 +334,14 @@ class StatsRepo {
 
     }
 
-    fun getStatsByH3(hashtagHandler: HashtagHandler, startDate: Instant?, endDate: Instant?): String {
-        return "users,edits,hash\n" + query {
-            it.createQuery(statsFromH3SQL(hashtagHandler))
+    fun getStatsByH3(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant?,
+        endDate: Instant?,
+        statsTopicHandler: StatsTopicsHandler
+    ): String {
+        return "result,hex_cell\n" + query {
+            it.createQuery(statsFromH3SQL(hashtagHandler, statsTopicHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())

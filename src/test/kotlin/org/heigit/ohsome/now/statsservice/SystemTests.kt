@@ -243,6 +243,25 @@ class SystemTests {
         }
 
         @Test
+        @DisplayName("GET /stats/h3")
+        fun `get statsH3 for edits`() {
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/h3")
+                    .queryParam("topic", "edit")
+                    .build()
+            }
+
+            assertTrue(
+                doGetAndAssertThat(url)
+                    .returnResult().toString().contains("hex_cell")
+            )
+
+        }
+
+
+        @Test
         @DisplayName("GET /hashtags")
         fun `get hashtags gets all hashtags`() {
             val url = { uriBuilder: UriBuilder ->

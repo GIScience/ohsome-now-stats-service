@@ -1,8 +1,8 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 @Suppress("LongMethod")
-fun lengthOrAreaAggregation(type: String, divideBy: Int): String {
-    return """        
+fun lengthOrAreaAggregationMainResult(type: String, divideBy: Int) =
+    """        
     ifNull( 
         sum( 
             multiIf(                                      -- this is a 'case'
@@ -13,8 +13,11 @@ fun lengthOrAreaAggregation(type: String, divideBy: Int): String {
             )                                            
         )/ ${divideBy},                                   -- m to km
         0
-    ) as topic_result,
-        
+    ) as topic_result"""
+
+@Suppress("LongMethod")
+fun lengthOrAreaAggregationRestOfResults(type: String, divideBy: Int) =
+    """
     ifNull(
         sum(
             if(edit = 1, ${type}, 0)
@@ -54,7 +57,7 @@ fun lengthOrAreaAggregation(type: String, divideBy: Int): String {
         0
     ) as topic_result_modified
     """
-}
+
 
 const val arraySQLBase = """
     groupArray(toFloat64(topic_result)) as topic_result,
@@ -67,8 +70,9 @@ const val arraySQLDetail = """
     groupArray(topic_result_modified_less) as topic_result_modified_less,
 """
 
-enum class AggregationStrategy(val sql: String, val arraySql: String) {
+enum class AggregationStrategy(val mainResultSql: String, val sql: String, val arraySql: String) {
     COUNT(
+        """ifNull(sum(edit), 0) as topic_result""",
         """
             ifNull(sum(edit), 0) as topic_result,
             ifNull(sum(if(edit = 1, 1, 0)), 0) as topic_result_created,
@@ -78,11 +82,19 @@ enum class AggregationStrategy(val sql: String, val arraySql: String) {
         arraySQLBase
     ),
     LENGTH(
-        lengthOrAreaAggregation("length", 1000),
+        lengthOrAreaAggregationMainResult("length", 1000),
+        arrayOf(
+            lengthOrAreaAggregationMainResult("length", 1000),
+            lengthOrAreaAggregationRestOfResults("length", 1000)
+        ).joinToString(separator = ",\n"),
         arraySQLBase + arraySQLDetail
     ),
     AREA(
-        lengthOrAreaAggregation("area", 1000000),
+        lengthOrAreaAggregationMainResult("area", 1000000),
+        arrayOf(
+            lengthOrAreaAggregationMainResult("area", 1000000),
+            lengthOrAreaAggregationRestOfResults("area", 1000000)
+        ).joinToString(separator = ",\n"),
         arraySQLBase + arraySQLDetail
     )
 }
@@ -104,6 +116,8 @@ class TopicDefinition(
     fun keys() = matchers.map { it.key }
 
     fun defineTopicResult() = aggregationStrategy.sql
+
+    fun defineTopicMainResult() = aggregationStrategy.mainResultSql
 
     fun defineTopicArrayResult() = aggregationStrategy.arraySql
 

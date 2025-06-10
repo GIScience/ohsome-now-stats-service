@@ -41,7 +41,7 @@ class TopicDefinitionTests {
         )/ 1000,                                   -- m to km
         0
     ) as topic_result,
-        
+
     ifNull(
         sum(
             if(edit = 1, length, 0)
@@ -102,7 +102,7 @@ class TopicDefinitionTests {
         )/ 1000000,                                   -- m to km
         0
     ) as topic_result,
-        
+
     ifNull(
         sum(
             if(edit = 1, area, 0)

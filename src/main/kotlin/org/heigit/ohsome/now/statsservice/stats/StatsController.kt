@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.statsservice.*
+import org.heigit.ohsome.now.statsservice.topic.ValidTopic
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
@@ -268,9 +269,13 @@ class StatsController {
 
         @EndDateConfig
         @RequestParam(name = "enddate", required = false)
-        endDate: Instant?
+        endDate: Instant?,
+
+        @Parameter(description = "topic - this endpoint can only serves results for one topic at a time")
+        @RequestParam("topic", required = true)
+        topic: @ValidTopic String
     ): String {
-        return statsService.getStatsByH3(hashtag, startDate, endDate)
+        return statsService.getStatsByH3(hashtag, startDate, endDate, topic)
     }
 
     @Suppress("LongParameterList")

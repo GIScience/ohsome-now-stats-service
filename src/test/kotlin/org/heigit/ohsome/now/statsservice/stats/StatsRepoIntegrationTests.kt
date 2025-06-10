@@ -298,8 +298,10 @@ class StatsRepoIntegrationTests {
     @Test
     fun `getStatsByH3 returns data aggregated by h3`() {
         val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getStatsByH3(hashtagHandler, null, null)
+        val result = this.repo.getStatsByH3(hashtagHandler, null, null, StatsTopicsHandler(listOf("edit")))
         println(result)
+        assertTrue(result.contains("832830fffffffff"))
+        assertTrue(result.contains("result,hex_cell\n"))
     }
 
 

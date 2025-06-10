@@ -145,6 +145,29 @@ class TopicRepo {
             country
         """.trimIndent()
 
+
+    @Suppress("LongMethod")
+    //language=sql
+    private fun topicFromH3SQL(hashtagHandler: HashtagHandler, topicHandler: TopicHandler) = """
+        WITH
+            ${topicHandler.valueLists()} 
+            
+            ${topicHandler.beforeCurrent()} 
+            if ((current = 0) AND (before = 0), NULL, current - before) as edit
+
+        SELECT
+            ${topicHandler.topicMainResult()},
+            h3ToString(h3_r3) as hex
+        FROM topic_${topicHandler.topic}_$topicSchemaVersion
+        WHERE
+            ${hashtagHandler.optionalFilterSQL}
+            changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+        GROUP BY hex
+        FORMAT CSV
+    """.trimIndent()
+
+
     @Suppress("LongMethod")
     fun topicByUserIdSQL(topicHandler: TopicHandler, hashtagHandler: HashtagHandler) =
         """
@@ -242,6 +265,22 @@ class TopicRepo {
                 .list()
         }
 
+    }
+
+    fun getTopicsByH3(
+        hashtagHandler: HashtagHandler,
+        startDate: Instant?,
+        endDate: Instant?,
+        topicHandler: TopicHandler
+    ): String {
+        return "result,hex_cell\n" + query {
+            it.createQuery(topicFromH3SQL(hashtagHandler, topicHandler))
+                .bind("hashtag", hashtagHandler.hashtag)
+                .bind("startDate", startDate ?: EPOCH)
+                .bind("endDate", endDate ?: now())
+                .mapTo(String::class.java)
+                .reduce { a, b -> "$a\n$b" }
+        }
     }
 
     fun getTopicbyUserId(

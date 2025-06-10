@@ -93,6 +93,9 @@ class TopicService {
         return topicResults
     }
 
+    fun getTopicsByH3(hashtag: String, startDate: Instant?, endDate: Instant?, topic: String) = this.repo
+        .getTopicsByH3(handler(hashtag), startDate, endDate, TopicHandler(topic))
+
 
     fun getTopicsByUserId(
         userId: String,
