@@ -6,9 +6,12 @@ fun getAllTopicDefinitions() = validDefinitions()
 fun getTopicDefinitionByName(name: String) = validDefinitions()
     .find { it.topicName == name }!!
 
-fun areTopicsValid(names: List<String>) = validDefinitions()
-    .map(TopicDefinition::topicName)
-    .containsAll(names)
+val statsTopics = listOf("contributor", "edit", "changeset")
+
+fun areTopicsValid(names: List<String>) = (
+        statsTopics
+                + validDefinitions().map(TopicDefinition::topicName)
+        ).containsAll(names)
 
 
 private fun validDefinitions() = topics
@@ -22,6 +25,7 @@ private val topics = listOf(
         "amenity",
         listOf(KeyOnlyMatcher("amenity"))
     ),
+
 
     TopicDefinition(
         "body_of_water",
@@ -158,7 +162,7 @@ private val topics = listOf(
         AggregationStrategy.LENGTH
     ),
 
-    
+
     TopicDefinition(
         "road",
         listOf(

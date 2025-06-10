@@ -104,7 +104,7 @@ class SystemTests {
                 .jsonPath("$.query.timespan.endDate").isEqualTo(endDate)
 
             if (hashtag.isNullOrBlank()) {
-                result.jsonPath("$.query.hashtag").isEmpty()
+                result.jsonPath("$.query.hashtag").doesNotExist()
             } else {
                 result.jsonPath("$.query.hashtag").isEqualTo(hashtag)
             }
@@ -257,13 +257,14 @@ class SystemTests {
 
 
         @Test
-        @DisplayName("GET /stats/user with good token and no topics")
+        @DisplayName("GET /stats/user with good token and statsTopics and topics")
         fun `get userstats with good token`() {
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
                     .path("/stats/user")
                     .queryParam("userId", "2186388")
                     .queryParam("hashtag", "hotosm-project-*")
+                    .queryParam("topics", listOf("edit", "road"))
                     .build()
             }
 
@@ -276,12 +277,12 @@ class SystemTests {
                 .isOk
                 .expectBody()
 
-            response
-                .jsonPath("$.result.topics").doesNotExist()
-                .jsonPath("$.result.userId").exists()
-                .jsonPath("$.result.changesets").exists()
-                .jsonPath("$.result.edits").exists()
+            println(response.returnResult())
 
+            response
+                .jsonPath("$.result.topics").exists()
+                .jsonPath("$.result.topics.edit").exists()
+                .jsonPath("$.result.topics.road").exists()
         }
 
         @Test
@@ -303,6 +304,8 @@ class SystemTests {
                 .expectStatus()
                 .isOk
                 .expectBody()
+
+            println(response.returnResult())
 
             response
                 .jsonPath("$.result.topics.road.value").isEqualTo(0.0)
@@ -613,11 +616,9 @@ class SystemTests {
 
             response
                 .jsonPath("$.result.$topic1.value").isEqualTo(-1)
-                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
                 .jsonPath("$.result.$topic2.value").isEqualTo(0)
                 .jsonPath("$.result.$topic2.value").isEqualTo(0)
                 .jsonPath("$.result.$topic2.modified.count_modified").isEqualTo(0)
-                .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
         }
     }
 

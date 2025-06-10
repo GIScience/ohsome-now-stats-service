@@ -17,10 +17,10 @@ fun Map<String, Any>.toTopicResult(topic: String) = TopicResult(
 
 @Suppress("LongParameterList")
 open class TopicResult(
-    open val topic: String,
-    open val added: Double,
-    open val modified: ModifiedSection,
-    open val deleted: Double,
+    open val topic: String?,
+    open val added: Double?,
+    open val modified: ModifiedSection?,
+    open val deleted: Double?,
     open val value: Double
 )
 
@@ -94,24 +94,20 @@ fun topicCountryResult(data: Map<String, Any>, topic: String) = TopicCountryResu
 
 @Suppress("LongParameterList")
 open class UserTopicResult(
-    topic: String,
-    added: Double,
-    modified: ModifiedSection,
-    deleted: Double,
+    added: Double?,
+    modified: ModifiedSection?,
+    deleted: Double?,
     value: Double,
-    open val userId: Int
-) : TopicResult(topic, added, modified, deleted, value)
+) : TopicResult(null, added, modified, deleted, value)
 
 
 fun Map<String, Any>.toUserTopicResult(topic: String) = UserTopicResult(
-    topic,
-    this["topic_result_created"].toString().toDouble(),
-    ModifiedSection(
+    this["topic_result_created"]?.toString()?.toDouble(),
+    if (topic in statsTopics) null else ModifiedSection(
         this["topic_result_modified"].toString().toDouble().toLong(),
         this["topic_result_modified_more"]?.toString()?.toDouble(),
         this["topic_result_modified_less"]?.toString()?.toDouble(),
     ),
-    this["topic_result_deleted"].toString().toDouble(),
+    this["topic_result_deleted"]?.toString()?.toDouble(),
     this["topic_result"].toString().toDouble(),
-    this["user_id"] as Int
 )

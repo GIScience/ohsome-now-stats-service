@@ -1,8 +1,6 @@
 package org.heigit.ohsome.now.statsservice.stats
 
-import org.heigit.ohsome.now.statsservice.topic.TopicCountryResult
-import org.heigit.ohsome.now.statsservice.topic.TopicResult
-import org.heigit.ohsome.now.statsservice.topic.TopicService
+import org.heigit.ohsome.now.statsservice.topic.*
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -215,22 +213,42 @@ class StatsService {
         .toUniqueHashtagsResult()
 
 
-    fun getStatsByUserId(userId: String, hashtag: String, topics: List<String>) = this.repo
-        .getStatsByUserId(userId, HashtagHandler(hashtag))
+    fun getStatsByUserId(userId: String, hashtag: String, topics: List<String>) = this
+        .addStatsTopics(userId, HashtagHandler(hashtag), StatsTopicsHandler(topics))
         .addTopicsByUserId(userId, hashtag, topics)
-        .toUserResult()
+        .toUserResult(userId)
 
-    private fun MutableMap<String, Any>.addTopicsByUserId(
+    private fun addStatsTopics(
+        userId: String,
+        hashtagHandler: HashtagHandler,
+        statsTopicsHandler: StatsTopicsHandler
+    ): Map<String, MutableMap<String, UserTopicResult>> {
+        val resultMap = mutableMapOf("topics" to mutableMapOf<String, UserTopicResult>())
+        if (!statsTopicsHandler.noStatsTopics) {
+            val result = this.repo.getStatsByUserId(userId, hashtagHandler, statsTopicsHandler)
+            for (topic in statsTopicsHandler.topics) {
+                resultMap["topics"]!![topic] =
+                    mapOf(
+                        "topic_result" to result[topic]!!,
+                    ).toUserTopicResult(
+                        topic
+                    )
+            }
+        }
+        return resultMap
+    }
+
+    private fun Map<String, MutableMap<String, UserTopicResult>>.addTopicsByUserId(
         userId: String,
         hashtag: String,
         topics: List<String>
     ): Map<String, Any> {
-        if (topics.isEmpty()) return this
-
-        this["topics"] = topicService.getTopicsByUserId(
-            userId,
-            topics,
-            hashtag
+        this["topics"]?.putAll(
+            topicService.getTopicsByUserId(
+                userId,
+                topics.filter { !statsTopics.contains(it) },
+                hashtag
+            )
         )
         return this
     }

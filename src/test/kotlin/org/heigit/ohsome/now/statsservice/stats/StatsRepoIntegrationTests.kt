@@ -321,7 +321,11 @@ class StatsRepoIntegrationTests {
 
     @Test
     fun `getStatsByUserIdAndHashtag returns stats for only one userid`() {
-        val result = this.repo.getStatsByUserId("2186388", HashtagHandler("hotosm-project-*"))
+        val result = this.repo.getStatsByUserId(
+            "2186388",
+            HashtagHandler("hotosm-project-*"),
+            StatsTopicsHandler(listOf("edit", "changeset"))
+        )
         println(result)
         assertTrue(result is MutableMap<String, *>)
         assertEquals(3, result.size)
@@ -330,7 +334,11 @@ class StatsRepoIntegrationTests {
 
     @Test
     fun `getStatsByUserIdAndHashtag returns zeros for unavailable user id`() {
-        val result = this.repo.getStatsByUserId("2186381", HashtagHandler("hotosm-project-*"))
+        val result = this.repo.getStatsByUserId(
+            "2186381",
+            HashtagHandler("hotosm-project-*"),
+            StatsTopicsHandler(listOf("edit", "user"))
+        )
         println(result)
         assertTrue(result is MutableMap<String, *>)
         assertEquals(2186381, result["user_id"])

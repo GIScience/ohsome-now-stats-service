@@ -109,19 +109,15 @@ data class MetadataResult(
 )
 
 
-fun Map<String, Any>.toUserResult() = UserResult(
-    this["topics"] as Map<String, UserTopicResult>?,
-    (this["edits"] as UnsignedLong).toLong(),
-    (this["changesets"] as UnsignedLong).toLong(),
-    this["user_id"] as Int
+fun Map<String, Any>.toUserResult(userId: String) = UserResult(
+    this["topics"] as Map<String, UserTopicResult>,
+    userId
 )
 
 
 data class UserResult(
-    val topics: Map<String, UserTopicResult>?,
-    val edits: Long,
-    val changesets: Long,
-    val userId: Int
+    val topics: Map<String, UserTopicResult>,
+    val userId: String
 )
 
 

@@ -44,9 +44,6 @@ class TopicRepoIntegrationTests {
     val topic = "place"
 
 
-
-
-
     private val emptyListCountryHandler = CountryHandler(emptyList())
     val bolivia = CountryHandler(listOf("BOL"))
     val liberia = CountryHandler(listOf("LBR"))
@@ -319,7 +316,7 @@ class TopicRepoIntegrationTests {
         println(result)
         assertTrue(result is MutableMap<String, *>)
         assertEquals(-1L, result["topic_result"])
-        assertEquals(5, result.size)
+        assertEquals(4, result.size)
     }
 
     @Test
@@ -344,7 +341,6 @@ class TopicRepoIntegrationTests {
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
-        assertEquals(6791950, result["user_id"])
         assertEquals(1L, result["topic_result"])
     }
 }

@@ -155,8 +155,7 @@ class TopicRepo {
             if ((current = 0) AND (before = 0), NULL, current - before) as edit
             
         SELECT 
-            ${topicHandler.topicResult()},
-        user_id
+            ${topicHandler.topicResult()}
         FROM topic_user_${topicHandler.topic}_$topicSchemaVersion
         WHERE
             ${hashtagHandler.optionalFilterSQL}

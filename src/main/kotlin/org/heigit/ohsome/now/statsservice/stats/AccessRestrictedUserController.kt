@@ -45,7 +45,7 @@ class AccessRestrictedUserController {
         authorization: String?,
 
         @Parameter(description = "topics")
-        @RequestParam("topics", required = false, defaultValue = "")
+        @RequestParam("topics", required = true)
         topics: List<@ValidTopic String>
     ): OhsomeFormat<UserResult> {
         if (authorization == null || authorization != "Basic ${appProperties.token}") {

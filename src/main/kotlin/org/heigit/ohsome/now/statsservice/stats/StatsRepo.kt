@@ -144,10 +144,9 @@ class StatsRepo {
 
 
     //language=sql
-    fun statsByUserIdSQL(hashtagHandler: HashtagHandler) = """
+    fun statsByUserIdSQL(hashtagHandler: HashtagHandler, statsTopicsHandler: StatsTopicsHandler) = """
         SELECT
-            count(map_feature_edit) as edits,
-            count(distinct changeset_id) as changesets, 
+            ${statsTopicsHandler.statsTopicSQL},
             user_id
         FROM "all_stats_user_$statsSchemaVersion"
         WHERE
@@ -295,12 +294,13 @@ class StatsRepo {
     @Suppress("LongMethod")
     fun getStatsByUserId(
         userId: String,
-        hashtagHandler: HashtagHandler
+        hashtagHandler: HashtagHandler,
+        statsTopicsHandler: StatsTopicsHandler
     ): MutableMap<String, Any> {
         logger.info("Getting HotOSM stats for user: $userId")
 
         return query {
-            it.select(statsByUserIdSQL(hashtagHandler))
+            it.select(statsByUserIdSQL(hashtagHandler, statsTopicsHandler))
                 .bind("userId", userId)
                 .bind("hashtag", hashtagHandler.hashtag)
                 .mapToMap()
@@ -342,7 +342,7 @@ class StatsRepo {
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
                 .mapTo(String::class.java)
-                .reduce { a, b -> a + "\n" + b }
+                .reduce { a, b -> "$a\n$b" }
         }
     }
 

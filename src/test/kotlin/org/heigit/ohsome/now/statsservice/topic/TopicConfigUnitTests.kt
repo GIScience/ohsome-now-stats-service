@@ -7,7 +7,7 @@ import org.junit.Test
 
 class TopicConfigUnitTests {
 
-    private val validNames = listOf("education", "poi", "amenity")
+    private val validNames = listOf("education", "poi", "amenity", "edit")
     private val mixedNames = listOf("education", "poi", "amenity", "kartoffelsupp")
 
 
@@ -18,7 +18,6 @@ class TopicConfigUnitTests {
         assertFalse(areTopicsValid(mixedNames))
 
     }
-
 
 
 }

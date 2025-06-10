@@ -35,22 +35,23 @@ class AccessRestrictedUserControllerMVCTests {
 
 
     val fakeResult = mutableMapOf(
-        "edits" to UnsignedLong.valueOf(34L),
-        "changesets" to UnsignedLong.valueOf(2L),
-        "user_id" to 4324
-    ).toUserResult()
+        "topics" to mapOf(
+            "edits" to mapOf("value" to UnsignedLong.valueOf(34L), "user_id" to 4324),
+            "changesets" to mapOf("value" to UnsignedLong.valueOf(2L), "user_id" to 4324)
+        ),
+    ).toUserResult("4324")
 
 
     @Test
     fun `statsByUserId returns stats for one user only`() {
 
-        `when`(statsService.getStatsByUserId(this.userId, "hotosm-project-*", emptyList()))
+        `when`(statsService.getStatsByUserId(this.userId, "hotosm-project-*", listOf("edit", "contributor")))
             .thenReturn(fakeResult)
 
         val GET = get("/stats/user")
             .queryParam("userId", userId)
             .queryParam("hashtag", "hotosm-project-*")
-            .queryParam("topics", "building,road")
+            .queryParam("topics", "edit,contributor")
             .header("Authorization", "Basic ${appProperties.token}")
 
 
@@ -70,6 +71,7 @@ class AccessRestrictedUserControllerMVCTests {
         val GET = get("/stats/user")
             .queryParam("userId", userId)
             .queryParam("hashtag", "hotosm-project-*")
+            .queryParam("topics", "building,road")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isForbidden)
@@ -86,6 +88,7 @@ class AccessRestrictedUserControllerMVCTests {
         val GET = get("/stats/user")
             .queryParam("userId", userId)
             .queryParam("hashtag", "hotosm-project-*")
+            .queryParam("topics", "edit,changeset")
             .header("Authorization", "Basic badToken")
 
         this.mockMvc.perform(GET)
