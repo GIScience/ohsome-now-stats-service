@@ -590,6 +590,7 @@ class SystemTests {
                 .jsonPath("$.result.$topic1").exists()
                 .jsonPath("$.result.$topic2").exists()
                 .jsonPath("$.result.lulc").exists()
+                .jsonPath("$.result.edit").exists()
                 .jsonPath("$.result.$topic1")
                 .isEqualTo("place in (country, state, region, province, district, county, municipality, city, borough, suburb, quarter, neighbourhood, town, village, hamlet, isolated_dwelling)")
         }

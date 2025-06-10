@@ -6,10 +6,14 @@ fun getAllTopicDefinitions() = validDefinitions()
 fun getTopicDefinitionByName(name: String) = validDefinitions()
     .find { it.topicName == name }!!
 
-val statsTopics = listOf("contributor", "edit", "changeset")
+val statsTopics = mapOf(
+    "contributor" to " The number of distinct users that edited OSM data",
+    "edit" to " The number of all OSM edits to \"map features\"",
+    "changeset" to "The number of changesets containing the OSM edits to \"map features\""
+)
 
 fun areTopicsValid(names: List<String>) = (
-        statsTopics
+        statsTopics.keys
                 + validDefinitions().map(TopicDefinition::topicName)
         ).containsAll(names)
 
@@ -231,10 +235,11 @@ private val topics = listOf(
 
 )
 
+
 fun buildTopicDefinitionMap(): Map<String, String> {
     val topicDefinitionsMap = mutableMapOf<String, String>()
     topics.forEach { topicDefinitionsMap[it.topicName] = it.buildTopicDefinitionString() }
-    return topicDefinitionsMap
+    return statsTopics + topicDefinitionsMap
 }
 
 
