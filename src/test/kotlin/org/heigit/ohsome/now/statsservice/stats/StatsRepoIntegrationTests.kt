@@ -172,9 +172,9 @@ class StatsRepoIntegrationTests {
     @Test
     fun `getStatsForTimeSpan returns all data on everything with only wildcard character`() {
         // wasn't sure about the sql behavior of startWith(""), but it seems that it selects everything like expected
-        // as of schema verison 3 startsWith("") counts all contributions which have hashtags
-        // querying only "*" in currently prohoboted by HashtagValidator
-        // if we want this behaviour, it could be optimized in HashtagHandler by filtering on has_hashtags
+        // as of schema version 3 startsWith("") counts all contributions which have hashtags
+        // querying only "*" is currently prohibited by HashtagValidator
+        // if we want this behavior, it could be optimized in HashtagHandler by filtering on has_hashtags
         val hashtagHandlerWildcard = HashtagHandler("*")
         val resultWildCard = this.repo.getStatsForTimeSpan(hashtagHandlerWildcard, null, null, emptyListCountryHandler)
 
@@ -298,7 +298,7 @@ class StatsRepoIntegrationTests {
     @Test
     fun `getStatsByH3 returns data aggregated by h3`() {
         val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getStatsByH3(hashtagHandler, null, null, StatsTopicsHandler(listOf("edit")))
+        val result = this.repo.getStatsByH3(hashtagHandler, null, null, StatsTopicsHandler(listOf("edit")), 3)
         println(result)
         assertTrue(result.contains("832830fffffffff"))
         assertTrue(result.contains("result,hex_cell\n"))
