@@ -271,7 +271,7 @@ class StatsController {
         @RequestParam(name = "enddate", required = false)
         endDate: Instant?,
 
-        @Parameter(description = "topic - this endpoint can only serves results for one topic at a time")
+        @Parameter(description = "topic - this endpoint can only serve results for one topic at a time")
         @RequestParam("topic", required = true)
         @ValidTopic
         topic: String,

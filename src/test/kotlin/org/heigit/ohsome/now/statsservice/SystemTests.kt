@@ -244,7 +244,7 @@ class SystemTests {
 
         @Test
         @DisplayName("GET /stats/h3")
-        fun `get statsH3 for edits`() {
+        fun `get statsH3 for edit`() {
 
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
@@ -272,7 +272,7 @@ class SystemTests {
             }
 
             assertBadRequestResponse(url)
-            
+
         }
 
 
