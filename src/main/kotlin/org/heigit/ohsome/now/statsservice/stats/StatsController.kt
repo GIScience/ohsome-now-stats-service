@@ -254,7 +254,7 @@ class StatsController {
         return buildOhsomeFormat(result, httpServletRequest)
     }
 
-
+    @Suppress("LongParameterList")
     @Operation(summary = "Returns live summary statistics grouped into h3 cells")
     @GetMapping("/stats/h3", produces = ["text/csv"])
     fun statsByH3(
@@ -274,9 +274,18 @@ class StatsController {
         @Parameter(description = "topic - this endpoint can only serves results for one topic at a time")
         @RequestParam("topic", required = true)
         @ValidTopic
-        topic: String
+        topic: String,
+
+        @Parameter(description = "h3 resolution")
+        @RequestParam(value = "resolution", required = false, defaultValue = "3")
+        @ValidResolution
+        resolution: Int,
+
+        @CountriesConfig
+        @RequestParam("countries", required = false, defaultValue = "")
+        countries: List<String>
     ): String {
-        return statsService.getStatsByH3(hashtag, startDate, endDate, topic)
+        return statsService.getStatsByH3(hashtag, startDate, endDate, topic, resolution, countries)
     }
 
     @Suppress("LongParameterList")

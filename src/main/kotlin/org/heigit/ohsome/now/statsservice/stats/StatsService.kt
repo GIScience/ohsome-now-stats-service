@@ -195,13 +195,28 @@ class StatsService {
         (this.find { it.country == countryMap["country"] }
             ?.value ?: 0.0)
 
-    fun getStatsByH3(hashtag: String, startDate: Instant?, endDate: Instant?, topic: String): String {
+    @Suppress("LongParameterList")
+    fun getStatsByH3(
+        hashtag: String,
+        startDate: Instant?,
+        endDate: Instant?,
+        topic: String,
+        resolution: Int,
+        countries: List<String>
+    ): String {
         val statsTopicHandler = StatsTopicsHandler(listOf(topic))
         return if (!statsTopicHandler.noStatsTopics)
             this.repo
-                .getStatsByH3(handler(hashtag), startDate, endDate, statsTopicHandler)
+                .getStatsByH3(
+                    handler(hashtag),
+                    startDate,
+                    endDate,
+                    statsTopicHandler,
+                    resolution,
+                    CountryHandler(countries)
+                )
         else this.topicService
-            .getTopicsByH3(hashtag, startDate, endDate, topic)
+            .getTopicsByH3(hashtag, startDate, endDate, topic, resolution, CountryHandler(countries))
     }
 
     fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?, countries: List<String>) = this.repo

@@ -28,6 +28,21 @@ class HashtagValidator : ConstraintValidator<ValidHashtag, String> {
 
 }
 
+@Target(VALUE_PARAMETER, TYPE)
+@Retention(RUNTIME)
+@Constraint(validatedBy = [ResolutionValidator::class])
+annotation class ValidResolution(
+    val message: String = "Currently only resolution 3 and 6 supported",
+    val groups: Array<KClass<*>> = [],
+    val payload: Array<KClass<out Payload>> = []
+)
+
+class ResolutionValidator : ConstraintValidator<ValidResolution, Int> {
+
+    override fun isValid(resolution: Int, context: ConstraintValidatorContext?) =
+        intArrayOf(3, 6).contains(resolution)
+
+}
 
 
 @Target(VALUE_PARAMETER, TYPE)
@@ -57,7 +72,7 @@ annotation class AtLeastOneMinuteInterval(
 
 class AtLeastOneMinuteIntervalValidator : ConstraintValidator<AtLeastOneMinuteInterval, String> {
 
-    override fun isValid(interval: String, context: ConstraintValidatorContext?) = ! isLessThanOneMinute(interval)
+    override fun isValid(interval: String, context: ConstraintValidatorContext?) = !isLessThanOneMinute(interval)
 
 }
 

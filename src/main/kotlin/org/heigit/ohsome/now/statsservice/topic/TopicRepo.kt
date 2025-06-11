@@ -148,7 +148,11 @@ class TopicRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun topicFromH3SQL(hashtagHandler: HashtagHandler, topicHandler: TopicHandler) = """
+    private fun topicFromH3SQL(
+        hashtagHandler: HashtagHandler,
+        topicHandler: TopicHandler,
+        countryHandler: CountryHandler
+    ) = """
         WITH
             ${topicHandler.valueLists()} 
             
@@ -157,12 +161,13 @@ class TopicRepo {
 
         SELECT
             ${topicHandler.topicMainResult()},
-            h3ToString(h3_r3) as hex
+            h3ToString(h3_r:resolution) as hex
         FROM topic_${topicHandler.topic}_$topicSchemaVersion
         WHERE
             ${hashtagHandler.optionalFilterSQL}
             changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            ${countryHandler.optionalFilterSQL}
         GROUP BY hex
         FORMAT CSV
     """.trimIndent()
@@ -267,17 +272,21 @@ class TopicRepo {
 
     }
 
+    @Suppress("LongParameterList")
     fun getTopicsByH3(
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?,
-        topicHandler: TopicHandler
+        topicHandler: TopicHandler,
+        resolution: Int,
+        countryHandler: CountryHandler
     ): String {
         return "result,hex_cell\n" + query {
-            it.createQuery(topicFromH3SQL(hashtagHandler, topicHandler))
+            it.createQuery(topicFromH3SQL(hashtagHandler, topicHandler, countryHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
+                .bind("resolution", resolution)
                 .mapTo(String::class.java)
                 .reduce { a, b -> "$a\n$b" }
         }

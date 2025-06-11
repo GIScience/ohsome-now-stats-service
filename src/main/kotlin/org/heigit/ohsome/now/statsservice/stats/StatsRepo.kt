@@ -128,15 +128,20 @@ class StatsRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    private fun statsFromH3SQL(hashtagHandler: HashtagHandler, statsTopicHandler: StatsTopicsHandler) = """
+    private fun statsFromH3SQL(
+        hashtagHandler: HashtagHandler,
+        statsTopicHandler: StatsTopicsHandler,
+        countryHandler: CountryHandler
+    ) = """
         SELECT
             ${statsTopicHandler.statsTopicSQL},
-            h3ToString(h3_r3) as hex
+            h3ToString(h3_r:resolution) as hex
         FROM "all_stats_$statsSchemaVersion"
         WHERE
             ${hashtagHandler.optionalFilterSQL}
             changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            ${countryHandler.optionalFilterSQL}
         GROUP BY hex
         FORMAT CSV
     """.trimIndent()
@@ -334,17 +339,21 @@ class StatsRepo {
 
     }
 
+    @Suppress("LongParameterList")
     fun getStatsByH3(
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?,
-        statsTopicHandler: StatsTopicsHandler
+        statsTopicHandler: StatsTopicsHandler,
+        resolution: Int,
+        countryHandler: CountryHandler,
     ): String {
         return "result,hex_cell\n" + query {
-            it.createQuery(statsFromH3SQL(hashtagHandler, statsTopicHandler))
+            it.createQuery(statsFromH3SQL(hashtagHandler, statsTopicHandler, countryHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
+                .bind("resolution", resolution)
                 .mapTo(String::class.java)
                 .reduce { a, b -> "$a\n$b" }
         }
