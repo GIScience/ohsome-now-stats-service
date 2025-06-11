@@ -309,8 +309,6 @@ class StatsRepoIntegrationTests {
     fun `getStatsForTimeSpanCountry aggregates data by country from all contributions with and without hashtags`() {
         val startDate = Instant.parse("2023-01-01T00:00:00Z")
         val endDate = Instant.parse("2024-01-01T00:00:00Z")
-//        val startDate = Instant.ofEpochSecond(0)
-//        val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("")
         val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
         println(result)
