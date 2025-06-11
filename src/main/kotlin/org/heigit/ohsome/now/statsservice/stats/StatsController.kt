@@ -256,7 +256,7 @@ class StatsController {
 
     @Suppress("LongParameterList")
     @Operation(summary = "Returns live summary statistics grouped into h3 cells")
-    @GetMapping("/stats/h3", produces = ["text/csv"])
+    @GetMapping("/stats/h3", produces = ["text/csv", "application/json"])
     fun statsByH3(
         @HashtagConfig
         @RequestParam(name = "hashtag", required = false, defaultValue = "")
