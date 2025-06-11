@@ -273,7 +273,8 @@ class StatsController {
 
         @Parameter(description = "topic - this endpoint can only serves results for one topic at a time")
         @RequestParam("topic", required = true)
-        topic: @ValidTopic String
+        @ValidTopic
+        topic: String
     ): String {
         return statsService.getStatsByH3(hashtag, startDate, endDate, topic)
     }

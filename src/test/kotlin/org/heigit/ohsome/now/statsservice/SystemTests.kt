@@ -260,6 +260,21 @@ class SystemTests {
 
         }
 
+        @Test
+        @DisplayName("GET /stats/h3 with invalid topic name throws bad request")
+        fun `get statsH3 with invalid topic name throws bad request`() {
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/h3")
+                    .queryParam("topic", "edits")
+                    .build()
+            }
+
+            assertBadRequestResponse(url)
+            
+        }
+
 
         @Test
         @DisplayName("GET /hashtags")
@@ -347,7 +362,7 @@ class SystemTests {
 
         @Test
         @DisplayName("GET /topic/kartoffelsupp?hashtag=osmliberia")
-        fun `a bad topic time leads to a  BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error - timeSpan`() {
+        fun `a bad topic time leads to a BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error - timeSpan`() {
 
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
