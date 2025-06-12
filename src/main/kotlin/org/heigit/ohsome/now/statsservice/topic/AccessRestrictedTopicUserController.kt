@@ -27,7 +27,7 @@ class AccessRestrictedTopicUserController {
     @Autowired
     lateinit var appProperties: AppProperties
 
-
+    @Deprecated("Use respective stats endpoint instead")
     @Operation(summary = "Returns aggregated topic statistics for a specific user.")
     @GetMapping("/topic/{topics}/user", produces = ["application/json"])
     @Suppress("LongParameterList")
