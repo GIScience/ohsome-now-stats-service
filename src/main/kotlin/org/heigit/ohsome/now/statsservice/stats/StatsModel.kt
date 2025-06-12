@@ -1,11 +1,14 @@
 package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
+import org.heigit.ohsome.now.statsservice.topic.TopicCountryResult
+import org.heigit.ohsome.now.statsservice.topic.TopicIntervalResultMinusTopic
 import org.heigit.ohsome.now.statsservice.topic.TopicResult
-import org.heigit.ohsome.now.statsservice.topic.UserTopicResult
+import org.heigit.ohsome.now.statsservice.topic.TopicResultMinusTopic
 import java.time.LocalDateTime
 
 
+// used in hashtags endpoint, do not remove
 fun Map<String, Any>.toStatsResult() = StatsResult(
     (this["changesets"] as UnsignedLong).toLong(),
     (this["users"] as UnsignedLong).toLong(),
@@ -13,6 +16,19 @@ fun Map<String, Any>.toStatsResult() = StatsResult(
     this["buildings"] as Long,
     (this["edits"] as UnsignedLong).toLong(),
     this["latest"].toString(),
+)
+
+@Suppress("LongParameterList")
+data class StatsResultWithTopics(
+    val topics: Map<String, TopicResult>
+)
+
+fun Map<String, TopicResult>.toStatsResult() = StatsResultWithTopics(this)
+
+data class StatsIntervalResultWithTopics(
+    var startDate: Array<LocalDateTime>?,
+    var endDate: Array<LocalDateTime>?,
+    val topics: MutableMap<String, TopicIntervalResultMinusTopic>
 )
 
 
@@ -69,6 +85,7 @@ data class StatsIntervalResult(
     val endDate: Array<LocalDateTime>
 )
 
+
 @Suppress("LongParameterList")
 class CountryStatsResult(
     changesets: Long,
@@ -79,6 +96,14 @@ class CountryStatsResult(
     latest: String,
     val country: String
 ) : StatsResult(changesets, users, roads, buildings, edits, latest)
+
+
+fun Map<String, List<TopicCountryResult>>.toStatsTopicCountryResult() = StatsTopicCountryResult(this)
+
+
+data class StatsTopicCountryResult(
+    val topics: Map<String, List<TopicCountryResult>>,
+)
 
 
 fun List<Map<String, Any>>.toHashtagResult() = this.map(::hashtagResult)
@@ -109,14 +134,14 @@ data class MetadataResult(
 )
 
 
-fun Map<String, Any>.toUserResult(userId: String) = UserResult(
-    this["topics"] as Map<String, UserTopicResult>,
+fun Map<String, TopicResultMinusTopic>.toUserResult(userId: String) = UserResult(
+    this,
     userId
 )
 
 
 data class UserResult(
-    val topics: Map<String, UserTopicResult>,
+    val topics: Map<String, TopicResultMinusTopic>,
     val userId: String
 )
 

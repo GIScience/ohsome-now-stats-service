@@ -33,7 +33,6 @@ class StatsController {
     fun stats(
         httpServletRequest: HttpServletRequest,
 
-
         @HashtagConfig
         @RequestParam("hashtag", required = false, defaultValue = "")
         @ValidHashtag
@@ -50,9 +49,13 @@ class StatsController {
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>,
-    ): OhsomeFormat<StatsResult> {
+
+        @Parameter(description = "topics")
+        @RequestParam("topics", required = true)
+        topics: List<@ValidTopic String>
+    ): OhsomeFormat<StatsResultWithTopics> {
         val result = measure {
-            statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries)
+            statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries, topics)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
@@ -100,7 +103,6 @@ class StatsController {
         @Parameter(description = "the hashtags to query for - case-insensitive and without the leading '#'")
         @PathVariable
         hashtags: List<@ValidHashtag String>,
-//        hashtags: List<@Valid Hashtag>,
 
         @StartDateConfig
         @RequestParam("startdate", required = false)
@@ -145,12 +147,16 @@ class StatsController {
 
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>
-    ): OhsomeFormat<StatsIntervalResult> {
+        countries: List<String>,
+
+        @Parameter(description = "topics")
+        @RequestParam("topics", required = true)
+        topics: List<@ValidTopic String>
+    ): OhsomeFormat<StatsIntervalResultWithTopics> {
 
 
         val result = measure {
-            statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries)
+            statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries, topics)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
@@ -202,6 +208,7 @@ class StatsController {
 
     @Operation(summary = "Returns live summary statistics for all contributions, optionally filtered by one hashtag, grouped by country")
     @GetMapping("/stats/country", produces = ["application/json"])
+    @Suppress("LongParameterList")
     fun statsCountry(
         httpServletRequest: HttpServletRequest,
 
@@ -216,11 +223,15 @@ class StatsController {
 
         @EndDateConfig
         @RequestParam(name = "enddate", required = false)
-        endDate: Instant?
-    ): OhsomeFormat<List<CountryStatsResult>> {
+        endDate: Instant?,
+
+        @Parameter(description = "topics")
+        @RequestParam("topics", required = true)
+        topics: List<@ValidTopic String>
+    ): OhsomeFormat<StatsTopicCountryResult> {
 
         val result = measure {
-            statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate)
+            statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate, topics)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)

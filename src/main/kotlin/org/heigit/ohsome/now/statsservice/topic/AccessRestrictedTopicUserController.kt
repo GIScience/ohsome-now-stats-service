@@ -7,8 +7,8 @@ import org.heigit.ohsome.now.statsservice.AppProperties
 import org.heigit.ohsome.now.statsservice.OhsomeFormat
 import org.heigit.ohsome.now.statsservice.buildOhsomeFormat
 import org.heigit.ohsome.now.statsservice.measure
+import org.heigit.ohsome.now.statsservice.topic.TopicResultMinusTopic
 import org.heigit.ohsome.now.statsservice.topic.TopicService
-import org.heigit.ohsome.now.statsservice.topic.UserTopicResult
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -48,7 +48,7 @@ class AccessRestrictedTopicUserController {
         @Parameter(description = "Hashtag which should be used for filtering")
         @RequestParam(name = "hashtag", required = false, defaultValue = "hotosm-project-*")
         hashtag: String
-    ): OhsomeFormat<Map<String, UserTopicResult>> {
+    ): OhsomeFormat<Map<String, TopicResultMinusTopic>> {
         if (authorization == null || authorization != "Basic ${appProperties.token}") {
             throw ResponseStatusException(HttpStatus.FORBIDDEN);
         }

@@ -86,6 +86,7 @@ class SystemTests {
                     .queryParamIfPresent("hashtag", Optional.ofNullable(hashtag))
                     .queryParam("startdate", startDate)
                     .queryParam("enddate", endDate)
+                    .queryParam("topics", listOf("changeset", "edit", "contributor", "building", "road"))
                     .build()
             }
 
@@ -94,12 +95,11 @@ class SystemTests {
             val result = doGetAndAssertThat(url)
 
             result
-                .jsonPath("$.result.changesets").isEqualTo(expectedChangesets)
-                .jsonPath("$.result.users").isEqualTo(expectedUsers)
-                .jsonPath("$.result.roads").isEqualTo(expectedRoads)
-                .jsonPath("$.result.buildings").isEqualTo(expectedBuildings)
-                .jsonPath("$.result.edits").isEqualTo(expectedEdits)
-                .jsonPath("$.result.latest").isEqualTo(expectedLatest)
+                .jsonPath("$.result.topics.changeset.value").isEqualTo(expectedChangesets)
+                .jsonPath("$.result.topics.contributor.value").isEqualTo(expectedUsers)
+                .jsonPath("$.result.topics.road.value").isEqualTo(expectedRoads)
+                .jsonPath("$.result.topics.building.value").isEqualTo(expectedBuildings)
+                .jsonPath("$.result.topics.edit.value").isEqualTo(expectedEdits)
                 .jsonPath("$.query.timespan.startDate").isEqualTo(startDate)
                 .jsonPath("$.query.timespan.endDate").isEqualTo(endDate)
 
@@ -214,7 +214,6 @@ class SystemTests {
 
         }
 
-
         @Test
         @DisplayName("GET /stats/&*/country")
         fun `get stats grouped by country`() {
@@ -241,6 +240,60 @@ class SystemTests {
                 .jsonPath("$.query.timespan.endDate").exists()
                 .jsonPath("$.query.hashtag").isEqualTo(hashtag)
         }
+
+        @Test
+        @DisplayName("GET /stats with statsTopics and topics")
+        fun `get stats with statsTopics and topics`() {
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats")
+                    .queryParam("topics", "edit,building")
+                    .build()
+            }
+
+            doGetAndAssertThat(url)
+                .jsonPath("$.result.topics.building").exists()
+                .jsonPath("$.result.topics.edit").exists()
+                .jsonPath("$.result.topics.edit.value").exists()
+        }
+
+        @Test
+        @DisplayName("GET /stats/interval with statsTopics and topics")
+        fun `get stats grouped by interval with statsTopics and topics`() {
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/interval")
+                    .queryParam("topics", "edit,building")
+                    .build()
+            }
+
+            doGetAndAssertThat(url)
+                .jsonPath("$.result.topics.building").exists()
+                .jsonPath("$.result.topics.edit").exists()
+                .jsonPath("$.result.topics.edit.value[0]").exists()
+        }
+
+        @Test
+        @DisplayName("GET /stats/country with statsTopics and topics")
+        fun `get stats grouped by country with statsTopics and topics`() {
+            val hashtag = "&*"
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/country")
+                    .queryParam("topics", "edit,building")
+                    .queryParam("hashtag", hashtag)
+                    .build()
+            }
+
+            doGetAndAssertThat(url)
+                .jsonPath("$.result.topics.building").exists()
+                .jsonPath("$.result.topics.edit").exists()
+                .jsonPath("$.result.topics.edit[0].value").isEqualTo(1)
+        }
+
 
         @Test
         @DisplayName("GET /stats/h3")
@@ -575,13 +628,10 @@ class SystemTests {
 
             doGetAndAssertThat(url)
                 .jsonPath("$.result.$topic1[0].value").isEqualTo(2)
-                .jsonPath("$.result.$topic1[0].topic").isEqualTo("place")
-                .jsonPath("$.result.$topic2[0].topic").isEqualTo("healthcare")
                 .jsonPath("$.result.$topic1[0].country").isEqualTo("BOL")
                 .jsonPath("$.result.$topic2[0].country").isEqualTo("BRA")
 
                 .jsonPath("$.result.$topic1[1].value").isEqualTo(2)
-                .jsonPath("$.result.$topic1[1].topic").isEqualTo("place")
                 .jsonPath("$.result.$topic1[1].country").isEqualTo("BRA")
                 .jsonPath("$.result.$topic2[1].country").isEqualTo("FRA")
 

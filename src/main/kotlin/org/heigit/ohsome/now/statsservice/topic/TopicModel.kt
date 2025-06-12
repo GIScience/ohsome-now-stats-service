@@ -5,13 +5,13 @@ import java.time.LocalDateTime
 
 fun Map<String, Any>.toTopicResult(topic: String) = TopicResult(
     topic,
-    (this["topic_result_created"].toString()).toDouble(),
-    ModifiedSection(
+    (this["topic_result_created"]?.toString())?.toDouble(),
+    if (topic in statsTopics) null else ModifiedSection(
         (this["topic_result_modified"].toString()).toDouble().toLong(),
         (this["topic_result_modified_more"]?.toString())?.toDouble(),
         (this["topic_result_modified_less"]?.toString())?.toDouble(),
     ),
-    (this["topic_result_deleted"].toString()).toDouble(),
+    (this["topic_result_deleted"]?.toString())?.toDouble(),
     (this["topic_result"].toString()).toDouble()
 )
 
@@ -40,13 +40,13 @@ data class ModifiedArraySection(
 @Suppress("LongParameterList")
 class TopicIntervalResult(
     val topic: String,
-    val added: DoubleArray,
-    val modified: ModifiedArraySection,
-    val deleted: DoubleArray,
-    val value: DoubleArray,
-    val startDate: Array<LocalDateTime>,
-    val endDate: Array<LocalDateTime>
-)
+    added: DoubleArray,
+    modified: ModifiedArraySection,
+    deleted: DoubleArray,
+    value: DoubleArray,
+    var startDate: Array<LocalDateTime>?,
+    var endDate: Array<LocalDateTime>?
+) : TopicIntervalResultMinusTopic(added, modified, deleted, value)
 
 
 fun Map<String, Any>.toTopicIntervalResult(topic: String) =
@@ -67,41 +67,40 @@ fun Map<String, Any>.toTopicIntervalResult(topic: String) =
 
 @Suppress("LongParameterList")
 open class TopicCountryResult(
-    topic: String,
-    added: Double,
-    modified: ModifiedSection,
-    deleted: Double,
+    added: Double?,
+    modified: ModifiedSection?,
+    deleted: Double?,
     value: Double,
     open val country: String
-) : TopicResult(topic, added, modified, deleted, value)
+) : TopicResult(null, added, modified, deleted, value)
 
 
 fun List<Map<String, Any>>.toTopicCountryResult(topic: String) = this.map { topicCountryResult(it, topic) }
 
 
 fun topicCountryResult(data: Map<String, Any>, topic: String) = TopicCountryResult(
-    topic,
-    (data["topic_result_created"].toString()).toDouble(),
-    ModifiedSection(
+    (data["topic_result_created"]?.toString())?.toDouble(),
+    if (topic in statsTopics) null else ModifiedSection(
         (data["topic_result_modified"].toString()).toDouble().toLong(),
         (data["topic_result_modified_more"]?.toString())?.toDouble(),
         (data["topic_result_modified_less"]?.toString())?.toDouble(),
     ),
-    (data["topic_result_deleted"].toString()).toDouble(),
+    (data["topic_result_deleted"]?.toString())?.toDouble(),
     (data["topic_result"].toString()).toDouble(),
     data["country"].toString()
 )
 
+//Todo: remove "MinusTopic" once everything else is deprecated
 @Suppress("LongParameterList")
-open class UserTopicResult(
-    added: Double?,
-    modified: ModifiedSection?,
-    deleted: Double?,
-    value: Double,
-) : TopicResult(null, added, modified, deleted, value)
+open class TopicResultMinusTopic(
+    open val added: Double?,
+    open val modified: ModifiedSection?,
+    open val deleted: Double?,
+    open val value: Double,
+)
 
 
-fun Map<String, Any>.toUserTopicResult(topic: String) = UserTopicResult(
+fun Map<String, Any>.toTopicResultMinusTopic(topic: String) = TopicResultMinusTopic(
     this["topic_result_created"]?.toString()?.toDouble(),
     if (topic in statsTopics) null else ModifiedSection(
         this["topic_result_modified"].toString().toDouble().toLong(),
@@ -111,3 +110,24 @@ fun Map<String, Any>.toUserTopicResult(topic: String) = UserTopicResult(
     this["topic_result_deleted"]?.toString()?.toDouble(),
     this["topic_result"].toString().toDouble(),
 )
+
+
+@Suppress("LongParameterList")
+open class TopicIntervalResultMinusTopic(
+    val added: DoubleArray?,
+    val modified: ModifiedArraySection?,
+    val deleted: DoubleArray?,
+    val value: DoubleArray,
+)
+
+fun Map<String, Any>.toTopicIntervalResultMinusTopic(topic: String) = TopicIntervalResultMinusTopic(
+    this["topic_result_created"] as? DoubleArray,
+    if (topic in statsTopics) null else ModifiedArraySection(
+        this["topic_result_modified"] as LongArray,
+        this["topic_result_modified_more"] as? DoubleArray,
+        this["topic_result_modified_less"] as? DoubleArray,
+    ),
+    this["topic_result_deleted"] as? DoubleArray,
+    this["topic_result"] as DoubleArray,
+)
+

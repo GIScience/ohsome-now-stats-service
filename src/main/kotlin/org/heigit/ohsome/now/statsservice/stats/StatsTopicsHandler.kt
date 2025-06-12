@@ -11,13 +11,20 @@ data class StatsTopicsHandler(var topics: List<String>) {
 
     val statsTopicSQL: String
 
+    val statsTopicAggregationSQL: String
+
     val noStatsTopics: Boolean
 
     init {
         this.topics = topics.intersect(statsTopicsDefinition.keys).toList()
         this.noStatsTopics = topics.isEmpty()
+
         statsTopicSQL =
             if (this.noStatsTopics) "" else this.topics.map { statsTopicsDefinition[it] }.reduce { a, b -> "$a,\n$b" }
                 .toString()
+
+        statsTopicAggregationSQL =
+            if (this.noStatsTopics) "" else this.topics.map { "groupArray($it::Float64) as $it" }
+                .reduce { a, b -> "$a,\n$b" }
     }
 }

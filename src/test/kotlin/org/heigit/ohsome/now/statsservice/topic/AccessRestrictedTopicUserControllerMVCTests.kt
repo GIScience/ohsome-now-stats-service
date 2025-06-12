@@ -41,14 +41,14 @@ class AccessRestrictedTopicUserControllerMVCTests {
             "topic_result_modified" to 0,
             "topic_result_deleted" to 1,
             "user_id" to 12312
-        ).toUserTopicResult(topics[0]),
+        ).toTopicResultMinusTopic(topics[0]),
         topics[1] to mutableMapOf(
             "topic_result" to 2,
             "topic_result_created" to 3,
             "topic_result_modified" to 0,
             "topic_result_deleted" to 1,
             "user_id" to 12312
-        ).toUserTopicResult(topics[0])
+        ).toTopicResultMinusTopic(topics[0])
     )
 
     @Test

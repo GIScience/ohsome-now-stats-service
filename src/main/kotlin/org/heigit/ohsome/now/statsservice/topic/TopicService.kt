@@ -68,7 +68,6 @@ class TopicService {
                     handler(countries),
                     TopicHandler(topic)
                 ).toTopicIntervalResult(topic)
-
         }
         return topicResults
     }
@@ -110,15 +109,15 @@ class TopicService {
         userId: String,
         topics: List<String>,
         hashtag: String
-    ): Map<String, UserTopicResult> {
-        val topicResults = mutableMapOf<String, UserTopicResult>()
+    ): Map<String, TopicResultMinusTopic> {
+        val topicResults = mutableMapOf<String, TopicResultMinusTopic>()
         for (topic in topics) {
             topicResults[topic] = this.repo
                 .getTopicbyUserId(
                     userId,
                     TopicHandler(topic),
                     HashtagHandler(hashtag)
-                ).toUserTopicResult(topic)
+                ).toTopicResultMinusTopic(topic)
         }
         return topicResults
     }

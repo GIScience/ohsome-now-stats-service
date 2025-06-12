@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.AppProperties
+import org.heigit.ohsome.now.statsservice.topic.toTopicResultMinusTopic
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +12,6 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -34,11 +34,12 @@ class AccessRestrictedUserControllerMVCTests {
     val userId = "12312"
 
 
-    val fakeResult = mutableMapOf(
-        "topics" to mapOf(
-            "edits" to mapOf("value" to UnsignedLong.valueOf(34L), "user_id" to 4324),
-            "changesets" to mapOf("value" to UnsignedLong.valueOf(2L), "user_id" to 4324)
-        ),
+    val fakeResult = mapOf(
+        "edit" to mapOf("topic_result" to UnsignedLong.valueOf(34L), "user_id" to 4324).toTopicResultMinusTopic("edit"),
+        "changeset" to mapOf(
+            "topic_result" to UnsignedLong.valueOf(2L),
+            "user_id" to 4324
+        ).toTopicResultMinusTopic("changeset")
     ).toUserResult("4324")
 
 

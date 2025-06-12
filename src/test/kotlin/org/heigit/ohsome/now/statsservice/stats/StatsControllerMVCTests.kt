@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.anyInstant
+import org.heigit.ohsome.now.statsservice.topic.toTopicResult
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -46,6 +47,14 @@ class StatsControllerMVCTests {
     private var exampleMultipleStatsData: Map<String, Any> = exampleStatsData + mapOf("hashtag" to hashtag)
 
     private var exampleStats: StatsResult = exampleStatsData.toStatsResult()
+    private var exampleStatsTopics: StatsResultWithTopics = StatsResultWithTopics(
+        mapOf(
+            "building" to mapOf(
+                "topic_result_modified" to exampleStatsData["buildings"]!!,
+                "topic_result" to exampleStatsData["buildings"]!!
+            ).toTopicResult("building")
+        )
+    )
     private var exampleMultipleStats: StatsResult = exampleMultipleStatsData.toStatsResult()
 
 
@@ -66,7 +75,7 @@ class StatsControllerMVCTests {
     @ParameterizedTest
     @ValueSource(
         strings = [
-            "/stats?hashtag=*",
+            "/stats?hashtag=*&topics=building",
             "/stats/*",
             "/stats/hashtags/*,hotosm*",
             "/stats/hashtags/hotosm*,*",
@@ -116,6 +125,9 @@ class StatsControllerMVCTests {
         `when`(this.statsService.getStatsForTimeSpan(matches(hashtag), any(), any(), anyList()))
             .thenReturn(exampleStats)
 
+        `when`(this.statsService.getStatsForTimeSpan(matches(hashtag), any(), any(), anyList(), anyList()))
+            .thenReturn(exampleStatsTopics)
+
         this.mockMvc
             .perform(get("/stats/$hashtag"))
             .andExpect(status().isOk)
@@ -125,10 +137,10 @@ class StatsControllerMVCTests {
             .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/&uganda"))
 
         this.mockMvc
-            .perform(get("/stats").queryParam("hashtag", hashtag))
+            .perform(get("/stats").queryParam("hashtag", hashtag).queryParam("topics", "building"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.result.buildings").value(123))
+            .andExpect(jsonPath("$.result.topics.building.value").value(123))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
             .andExpect { jsonPath("$.metadata.requestUrl").value("/stats?hashtag=&uganda") }
     }
@@ -139,6 +151,9 @@ class StatsControllerMVCTests {
 
         `when`(this.statsService.getStatsForTimeSpan("h*", null, null, listOf("UGA", "DE")))
             .thenReturn(exampleStats)
+
+        `when`(this.statsService.getStatsForTimeSpan("h*", null, null, listOf("UGA", "DE"), listOf("building")))
+            .thenReturn(exampleStatsTopics)
 
         this.mockMvc
             .perform(
@@ -152,13 +167,17 @@ class StatsControllerMVCTests {
 
         this.mockMvc
             .perform(
-                get("/stats?hashtag=h*").queryParam("countries", "UGA,DE")
+                get("/stats")
+                    .queryParam("hashtag", "h*")
+                    .queryParam("countries", "UGA,DE")
+                    .queryParam("topics", "building")
+
             )
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.result.buildings").value(123))
+            .andExpect(jsonPath("$.result.topics.building.value").value(123))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
-            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats?hashtag=h*&countries=UGA,DE"))
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats?hashtag=h*&countries=UGA,DE&topics=building"))
     }
 
 
@@ -232,12 +251,10 @@ class StatsControllerMVCTests {
         }
 
         performGetRequest(GET_DEPRECATED)
-            .andExpect { jsonPath("$.metadata.requestUrl")
-                .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M") }
-
-        performGetRequest(GET)
-            .andExpect { jsonPath("$.metadata.requestUrl")
-                .value("/stats/interval?hashtag=&uganda&startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M") }
+            .andExpect {
+                jsonPath("$.metadata.requestUrl")
+                    .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M")
+            }
     }
 
 
@@ -283,7 +300,8 @@ class StatsControllerMVCTests {
     @Test
     fun `stats per interval throws error for invalid interval string`() {
 
-        val expectedErrorMessage = """[{"message":"Invalid ISO8601 string as interval.","invalidValue":"bad_interval"}]"""
+        val expectedErrorMessage =
+            """[{"message":"Invalid ISO8601 string as interval.","invalidValue":"bad_interval"}]"""
 
         val GET = get("/stats/$hashtag/interval")
             .queryParam("startdate", "2017-10-01T04:00:00Z")
@@ -356,29 +374,6 @@ class StatsControllerMVCTests {
                 jsonPath("$.metadata.requestUrl")
                     .value("/stats/&uganda/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z")
             )
-
-        performGetRequest(GET)
-            .andExpect {
-                jsonPath("$.metadata.requestUrl")
-                    .value("/stats/country?hashtag=&uganda&startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z")
-            }
-
-
-//        this.mockMvc.perform(GET)
-//            .andExpect(status().isOk)
-//            .andExpect(content().contentType(APPLICATION_JSON))
-//            .andExpect(jsonPath("$.query.hashtag").value(hashtag))
-//            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
-//            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
-//            .andExpect(
-//                jsonPath("$.metadata.requestUrl")
-//                    .value("/stats/&uganda/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z")
-//            )
-//            .andExpect(
-//                jsonPath("$.query.hashtag")
-//                    .value("&uganda")
-//            )
-//            .andExpect(jsonPath("$.result.[0].country").value("xyz"))
     }
 
 
