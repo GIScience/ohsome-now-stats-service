@@ -18,7 +18,7 @@ class TopicController {
     @Autowired
     lateinit var topicService: TopicService
 
-
+    @Deprecated("use the respective stats endpoint instead")
     @Suppress("LongParameterList")
     @Operation(summary = "Get stats for a list of topics")
     @GetMapping("/topic/{topics}", produces = ["application/json"])
@@ -55,7 +55,7 @@ class TopicController {
         return buildOhsomeFormat(result, httpServletRequest)
     }
 
-
+    @Deprecated("use the respective stats endpoint instead")
     @Operation(summary = "Returns live summary statistics for a list of topics, optionally filtered by one hashtag, grouped by a given time interval")
     @GetMapping("/topic/{topics}/interval", produces = ["application/json"])
     @Suppress("LongParameterList")
@@ -97,7 +97,7 @@ class TopicController {
         return buildOhsomeFormat(result, httpServletRequest)
     }
 
-
+    @Deprecated("use the respective stats endpoint instead")
     @Operation(summary = "Returns live summary statistics for a list of topics, optionally filtered by one hashtag, grouped by country")
     @GetMapping("/topic/{topics}/country", produces = ["application/json"])
     @Suppress("LongParameterList")
@@ -141,7 +141,7 @@ class TopicController {
         )
         @RequestParam(name = "topics", required = false)
         topics: List<@ValidTopic String>?,
-        
+
         httpServletRequest: HttpServletRequest,
     ): OhsomeFormat<Map<String, String>> {
         val result = measure {
