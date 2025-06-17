@@ -6,6 +6,7 @@ data class StatsTopicsHandler(var topics: List<String>) {
     var statsTopicsDefinition = mapOf(
         "edit" to "count(map_feature_edit) as edit",
         "contributor" to "count(distinct user_id) as contributor",
+        "edit" to "count(map_feature_edit) as edit",
         "changeset" to "count(distinct changeset_id) as changeset"
     )
 
