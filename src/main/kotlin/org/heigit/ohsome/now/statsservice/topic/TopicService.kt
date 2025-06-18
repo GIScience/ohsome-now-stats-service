@@ -1,11 +1,13 @@
 package org.heigit.ohsome.now.statsservice.topic
 
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Instant
-
 
 //TODO: add unit or integration tests
 
@@ -23,14 +25,20 @@ class TopicService {
         endDate: Instant?,
         countries: List<String>,
         topics: List<String>
-    ): Map<String, TopicResult> {
-        val topicResults = mutableMapOf<String, TopicResult>()
-        for (topic in topics) {
-            topicResults[topic] = this.repo
-                .getTopicStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries), TopicHandler(topic))
-                .toTopicResult(topic)
+    ): Map<String, TopicResult> = runBlocking {
+        val deferredResults = topics.map { topic ->
+            async(IO) {
+                repo.getTopicStatsForTimeSpan(
+                    handler(hashtag),
+                    startDate,
+                    endDate,
+                    handler(countries),
+                    TopicHandler(topic)
+                ).toTopicResult(topic)
+            }.let { topic to it }
         }
-        return topicResults
+
+        deferredResults.associate { (topic, deferred) -> topic to deferred.await() }
     }
 
     fun getTopicStatsForTimeSpanAggregate(
@@ -56,11 +64,10 @@ class TopicService {
         interval: String,
         countries: List<String>,
         topics: List<String>
-    ): Map<String, TopicIntervalResult> {
-        val topicResults = mutableMapOf<String, TopicIntervalResult>()
-        for (topic in topics) {
-            topicResults[topic] = this.repo
-                .getTopicStatsForTimeSpanInterval(
+    ): Map<String, TopicIntervalResult> = runBlocking {
+        val deferredResults = topics.map { topic ->
+            async(IO) {
+                repo.getTopicStatsForTimeSpanInterval(
                     handler(hashtag),
                     startDate,
                     endDate,
@@ -68,8 +75,10 @@ class TopicService {
                     handler(countries),
                     TopicHandler(topic)
                 ).toTopicIntervalResult(topic)
+            }.let { topic to it }
         }
-        return topicResults
+
+        deferredResults.associate { (topic, deferred) -> topic to deferred.await() }
     }
 
 
@@ -78,19 +87,21 @@ class TopicService {
         startDate: Instant?,
         endDate: Instant?,
         topics: List<String>
-    ): Map<String, List<TopicCountryResult>> {
-        val topicResults = mutableMapOf<String, List<TopicCountryResult>>()
-        for (topic in topics) {
-            topicResults[topic] = this.repo
-                .getTopicStatsForTimeSpanCountry(
+    ): Map<String, List<TopicCountryResult>> = runBlocking {
+        val deferredResults = topics.map { topic ->
+            async(IO) {
+                repo.getTopicStatsForTimeSpanCountry(
                     handler(hashtag),
                     startDate,
                     endDate,
                     TopicHandler(topic)
                 ).toTopicCountryResult(topic)
+            }.let { topic to it }
         }
-        return topicResults
+
+        deferredResults.associate { (topic, deferred) -> topic to deferred.await() }
     }
+
 
     @Suppress("LongParameterList")
     fun getTopicsByH3(
