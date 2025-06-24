@@ -217,7 +217,6 @@ class TopicRepo {
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
-//                .setSqlLogger(Slf4JSqlLogger(logger))
                 .mapToMap()
                 .single()
         }
