@@ -167,6 +167,7 @@ class TopicRepo {
             ${hashtagHandler.optionalFilterSQL}
             changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            AND isNotNull(h3_r:resolution) 
             ${countryHandler.optionalFilterSQL}
         GROUP BY hex
         FORMAT CSV
