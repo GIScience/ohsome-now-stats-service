@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+import java.time.Instant
 
 
 @CrossOrigin
@@ -41,6 +42,14 @@ class AccessRestrictedUserController {
         @ValidHashtag
         hashtag: String,
 
+        @StartDateConfig
+        @RequestParam(name = "startdate", required = false)
+        startDate: Instant?,
+
+        @EndDateConfig
+        @RequestParam(name = "enddate", required = false)
+        endDate: Instant?,
+
         @RequestHeader(value = "Authorization", required = false)
         authorization: String?,
 
@@ -53,7 +62,7 @@ class AccessRestrictedUserController {
         }
 
         val result = measure {
-            statsService.getStatsByUserId(userId, hashtag, topics)
+            statsService.getStatsByUserId(userId, hashtag, topics, startDate, endDate)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)

@@ -46,7 +46,15 @@ class AccessRestrictedUserControllerMVCTests {
     @Test
     fun `statsByUserId returns stats for one user only`() {
 
-        `when`(statsService.getStatsByUserId(this.userId, "hotosm-project-*", listOf("edit", "contributor")))
+        `when`(
+            statsService.getStatsByUserId(
+                this.userId,
+                "hotosm-project-*",
+                listOf("edit", "contributor"),
+                null,
+                null
+            )
+        )
             .thenReturn(fakeResult)
 
         val GET = get("/stats/user")
@@ -67,7 +75,7 @@ class AccessRestrictedUserControllerMVCTests {
 
         // service must never be called because auth happens before service invocation
         verify(statsService, never())
-            .getStatsByUserId(anyString(), anyString(), anyList())
+            .getStatsByUserId(anyString(), anyString(), anyList(), any(), any())
 
         val GET = get("/stats/user")
             .queryParam("userId", userId)
@@ -84,7 +92,7 @@ class AccessRestrictedUserControllerMVCTests {
 
         // service must never be called because auth happens before service invocation
         verify(statsService, never())
-            .getStatsByUserId(anyString(), anyString(), anyList())
+            .getStatsByUserId(anyString(), anyString(), anyList(), any(), any())
 
         val GET = get("/stats/user")
             .queryParam("userId", userId)

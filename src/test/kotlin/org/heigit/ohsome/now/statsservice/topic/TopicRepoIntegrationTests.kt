@@ -311,7 +311,9 @@ class TopicRepoIntegrationTests {
         val result = this.repo.getTopicbyUserId(
             "4362353",
             TopicHandler(topic),
-            HashtagHandler("hotosm-project-*")
+            HashtagHandler("hotosm-project-*"),
+            null,
+            null
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -324,7 +326,9 @@ class TopicRepoIntegrationTests {
         val result = this.repo.getTopicbyUserId(
             "2381",
             TopicHandler(topic),
-            HashtagHandler("hotosm-project-*")
+            HashtagHandler("hotosm-project-*"),
+            null,
+            null
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -337,7 +341,9 @@ class TopicRepoIntegrationTests {
         val result = this.repo.getTopicbyUserId(
             "6791950",
             TopicHandler("building"),
-            HashtagHandler("&uganda")
+            HashtagHandler("&uganda"),
+            null,
+            null
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)

@@ -189,6 +189,8 @@ class TopicRepo {
         WHERE
             ${hashtagHandler.optionalFilterSQL}
             user_id = :userId
+            AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY user_id
         """
 
@@ -292,16 +294,21 @@ class TopicRepo {
         }
     }
 
+    @Suppress("LongParameterList", "CyclomaticComplexMethod")
     fun getTopicbyUserId(
         userId: String,
         topicHandler: TopicHandler,
-        hashtagHandler: HashtagHandler
+        hashtagHandler: HashtagHandler,
+        startDate: Instant?,
+        endDate: Instant?
     ): Map<String, Any> {
         logger.info("Getting topic stats for user: $userId, topic: ${topicHandler.topic}")
         return query {
             it.select(topicByUserIdSQL(topicHandler, hashtagHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("userId", userId)
+                .bind("startDate", startDate ?: EPOCH)
+                .bind("endDate", endDate ?: now())
                 .mapToMap()
                 .singleOrNull()
                 ?: defaultTopicResultForMissingUser(userId, topicHandler.definition.aggregationStrategy.toString())

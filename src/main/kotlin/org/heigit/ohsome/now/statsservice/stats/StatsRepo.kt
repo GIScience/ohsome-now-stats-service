@@ -226,6 +226,8 @@ class StatsRepo {
         WHERE
             ${hashtagHandler.optionalFilterSQL}
             user_id = :userId 
+            AND changeset_timestamp > parseDateTimeBestEffort(:startDate) 
+            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
         GROUP BY user_id
         ;
     """.trimIndent()
@@ -435,11 +437,13 @@ class StatsRepo {
      * @param userId the osm userid which should be queried.
      * @return A list of maps containing the statistics for all hotTM projects.
      */
-    @Suppress("LongMethod")
+    @Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod")
     fun getStatsByUserId(
         userId: String,
         hashtagHandler: HashtagHandler,
-        statsTopicsHandler: StatsTopicsHandler
+        statsTopicsHandler: StatsTopicsHandler,
+        startDate: Instant?,
+        endDate: Instant?
     ): MutableMap<String, Any> {
         logger.info("Getting HotOSM stats for user: $userId")
 
@@ -447,6 +451,8 @@ class StatsRepo {
             it.select(statsByUserIdSQL(hashtagHandler, statsTopicsHandler))
                 .bind("userId", userId)
                 .bind("hashtag", hashtagHandler.hashtag)
+                .bind("startDate", startDate ?: EPOCH)
+                .bind("endDate", endDate ?: now())
                 .mapToMap()
                 .singleOrNull()
                 ?: defaultResultForMissingUser(userId)

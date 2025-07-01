@@ -404,33 +404,47 @@ class StatsService {
         .getUniqueHashtags()
         .toUniqueHashtagsResult()
 
-
-    fun getStatsByUserId(userId: String, hashtag: String, topics: List<String>) = this
-        .addStatsTopicsByUserId(userId, HashtagHandler(hashtag), StatsTopicsHandler(topics))
-        .addTopicsByUserId(userId, hashtag, topics.filter { !statsTopics.contains(it) })
+    @Suppress("LongParameterList")
+    fun getStatsByUserId(
+        userId: String,
+        hashtag: String,
+        topics: List<String>,
+        startDate: Instant?,
+        endDate: Instant?
+    ) = this
+        .addStatsTopicsByUserId(userId, HashtagHandler(hashtag), StatsTopicsHandler(topics), startDate, endDate)
+        .addTopicsByUserId(userId, hashtag, topics.filter { !statsTopics.contains(it) }, startDate, endDate)
         .toUserResult(userId)
 
+    @Suppress("LongParameterList")
     private fun addStatsTopicsByUserId(
         userId: String,
         hashtagHandler: HashtagHandler,
-        statsTopicsHandler: StatsTopicsHandler
+        statsTopicsHandler: StatsTopicsHandler,
+        startDate: Instant?,
+        endDate: Instant?
     ): MutableMap<String, TopicResultMinusTopic> {
         if (statsTopicsHandler.noStatsTopics) return mutableMapOf()
 
-        val result = repo.getStatsByUserId(userId, hashtagHandler, statsTopicsHandler)
+        val result = repo.getStatsByUserId(userId, hashtagHandler, statsTopicsHandler, startDate, endDate)
         return statsTopicsHandler.topics.associateWith { topic ->
             mapOf("topic_result" to result[topic]!!).toTopicResultMinusTopic(topic)
         }.toMutableMap()
     }
 
+    @Suppress("LongParameterList")
     private fun MutableMap<String, TopicResultMinusTopic>.addTopicsByUserId(
         userId: String,
         hashtag: String,
-        topics: List<String>
+        topics: List<String>,
+        startDate: Instant?,
+        endDate: Instant?
     ) = this + topicService.getTopicsByUserId(
         userId,
         topics,
-        hashtag
+        hashtag,
+        startDate,
+        endDate
     )
 
     private fun handler(hashtag: String) = HashtagHandler(hashtag)

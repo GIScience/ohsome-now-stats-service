@@ -115,11 +115,13 @@ class TopicService {
         this.repo
             .getTopicsByH3(handler(hashtag), startDate, endDate, TopicHandler(topic), resolution, countryHandler)
 
-
+    @Suppress("LongParameterList")
     fun getTopicsByUserId(
         userId: String,
         topics: List<String>,
-        hashtag: String
+        hashtag: String,
+        startDate: Instant?,
+        endDate: Instant?
     ): Map<String, TopicResultMinusTopic> {
         val topicResults = mutableMapOf<String, TopicResultMinusTopic>()
         for (topic in topics) {
@@ -127,7 +129,9 @@ class TopicService {
                 .getTopicbyUserId(
                     userId,
                     TopicHandler(topic),
-                    HashtagHandler(hashtag)
+                    HashtagHandler(hashtag),
+                    startDate,
+                    endDate
                 ).toTopicResultMinusTopic(topic)
         }
         return topicResults

@@ -2,6 +2,7 @@ package org.heigit.ohsome.now.statsservice.topic
 
 import org.heigit.ohsome.now.statsservice.AppProperties
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyList
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
@@ -58,7 +59,9 @@ class AccessRestrictedTopicUserControllerMVCTests {
             topicService.getTopicsByUserId(
                 this.userId,
                 listOf(topics[0]),
-                "hotosm-project-*"
+                "hotosm-project-*",
+                null,
+                null
             )
         )
             .thenReturn(fakeResult)
@@ -81,7 +84,7 @@ class AccessRestrictedTopicUserControllerMVCTests {
 
         // service must never be called because auth happens before service invocation
         verify(topicService, never())
-            .getTopicsByUserId(anyString(), anyList(), anyString())
+            .getTopicsByUserId(anyString(), anyList(), anyString(), any(), any())
 
 
         val GET = MockMvcRequestBuilders.get("/topic/place/user")
@@ -96,7 +99,7 @@ class AccessRestrictedTopicUserControllerMVCTests {
     fun `statsHotTMUserStats returns forbidden with wrong token`() {
         // service must never be called because auth happens before service invocation
         verify(topicService, never())
-            .getTopicsByUserId(anyString(), anyList(), anyString())
+            .getTopicsByUserId(anyString(), anyList(), anyString(), any(), any())
 
         val GET = MockMvcRequestBuilders.get("/topic/place/user")
             .queryParam("userId", "12312")

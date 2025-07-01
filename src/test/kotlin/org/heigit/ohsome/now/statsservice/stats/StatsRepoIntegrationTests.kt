@@ -331,7 +331,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsByUserId(
             "2186388",
             HashtagHandler("hotosm-project-*"),
-            StatsTopicsHandler(listOf("edit", "changeset"))
+            StatsTopicsHandler(listOf("edit", "changeset")), null, null
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -344,7 +344,9 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getStatsByUserId(
             "2186381",
             HashtagHandler("hotosm-project-*"),
-            StatsTopicsHandler(listOf("edit", "user"))
+            StatsTopicsHandler(listOf("edit", "user")),
+            null,
+            null
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)

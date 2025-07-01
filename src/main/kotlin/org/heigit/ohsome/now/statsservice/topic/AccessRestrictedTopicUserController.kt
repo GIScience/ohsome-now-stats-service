@@ -54,7 +54,7 @@ class AccessRestrictedTopicUserController {
         }
 
         val result = measure {
-            topicService.getTopicsByUserId(userId, topics, hashtag)
+            topicService.getTopicsByUserId(userId, topics, hashtag, null, null)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
