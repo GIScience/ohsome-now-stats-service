@@ -44,7 +44,7 @@ class AccessRestrictedUserController {
         @RequestHeader(value = "Authorization", required = false)
         authorization: String?,
 
-        @Parameter(description = "topics")
+        @TopicsConfig
         @RequestParam("topics", required = true)
         topics: List<@ValidTopic String>
     ): OhsomeFormat<UserResult> {

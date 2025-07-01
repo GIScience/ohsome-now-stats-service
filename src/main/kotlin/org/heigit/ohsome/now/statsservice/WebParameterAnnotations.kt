@@ -9,25 +9,39 @@ import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
 
 @Target(VALUE_PARAMETER)
 @Retention(RUNTIME)
-@Parameter(description = "the hashtag to query for - case-insensitive and without the leading '#'", example = "missingmaps")
-annotation class HashtagConfig { }
+@Parameter(
+    description = "the hashtag to query for - case-insensitive and without the leading '#'",
+    example = "missingmaps"
+)
+annotation class HashtagConfig {}
 
 
 @Target(VALUE_PARAMETER)
 @Retention(RUNTIME)
 @DateTimeFormat(iso = DATE_TIME)
-@Parameter(description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)", example = "2024-01-01T00:00:00Z")
-annotation class StartDateConfig { }
+@Parameter(
+    description = "the (inclusive) start date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)",
+    example = "2024-01-01T00:00:00Z"
+)
+annotation class StartDateConfig {}
 
 
 @Target(VALUE_PARAMETER)
 @Retention(RUNTIME)
 @DateTimeFormat(iso = DATE_TIME)
-@Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)", example = "2025-01-01T00:00:00Z")
-annotation class EndDateConfig { }
+@Parameter(
+    description = "the (exclusive) end date for the query in ISO format (e.g. 2020-01-01T00:00:00Z)",
+    example = "2025-01-01T00:00:00Z"
+)
+annotation class EndDateConfig {}
 
 
 @Target(VALUE_PARAMETER)
 @Retention(RUNTIME)
 @Parameter(description = "A comma separated list of countries as ISO 3166-1 alpha-3 codes, can also only be one country, e.g. 'DEU'")
 annotation class CountriesConfig {}
+
+@Target(VALUE_PARAMETER)
+@Retention(RUNTIME)
+@Parameter(description = "A comma separated list of topics. Get an overview of valid topics from topic/definition.")
+annotation class TopicsConfig {}

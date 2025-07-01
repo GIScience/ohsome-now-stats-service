@@ -50,7 +50,7 @@ class StatsController {
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>,
 
-        @Parameter(description = "topics")
+        @TopicsConfig
         @RequestParam("topics", required = true)
         topics: List<@ValidTopic String>
     ): OhsomeFormat<StatsResultWithTopics> {
@@ -149,7 +149,7 @@ class StatsController {
         @RequestParam("countries", required = false, defaultValue = "")
         countries: List<String>,
 
-        @Parameter(description = "topics")
+        @TopicsConfig
         @RequestParam("topics", required = true)
         topics: List<@ValidTopic String>
     ): OhsomeFormat<StatsIntervalResultWithTopics> {
@@ -225,7 +225,7 @@ class StatsController {
         @RequestParam(name = "enddate", required = false)
         endDate: Instant?,
 
-        @Parameter(description = "topics")
+        @TopicsConfig
         @RequestParam("topics", required = true)
         topics: List<@ValidTopic String>
     ): OhsomeFormat<StatsTopicCountryResult> {
