@@ -60,7 +60,7 @@ class SystemTests {
         fun hashtagProvider(): Stream<Arguments> = Stream.of(
             Arguments.of(null, 4, 4, 1.983, 2, 3, "2017-12-19T00:52:03Z"),
             Arguments.of("", 4, 4, 1.983, 2, 3, "2017-12-19T00:52:03Z"),
-            Arguments.of(normalHashtag, 1, 1, 1.059, 1, 0, "2017-12-19T00:52:03Z"),
+            Arguments.of(normalHashtag, 1, 1, 1.059, 2, 0, "2017-12-19T00:52:03Z"),
             Arguments.of(wildcardHashtag, 1, 1, 0.0, 0, 1, "2016-03-05T14:00:20Z")
         )
 
@@ -74,7 +74,6 @@ class SystemTests {
             expectedRoads: Double,
             expectedBuildings: Int,
             expectedEdits: Int,
-            expectedLatest: String
         ) {
 
             val startDate = "2015-01-01T00:00:00Z"
@@ -131,7 +130,7 @@ class SystemTests {
                 .jsonPath("$.result.changesets").isEqualTo(1)
                 .jsonPath("$.result.users").isEqualTo(1)
                 .jsonPath("$.result.roads").isEqualTo(1.059)
-                .jsonPath("$.result.buildings").isEqualTo(1)
+                .jsonPath("$.result.buildings").isEqualTo(2)
                 .jsonPath("$.result.edits").isEqualTo(0)
                 .jsonPath("$.result.latest").isEqualTo("2017-12-19T00:52:03Z")
 
@@ -166,7 +165,41 @@ class SystemTests {
                 .jsonPath("$.result.$hashtag2.changesets").isEqualTo(1)
                 .jsonPath("$.result.$hashtag2.users").isEqualTo(1)
                 .jsonPath("$.result.$hashtag2.roads").isEqualTo(-0.36)
-                .jsonPath("$.result.$hashtag2.buildings").isEqualTo(1)
+                .jsonPath("$.result.$hashtag2.buildings").isEqualTo(2)
+                .jsonPath("$.result.$hashtag2.edits").isEqualTo(0)
+
+                .jsonPath("$.result.$hashtag2.latest").isEqualTo("2017-12-19T00:52:03Z")
+
+                .jsonPath("$.query.timespan.startDate").exists()
+                .jsonPath("$.query.timespan.endDate").exists()
+        }
+
+        @Test
+        @DisplayName("GET /stats/hashtags/&*")
+        fun `get stats grouped by multiple hashtags with wildcard operator`() {
+            val hashtag1 = "&group"
+            val hashtag2 = "&uganda"
+
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/hashtags/&*")
+                    .build()
+            }
+
+
+            doGetAndAssertThat(url)
+                .jsonPath("$.result.$hashtag1.changesets").isEqualTo(1)
+                .jsonPath("$.result.$hashtag1.users").isEqualTo(1)
+                .jsonPath("$.result.$hashtag1.roads").isEqualTo(0)
+                .jsonPath("$.result.$hashtag1.buildings").isEqualTo(0)
+                .jsonPath("$.result.$hashtag1.edits").isEqualTo(7)
+                .jsonPath("$.result.$hashtag1.latest").isEqualTo("2021-12-09T13:01:28Z")
+
+                .jsonPath("$.result.$hashtag2.changesets").isEqualTo(1)
+                .jsonPath("$.result.$hashtag2.users").isEqualTo(1)
+                .jsonPath("$.result.$hashtag2.roads").isEqualTo(-0.36)
+                .jsonPath("$.result.$hashtag2.buildings").isEqualTo(2)
                 .jsonPath("$.result.$hashtag2.edits").isEqualTo(0)
 
                 .jsonPath("$.result.$hashtag2.latest").isEqualTo("2017-12-19T00:52:03Z")

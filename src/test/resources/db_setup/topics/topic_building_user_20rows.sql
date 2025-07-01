@@ -12,7 +12,7 @@ VALUES
     (parseDateTimeBestEffort('2017-12-19 00:52:03'),['&uganda'],6791950,['UGA'],'yes','yes',true),
     (parseDateTimeBestEffort('2017-12-19 00:52:03'),['&uganda'],6791950,['UGA'],'yes','yes',true),
     (parseDateTimeBestEffort('2017-12-19 00:52:03'),['&uganda'],6791950,['UGA'],'yes','',true),
-    (parseDateTimeBestEffort('2015-01-11 15:55:45'),['&ui-state'],893327,['ITA'],'yes','',true),
+    (parseDateTimeBestEffort('2015-01-11 15:55:45'),['&uganda'],893327,['ITA'],'yes','',true),
     (parseDateTimeBestEffort('2020-10-05 02:09:48'),['+243'],11876234,['COD'],'yes','',true),
     (parseDateTimeBestEffort('2020-10-05 02:09:48'),['+243'],11876234,['COD'],'yes','',true),
     (parseDateTimeBestEffort('2020-10-05 02:09:48'),['+243'],11876234,['COD'],'yes','',true),

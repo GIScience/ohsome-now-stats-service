@@ -154,7 +154,7 @@ class StatsService {
 
         var topicIndex = 0
         this.forEach { result ->
-            if (topicResults[topicIndex].first == result["hashtag"]) {
+            if (topicResults.getOrElse(topicIndex) { Pair(null, null) }.first == result["hashtag"]) {
                 result[resultObjectKey] = getTopicResultInCorrectDataType(resultObjectKey, topicResults, topicIndex++)
             } else {
                 result[resultObjectKey] = defaultZero
