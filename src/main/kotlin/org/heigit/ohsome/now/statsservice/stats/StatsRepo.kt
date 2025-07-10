@@ -30,8 +30,9 @@ class StatsRepo {
 
     fun defaultResultForMissingUser(userId: String): MutableMap<String, Any> = mutableMapOf(
         "user_id" to userId.toInt(),
-        "edits" to UnsignedLong.valueOf(0),
-        "changesets" to UnsignedLong.valueOf(0)
+        "contributor" to 1,
+        "edit" to UnsignedLong.valueOf(0),
+        "changeset" to UnsignedLong.valueOf(0)
     )
 
     @Deprecated("remove together with controller")

@@ -351,8 +351,9 @@ class StatsRepoIntegrationTests {
         println(result)
         assertTrue(result is MutableMap<String, *>)
         assertEquals(2186381, result["user_id"])
-        assertEquals(UnsignedLong.valueOf(0), result["edits"])
-        assertEquals(UnsignedLong.valueOf(0), result["changesets"])
+        assertEquals(UnsignedLong.valueOf(0), result["edit"])
+        assertEquals(UnsignedLong.valueOf(0), result["changeset"])
+        assertEquals(1, result["contributor"])
     }
 
 
