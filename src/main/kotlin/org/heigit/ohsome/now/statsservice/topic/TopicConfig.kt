@@ -157,6 +157,14 @@ private val topics = listOf(
     ),
 
 
+    TopicDefinition(
+        "power",
+        listOf(
+            KeyOnlyMatcher("power"),
+        )
+    ),
+
+
     // TODO: DEPRECATED!!! USE ROAD INSTEAD
     TopicDefinition(
         "highway",
