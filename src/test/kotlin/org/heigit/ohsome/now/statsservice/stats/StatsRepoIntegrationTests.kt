@@ -61,7 +61,7 @@ class StatsRepoIntegrationTests {
         assertEquals(5, result.size)
         println(result)
         assertEquals(
-            "{changesets=7, users=6, edits=16, latest=2023-06-29T12:48:45Z, hashtag=}",
+            "{changesets=7, users=6, edits=16, latest=2023-06-29T12:50Z, hashtag=}",
             result.toString()
         )
     }

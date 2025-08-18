@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 
 @WebMvcTest(StatsController::class)
@@ -40,7 +41,7 @@ class StatsControllerMVCTests {
         "roads" to 43534.5,
         "buildings" to 123L,
         "edits" to UnsignedLong.valueOf(213124L),
-        "latest" to "20.05.2053",
+        "latest" to OffsetDateTime.parse("2023-06-29T12:50Z"),
         "changesets" to UnsignedLong.valueOf(2),
     )
 
@@ -419,13 +420,18 @@ class StatsControllerMVCTests {
     fun `metadata should return max_timestamp and min_timestamp`() {
 
         `when`(this.statsService.getMetadata())
-            .thenReturn(mapOf("max_timestamp" to "2021-12-09T13:01:28").toMetadataResult())
+            .thenReturn(
+                mapOf(
+                    "max_timestamp" to OffsetDateTime.parse("2021-12-09T13:01:28Z"),
+                    "min_timestamp" to OffsetDateTime.parse("2000-12-09T13:01:28Z")
+                ).toMetadataResult()
+            )
 
         this.mockMvc
             .perform(get("/metadata"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.result.max_timestamp").value("2021-12-09T13:01:28"))
+            .andExpect(jsonPath("$.result.max_timestamp").value("2021-12-09T13:01:28Z"))
     }
 
 

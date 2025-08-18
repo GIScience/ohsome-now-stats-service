@@ -14,6 +14,7 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import java.time.Instant
 import java.time.Instant.now
+import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit.SECONDS
 
 
@@ -59,7 +60,7 @@ class CachingTests {
         "roads" to 43534.5,
         "buildings" to 123L,
         "edits" to UnsignedLong.valueOf(213124L),
-        "latest" to "20.05.2053",
+        "latest" to OffsetDateTime.parse("2023-06-29T12:50:00Z"),
         "changesets" to UnsignedLong.valueOf(2),
     )
 

@@ -740,6 +740,32 @@ class SystemTests {
         }
     }
 
+    @Nested
+    @DisplayName("for meta queries")
+    @WithStatsData
+    inner class MetaQueries {
+        @Test
+        fun `metadata request always returns seconds`() {
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/metadata")
+                    .build()
+            }
+
+            val response = client()
+                .get()
+                .uri(url)
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody()
+
+            response
+                .jsonPath("$.result.max_timestamp").isEqualTo("2023-06-29T12:50:00Z")
+
+        }
+    }
+
 
     private fun doGetAndAssertThat(url: (UriBuilder) -> URI) = client()
         .get()

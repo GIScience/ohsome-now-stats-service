@@ -4,6 +4,7 @@ import com.clickhouse.data.value.UnsignedLong
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 
 class StatsModelTests {
@@ -22,7 +23,7 @@ class StatsModelTests {
         "roads" to 43534.5,
         "buildings" to 123L,
         "edits" to UnsignedLong.valueOf(213124L),
-        "latest" to "20.05.2053",
+        "latest" to OffsetDateTime.parse("2021-12-09T13:01:28Z"),
     )
 
     private val intervalMap = mapOf(
@@ -56,7 +57,7 @@ class StatsModelTests {
         assertThat(result.roads).isEqualTo(43534.5)
         assertThat(result.buildings).isEqualTo(123L)
         assertThat(result.edits).isEqualTo(213124L)
-        assertThat(result.latest).isEqualTo("20.05.2053")
+        assertThat(result.latest).isEqualTo("2021-12-09T13:01:28Z")
     }
 
 

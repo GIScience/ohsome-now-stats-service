@@ -6,6 +6,8 @@ import org.heigit.ohsome.now.statsservice.topic.TopicIntervalResultMinusTopic
 import org.heigit.ohsome.now.statsservice.topic.TopicResult
 import org.heigit.ohsome.now.statsservice.topic.TopicResultMinusTopic
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_INSTANT
 
 
 // used in hashtags endpoint, do not remove
@@ -15,7 +17,7 @@ fun Map<String, Any>.toStatsResult() = StatsResult(
     this["roads"] as Double,
     this["buildings"] as Long,
     (this["edits"] as UnsignedLong).toLong(),
-    this["latest"].toString(),
+    (this["latest"] as OffsetDateTime).format(ISO_INSTANT)
 )
 
 @Suppress("LongParameterList")
@@ -58,7 +60,7 @@ fun countryStatsResult(data: Map<String, Any>) = CountryStatsResult(
     data["roads"] as Double,
     data["buildings"] as Long,
     (data["edits"] as UnsignedLong).toLong(),
-    data["latest"].toString(),
+    (data["latest"] as OffsetDateTime).format(ISO_INSTANT),
     data["country"].toString(),
 )
 
@@ -123,8 +125,8 @@ data class HashtagResult(
 
 fun Map<String, Any>.toMetadataResult(): MetadataResult =
     MetadataResult(
-        this["max_timestamp"].toString(),
-        this["min_timestamp"].toString()
+        (this["max_timestamp"] as OffsetDateTime).format(ISO_INSTANT),
+        (this["min_timestamp"] as OffsetDateTime).format(ISO_INSTANT)
     )
 
 

@@ -42,8 +42,8 @@ VALUES
     (114743252, toDateTime(1513644723), ['&test'], 'JOSM', 123456, 'node/7805319', NULL,                      true, ['DE'], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff')),
     (114743252, toDateTime(1513644723), ['&test'], 'JOSM', 123456, 'way/21875648', NULL,                      true, [], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff')),
     (114743252, toDateTime(1513644723), ['&test'], 'JOSM', 123456, 'way/64192853', NULL,                      true, ['DE'], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff')),
-    (114743252, toDateTime(1688042925), ['&test'], 'JOSM', 123456, 'node/102547876', 0,                       true, ['DE'], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff')),
-    (114743252, toDateTime(1688042925), ['hotosm-project-12312'], 'JOSM', 2186388, 'node/102547876', 1,       true, ['DE'], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff')),
-    (114743252, toDateTime(1688042925), ['hotosm-project-12312'], 'JOSM', 2186388, 'node/102547876', 1,       true, ['DE'], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff')),
-  (114743252, toDateTime(1688042925), [], 'JOSM', 12345678, 'node/102547876', 1, false, ['DE'], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff'))
+    (114743252, toDateTime(1688043000), ['&test'], 'JOSM', 123456, 'node/102547876', 0,                       true, ['DE'], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff')),
+    (114743252, toDateTime(1688043000), ['hotosm-project-12312'], 'JOSM', 2186388, 'node/102547876', 1,       true, ['DE'], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff')),
+    (114743252, toDateTime(1688043000), ['hotosm-project-12312'], 'JOSM', 2186388, 'node/102547876', 1,       true, ['DE'], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff')),
+  (114743252, toDateTime(1688043000), [], 'JOSM', 12345678, 'node/102547876', 1, false, ['DE'], stringToH3('832830fffffffff'), stringToH3('8630eafffffffff'))
 ;
