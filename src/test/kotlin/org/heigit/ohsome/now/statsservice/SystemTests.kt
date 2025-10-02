@@ -111,7 +111,7 @@ class SystemTests {
 
 
         @Test
-        @DisplayName("GET /stats/&uganda")
+        @DisplayName("GET /stats?hashtag=&uganda")
         fun `get stats for hashtag`() {
 
             val hashtag = "&uganda"
@@ -120,19 +120,20 @@ class SystemTests {
 
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
-                    .path("/stats/$hashtag")
+                    .path("/stats")
+                    .queryParam("hashtag", hashtag)
+                    .queryParam("topics", "changeset,edit,contributor,building,road")
                     .queryParam("startdate", startDate)
                     .queryParam("enddate", endDate)
                     .build()
             }
 
             doGetAndAssertThat(url)
-                .jsonPath("$.result.changesets").isEqualTo(1)
-                .jsonPath("$.result.users").isEqualTo(1)
-                .jsonPath("$.result.roads").isEqualTo(1.059)
-                .jsonPath("$.result.buildings").isEqualTo(2)
-                .jsonPath("$.result.edits").isEqualTo(0)
-                .jsonPath("$.result.latest").isEqualTo("2017-12-19T00:52:03Z")
+                .jsonPath("$.result.topics.changeset.value").isEqualTo(1)
+                .jsonPath("$.result.topics.contributor.value").isEqualTo(1)
+                .jsonPath("$.result.topics.road.value").isEqualTo(1.059)
+                .jsonPath("$.result.topics.building.value").isEqualTo(2)
+                .jsonPath("$.result.topics.edit.value").isEqualTo(0)
 
                 .jsonPath("$.query.timespan.startDate").isEqualTo(startDate)
                 .jsonPath("$.query.timespan.endDate").isEqualTo(endDate)
@@ -210,7 +211,7 @@ class SystemTests {
 
 
         @Test
-        @DisplayName("GET /stats/&group/interval?interval=P1Y")
+        @DisplayName("GET /stats/interval?hashtag=&group&interval=P1Y")
         fun `get stats grouped by time interval`() {
 
             val hashtag = "&group"
@@ -218,8 +219,10 @@ class SystemTests {
 
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
-                    .path("/stats/$hashtag/interval")
+                    .path("/stats/interval")
+                    .queryParam("hashtag", hashtag)
                     .queryParam("interval", interval)
+                    .queryParam("topics", "changeset,edit,contributor,building,road")
                     .build()
             }
 
@@ -227,18 +230,18 @@ class SystemTests {
             doGetAndAssertThat(url)
 
                 // no results in 1970
-                .jsonPath("$.result.changesets[0]").isEqualTo(0)
-                .jsonPath("$.result.users[0]").isEqualTo(0)
-                .jsonPath("$.result.roads[0]").isEqualTo(0)
-                .jsonPath("$.result.buildings[0]").isEqualTo(0)
-                .jsonPath("$.result.edits[0]").isEqualTo(0)
+                .jsonPath("$.result.topics.changeset.value[0]").isEqualTo(0)
+                .jsonPath("$.result.topics.contributor.value[0]").isEqualTo(0)
+                .jsonPath("$.result.topics.road.value[0]").isEqualTo(0)
+                .jsonPath("$.result.topics.building.value[0]").isEqualTo(0)
+                .jsonPath("$.result.topics.edit.value[0]").isEqualTo(0)
 
                 // some results in 2021
-                .jsonPath("$.result.changesets[51]").isEqualTo(1)
-                .jsonPath("$.result.users[51]").isEqualTo(1)
-                .jsonPath("$.result.roads[51]").isEqualTo(0)
-                .jsonPath("$.result.buildings[51]").isEqualTo(0)
-                .jsonPath("$.result.edits[51]").isEqualTo(7)
+                .jsonPath("$.result.topics.changeset.value[51]").isEqualTo(1)
+                .jsonPath("$.result.topics.contributor.value[51]").isEqualTo(1)
+                .jsonPath("$.result.topics.road.value[51]").isEqualTo(0)
+                .jsonPath("$.result.topics.building.value[51]").isEqualTo(0)
+                .jsonPath("$.result.topics.edit.value[51]").isEqualTo(7)
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
@@ -248,26 +251,26 @@ class SystemTests {
         }
 
         @Test
-        @DisplayName("GET /stats/&*/country")
+        @DisplayName("GET /stats/country?hashtag=&*")
         fun `get stats grouped by country`() {
 
             val hashtag = "&*"
 
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
-                    .path("/stats/$hashtag/country")
+                    .path("/stats/country")
+                    .queryParam("hashtag", hashtag)
+                    .queryParam("topics", "changeset,edit,contributor,building,road")
                     .build()
             }
 
             doGetAndAssertThat(url)
-                .jsonPath("$.result[0].changesets").isEqualTo(3)
-                .jsonPath("$.result[0].users").isEqualTo(2)
-                .jsonPath("$.result[0].roads").isEqualTo(0.0)
-                .jsonPath("$.result[0].buildings").isEqualTo(0)
-                .jsonPath("$.result[0].edits").isEqualTo(1)
-
-                .jsonPath("$.result[0].latest").isEqualTo("2021-12-09T13:01:28Z")
-                .jsonPath("$.result[0].country").isEqualTo("BEL")
+                .jsonPath("$.result.topics.changeset[0].value").isEqualTo(3)
+                .jsonPath("$.result.topics.contributor[0].value").isEqualTo(2)
+                .jsonPath("$.result.topics.road[0].value").isEqualTo(-0.36)
+                .jsonPath("$.result.topics.building[0].value").isEqualTo(0)
+                .jsonPath("$.result.topics.edit[0].value").isEqualTo(1)
+                .jsonPath("$.result.topics.changeset[0].country").isEqualTo("BEL")
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
@@ -441,236 +444,9 @@ class SystemTests {
 
         val topic1 = "place"
         val topic2 = "healthcare"
-        val topic3 = "amenity"
-        val topic4 = "waterway"
-        val topics = listOf(topic1, topic2, topic4)
+        val topic3 = "waterway"
+        val topics = listOf(topic1, topic2, topic3)
 
-
-        @Test
-        @DisplayName("GET /topic/kartoffelsupp?hashtag=osmliberia")
-        fun `a bad topic time leads to a BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error - timeSpan`() {
-
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/topic/kartoffelsupp")
-                    .queryParam("hashtag", "osmliberia")
-                    .build()
-            }
-
-            assertBadRequestResponse(url)
-        }
-
-
-        @Test
-        @DisplayName("GET /topic/kartoffelsupp/interval?hashtag=osmliberia&interval=P1M")
-        fun `a bad topic time leads to a  BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error - by interval`() {
-
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/topic/kartoffelsupp/interval")
-                    .queryParam("hashtag", "osmliberia")
-                    .queryParam("interval", "P1M")
-                    .build()
-            }
-
-            assertBadRequestResponse(url)
-        }
-
-
-        @Test
-        @DisplayName("GET /topic/kartoffelsupp/country?hashtag=osmliberia")
-        fun `a bad topic time leads to a  BAD_REQUEST (400) error instead of a INTERNAL_SERVER_ERROR (500) error - by country`() {
-
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/topic/kartoffelsupp/country")
-                    .queryParam("hashtag", "osmliberia")
-                    .build()
-            }
-
-            assertBadRequestResponse(url)
-        }
-
-
-        @Test
-        @DisplayName("GET /topic/amenity?hashtag=osmliberia")
-        fun `get topic amenity`() {
-
-            val hashtag = "hotosm-project-osmliberia"
-
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/topic/$topic3")
-                    .queryParam("hashtag", hashtag)
-                    .build()
-            }
-
-            doGetAndAssertThat(url)
-                .jsonPath("$.result.$topic3.value").isEqualTo(23)
-                .jsonPath("$.result.$topic3.topic").isEqualTo(topic3)
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
-        }
-
-
-        @Test
-        @DisplayName("GET /topic/place,healthcare,waterway?hashtag=hotmicrogrant*")
-        fun `get topics place and healthcare and waterway`() {
-
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/topic/${topics.joinToString(separator = ",")}")
-                    .queryParam("hashtag", "hotmicrogrant*")
-                    .build()
-            }
-
-            doGetAndAssertThat(url)
-                .jsonPath("$.result.$topic1.value").isEqualTo(5)
-                //TODO: check if this is a bug: should be 'hotmicrogrant*' instead of 'hotmicrogrant'
-                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-                .jsonPath("$.result.$topic2.topic").isEqualTo("healthcare")
-                .jsonPath("$.result.$topic2.value").isEqualTo(2)
-                .jsonPath("$.result.$topic4.topic").isEqualTo("waterway")
-                .jsonPath("$.result.$topic4.value").isEqualTo(2.207)
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
-        }
-
-
-        @Test
-        @DisplayName("GET /topic/place,healthcare/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M")
-        fun `get topics place and healthcare by interval`() {
-
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/topic/${topics.joinToString(separator = ",")}/interval")
-                    .queryParam("hashtag", "hotmicrogrant*")
-                    .queryParam("startdate", "2015-01-01T00:00:00Z")
-                    .queryParam("enddate", "2018-01-01T00:00:00Z")
-                    .queryParam("interval", "P1M")
-                    .build()
-            }
-
-            doGetAndAssertThat(url)
-                .jsonPath("$.result.$topic1.value[0]").isEqualTo(3)
-                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1.startDate[0]").isEqualTo("2015-01-01T00:00:00")
-                .jsonPath("$.result.$topic1.endDate[0]").isEqualTo("2015-02-01T00:00:00")
-                .jsonPath("$.result.$topic2.startDate[0]").isEqualTo("2015-01-01T00:00:00")
-                .jsonPath("$.result.$topic2.endDate[0]").isEqualTo("2015-02-01T00:00:00")
-
-                .jsonPath("$.result.$topic1.value[35]").isEqualTo(2)
-                .jsonPath("$.result.$topic2.value[35]").isEqualTo(0)
-                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1.startDate[35]").isEqualTo("2017-12-01T00:00:00")
-                .jsonPath("$.result.$topic1.endDate[35]").isEqualTo("2018-01-01T00:00:00")
-                .jsonPath("$.result.$topic2.startDate[35]").isEqualTo("2017-12-01T00:00:00")
-                .jsonPath("$.result.$topic2.endDate[35]").isEqualTo("2018-01-01T00:00:00")
-
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
-        }
-
-
-        @Test
-        @DisplayName("GET /topic/place,healthcare/interval?hashtag=hotmicrogrant*&startdate=2015-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z&interval=P1M&countries=BOL")
-        fun `get topics place and healthcare by interval for one country`() {
-
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/topic/${topics.joinToString(separator = ",")}/interval")
-                    .queryParam("hashtag", "hotmicrogrant*")
-                    .queryParam("startdate", "2015-01-01T00:00:00Z")
-                    .queryParam("enddate", "2018-01-01T00:00:00Z")
-                    .queryParam("interval", "P1M")
-                    .queryParam("countries", "BOL")
-                    .build()
-            }
-
-            doGetAndAssertThat(url)
-                .jsonPath("$.result.$topic1.value[0]").isEqualTo(0)
-                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1.startDate[0]").isEqualTo("2015-01-01T00:00:00")
-                .jsonPath("$.result.$topic1.endDate[0]").isEqualTo("2015-02-01T00:00:00")
-                .jsonPath("$.result.$topic2.startDate[0]").isEqualTo("2015-01-01T00:00:00")
-                .jsonPath("$.result.$topic2.endDate[0]").isEqualTo("2015-02-01T00:00:00")
-
-                .jsonPath("$.result.$topic1.value[35]").isEqualTo(2)
-                .jsonPath("$.result.$topic1.modified.unit_more").doesNotExist()
-                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1.startDate[35]").isEqualTo("2017-12-01T00:00:00")
-                .jsonPath("$.result.$topic1.endDate[35]").isEqualTo("2018-01-01T00:00:00")
-
-                .jsonPath("$.result.$topic4.value[35]").isEqualTo(0)
-                .jsonPath("$.result.$topic4.modified.unit_more[35]").isEqualTo(0.0)
-                .jsonPath("$.result.$topic4.topic").isEqualTo("waterway")
-                .jsonPath("$.result.$topic4.startDate[35]").isEqualTo("2017-12-01T00:00:00")
-                .jsonPath("$.result.$topic4.endDate[35]").isEqualTo("2018-01-01T00:00:00")
-
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
-        }
-
-
-        @Test
-        @DisplayName("GET /topic/place,healthcare/interval?hashtag=hotmicrogrant*&enddate=2018-01-01T00:00:00Z&interval=P1M")
-        fun `get topics place and healthcare by interval for all countries without start date`() {
-
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/topic/${topics.joinToString(separator = ",")}/interval")
-                    .queryParam("hashtag", "hotmicrogrant*")
-                    .queryParam("enddate", "2018-01-01T00:00:00Z")
-                    .queryParam("interval", "P1Y")
-                    .build()
-            }
-
-            doGetAndAssertThat(url)
-                .jsonPath("$.result.$topic1.value[0]").isEqualTo(0)
-                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1.startDate[0]").isEqualTo("1970-01-01T00:00:00")
-                .jsonPath("$.result.$topic1.endDate[0]").isEqualTo("1971-01-01T00:00:00")
-
-                .jsonPath("$.result.$topic1.value[45]").isEqualTo(3)
-                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1.startDate[45]").isEqualTo("2015-01-01T00:00:00")
-                .jsonPath("$.result.$topic1.endDate[45]").isEqualTo("2016-01-01T00:00:00")
-
-                .jsonPath("$.result.$topic1.value[47]").isEqualTo(2)
-                .jsonPath("$.result.$topic1.topic").isEqualTo("place")
-                .jsonPath("$.result.$topic1.startDate[47]").isEqualTo("2017-01-01T00:00:00")
-                .jsonPath("$.result.$topic1.endDate[47]").isEqualTo("2018-01-01T00:00:00")
-
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
-        }
-
-
-        @Test
-        @DisplayName("GET /topic/place,healthcare/country?hashtag=*&startdate=1970-01-01T00:00:00Z&enddate=2018-01-01T00:00:00Z")
-        fun `get topics place and healthcare by country`() {
-
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/topic/${topics.joinToString(separator = ",")}/country")
-                    .queryParam("hashtag", "h*")
-                    .queryParam("startdate", "1970-01-01T00:00:00Z")
-                    .queryParam("enddate", "2024-01-01T00:00:00Z")
-                    .build()
-            }
-
-            doGetAndAssertThat(url)
-                .jsonPath("$.result.$topic1[0].value").isEqualTo(2)
-                .jsonPath("$.result.$topic1[0].country").isEqualTo("BOL")
-                .jsonPath("$.result.$topic2[0].country").isEqualTo("BRA")
-
-                .jsonPath("$.result.$topic1[1].value").isEqualTo(2)
-                .jsonPath("$.result.$topic1[1].country").isEqualTo("BRA")
-                .jsonPath("$.result.$topic2[1].country").isEqualTo("FRA")
-
-                .jsonPath("$.query.timespan.startDate").exists()
-                .jsonPath("$.query.timespan.endDate").exists()
-        }
 
         @Test
         @DisplayName("GET /topic/definition/ for place and healthcare")
@@ -710,33 +486,6 @@ class SystemTests {
                 .jsonPath("$.result.edit").exists()
                 .jsonPath("$.result.$topic1")
                 .isEqualTo("place in (country, state, region, province, district, county, municipality, city, borough, suburb, quarter, neighbourhood, town, village, hamlet, isolated_dwelling)")
-        }
-
-
-        @Test
-        @DisplayName("GET /topic/place,healthcare/user?userid=4362353")
-        fun `get userstats topics with good token`() {
-            val url = { uriBuilder: UriBuilder ->
-                uriBuilder
-                    .path("/topic/$topic1,$topic2/user")
-                    .queryParam("userId", "4362353")
-                    .build()
-            }
-
-            val response = client()
-                .get()
-                .uri(url)
-                .header("Authorization", "Basic ${appProperties.token}")
-                .exchange()
-                .expectStatus()
-                .isOk
-                .expectBody()
-
-            response
-                .jsonPath("$.result.$topic1.value").isEqualTo(-1)
-                .jsonPath("$.result.$topic2.value").isEqualTo(0)
-                .jsonPath("$.result.$topic2.value").isEqualTo(0)
-                .jsonPath("$.result.$topic2.modified.count_modified").isEqualTo(0)
         }
     }
 

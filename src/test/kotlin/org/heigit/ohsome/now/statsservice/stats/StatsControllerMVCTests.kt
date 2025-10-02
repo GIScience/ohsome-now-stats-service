@@ -2,6 +2,9 @@ package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.anyInstant
+import org.heigit.ohsome.now.statsservice.topic.TopicCountryResult
+import org.heigit.ohsome.now.statsservice.topic.TopicResult
+import org.heigit.ohsome.now.statsservice.topic.toTopicIntervalResult
 import org.heigit.ohsome.now.statsservice.topic.toTopicResult
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -36,58 +39,86 @@ class StatsControllerMVCTests {
     private lateinit var mockMvc: MockMvc
 
 
-    private var exampleStatsData: Map<String, Any> = mapOf(
-        "users" to UnsignedLong.valueOf(1001L),
-        "roads" to 43534.5,
-        "buildings" to 123L,
-        "edits" to UnsignedLong.valueOf(213124L),
-        "latest" to OffsetDateTime.parse("2023-06-29T12:50Z"),
-        "changesets" to UnsignedLong.valueOf(2),
+    private var exampleStatsData: Map<String, TopicResult> = mapOf(
+        "contributor" to mapOf("topic_result" to 1001.0).toTopicResult("contributor"),
+        "road" to mapOf("topic_result" to 43534.5, "topic_result_modified" to 43534).toTopicResult("road"),
+        "building" to mapOf("topic_result" to 123.0, "topic_result_modified" to 123).toTopicResult("building"),
+        "edit" to mapOf("topic_result" to 213124.0).toTopicResult("edit"),
+        "changeset" to mapOf("topic_result" to 2.0).toTopicResult("changeset"),
     )
 
-    private var exampleMultipleStatsData: Map<String, Any> = exampleStatsData + mapOf("hashtag" to hashtag)
+    private var exampleStats: StatsResultWithTopics = exampleStatsData.toStatsResult()
 
-    private var exampleStats: StatsResult = exampleStatsData.toStatsResult()
-    private var exampleStatsTopics: StatsResultWithTopics = StatsResultWithTopics(
-        mapOf(
+    private var exampleIntervalStats = StatsIntervalResultWithTopics(
+        arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+        arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+        mutableMapOf(
+            "contributor" to mapOf(
+                "topic_result" to doubleArrayOf(1001.0),
+                "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+                "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+            ).toTopicIntervalResult("contributor"),
+            "road" to mapOf(
+                "topic_result" to doubleArrayOf(43534.5),
+                "topic_result_modified" to longArrayOf(43534),
+                "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+                "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+            ).toTopicIntervalResult("road"),
             "building" to mapOf(
-                "topic_result_modified" to exampleStatsData["buildings"]!!,
-                "topic_result" to exampleStatsData["buildings"]!!
-            ).toTopicResult("building")
+                "topic_result" to doubleArrayOf(123.0),
+                "topic_result_modified" to longArrayOf(123),
+                "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+                "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+            ).toTopicIntervalResult("building"),
+            "edit" to mapOf(
+                "topic_result" to doubleArrayOf(213124.0),
+                "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+                "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+            ).toTopicIntervalResult("edit"),
+            "changeset" to mapOf(
+                "topic_result" to doubleArrayOf(1.0),
+                "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+                "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+            ).toTopicIntervalResult("changeset")
         )
     )
-    private var exampleMultipleStats: StatsResult = exampleMultipleStatsData.toStatsResult()
-
-
-    private var exampleIntervalStatsData = mapOf(
-        "users" to longArrayOf(1001L),
-        "roads" to doubleArrayOf(43534.5),
-        "buildings" to doubleArrayOf(123.0),
-        "edits" to longArrayOf(213124L),
-        "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
-        "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
-        "changesets" to longArrayOf(2)
-    )
-
-    private var exampleIntervalStats = exampleIntervalStatsData.toIntervalStatsResult()
-
 
     @Suppress("DANGEROUS_CHARACTERS")
     @ParameterizedTest
     @ValueSource(
         strings = [
             "/stats?hashtag=*&topics=building",
-            "/stats/*",
             "/stats/hashtags/*,hotosm*",
             "/stats/hashtags/hotosm*,*",
             "/stats/hashtags/a,*,b",
-            "/stats/*/interval?interval=P1M",
-            "/stats/*/country"
+            "/stats/interval?hashtag=*&interval=P1M&topics=building",
+            "/stats/country?hashtag=*&&topics=building"
         ]
     )
     fun `all requests with '*' hashtag throw error`(url: String) {
 
         val expectedErrorMessage = """[{"message":"Hashtag must not be '*'","invalidValue":"*"}]"""
+
+        val GET = get(url)
+
+        this.mockMvc
+            .perform(GET)
+            .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
+    }
+
+    @Suppress("DANGEROUS_CHARACTERS")
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "/stats?hashtag=whatever&topics=wrooong",
+            "/stats/interval?hashtag=whatever&interval=P1M&topics=wrooong",
+            "/stats/country?hashtag=whatever&&topics=wrooong",
+        ]
+    )
+    fun `all requests with invalid topic name throw error`(url: String) {
+
+        val expectedErrorMessage = """[{"message":"Topic not valid","invalidValue":"wrooong"}]"""
 
         val GET = get(url)
 
@@ -123,19 +154,8 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats can be served without explicit timespans`() {
-        `when`(this.statsService.getStatsForTimeSpan(matches(hashtag), any(), any(), anyList()))
-            .thenReturn(exampleStats)
-
         `when`(this.statsService.getStatsForTimeSpan(matches(hashtag), any(), any(), anyList(), anyList()))
-            .thenReturn(exampleStatsTopics)
-
-        this.mockMvc
-            .perform(get("/stats/$hashtag"))
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.result.buildings").value(123))
-            .andExpect(jsonPath("$.query.timespan.endDate").exists())
-            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/&uganda"))
+            .thenReturn(exampleStats)
 
         this.mockMvc
             .perform(get("/stats").queryParam("hashtag", hashtag).queryParam("topics", "building"))
@@ -150,21 +170,8 @@ class StatsControllerMVCTests {
     @Test
     fun `stats can be served without explicit timespans and a country filter`() {
 
-        `when`(this.statsService.getStatsForTimeSpan("h*", null, null, listOf("UGA", "DE")))
-            .thenReturn(exampleStats)
-
         `when`(this.statsService.getStatsForTimeSpan("h*", null, null, listOf("UGA", "DE"), listOf("building")))
-            .thenReturn(exampleStatsTopics)
-
-        this.mockMvc
-            .perform(
-                get("/stats/h*").queryParam("countries", "UGA,DE")
-            )
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(APPLICATION_JSON))
-            .andExpect(jsonPath("$.result.buildings").value(123))
-            .andExpect(jsonPath("$.query.timespan.endDate").exists())
-            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats/h*?countries=UGA,DE"))
+            .thenReturn(exampleStats)
 
         this.mockMvc
             .perform(
@@ -185,7 +192,18 @@ class StatsControllerMVCTests {
     @Test
     fun `stats for multiple hashtags can be served`() {
         `when`(this.statsService.getStatsForTimeSpanAggregate(anyList(), any(), any()))
-            .thenReturn(mapOf(this.hashtag to exampleStats))
+            .thenReturn(
+                mapOf(
+                    this.hashtag to mapOf(
+                        "users" to UnsignedLong.valueOf(1001L),
+                        "roads" to 43534.5,
+                        "buildings" to 123L,
+                        "edits" to UnsignedLong.valueOf(213124L),
+                        "latest" to OffsetDateTime.parse("2023-06-29T12:50Z"),
+                        "changesets" to UnsignedLong.valueOf(2)
+                    ).toStatsResult()
+                )
+            )
 
         this.mockMvc
             .perform(get("/stats/hashtags/$hashtag,hotosm*"))
@@ -207,31 +225,21 @@ class StatsControllerMVCTests {
                 anyInstant(),
                 anyInstant(),
                 anyString(),
+                anyList(),
                 anyList()
             )
         )
             .thenReturn(
-                StatsIntervalResult(
-                    longArrayOf(1),
-                    longArrayOf(2),
-                    doubleArrayOf(1.0),
-                    doubleArrayOf(2.0),
-                    longArrayOf(2),
-                    arrayOf(LocalDateTime.parse("2017-10-01T04:00:00")),
-                    arrayOf(LocalDateTime.parse("2020-10-01T04:00:00"))
-                )
+                exampleIntervalStats
             )
 
-        val GET_DEPRECATED = get("/stats/$hashtag/interval")
-            .queryParam("startdate", "2017-10-01T04:00:00Z")
-            .queryParam("enddate", "2020-10-01T04:00:00Z")
-            .queryParam("interval", "P1M")
 
         val GET = get("/stats/interval")
             .queryParam("hashtag", hashtag)
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "P1M")
+            .queryParam("topics", "changeset,road,contributor,building,edit")
 
 
         fun performGetRequest(requestBuilder: MockHttpServletRequestBuilder): ResultActions {
@@ -243,18 +251,18 @@ class StatsControllerMVCTests {
                 .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
                 .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
                 .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
-                .andExpect(jsonPath("$.result.changesets[0]").value(1))
-                .andExpect(jsonPath("$.result.users[0]").value(2))
-                .andExpect(jsonPath("$.result.roads[0]").value(1.0))
-                .andExpect(jsonPath("$.result.buildings[0]").value(2.0))
-                .andExpect(jsonPath("$.result.edits[0]").value(2))
+                .andExpect(jsonPath("$.result.topics.changeset.value[0]").value(1))
+                .andExpect(jsonPath("$.result.topics.contributor.value[0]").value(1001))
+                .andExpect(jsonPath("$.result.topics.road.value[0]").value(43534.5))
+                .andExpect(jsonPath("$.result.topics.building.value[0]").value(123))
+                .andExpect(jsonPath("$.result.topics.edit.value[0]").value(213124))
             return result
         }
 
-        performGetRequest(GET_DEPRECATED)
+        performGetRequest(GET)
             .andExpect {
                 jsonPath("$.metadata.requestUrl")
-                    .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M")
+                    .value("/stats/interval?hashtag=uganda&startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M")
             }
     }
 
@@ -268,16 +276,19 @@ class StatsControllerMVCTests {
                 anyInstant(),
                 anyInstant(),
                 anyString(),
+                anyList(),
                 anyList()
             )
         )
             .thenReturn(exampleIntervalStats)
 
-        val GET = get("/stats/$hashtag/interval")
+        val GET = get("/stats/interval")
+            .queryParam("hashtag", hashtag)
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "P1M")
             .queryParam("countries", "UGA,DE")
+            .queryParam("topics", "changeset,road,contributor,building,edit")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isOk)
@@ -287,14 +298,14 @@ class StatsControllerMVCTests {
             .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
             .andExpect(
                 jsonPath("$.metadata.requestUrl")
-                    .value("/stats/&uganda/interval?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M&countries=UGA,DE")
+                    .value("/stats/interval?hashtag=%26uganda&startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M&countries=UGA,DE&topics=changeset,road,contributor,building,edit")
             )
             .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
-            .andExpect(jsonPath("$.result.changesets[0]").value(2))
-            .andExpect(jsonPath("$.result.users[0]").value(1001))
-            .andExpect(jsonPath("$.result.roads[0]").value(43534.5))
-            .andExpect(jsonPath("$.result.buildings[0]").value(123))
-            .andExpect(jsonPath("$.result.edits[0]").value(213124))
+            .andExpect(jsonPath("$.result.topics.changeset.value[0]").value(1))
+            .andExpect(jsonPath("$.result.topics.contributor.value[0]").value(1001))
+            .andExpect(jsonPath("$.result.topics.road.value[0]").value(43534.5))
+            .andExpect(jsonPath("$.result.topics.building.value[0]").value(123))
+            .andExpect(jsonPath("$.result.topics.edit.value[0]").value(213124))
     }
 
 
@@ -304,10 +315,12 @@ class StatsControllerMVCTests {
         val expectedErrorMessage =
             """[{"message":"Invalid ISO8601 string as interval.","invalidValue":"bad_interval"}]"""
 
-        val GET = get("/stats/$hashtag/interval")
+        val GET = get("/stats/interval")
+            .queryParam("hashtag", hashtag)
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "bad_interval")
+            .queryParam("topics", "building")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)
@@ -321,11 +334,12 @@ class StatsControllerMVCTests {
 
         val expectedErrorMessage = """[{"message":"Interval must not be under 1 minute.","invalidValue":"PT1S"}]"""
 
-
-        val GET = get("/stats/$hashtag/interval")
+        val GET = get("/stats/interval")
+            .queryParam("hashtag", hashtag)
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "PT1S")
+            .queryParam("topics", "edit")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)
@@ -340,40 +354,41 @@ class StatsControllerMVCTests {
         val map = exampleStatsData + mapOf("country" to "xyz")
 
 
-        `when`(this.statsService.getStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant()))
-            .thenReturn(listOf(countryStatsResult(map)))
+        `when`(this.statsService.getStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant(), anyList()))
+            .thenReturn(
+                mapOf(
+                    "changeset" to listOf(
+                        TopicCountryResult(
+                            null,
+                            null,
+                            null,
+                            2.0,
+                            "xyz"
+                        )
+                    )
+                ).toStatsTopicCountryResult()
+            )
 
-        val GET_DEPRECATED = get("/stats/$hashtag/country")
-            .queryParam("startdate", "2017-10-01T04:00:00Z")
-            .queryParam("enddate", "2020-10-01T04:00:00Z")
 
         val GET = get("/stats/country")
             .queryParam("hashtag", hashtag)
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
+            .queryParam("topics", "changeset")
 
-        fun performGetRequest(requestBuilder: MockHttpServletRequestBuilder): ResultActions {
-            val result = this.mockMvc.perform(requestBuilder)
-            result.andDo(print())
-                .andExpect(status().isOk)
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.query.hashtag").value(hashtag))
-                .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
-                .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
-                .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
-                .andExpect(jsonPath("$.result[0].country").value("xyz"))
-                .andExpect(jsonPath("$.result[0].changesets").value(2))
-                .andExpect(jsonPath("$.result[0].users").value(1001))
-                .andExpect(jsonPath("$.result[0].roads").value(43534.5))
-                .andExpect(jsonPath("$.result[0].buildings").value(123))
-                .andExpect(jsonPath("$.result[0].edits").value(213124))
-            return result
-        }
-
-        performGetRequest(GET_DEPRECATED)
+        val result = this.mockMvc.perform(GET)
+        result.andDo(print())
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(APPLICATION_JSON))
+            .andExpect(jsonPath("$.query.hashtag").value(hashtag))
+            .andExpect(jsonPath("$.query.timespan.startDate").value("2017-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
+            .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
+            .andExpect(jsonPath("$.result.topics.changeset[0].country").value("xyz"))
+            .andExpect(jsonPath("$.result.topics.changeset[0].value").value(2))
             .andExpect(
                 jsonPath("$.metadata.requestUrl")
-                    .value("/stats/&uganda/country?startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z")
+                    .value("/stats/country?hashtag=%26uganda&startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&topics=changeset")
             )
     }
 

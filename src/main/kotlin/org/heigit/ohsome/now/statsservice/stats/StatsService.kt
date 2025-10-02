@@ -27,43 +27,6 @@ class StatsService {
     fun clearCache() {
     }
 
-    @Deprecated(
-        message = "remove together with Controller Funcs",
-        replaceWith = ReplaceWith("getStatsForTimeSpan")
-    )
-    @Cacheable("statsForTimeSpan", condition = "#hashtag=='hotosm-project-*' && #startDate==null && #endDate==null")
-    fun getStatsForTimeSpan(
-        hashtag: String,
-        startDate: Instant?,
-        endDate: Instant?,
-        countries: List<String>,
-    ) =
-        this.repo
-            .getStatsForTimeSpan(handler(hashtag), startDate, endDate, handler(countries))
-            .toMutableMap()
-            .addStatsForTimeSpanBuildingsAndRoads(hashtag, startDate, endDate, countries)
-            .toStatsResult()
-
-    @Deprecated("Remove with controller")
-    fun MutableMap<String, Any>.addStatsForTimeSpanBuildingsAndRoads(
-        hashtag: String,
-        startDate: Instant?,
-        endDate: Instant?,
-        countries: List<String>
-    ): Map<String, Any> {
-        val topicResults = topicService.getTopicStatsForTimeSpan(
-            hashtag,
-            startDate,
-            endDate,
-            countries,
-            listOf("building", "road")
-        )
-        this["buildings"] = topicResults["building"]!!.value.toLong()
-        this["roads"] = topicResults["road"]!!.value
-
-        return this
-    }
-
     @Suppress("LongParameterList")
     @Cacheable("statsForTimeSpan", condition = "#hashtag=='hotosm-project-*' && #startDate==null && #endDate==null")
     fun getStatsForTimeSpan(
@@ -176,50 +139,6 @@ class StatsService {
         topicResults[topicIndex].second.value.toLong()
 
 
-    @Deprecated("remove with controller")
-    @Suppress("LongParameterList")
-    fun getStatsForTimeSpanInterval(
-        hashtag: String,
-        startDate: Instant?,
-        endDate: Instant?,
-        interval: String,
-        countries: List<String>
-    ) = this.repo
-        .getStatsForTimeSpanInterval(handler(hashtag), startDate, endDate, interval, handler(countries))
-        .addStatsForTimeSpanIntervalBuildingsAndRoads(
-            hashtag,
-            startDate,
-            endDate,
-            interval,
-            countries
-        )
-        .toIntervalStatsResult()
-
-    @Deprecated("remove with controller")
-    @Suppress("LongParameterList")
-    private fun Map<String, Any>.addStatsForTimeSpanIntervalBuildingsAndRoads(
-        hashtag: String,
-        startDate: Instant?,
-        endDate: Instant?,
-        interval: String,
-        countries: List<String>
-    ): Map<String, Any> {
-        val topicResults = topicService.getTopicStatsForTimeSpanInterval(
-            hashtag,
-            startDate,
-            endDate,
-            interval,
-            countries,
-            listOf("building", "road")
-        )
-        return this.plus(
-            mapOf(
-                "buildings" to topicResults["building"]!!.value,
-                "roads" to topicResults["road"]!!.value,
-            )
-        )
-    }
-
     @Suppress("LongParameterList")
     fun getStatsForTimeSpanInterval(
         hashtag: String,
@@ -258,7 +177,7 @@ class StatsService {
             result["startdate"] as Array<LocalDateTime>,
             result["enddate"] as Array<LocalDateTime>,
             statsTopicHandler.topics.associateWith { topic ->
-                mapOf("topic_result" to result[topic]!!).toTopicIntervalResultMinusTopic(topic)
+                mapOf("topic_result" to result[topic]!!).toTopicIntervalResult(topic)
             }.toMutableMap()
         )
     }
@@ -291,37 +210,6 @@ class StatsService {
         topicResults.values.forEach {
             it.startDate = null
             it.endDate = null
-        }
-    }
-
-    @Deprecated("remove with controller")
-    fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?) = this.repo
-        .getStatsForTimeSpanCountry(handler(hashtag), startDate, endDate)
-        .addStatsForTimeSpanCountriesBuildingsAndRoads(
-            hashtag,
-            startDate,
-            endDate,
-        )
-        .toCountryStatsResult()
-
-    @Deprecated("remove with controller")
-    private fun List<Map<String, Any>>.addStatsForTimeSpanCountriesBuildingsAndRoads(
-        hashtag: String,
-        startDate: Instant?,
-        endDate: Instant?,
-    ): List<Map<String, Any>> {
-        val topicResults = topicService.getTopicStatsForTimeSpanCountry(
-            hashtag,
-            startDate,
-            endDate,
-            listOf("building", "road")
-        )
-        val enrichedCountryList = this.map {
-            it + ("buildings" to topicResults["building"]!!.matchCountryValue(it).toLong())
-        }
-
-        return enrichedCountryList.map {
-            it + ("roads" to topicResults["road"]!!.matchCountryValue(it))
         }
     }
 
@@ -423,17 +311,17 @@ class StatsService {
         statsTopicsHandler: StatsTopicsHandler,
         startDate: Instant?,
         endDate: Instant?
-    ): MutableMap<String, TopicResultMinusTopic> {
+    ): MutableMap<String, TopicResult> {
         if (statsTopicsHandler.noStatsTopics) return mutableMapOf()
 
         val result = repo.getStatsByUserId(userId, hashtagHandler, statsTopicsHandler, startDate, endDate)
         return statsTopicsHandler.topics.associateWith { topic ->
-            mapOf("topic_result" to result[topic]!!).toTopicResultMinusTopic(topic)
+            mapOf("topic_result" to result[topic]!!).toTopicResult(topic)
         }.toMutableMap()
     }
 
     @Suppress("LongParameterList")
-    private fun MutableMap<String, TopicResultMinusTopic>.addTopicsByUserId(
+    private fun MutableMap<String, TopicResult>.addTopicsByUserId(
         userId: String,
         hashtag: String,
         topics: List<String>,

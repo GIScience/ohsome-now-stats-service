@@ -1,15 +1,15 @@
 SELECT
-	groupArray(changesets)as changesets,
-	groupArray(users)as users,
-	groupArray(edits)as edits,
+	groupArray(changeset::Float64)as changeset,
+	groupArray(contributor::Float64)as contributor,
+	groupArray(edit::Float64)as edit,
 	groupArray(inner_startdate)as startdate,
-	groupArray(inner_startdate + INTERVAL :interval)as enddate
+	groupArray(inner_startdate + INTERVAL :interval) as enddate
 FROM
 (
     SELECT
-       count(distinct changeset_id) as changesets,
-       count(distinct user_id) as users,
-       count(map_feature_edit) as edits,
+       count(distinct changeset_id) as changeset,
+       count(distinct user_id) as contributor,
+       count(map_feature_edit) as edit,
        toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
     FROM "all_stats_3"
     WHERE

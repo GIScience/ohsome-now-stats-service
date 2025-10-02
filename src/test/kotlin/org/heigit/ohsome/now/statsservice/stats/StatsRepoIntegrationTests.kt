@@ -45,32 +45,33 @@ class StatsRepoIntegrationTests {
     lateinit var repo: StatsRepo
 
     val expected = mapOf(
-        "changesets" to 1,
-        "users" to 1,
-        "edits" to 0,
-        "latest" to "2017-12-19T00:52:03Z",
+        "edit" to 0,
+        "changeset" to 1,
+        "contributor" to 1,
         "hashtag" to "&uganda"
     )
 
     private val emptyListCountryHandler = CountryHandler(emptyList())
+    private val statsTopicsHandler = StatsTopicsHandler(listOf("edit", "changeset", "contributor"))
 
     @Test
     fun `getStatsForTimeSpan should return all data when using no hashtag, no time span and null-list of countries`() {
         val hashtagHandler = HashtagHandler("")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler)
-        assertEquals(5, result.size)
+        val result =
+            this.repo.getStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, statsTopicsHandler)
+        assertEquals(4, result.size)
         println(result)
         assertEquals(
-            "{changesets=7, users=6, edits=16, latest=2023-06-29T12:50Z, hashtag=}",
-            result.toString()
+            "{edit=16, changeset=7, contributor=6, hashtag=}", result.toString()
         )
     }
 
     @Test
     fun `getStatsForTimeSpan should return all data when using no time span and null-list of countries`() {
         val hashtagHandler = HashtagHandler("&uganda")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler)
-        assertEquals(5, result.size)
+        val result =
+            this.repo.getStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, statsTopicsHandler)
+        assertEquals(4, result.size)
         println(result)
         assertEquals(expected.toString(), result.toString())
     }
@@ -79,12 +80,13 @@ class StatsRepoIntegrationTests {
     @Test
     fun `getStatsForTimeSpan should return all data when using no time span and list of 2 countries`() {
         val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, CountryHandler(listOf("HUN", "BEL")))
-        assertEquals(5, result.size)
+        val result = this.repo.getStatsForTimeSpan(
+            hashtagHandler, null, null, CountryHandler(listOf("HUN", "BEL")), statsTopicsHandler
+        )
+        assertEquals(4, result.size)
         println(result)
         assertEquals(
-            "{changesets=4, users=2, edits=9, latest=2021-12-09T13:01:28Z, hashtag=}",
-            result.toString()
+            "{edit=9, changeset=4, contributor=2, hashtag=}", result.toString()
         )
     }
 
@@ -95,12 +97,13 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1457186430)
         println(startDate)
         val hashtagHandler = HashtagHandler("&")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, startDate, endDate, emptyListCountryHandler)
+        val result = this.repo.getStatsForTimeSpan(
+            hashtagHandler, startDate, endDate, emptyListCountryHandler, statsTopicsHandler
+        )
         println(result)
 
-        assertEquals(5, result.size)
-        assertEquals("1", result["changesets"].toString())
-        assertEquals("2016-03-05T14:00:20Z", result["latest"].toString())
+        assertEquals(4, result.size)
+        assertEquals("1", result["changeset"].toString())
     }
 
 
@@ -108,12 +111,12 @@ class StatsRepoIntegrationTests {
     fun `getStatsForTimeSpan returns partial data in time span for start date only`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val hashtagHandler = HashtagHandler("&group")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, startDate, null, emptyListCountryHandler)
+        val result =
+            this.repo.getStatsForTimeSpan(hashtagHandler, startDate, null, emptyListCountryHandler, statsTopicsHandler)
         println(result)
 
-        assertEquals(5, result.size)
-        assertEquals("1", result["changesets"].toString())
-        assertEquals("2021-12-09T13:01:28Z", result["latest"].toString())
+        assertEquals(4, result.size)
+        assertEquals("1", result["changeset"].toString())
     }
 
 
@@ -121,25 +124,27 @@ class StatsRepoIntegrationTests {
     fun `getStatsForTimeSpan returns partial data in time span for end date only`() {
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&group")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, endDate, emptyListCountryHandler)
+        val result =
+            this.repo.getStatsForTimeSpan(hashtagHandler, null, endDate, emptyListCountryHandler, statsTopicsHandler)
         println(result)
 
-        assertEquals(5, result.size)
-        assertEquals("1", result["changesets"].toString())
-        assertEquals("2021-12-09T13:01:28Z", result["latest"].toString())
+        assertEquals(4, result.size)
+        assertEquals("1", result["changeset"].toString())
     }
 
 
     @Test
     fun `getStatsForTimeSpan returns combined data of multiple hashtags with wildcard`() {
         val hashtagHandlerWildcard = HashtagHandler("&group*")
-        val resultWildCard =
-            this.repo.getStatsForTimeSpan(hashtagHandlerWildcard, null, null, emptyListCountryHandler)
+        val resultWildCard = this.repo.getStatsForTimeSpan(
+            hashtagHandlerWildcard, null, null, emptyListCountryHandler, statsTopicsHandler
+        )
 
         val hashtagHandler = HashtagHandler("&group")
-        val result = this.repo.getStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler)
+        val result =
+            this.repo.getStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, statsTopicsHandler)
 
-        assertTrue(result["changesets"].toString().toInt() < resultWildCard["changesets"].toString().toInt())
+        assertTrue(result["changeset"].toString().toInt() < resultWildCard["changeset"].toString().toInt())
     }
 
 
@@ -176,9 +181,11 @@ class StatsRepoIntegrationTests {
         // querying only "*" is currently prohibited by HashtagValidator
         // if we want this behavior, it could be optimized in HashtagHandler by filtering on has_hashtags
         val hashtagHandlerWildcard = HashtagHandler("*")
-        val resultWildCard = this.repo.getStatsForTimeSpan(hashtagHandlerWildcard, null, null, emptyListCountryHandler)
+        val resultWildCard = this.repo.getStatsForTimeSpan(
+            hashtagHandlerWildcard, null, null, emptyListCountryHandler, statsTopicsHandler
+        )
 
-        assertEquals(7, resultWildCard["changesets"].toString().toInt())
+        assertEquals(7, resultWildCard["changeset"].toString().toInt())
     }
 
 
@@ -188,18 +195,14 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&group")
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler,
-            startDate,
-            endDate,
-            "P1M",
-            this.emptyListCountryHandler
+            hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, statsTopicsHandler
         )
         println(result)
         assertEquals(5, result.size)
-        assertEquals(84, (result["changesets"] as LongArray).size)
+        assertEquals(84, (result["changeset"] as DoubleArray).size)
         assertEquals("2015-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
-        assertEquals("1", (result["users"] as LongArray)[83].toString())
-        assertEquals("7", (result["edits"] as LongArray)[83].toString())
+        assertEquals("1.0", (result["contributor"] as DoubleArray)[83].toString())
+        assertEquals("7.0", (result["edit"] as DoubleArray)[83].toString())
     }
 
 
@@ -209,18 +212,14 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&uganda")
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler,
-            startDate,
-            endDate,
-            "P1M",
-            CountryHandler(listOf("XYZ"))
+            hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("XYZ")), statsTopicsHandler
         )
         println(result)
         assertEquals(5, result.size)
-        assertEquals(84, (result["changesets"] as LongArray).size)
+        assertEquals(84, (result["changeset"] as DoubleArray).size)
         assertEquals("2015-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
-        assertEquals("1", (result["users"] as LongArray)[35].toString())
-        assertEquals("1", (result["changesets"] as LongArray)[35].toString())
+        assertEquals("1.0", (result["contributor"] as DoubleArray)[35].toString())
+        assertEquals("1.0", (result["changeset"] as DoubleArray)[35].toString())
     }
 
 
@@ -232,15 +231,11 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1640486233)
         val hashtagHandler = HashtagHandler("&gid")
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler,
-            startDate,
-            endDate,
-            "P1M",
-            this.emptyListCountryHandler
+            hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, statsTopicsHandler
         )
 
         assertEquals(5, result.size)
-        assertEquals(53, (result["changesets"] as LongArray).size)
+        assertEquals(53, (result["changeset"] as DoubleArray).size)
 
         assertEquals("2017-08-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
     }
@@ -252,15 +247,11 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1639054888)
         val hashtagHandler = HashtagHandler("&group")
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler,
-            startDate,
-            endDate,
-            "P1M",
-            this.emptyListCountryHandler
+            hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, statsTopicsHandler
         )
         println(result)
         assertEquals(5, result.size)
-        assertEquals(624, (result["edits"] as LongArray).size)
+        assertEquals(624, (result["edit"] as DoubleArray).size)
         assertEquals("1970-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
     }
 
@@ -271,15 +262,11 @@ class StatsRepoIntegrationTests {
         val hashtagHandler = HashtagHandler("")
         val interval = "P1Y"
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler,
-            startDate,
-            endDate,
-            interval,
-            this.emptyListCountryHandler
+            hashtagHandler, startDate, endDate, interval, this.emptyListCountryHandler, statsTopicsHandler
         )
 
         // year 2023 has 3 distinct userids with different and without hashtags
-        assertEquals(3, (result["users"] as LongArray)[0])
+        assertEquals(3.0, (result["contributor"] as DoubleArray)[0])
     }
 
 
@@ -288,27 +275,10 @@ class StatsRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(0)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
+        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, statsTopicsHandler)
         println(result)
         assertTrue(result is List)
-        assertEquals(5, result[0].size)
-    }
-
-
-    @Test
-    fun `getStatsByH3 returns data aggregated by h3`() {
-        val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getStatsByH3(
-            hashtagHandler,
-            null,
-            null,
-            StatsTopicsHandler(listOf("edit")),
-            3,
-            CountryHandler(emptyList())
-        )
-        println(result)
-        assertTrue(result.contains("832830fffffffff"))
-        assertTrue(result.contains("result,hex_cell\n"))
+        assertEquals(4, result[0].size)
     }
 
 
@@ -317,21 +287,31 @@ class StatsRepoIntegrationTests {
         val startDate = Instant.parse("2023-01-01T00:00:00Z")
         val endDate = Instant.parse("2024-01-01T00:00:00Z")
         val hashtagHandler = HashtagHandler("")
-        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate)
+        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, statsTopicsHandler)
         println(result)
-        assertEquals(5, result[0].size)
+        assertEquals(4, result[0].size)
 
         // year 2023 has 3 distinct userids with different and without hashtags
-        assertEquals("3", result[0]["users"].toString())
+        assertEquals("3", result[0]["contributor"].toString())
+    }
+
+
+    @Test
+    fun `getStatsByH3 returns data aggregated by h3`() {
+        val hashtagHandler = HashtagHandler("*")
+        val result = this.repo.getStatsByH3(
+            hashtagHandler, null, null, StatsTopicsHandler(listOf("edit")), 3, CountryHandler(emptyList())
+        )
+        println(result)
+        assertTrue(result.contains("832830fffffffff"))
+        assertTrue(result.contains("result,hex_cell\n"))
     }
 
 
     @Test
     fun `getStatsByUserIdAndHashtag returns stats for only one userid`() {
         val result = this.repo.getStatsByUserId(
-            "2186388",
-            HashtagHandler("hotosm-project-*"),
-            StatsTopicsHandler(listOf("edit", "changeset")), null, null
+            "2186388", HashtagHandler("hotosm-project-*"), StatsTopicsHandler(listOf("edit", "changeset")), null, null
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -342,11 +322,7 @@ class StatsRepoIntegrationTests {
     @Test
     fun `getStatsByUserIdAndHashtag returns zeros for unavailable user id`() {
         val result = this.repo.getStatsByUserId(
-            "2186381",
-            HashtagHandler("hotosm-project-*"),
-            StatsTopicsHandler(listOf("edit", "user")),
-            null,
-            null
+            "2186381", HashtagHandler("hotosm-project-*"), StatsTopicsHandler(listOf("edit", "user")), null, null
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -391,8 +367,7 @@ class StatsRepoIntegrationTests {
         val result = this.repo.getUniqueHashtags()
 
         assertEquals(
-            listOf(mapOf("hashtag" to "&group", "count" to 13)).toString(),
-            result.toString()
+            listOf(mapOf("hashtag" to "&group", "count" to 13)).toString(), result.toString()
         )
         println(result)
     }

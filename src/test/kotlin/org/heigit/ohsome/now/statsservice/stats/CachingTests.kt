@@ -14,7 +14,6 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import java.time.Instant
 import java.time.Instant.now
-import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit.SECONDS
 
 
@@ -56,17 +55,16 @@ class CachingTests {
 
 
     private var exampleStatsData: Map<String, Any> = mapOf(
-        "users" to UnsignedLong.valueOf(1001L),
-        "roads" to 43534.5,
-        "buildings" to 123L,
-        "edits" to UnsignedLong.valueOf(213124L),
-        "latest" to OffsetDateTime.parse("2023-06-29T12:50:00Z"),
-        "changesets" to UnsignedLong.valueOf(2),
+        "contributor" to UnsignedLong.valueOf(1001L),
+        "road" to 43534.5,
+        "building" to 123L,
+        "edit" to UnsignedLong.valueOf(213124L),
+        "changeset" to UnsignedLong.valueOf(2),
     )
 
 
-    fun serviceCall(hashtag: String, date: Instant? = null): () -> StatsResult =
-        { statsService.getStatsForTimeSpan(hashtag, date, null, emptyList()) }
+    fun serviceCall(hashtag: String, date: Instant? = null): () -> StatsResultWithTopics =
+        { statsService.getStatsForTimeSpan(hashtag, date, null, emptyList(), listOf("edit")) }
 
 
     @DirtiesContext
@@ -133,7 +131,15 @@ class CachingTests {
     private fun setupMockingForRepo(hashtagHandler: HashtagHandler, date: Instant? = null) {
 
         //hashtag hotosm
-        `when`(this.statsRepo.getStatsForTimeSpan(hashtagHandler, date, null, noCountries))
+        `when`(
+            this.statsRepo.getStatsForTimeSpan(
+                hashtagHandler,
+                date,
+                null,
+                noCountries,
+                StatsTopicsHandler(listOf("edit"))
+            )
+        )
             .thenReturn(exampleStatsData)
 
         `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, date, null, noCountries, buildingTopic))
@@ -146,14 +152,14 @@ class CachingTests {
 
 
     private fun assertTotalNumberOfCallsToRepo(
-        call: () -> StatsResult,
+        call: () -> StatsResultWithTopics,
         callCount: Int,
         hashtagHandler: HashtagHandler,
         date: Instant? = null
     ) {
-        assertEquals("213124", call().edits.toString())
+        assertEquals("213124.0", call().topics["edit"]!!.value.toString())
         verify(this.statsRepo, times(callCount))
-            .getStatsForTimeSpan(hashtagHandler, date, null, noCountries)
+            .getStatsForTimeSpan(hashtagHandler, date, null, noCountries, StatsTopicsHandler(listOf("edit")))
     }
 
 

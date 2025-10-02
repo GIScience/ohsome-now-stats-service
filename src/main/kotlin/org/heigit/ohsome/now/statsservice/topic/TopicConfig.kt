@@ -165,16 +165,6 @@ private val topics = listOf(
     ),
 
 
-    // TODO: DEPRECATED!!! USE ROAD INSTEAD
-    TopicDefinition(
-        "highway",
-        listOf(
-            KeyOnlyMatcher("highway")
-        ),
-        AggregationStrategy.LENGTH
-    ),
-
-
     TopicDefinition(
         "road",
         listOf(

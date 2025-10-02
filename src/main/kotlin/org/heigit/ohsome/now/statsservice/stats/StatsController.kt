@@ -61,39 +61,6 @@ class StatsController {
         return buildOhsomeFormat(result, httpServletRequest)
     }
 
-    @Suppress("LongParameterList")
-    @Operation(summary = "Returns live summary statistics for one hashtag", deprecated = true)
-    @Deprecated("Use the /stats endpoint with query parameters instead.", ReplaceWith("stats"))
-    @GetMapping("/stats/{hashtag}", produces = ["application/json"])
-    fun statsWithHashtagOnly(
-        httpServletRequest: HttpServletRequest,
-
-        @HashtagConfig
-        @PathVariable
-        @ValidHashtag
-        hashtag: String,
-
-        @StartDateConfig
-        @RequestParam("startdate", required = false)
-        startDate: Instant?,
-
-        @EndDateConfig
-        @RequestParam("enddate", required = false)
-        endDate: Instant?,
-
-        @CountriesConfig
-        @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>,
-    ): OhsomeFormat<StatsResult> {
-
-        val result = measure {
-            statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries)
-        }
-
-        return buildOhsomeFormat(result, httpServletRequest)
-    }
-
-
     @Suppress("LongMethod")
     @Operation(summary = "Returns live summary statistics for multiple hashtags. Wildcard-hashtags are disaggregated.")
     @GetMapping("/stats/hashtags/{hashtags}", produces = ["application/json"])
@@ -163,49 +130,6 @@ class StatsController {
     }
 
 
-    @Suppress("LongParameterList")
-    @Operation(
-        summary = "Returns live summary statistics for one hashtag grouped by a given time interval",
-        deprecated = true
-    )
-    @Deprecated("Use the /stats/interval endpoint with query parameters instead.", ReplaceWith("statsInterval"))
-    @GetMapping("/stats/{hashtag}/interval", produces = ["application/json"])
-    fun statsIntervalWithHashtagOnly(
-        httpServletRequest: HttpServletRequest,
-
-        @HashtagConfig
-        @PathVariable
-        @ValidHashtag
-        hashtag: String,
-
-        @StartDateConfig
-        @RequestParam(name = "startdate", required = false)
-        startDate: Instant?,
-
-        @EndDateConfig
-        @RequestParam(name = "enddate", required = false)
-        endDate: Instant?,
-
-        @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
-        @RequestParam(name = "interval", defaultValue = "P1M", required = false)
-        @ParseableInterval
-        @AtLeastOneMinuteInterval
-        interval: String,
-
-        @CountriesConfig
-        @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>
-    ): OhsomeFormat<StatsIntervalResult> {
-
-
-        val result = measure {
-            statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries)
-        }
-
-        return buildOhsomeFormat(result, httpServletRequest)
-    }
-
-
     @Operation(summary = "Returns live summary statistics for all contributions, optionally filtered by one hashtag, grouped by country")
     @GetMapping("/stats/country", produces = ["application/json"])
     @Suppress("LongParameterList")
@@ -232,34 +156,6 @@ class StatsController {
 
         val result = measure {
             statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate, topics)
-        }
-
-        return buildOhsomeFormat(result, httpServletRequest)
-    }
-
-
-    @Operation(summary = "Returns live summary statistics for one hashtag grouped by country", deprecated = true)
-    @Deprecated("Use the /stats/country endpoint with query parameters instead.", ReplaceWith("statsCountry"))
-    @GetMapping("/stats/{hashtag}/country", produces = ["application/json"])
-    fun statsCountryWithHashtagOnly(
-        httpServletRequest: HttpServletRequest,
-
-        @HashtagConfig
-        @PathVariable
-        @ValidHashtag
-        hashtag: String,
-
-        @StartDateConfig
-        @RequestParam(name = "startdate", required = false)
-        startDate: Instant?,
-
-        @EndDateConfig
-        @RequestParam(name = "enddate", required = false)
-        endDate: Instant?
-    ): OhsomeFormat<List<CountryStatsResult>> {
-
-        val result = measure {
-            statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)

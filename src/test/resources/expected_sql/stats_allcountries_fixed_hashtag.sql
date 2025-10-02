@@ -1,8 +1,7 @@
 SELECT
-   count(distinct changeset_id) as changesets,
-   count(distinct user_id) as users,
-   count(map_feature_edit) as edits,
-   max(changeset_timestamp) as latest
+   count(distinct changeset_id) as changeset,
+   count(distinct user_id) as contributor,
+   count(map_feature_edit) as edit
 FROM "all_stats_3"
 WHERE
    has_hashtags = true

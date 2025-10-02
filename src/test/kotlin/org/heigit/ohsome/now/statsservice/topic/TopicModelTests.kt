@@ -21,7 +21,6 @@ class TopicModelTests {
         val topic = "place"
         val result = map5.toTopicResult(topic)
 
-        assertThat(result.topic).isEqualTo(topic)
         assertThat(result.value).isEqualTo(20.0)
         assertThat(result.added).isEqualTo(20.0)
         assertThat(result.modified?.count_modified).isEqualTo(0L)
@@ -39,7 +38,6 @@ class TopicModelTests {
         val topic = "place"
         val result = map5.toTopicResult(topic)
 
-        assertThat(result.topic).isEqualTo(topic)
         assertThat(result.value).isEqualTo(20.0)
         assertThat(result.added).isEqualTo(20.0)
         assertThat(result.modified?.count_modified).isEqualTo(0L)

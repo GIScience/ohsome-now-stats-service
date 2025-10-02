@@ -2,7 +2,7 @@ package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.AppProperties
-import org.heigit.ohsome.now.statsservice.topic.toTopicResultMinusTopic
+import org.heigit.ohsome.now.statsservice.topic.toTopicResult
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,11 +35,11 @@ class AccessRestrictedUserControllerMVCTests {
 
 
     val fakeResult = mapOf(
-        "edit" to mapOf("topic_result" to UnsignedLong.valueOf(34L), "user_id" to 4324).toTopicResultMinusTopic("edit"),
+        "edit" to mapOf("topic_result" to UnsignedLong.valueOf(34L), "user_id" to 4324).toTopicResult("edit"),
         "changeset" to mapOf(
             "topic_result" to UnsignedLong.valueOf(2L),
             "user_id" to 4324
-        ).toTopicResultMinusTopic("changeset")
+        ).toTopicResult("changeset")
     ).toUserResult("4324")
 
 

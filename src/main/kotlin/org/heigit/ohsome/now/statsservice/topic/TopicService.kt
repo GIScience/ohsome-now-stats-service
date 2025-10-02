@@ -122,8 +122,8 @@ class TopicService {
         hashtag: String,
         startDate: Instant?,
         endDate: Instant?
-    ): Map<String, TopicResultMinusTopic> {
-        val topicResults = mutableMapOf<String, TopicResultMinusTopic>()
+    ): Map<String, TopicResult> {
+        val topicResults = mutableMapOf<String, TopicResult>()
         for (topic in topics) {
             topicResults[topic] = this.repo
                 .getTopicbyUserId(
@@ -132,7 +132,7 @@ class TopicService {
                     HashtagHandler(hashtag),
                     startDate,
                     endDate
-                ).toTopicResultMinusTopic(topic)
+                ).toTopicResult(topic)
         }
         return topicResults
     }

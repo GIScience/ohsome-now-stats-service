@@ -35,23 +35,6 @@ class StatsRepo {
         "changeset" to UnsignedLong.valueOf(0)
     )
 
-    @Deprecated("remove together with controller")
-    //language=sql
-    fun statsFromTimeSpanSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
-        SELECT
-            count(distinct changeset_id) as changesets,
-            count(distinct user_id) as users,
-            count(map_feature_edit) as edits,
-            max(changeset_timestamp) as latest
-        FROM "all_stats_$statsSchemaVersion"
-        WHERE
-            ${hashtagHandler.optionalFilterSQL}        
-            changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
-            ${countryHandler.optionalFilterSQL}
-            ;
-        """.trimIndent()
-
     //language=sql
     fun statsFromTimeSpanSQL(
         hashtagHandler: HashtagHandler,
@@ -88,39 +71,6 @@ class StatsRepo {
         ORDER BY hashtag
         """.trimIndent()
 
-    @Deprecated("Remove with controller")
-    @Suppress("LongMethod")
-    //language=sql
-    fun statsFromTimeSpanIntervalSQL(hashtagHandler: HashtagHandler, countryHandler: CountryHandler) = """
-    SELECT
-        groupArray(changesets)as changesets,	
-        groupArray(users)as users,
-        groupArray(edits)as edits,
-        groupArray(inner_startdate)as startdate,
-        groupArray(inner_startdate + INTERVAL :interval)as enddate
-    FROM
-    (    
-        SELECT
-            count(distinct changeset_id) as changesets,
-            count(distinct user_id) as users,
-            count(map_feature_edit) as edits,
-            toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
-        FROM "all_stats_$statsSchemaVersion"
-        WHERE
-            ${hashtagHandler.optionalFilterSQL}
-            changeset_timestamp > parseDateTimeBestEffort(:startdate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
-            ${countryHandler.optionalFilterSQL}
-        GROUP BY
-            inner_startdate
-        ORDER BY inner_startdate ASC
-        WITH FILL
-            FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
-            TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
-        STEP INTERVAL :interval 
-    )
-    ;
-    """.trimIndent()
 
     @Suppress("LongMethod")
     //language=sql
@@ -155,27 +105,6 @@ class StatsRepo {
     ;
     """.trimIndent()
 
-    @Deprecated("remove with controller")
-    @Suppress("LongMethod")
-    //language=sql
-    fun statsFromTimeSpanCountrySQL(hashtagHandler: HashtagHandler) = """
-        SELECT
-            count(distinct changeset_id) as changesets,
-            count(distinct user_id) as users,
-            count(map_feature_edit) as edits,
-            max(changeset_timestamp) as latest,
-            country_iso_a3 as country
-            FROM "all_stats_$statsSchemaVersion"
-        ARRAY JOIN country_iso_a3
-        WHERE
-            ${hashtagHandler.optionalFilterSQL}
-            changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
-        GROUP BY
-            country
-        ORDER BY country
-        ;
-        """.trimIndent()
 
     @Suppress("LongMethod")
     //language=sql
@@ -277,34 +206,6 @@ class StatsRepo {
         ;
     """.trimIndent()
 
-    /**
-     * Retrieves statistics for a specific hashtag within a time span.
-     *
-     * @param hashtagHandler Contains the hashtag to retrieve statistics for.
-     * @param startDate The start date of the time span.
-     * @param endDate The end date of the time span.
-     * @return A map containing the statistics.
-     */
-    @Deprecated("Remove with controller")
-    fun getStatsForTimeSpan(
-        hashtagHandler: HashtagHandler,
-        startDate: Instant?,
-        endDate: Instant?,
-        countryHandler: CountryHandler
-    ): Map<String, Any> {
-        logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
-
-        val result = query {
-            it.select(statsFromTimeSpanSQL(hashtagHandler, countryHandler))
-                .bind("hashtag", hashtagHandler.hashtag)
-                .bind("startDate", startDate ?: EPOCH)
-                .bind("endDate", endDate ?: now())
-                .mapToMap()
-                .single()
-        }
-
-        return result + ("hashtag" to hashtagHandler.hashtag)
-    }
 
     @Suppress("LongParameterList")
             /**
@@ -361,39 +262,6 @@ class StatsRepo {
                 .bind("endDate", endDate ?: now())
                 .mapToMap()
                 .list()
-        }
-    }
-
-
-    /**
-     * Retrieves statistics for a specific hashtag within a time span and interval.
-     *
-     * @param hashtagHandler Contains the hashtag to retrieve statistics for.
-     * @param startDate The start date of the time span.
-     * @param endDate The end date of the time span.
-     * @param interval The interval for grouping the statistics.
-     * @return A list of maps containing the statistics for each interval.
-     */
-    @Deprecated("remove with controller")
-    @Suppress("LongParameterList")
-    fun getStatsForTimeSpanInterval(
-        hashtagHandler: HashtagHandler,
-        startDate: Instant?,
-        endDate: Instant?,
-        interval: String,
-        countryHandler: CountryHandler
-    ): Map<String, Any> {
-
-        logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
-
-        return query {
-            it.select(statsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler))
-                .bind("interval", getGroupbyInterval(interval))
-                .bind("startdate", startDate ?: EPOCH)
-                .bind("enddate", endDate ?: now())
-                .bind("hashtag", hashtagHandler.hashtag)
-                .mapToMap()
-                .single()
         }
     }
 
@@ -458,33 +326,6 @@ class StatsRepo {
                 .singleOrNull()
                 ?: defaultResultForMissingUser(userId)
         }
-    }
-
-
-    /**
-     * Retrieves statistics for a specific hashtag grouped by country.
-     *
-     * @param hashtagHandler The hashtag to retrieve statistics for.
-     * @param startDate The start date of the time span.
-     * @param endDate The end date of the time span.
-     * @return A list of maps containing the statistics for each interval.
-     */
-    @Deprecated("remove with controller")
-    fun getStatsForTimeSpanCountry(
-        hashtagHandler: HashtagHandler,
-        startDate: Instant? = EPOCH,
-        endDate: Instant? = now()
-    ): List<Map<String, Any>> {
-
-        return query {
-            it.select(statsFromTimeSpanCountrySQL(hashtagHandler))
-                .bind("hashtag", hashtagHandler.hashtag)
-                .bind("startDate", startDate ?: EPOCH)
-                .bind("endDate", endDate ?: now())
-                .mapToMap()
-                .list()
-        }
-
     }
 
     fun getStatsForTimeSpanCountry(

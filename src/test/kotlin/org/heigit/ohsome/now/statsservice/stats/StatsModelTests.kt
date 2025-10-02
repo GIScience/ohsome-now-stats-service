@@ -2,8 +2,10 @@ package org.heigit.ohsome.now.statsservice.stats
 
 import com.clickhouse.data.value.UnsignedLong
 import org.assertj.core.api.Assertions.assertThat
+import org.heigit.ohsome.now.statsservice.topic.TopicResult
+import org.heigit.ohsome.now.statsservice.topic.toTopicCountryResult
+import org.heigit.ohsome.now.statsservice.topic.toTopicResult
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
 
@@ -13,11 +15,10 @@ class StatsModelTests {
     private val hashtag2 = "missing_maps"
     private val map1: Map<String, Any> = createMap(hashtag1)
     private val map2: Map<String, Any> = createMap(hashtag2)
-
+    private val topicMap1: Map<String, TopicResult> = createTopicMap();
 
     private fun createMap(hashtag: String) = mapOf(
         "hashtag" to hashtag,
-
         "changesets" to UnsignedLong.valueOf(2),
         "users" to UnsignedLong.valueOf(1001L),
         "roads" to 43534.5,
@@ -26,38 +27,24 @@ class StatsModelTests {
         "latest" to OffsetDateTime.parse("2021-12-09T13:01:28Z"),
     )
 
-    private val intervalMap = mapOf(
-        "changesets" to longArrayOf(2L),
-        "users" to longArrayOf(1001L),
-        "roads" to doubleArrayOf(43534.5),
-        "buildings" to doubleArrayOf(123.0),
-        "edits" to longArrayOf(213124L),
-        "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
-        "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
-    )
-
-    private var exampleIntervalStatsData = StatsIntervalResult(
-        intervalMap["changesets"] as LongArray,
-        intervalMap["users"] as LongArray,
-        intervalMap["roads"] as DoubleArray,
-        intervalMap["buildings"] as DoubleArray,
-        intervalMap["edits"] as LongArray,
-        intervalMap["startdate"] as Array<LocalDateTime>,
-        intervalMap["enddate"] as Array<LocalDateTime>
+    private fun createTopicMap() = mapOf(
+        "changeset" to mapOf("topic_result" to 2.0).toTopicResult("changeset"),
+        "contributor" to mapOf("topic_result" to 1001.0).toTopicResult("contributor"),
+        "road" to mapOf("topic_result" to 43534.5, "topic_result_modified" to 10).toTopicResult("road"),
+        "building" to mapOf("topic_result" to 123.0, "topic_result_modified" to 10).toTopicResult("building"),
+        "edit" to mapOf("topic_result" to 213124.0).toTopicResult("edit"),
     )
 
 
     @Test
     fun toStatsResult() {
+        val result = topicMap1.toStatsResult()
 
-        val result = map1.toStatsResult()
-
-        assertThat(result.changesets).isEqualTo(2L)
-        assertThat(result.users).isEqualTo(1001L)
-        assertThat(result.roads).isEqualTo(43534.5)
-        assertThat(result.buildings).isEqualTo(123L)
-        assertThat(result.edits).isEqualTo(213124L)
-        assertThat(result.latest).isEqualTo("2021-12-09T13:01:28Z")
+        assertThat(result.topics["changeset"]?.value).isEqualTo(2.0)
+        assertThat(result.topics["contributor"]?.value).isEqualTo(1001.0)
+        assertThat(result.topics["road"]?.value).isEqualTo(43534.5)
+        assertThat(result.topics["building"]?.value).isEqualTo(123.0)
+        assertThat(result.topics["edit"]?.value).isEqualTo(213124.0)
     }
 
 
@@ -78,28 +65,15 @@ class StatsModelTests {
 
 
     @Test
-    fun toIntervalStatsResult() {
-        val result = intervalMap.toIntervalStatsResult()
-
-        assertThat(result)
-            .usingRecursiveComparison()
-            .isEqualTo(exampleIntervalStatsData)
-    }
-
-
-    @Test
     fun toCountryStatsResult() {
 
-        val maps = listOf(this.map1, this.map2)
-        val result = maps.toCountryStatsResult()
+        val maps = listOf(mapOf("topic_result" to 2.0)).toTopicCountryResult("edit")
+        val result = mapOf("edit" to maps).toStatsTopicCountryResult()
 
-        assertThat(result[0])
-            .usingRecursiveComparison()
-            .isEqualTo(countryStatsResult(map1))
-
-        assertThat(result[1])
-            .usingRecursiveComparison()
-            .isEqualTo(countryStatsResult(map2))
+        assertThat(result.topics["edit"]!![0].value)
+            .isEqualTo(
+                2.0
+            )
     }
 
 
