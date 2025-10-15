@@ -2,15 +2,16 @@ import net.researchgate.release.ReleaseExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URI
+import dev.detekt.gradle.Detekt
 
 
 plugins {
     id("org.springframework.boot") version "3.5.6"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("jvm") version "2.2.20"
-    kotlin("plugin.spring") version "2.2.20"
+    kotlin("jvm") version "2.2.10"
+    kotlin("plugin.spring") version "2.2.10"
 
-    id("io.gitlab.arturbosch.detekt") version "1.23.8"
+    id("dev.detekt") version "2.0.0-alpha.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.2"
     id("io.gatling.gradle") version "3.13.5.4"
 
@@ -61,7 +62,6 @@ tasks.withType<KotlinCompile> {
 }
 
 
-
 tasks.withType<Test> {
     useJUnitPlatform()
 }
@@ -97,6 +97,11 @@ tasks.named("test") {
     finalizedBy(tasks.named("koverXmlReport"))
     finalizedBy(tasks.named("koverHtmlReport"))
 }
+
+tasks.withType(Detekt::class.java).configureEach {
+    ignoreFailures = false
+}
+
 
 publishing {
     publications {
