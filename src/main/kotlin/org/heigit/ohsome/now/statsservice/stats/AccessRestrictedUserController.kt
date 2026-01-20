@@ -50,17 +50,10 @@ class AccessRestrictedUserController {
         @RequestParam(name = "enddate", required = false)
         endDate: Instant?,
 
-        @RequestHeader(value = "Authorization", required = false)
-        authorization: String?,
-
         @TopicsConfig
         @RequestParam("topics", required = true)
         topics: List<@ValidTopic String>
     ): OhsomeFormat<UserResult> {
-        if (authorization == null || authorization != "Basic ${appProperties.token}") {
-            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid Token")
-        }
-
         val result = measure {
             statsService.getStatsByUserId(userId, hashtag, topics, startDate, endDate)
         }
