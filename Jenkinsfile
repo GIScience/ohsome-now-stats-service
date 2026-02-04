@@ -54,6 +54,7 @@ pipeline {
     stage ('Test') {
       steps {
         script {
+          sh 'echo api.version=1.44 >> ~/.docker-java.properties'
           sh 'gradle clean test'
         }
       }
