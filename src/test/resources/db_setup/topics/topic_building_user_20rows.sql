@@ -20,4 +20,7 @@ VALUES
     (parseDateTimeBestEffort('2020-10-05 02:09:48'),['+243'],11876234,['COD'],'yes','',true),
     (parseDateTimeBestEffort('2020-10-05 02:09:48'),['+243'],11876234,['COD'],'yes','',true),
     (parseDateTimeBestEffort('2020-10-05 02:09:48'),['+243'],11876234,['COD'],'yes','',true),
+    (parseDateTimeBestEffort('2020-10-05 02:09:48'),['+243'],11876234,['COD'],'yes','',true),
+    (parseDateTimeBestEffort('2020-10-05 02:09:48'),['+243'],552187,['COD'],'trailer','yes',true),
+    (parseDateTimeBestEffort('2020-10-05 02:09:48'),['+243'],552187,['COD'],'yes','',true),
     (parseDateTimeBestEffort('2020-10-05 02:09:48'),['+243'],11876234,['COD'],'yes','',true);

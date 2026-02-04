@@ -125,8 +125,8 @@ class TopicRepo {
     //language=sql
     fun topicStatsFromTimeSpanCountrySQL(
         hashtagHandler: HashtagHandler,
-        topicHandler:
-        TopicHandler
+        topicHandler: TopicHandler,
+        userHandler: UserHandler
     ) = """
         WITH
             ${topicHandler.valueLists()} 
@@ -138,12 +138,13 @@ class TopicRepo {
             ${topicHandler.topicResult()},
             country_iso_a3 as country
 
-        FROM topic_${topicHandler.topic}_$topicSchemaVersion
+        FROM topic${userHandler.userTableIdentifier}_${topicHandler.topic}_$topicSchemaVersion
         ARRAY JOIN country_iso_a3
         WHERE
             ${hashtagHandler.optionalFilterSQL}
             changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            ${userHandler.optionalFilterSQL}
         GROUP BY
             country
         ORDER BY
@@ -156,7 +157,8 @@ class TopicRepo {
     private fun topicFromH3SQL(
         hashtagHandler: HashtagHandler,
         topicHandler: TopicHandler,
-        countryHandler: CountryHandler
+        countryHandler: CountryHandler,
+        userHandler: UserHandler
     ) = """
         WITH
             ${topicHandler.valueLists()} 
@@ -167,48 +169,17 @@ class TopicRepo {
         SELECT
             ${topicHandler.topicMainResult()},
             h3ToString(h3_r:resolution) as hex
-        FROM topic_${topicHandler.topic}_$topicSchemaVersion
+        FROM topic${userHandler.userTableIdentifier}_${topicHandler.topic}_$topicSchemaVersion
         WHERE
             ${hashtagHandler.optionalFilterSQL}
             changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
             AND isNotNull(h3_r:resolution)
             ${countryHandler.optionalFilterSQL}
+            ${userHandler.optionalFilterSQL}
         GROUP BY hex
         FORMAT CSV
     """.trimIndent()
-
-
-    @Suppress("LongMethod")
-    fun topicByUserIdSQL(topicHandler: TopicHandler, hashtagHandler: HashtagHandler) =
-        """
-        WITH
-            ${topicHandler.valueLists()} 
-            
-            ${topicHandler.beforeCurrent()} 
-            if ((current = 0) AND (before = 0), NULL, current - before) as edit
-            
-        SELECT 
-            ${topicHandler.topicResult()}
-        FROM topic_user_${topicHandler.topic}_$topicSchemaVersion
-        WHERE
-            ${hashtagHandler.optionalFilterSQL}
-            user_id = :userId
-            AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
-        GROUP BY user_id
-        """
-
-
-    fun defaultTopicResultForMissingUser(userId: String, topicAggregationType: String): Map<String, Any> = mapOf(
-        "topic_result" to 0.0,
-        "topic_result_created" to 0.0,
-        "topic_result_modified" to 0L,
-        "topic_result_deleted" to 0.0,
-        "topic_result_modified_more" to 0.0,
-        "topic_result_modified_less" to 0.0,
-        "user_id" to userId.toInt(),
-    )
 
     @Suppress("LongParameterList")
     fun getTopicStatsForTimeSpan(
@@ -265,13 +236,14 @@ class TopicRepo {
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?,
-        topicHandler: TopicHandler
+        topicHandler: TopicHandler,
+        userHandler: UserHandler
     ): List<Map<String, Any>> {
 
         logger.info("Getting topic stats by country for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, topic: ${topicHandler.topic}")
 
         return query {
-            it.select(topicStatsFromTimeSpanCountrySQL(hashtagHandler, topicHandler))
+            it.select(topicStatsFromTimeSpanCountrySQL(hashtagHandler, topicHandler, userHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
@@ -288,10 +260,11 @@ class TopicRepo {
         endDate: Instant?,
         topicHandler: TopicHandler,
         resolution: Int,
-        countryHandler: CountryHandler
+        countryHandler: CountryHandler,
+        userHandler: UserHandler
     ): String {
         return "result,hex_cell\n" + query {
-            it.createQuery(topicFromH3SQL(hashtagHandler, topicHandler, countryHandler))
+            it.createQuery(topicFromH3SQL(hashtagHandler, topicHandler, countryHandler, userHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())

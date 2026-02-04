@@ -113,16 +113,21 @@ class StatsRepo {
 
     @Suppress("LongMethod")
     //language=sql
-    fun statsFromTimeSpanCountrySQL(hashtagHandler: HashtagHandler, statsTopicHandler: StatsTopicsHandler) = """
+    fun statsFromTimeSpanCountrySQL(
+        hashtagHandler: HashtagHandler,
+        statsTopicHandler: StatsTopicsHandler,
+        userHandler: UserHandler
+    ) = """
         SELECT
             ${statsTopicHandler.statsTopicSQL},
             country_iso_a3 as country
-        FROM "all_stats_$statsSchemaVersion"
+        FROM "all_stats${userHandler.userTableIdentifier}_$statsSchemaVersion"
         ARRAY JOIN country_iso_a3
         WHERE
             ${hashtagHandler.optionalFilterSQL}
             changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            ${userHandler.optionalFilterSQL}
         GROUP BY
             country
         ORDER BY country
@@ -135,18 +140,20 @@ class StatsRepo {
     private fun statsFromH3SQL(
         hashtagHandler: HashtagHandler,
         statsTopicHandler: StatsTopicsHandler,
-        countryHandler: CountryHandler
+        countryHandler: CountryHandler,
+        userHandler: UserHandler
     ) = """
         SELECT
             ${statsTopicHandler.statsTopicSQL},
             h3ToString(h3_r:resolution) as hex
-        FROM "all_stats_$statsSchemaVersion"
+        FROM "all_stats${userHandler.userTableIdentifier}_$statsSchemaVersion"
         WHERE
             ${hashtagHandler.optionalFilterSQL}
             changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
             AND isNotNull(h3_r:resolution) 
             ${countryHandler.optionalFilterSQL}
+            ${userHandler.optionalFilterSQL}
         GROUP BY hex
         FORMAT CSV
     """.trimIndent()
@@ -294,11 +301,12 @@ class StatsRepo {
         hashtagHandler: HashtagHandler,
         startDate: Instant? = EPOCH,
         endDate: Instant? = now(),
-        statsTopicHandler: StatsTopicsHandler
+        statsTopicHandler: StatsTopicsHandler,
+        userHandler: UserHandler
     ): List<Map<String, Any>> {
 
         return query {
-            it.select(statsFromTimeSpanCountrySQL(hashtagHandler, statsTopicHandler))
+            it.select(statsFromTimeSpanCountrySQL(hashtagHandler, statsTopicHandler, userHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
@@ -316,9 +324,10 @@ class StatsRepo {
         statsTopicHandler: StatsTopicsHandler,
         resolution: Int,
         countryHandler: CountryHandler,
+        userHandler: UserHandler,
     ): String {
         return "result,hex_cell\n" + query {
-            it.createQuery(statsFromH3SQL(hashtagHandler, statsTopicHandler, countryHandler))
+            it.createQuery(statsFromH3SQL(hashtagHandler, statsTopicHandler, countryHandler, userHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())

@@ -356,7 +356,15 @@ class StatsControllerMVCTests {
         val map = exampleStatsData + mapOf("country" to "xyz")
 
 
-        `when`(this.statsService.getStatsForTimeSpanCountry(anyString(), anyInstant(), anyInstant(), anyList()))
+        `when`(
+            this.statsService.getStatsForTimeSpanCountry(
+                anyString(),
+                anyInstant(),
+                anyInstant(),
+                anyList(),
+                anyString()
+            )
+        )
             .thenReturn(
                 mapOf(
                     "changeset" to listOf(

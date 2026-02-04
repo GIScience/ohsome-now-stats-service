@@ -91,7 +91,8 @@ class TopicService {
         hashtag: String,
         startDate: Instant?,
         endDate: Instant?,
-        topics: List<String>
+        topics: List<String>,
+        userId: String
     ): Map<String, List<TopicCountryResult>> = runBlocking {
         val deferredResults = topics.map { topic ->
             async(IO) {
@@ -99,7 +100,8 @@ class TopicService {
                     handler(hashtag),
                     startDate,
                     endDate,
-                    TopicHandler(topic)
+                    TopicHandler(topic),
+                    UserHandler(userId)
                 ).toTopicCountryResult(topic)
             }.let { topic to it }
         }
@@ -115,10 +117,19 @@ class TopicService {
         endDate: Instant?,
         topic: String,
         resolution: Int,
-        countryHandler: CountryHandler
+        countries: List<String>,
+        userId: String
     ) =
         this.repo
-            .getTopicsByH3(handler(hashtag), startDate, endDate, TopicHandler(topic), resolution, countryHandler)
+            .getTopicsByH3(
+                handler(hashtag),
+                startDate,
+                endDate,
+                TopicHandler(topic),
+                resolution,
+                CountryHandler(countries),
+                UserHandler(userId)
+            )
 
 
     fun getTopicDefinitions(topics: List<String>?): Map<String, String> {

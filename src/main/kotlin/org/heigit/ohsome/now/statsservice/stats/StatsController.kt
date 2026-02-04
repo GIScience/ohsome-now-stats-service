@@ -6,8 +6,6 @@ import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.statsservice.*
 import org.heigit.ohsome.now.statsservice.topic.ValidTopic
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.format.annotation.DateTimeFormat
-import org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
@@ -201,16 +199,12 @@ class StatsController {
     fun mostUsedHashtags(
         httpServletRequest: HttpServletRequest,
 
-        //TODO: check if this description really should be different from the one above
-        @Parameter(description = "the start date for the query in ISO format (e.g. 2014-01-01T00:00:00Z). Default: start of data")
+        @StartDateConfig
         @RequestParam(name = "startdate", required = false)
-        @DateTimeFormat(iso = DATE_TIME)
         startDate: Instant?,
 
-        //TODO: check if this description really should be different from the one above
-        @Parameter(description = "the (exclusive) end date for the query in ISO format (e.g. 2023-01-01T00:00:00Z). Default: now")
+        @EndDateConfig
         @RequestParam(name = "enddate", required = false)
-        @DateTimeFormat(iso = DATE_TIME)
         endDate: Instant?,
 
         @Parameter(description = "the number of hashtags to return")

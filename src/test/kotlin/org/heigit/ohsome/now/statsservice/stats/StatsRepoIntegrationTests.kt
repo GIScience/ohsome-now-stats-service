@@ -318,7 +318,13 @@ class StatsRepoIntegrationTests {
         val startDate = Instant.ofEpochSecond(0)
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("*")
-        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, statsTopicsHandler)
+        val result = this.repo.getStatsForTimeSpanCountry(
+            hashtagHandler,
+            startDate,
+            endDate,
+            statsTopicsHandler,
+            noUserHandler
+        )
         println(result)
         assertTrue(result is List)
         assertEquals(4, result[0].size)
@@ -330,7 +336,13 @@ class StatsRepoIntegrationTests {
         val startDate = Instant.parse("2023-01-01T00:00:00Z")
         val endDate = Instant.parse("2024-01-01T00:00:00Z")
         val hashtagHandler = HashtagHandler("")
-        val result = this.repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, statsTopicsHandler)
+        val result = this.repo.getStatsForTimeSpanCountry(
+            hashtagHandler,
+            startDate,
+            endDate,
+            statsTopicsHandler,
+            noUserHandler
+        )
         println(result)
         assertEquals(4, result[0].size)
 
@@ -343,7 +355,13 @@ class StatsRepoIntegrationTests {
     fun `getStatsByH3 returns data aggregated by h3`() {
         val hashtagHandler = HashtagHandler("*")
         val result = this.repo.getStatsByH3(
-            hashtagHandler, null, null, StatsTopicsHandler(listOf("edit")), 3, CountryHandler(emptyList())
+            hashtagHandler,
+            null,
+            null,
+            StatsTopicsHandler(listOf("edit")),
+            3,
+            CountryHandler(emptyList()),
+            UserHandler("")
         )
         println(result)
         assertTrue(result.contains("832830fffffffff"))
@@ -388,7 +406,11 @@ class StatsRepoIntegrationTests {
     fun `getMostUsedHashtags returns the most used hashtags in given time range for start and enddate`() {
         val startDate = Instant.ofEpochSecond(1420991470)
         val endDate = Instant.ofEpochSecond(1639054890)
-        val result = this.repo.getMostUsedHashtags(startDate, endDate, 10, CountryHandler(emptyList()))
+        val result = this.repo.getMostUsedHashtags(
+            startDate,
+            endDate,
+            countryHandler = CountryHandler(emptyList()),
+        )
         println(result)
         assertTrue(result[0] is Map)
         assertTrue(result[0].containsKey("hashtag"))
@@ -402,14 +424,22 @@ class StatsRepoIntegrationTests {
     fun `getMostUsedHashtags returns empty list when out of time bounds`() {
         val startDate = Instant.ofEpochSecond(1020991470)
         val endDate = Instant.ofEpochSecond(1019054890)
-        val result = this.repo.getMostUsedHashtags(startDate, endDate, 10, CountryHandler(emptyList()))
+        val result = this.repo.getMostUsedHashtags(
+            startDate,
+            endDate,
+            countryHandler = CountryHandler(emptyList()),
+        )
         println(result)
         assertEquals(emptyList<String>(), result)
     }
 
     @Test
     fun `getMostUsedHashtags can filter list by countries`() {
-        val result = this.repo.getMostUsedHashtags(Instant.EPOCH, Instant.now(), 10, CountryHandler(listOf("HUN")))
+        val result = this.repo.getMostUsedHashtags(
+            Instant.EPOCH,
+            Instant.now(),
+            countryHandler = CountryHandler(listOf("HUN")),
+        )
         assertEquals(listOf("&group", "&groupExtra"), result.map { it["hashtag"] })
     }
 

@@ -189,6 +189,4 @@ class CachingTests {
                 noUserHandler
             )
     }
-
-
 }

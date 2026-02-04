@@ -435,7 +435,88 @@ class SystemTests {
                 .jsonPath("$.result.topics.road.modified.unit_more").isEqualTo(0.0)
                 .jsonPath("$.result.topics.building.added").isEqualTo(0.0)
         }
+
+        @Test
+        @DisplayName("GET /stats/user/interval")
+        fun `get user stats by interval`() {
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/user/interval")
+                    .queryParam("userId", "552187")
+                    .queryParam("topics", listOf("edit", "building"))
+                    .queryParam("interval", "P1Y")
+                    .build()
+            }
+
+            val response = client()
+                .get()
+                .uri(url)
+                .header("Authorization", "Basic ${appProperties.token}")
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody()
+
+            println(response.returnResult())
+            response
+                .jsonPath("$.result.topics.building.added").isArray()
+                .jsonPath("$.result.topics.edit.value").isArray()
+        }
+
+        @Test
+        @DisplayName("GET /stats/user/country")
+        fun `get user stats by country`() {
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/user/country")
+                    .queryParam("userId", "552187")
+                    .queryParam("topics", listOf("edit", "building"))
+                    .build()
+            }
+
+            val response = client()
+                .get()
+                .uri(url)
+                .header("Authorization", "Basic ${appProperties.token}")
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody()
+
+            println(response.returnResult())
+            response
+                .jsonPath("$.result.topics.building[0].added").isEqualTo(1)
+                .jsonPath("$.result.topics.building[0].modified.count_modified").isEqualTo(1)
+                .jsonPath("$.result.topics.edit[1].value").isEqualTo(8)
+        }
+
+
+        @Test
+        @DisplayName("GET /stats/user/h3")
+        fun `get user stats by h3`() {
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/user/h3")
+                    .queryParam("userId", "552187")
+                    .queryParam("topic", "edit")
+                    .build()
+            }
+
+            val response = client()
+                .get()
+                .uri(url)
+                .header("Authorization", "Basic ${appProperties.token}")
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody()
+
+            println(response.returnResult())
+            response.toString().contains("13,\"832830fffffffff\"")
+        }
+
     }
+
 
     @Nested
     @DisplayName("for topic queries")

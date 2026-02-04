@@ -251,20 +251,39 @@ class StatsService {
         (this.find { it.country == countryMap["country"] }
             ?.value ?: 0.0)
 
-    fun getStatsForTimeSpanCountry(hashtag: String, startDate: Instant?, endDate: Instant?, topics: List<String>) =
-        this.addStatsTopicsForTimeSpanCountry(handler(hashtag), startDate, endDate, StatsTopicsHandler(topics))
-            .addTopicsForTimeSpanCountry(hashtag, startDate, endDate, topics.filter { !statsTopics.contains(it) })
+    fun getStatsForTimeSpanCountry(
+        hashtag: String,
+        startDate: Instant?,
+        endDate: Instant?,
+        topics: List<String>,
+        userId: String = ""
+    ) =
+        this.addStatsTopicsForTimeSpanCountry(
+            handler(hashtag),
+            startDate,
+            endDate,
+            StatsTopicsHandler(topics),
+            UserHandler(userId)
+        )
+            .addTopicsForTimeSpanCountry(
+                hashtag,
+                startDate,
+                endDate,
+                topics.filter { !statsTopics.contains(it) },
+                userId
+            )
             .toStatsTopicCountryResult()
 
     private fun addStatsTopicsForTimeSpanCountry(
         hashtagHandler: HashtagHandler,
         startDate: Instant?,
         endDate: Instant?,
-        statsTopicHandler: StatsTopicsHandler
+        statsTopicHandler: StatsTopicsHandler,
+        userHandler: UserHandler
     ): MutableMap<String, List<TopicCountryResult>> {
         if (statsTopicHandler.noStatsTopics) return mutableMapOf()
 
-        val result = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, statsTopicHandler)
+        val result = repo.getStatsForTimeSpanCountry(hashtagHandler, startDate, endDate, statsTopicHandler, userHandler)
 
         return statsTopicHandler.topics.associateWith { topic ->
             result.map { countryData ->
@@ -283,9 +302,10 @@ class StatsService {
         hashtag: String,
         startDate: Instant?,
         endDate: Instant?,
-        topics: List<String>
+        topics: List<String>,
+        userId: String
     ) = this + topicService.getTopicStatsForTimeSpanCountry(
-        hashtag, startDate, endDate, topics
+        hashtag, startDate, endDate, topics, userId
     )
 
     @Suppress("LongParameterList")
@@ -295,7 +315,8 @@ class StatsService {
         endDate: Instant?,
         topic: String,
         resolution: Int,
-        countries: List<String>
+        countries: List<String>,
+        userId: String = ""
     ): String {
         val statsTopicHandler = StatsTopicsHandler(listOf(topic))
         return if (!statsTopicHandler.noStatsTopics)
@@ -306,13 +327,19 @@ class StatsService {
                     endDate,
                     statsTopicHandler,
                     resolution,
-                    CountryHandler(countries)
+                    CountryHandler(countries),
+                    UserHandler(userId)
                 )
         else this.topicService
-            .getTopicsByH3(hashtag, startDate, endDate, topic, resolution, CountryHandler(countries))
+            .getTopicsByH3(hashtag, startDate, endDate, topic, resolution, countries, userId)
     }
 
-    fun getMostUsedHashtags(startDate: Instant?, endDate: Instant?, limit: Int?, countries: List<String>) = this.repo
+    fun getMostUsedHashtags(
+        startDate: Instant?,
+        endDate: Instant?,
+        limit: Int?,
+        countries: List<String>,
+    ) = this.repo
         .getMostUsedHashtags(startDate, endDate, limit, handler(countries))
         .toHashtagResult()
 

@@ -91,7 +91,7 @@ class StatsRepoUnitTests {
 
         val expected = file("stats_bycountry_wildcard_hashtag")
 
-        val sql = repo.statsFromTimeSpanCountrySQL(wildcardHashtag, statsTopicsHandler)
+        val sql = repo.statsFromTimeSpanCountrySQL(wildcardHashtag, statsTopicsHandler, noUserHandler)
 
         assertThat(sql)
             .contains("all_stats_$statsSchemaVersion")
@@ -103,7 +103,7 @@ class StatsRepoUnitTests {
 
         val expected = file("stats_bycountry_no_hashtag")
 
-        val sql = repo.statsFromTimeSpanCountrySQL(noHashtag, statsTopicsHandler)
+        val sql = repo.statsFromTimeSpanCountrySQL(noHashtag, statsTopicsHandler, noUserHandler)
 
         assertThat(sql)
             .contains("all_stats_$statsSchemaVersion")

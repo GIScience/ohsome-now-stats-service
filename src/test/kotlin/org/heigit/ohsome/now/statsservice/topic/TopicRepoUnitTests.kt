@@ -90,7 +90,7 @@ class TopicRepoUnitTests {
 
         val expected = file("topic_place_bycountry_wildcard_hashtag")
 
-        val sql = repo.topicStatsFromTimeSpanCountrySQL(wildcardHashtag, placeTopic)
+        val sql = repo.topicStatsFromTimeSpanCountrySQL(wildcardHashtag, placeTopic, noUserHandler)
         assertThat(sql)
             .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
@@ -102,24 +102,11 @@ class TopicRepoUnitTests {
 
         val expected = file("topic_place_bycountry_no_hashtag")
 
-        val sql = repo.topicStatsFromTimeSpanCountrySQL(noHashtag, placeTopic)
+        val sql = repo.topicStatsFromTimeSpanCountrySQL(noHashtag, placeTopic, noUserHandler)
         assertThat(sql)
             .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
     }
-
-
-    @Test
-    fun `can create SQL for topic user endpoint`() {
-
-        val expected = file("topic_place_by_userid")
-
-        val sql = repo.topicByUserIdSQL(placeTopic, HashtagHandler("hotosm-project-*"))
-        assertThat(sql)
-            .contains("_$topicSchemaVersion")
-            .isEqualToNormalizingPunctuationAndWhitespace(expected)
-    }
-
 }
 
 
