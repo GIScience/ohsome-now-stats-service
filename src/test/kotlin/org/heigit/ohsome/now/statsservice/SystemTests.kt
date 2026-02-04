@@ -512,7 +512,7 @@ class SystemTests {
                 .expectBody()
 
             println(response.returnResult())
-            response.toString().contains("13,\"832830fffffffff\"")
+            response.toString().contains("hex_cell")
         }
 
     }

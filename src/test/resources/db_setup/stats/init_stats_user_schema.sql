@@ -24,10 +24,10 @@ CREATE TABLE IF NOT EXISTS all_stats_user_3
 
 --     centroid Tuple(x Nullable(Float64), y Nullable(Float64)),
 
---     h3_r3 Nullable(UInt64),
---     h3_r6 Nullable(UInt64),
 
-    country_iso_a3 Array(String)
+    country_iso_a3 Array(String),
+    h3_r3 Nullable(UInt64),
+    h3_r6 Nullable(UInt64)
 )
 ENGINE = MergeTree
 PRIMARY KEY(user_id, has_hashtags, changeset_timestamp)
