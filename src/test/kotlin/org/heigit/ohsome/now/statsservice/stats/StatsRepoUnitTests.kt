@@ -22,7 +22,7 @@ class StatsRepoUnitTests {
 
     private val statsTopicsHandler = StatsTopicsHandler(listOf("changeset", "contributor", "edit"))
     private val noUserHandler = UserHandler("");
-    
+
     @Test
     fun `can create stats SQL for all countries & no hashtag`() {
 
@@ -65,7 +65,7 @@ class StatsRepoUnitTests {
 
         val expected = file("stats_bymonth_1country_wildcard_hashtag")
 
-        val sql = repo.statsFromTimeSpanIntervalSQL(wildcardHashtag, bolivia, statsTopicsHandler)
+        val sql = repo.statsFromTimeSpanIntervalSQL(wildcardHashtag, bolivia, statsTopicsHandler, noUserHandler)
 
         assertThat(sql)
             .contains("all_stats_$statsSchemaVersion")
@@ -78,7 +78,7 @@ class StatsRepoUnitTests {
 
         val expected = file("stats_bymonth_1country_no_hashtag")
 
-        val sql = repo.statsFromTimeSpanIntervalSQL(noHashtag, bolivia, statsTopicsHandler)
+        val sql = repo.statsFromTimeSpanIntervalSQL(noHashtag, bolivia, statsTopicsHandler, noUserHandler)
 
         assertThat(sql)
             .contains("all_stats_$statsSchemaVersion")

@@ -80,7 +80,8 @@ class StatsRepo {
     fun statsFromTimeSpanIntervalSQL(
         hashtagHandler: HashtagHandler,
         countryHandler: CountryHandler,
-        statsTopicHandler: StatsTopicsHandler
+        statsTopicHandler: StatsTopicsHandler,
+        userHandler: UserHandler
     ) = """
     SELECT
         ${statsTopicHandler.statsTopicAggregationSQL},       
@@ -91,12 +92,13 @@ class StatsRepo {
         SELECT
             ${statsTopicHandler.statsTopicSQL},
             toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
-        FROM "all_stats_$statsSchemaVersion"
+        FROM "all_stats${userHandler.userTableIdentifier}_$statsSchemaVersion"
         WHERE
             ${hashtagHandler.optionalFilterSQL}
             changeset_timestamp > parseDateTimeBestEffort(:startdate)
             AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
             ${countryHandler.optionalFilterSQL}
+            ${userHandler.optionalFilterSQL}
         GROUP BY
             inner_startdate
         ORDER BY inner_startdate ASC
@@ -270,13 +272,14 @@ class StatsRepo {
         endDate: Instant?,
         interval: String,
         countryHandler: CountryHandler,
-        statsTopicHandler: StatsTopicsHandler
+        statsTopicHandler: StatsTopicsHandler,
+        userHandler: UserHandler
     ): Map<String, Any> {
 
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, interval: $interval")
 
         return query {
-            it.select(statsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler, statsTopicHandler))
+            it.select(statsFromTimeSpanIntervalSQL(hashtagHandler, countryHandler, statsTopicHandler, userHandler))
                 .bind("interval", getGroupbyInterval(interval))
                 .bind("startdate", startDate ?: EPOCH)
                 .bind("enddate", endDate ?: now())

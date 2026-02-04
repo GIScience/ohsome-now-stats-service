@@ -87,7 +87,7 @@ class StatsService {
         endDate: Instant?,
         countries: List<String>,
         topics: List<String>,
-        userId: String
+        userId: String = ""
     ) = this + topicService.getTopicStatsForTimeSpan(
         hashtag,
         startDate,
@@ -170,9 +170,16 @@ class StatsService {
         endDate: Instant?,
         interval: String,
         countries: List<String>,
-        topics: List<String>
+        topics: List<String>,
+        userId: String = ""
     ) = addStatsTopicsForTimeSpanInterval(
-        HashtagHandler(hashtag), startDate, endDate, interval, CountryHandler(countries), StatsTopicsHandler(topics)
+        HashtagHandler(hashtag),
+        startDate,
+        endDate,
+        interval,
+        CountryHandler(countries),
+        StatsTopicsHandler(topics),
+        UserHandler(userId)
     ).addTopicsForTimeSpanInterval(
         hashtag,
         startDate,
@@ -180,6 +187,7 @@ class StatsService {
         interval,
         countries,
         topics.filter { !statsTopics.contains(it) },
+        userId
     )
 
     @Suppress("LongParameterList")
@@ -189,12 +197,13 @@ class StatsService {
         endDate: Instant?,
         interval: String,
         countryHandler: CountryHandler,
-        statsTopicHandler: StatsTopicsHandler
+        statsTopicHandler: StatsTopicsHandler,
+        userHandler: UserHandler
     ): StatsIntervalResultWithTopics {
         if (statsTopicHandler.noStatsTopics) return StatsIntervalResultWithTopics(null, null, mutableMapOf())
 
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler, startDate, endDate, interval, countryHandler, statsTopicHandler
+            hashtagHandler, startDate, endDate, interval, countryHandler, statsTopicHandler, userHandler
         )
 
         return StatsIntervalResultWithTopics(
@@ -213,10 +222,11 @@ class StatsService {
         endDate: Instant?,
         interval: String,
         countries: List<String>,
-        topics: List<String>
+        topics: List<String>,
+        userId: String
     ): StatsIntervalResultWithTopics {
         val topicResults = topicService.getTopicStatsForTimeSpanInterval(
-            hashtag, startDate, endDate, interval, countries, topics
+            hashtag, startDate, endDate, interval, countries, topics, userId
         )
         // if no statsTopic was queried, we need the start and end-date once
         if (this.startDate.isNullOrEmpty()) {

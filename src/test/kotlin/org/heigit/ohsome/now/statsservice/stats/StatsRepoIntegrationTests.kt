@@ -232,7 +232,7 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&group")
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, statsTopicsHandler
+            hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, statsTopicsHandler, noUserHandler
         )
         println(result)
         assertEquals(5, result.size)
@@ -249,7 +249,7 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1639054890)
         val hashtagHandler = HashtagHandler("&uganda")
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("XYZ")), statsTopicsHandler
+            hashtagHandler, startDate, endDate, "P1M", CountryHandler(listOf("XYZ")), statsTopicsHandler, noUserHandler
         )
         println(result)
         assertEquals(5, result.size)
@@ -268,7 +268,7 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1640486233)
         val hashtagHandler = HashtagHandler("&gid")
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, statsTopicsHandler
+            hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, statsTopicsHandler, noUserHandler
         )
 
         assertEquals(5, result.size)
@@ -284,7 +284,7 @@ class StatsRepoIntegrationTests {
         val endDate = Instant.ofEpochSecond(1639054888)
         val hashtagHandler = HashtagHandler("&group")
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, statsTopicsHandler
+            hashtagHandler, startDate, endDate, "P1M", this.emptyListCountryHandler, statsTopicsHandler, noUserHandler
         )
         println(result)
         assertEquals(5, result.size)
@@ -299,7 +299,13 @@ class StatsRepoIntegrationTests {
         val hashtagHandler = HashtagHandler("")
         val interval = "P1Y"
         val result = this.repo.getStatsForTimeSpanInterval(
-            hashtagHandler, startDate, endDate, interval, this.emptyListCountryHandler, statsTopicsHandler
+            hashtagHandler,
+            startDate,
+            endDate,
+            interval,
+            this.emptyListCountryHandler,
+            statsTopicsHandler,
+            noUserHandler
         )
 
         // year 2023 has 3 distinct userids with different and without hashtags

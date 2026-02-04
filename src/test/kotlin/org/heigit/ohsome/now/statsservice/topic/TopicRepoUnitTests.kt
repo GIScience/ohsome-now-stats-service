@@ -54,7 +54,7 @@ class TopicRepoUnitTests {
 
         val expected = file("topic_place_bymonth_1country_wildcard_hashtag")
 
-        val sql = repo.topicStatsFromTimeSpanIntervalSQL(wildcardHashtag, bolivia, placeTopic)
+        val sql = repo.topicStatsFromTimeSpanIntervalSQL(wildcardHashtag, bolivia, placeTopic, noUserHandler)
         assertThat(sql)
             .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
@@ -66,7 +66,7 @@ class TopicRepoUnitTests {
 
         val expected = file("topic_place_bymonth_1country_no_hashtag")
 
-        val sql = repo.topicStatsFromTimeSpanIntervalSQL(noHashtag, bolivia, placeTopic)
+        val sql = repo.topicStatsFromTimeSpanIntervalSQL(noHashtag, bolivia, placeTopic, noUserHandler)
         assertThat(sql)
             .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)

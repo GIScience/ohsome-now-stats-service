@@ -72,4 +72,59 @@ class AccessRestrictedUserController {
 
         return buildOhsomeFormat(result, httpServletRequest)
     }
+
+    @Suppress("LongParameterList")
+    @Operation(summary = "Returns aggregated statistics for a specific user.")
+    @GetMapping("/stats/user/interval", produces = ["application/json"])
+    fun statsByUserIdInterval(
+        httpServletRequest: HttpServletRequest,
+
+        @Parameter(description = "OSM user id")
+        @RequestParam("userId")
+        userId: String,
+
+        @Parameter(
+            description = "the hashtag to query for - case-insensitive and without the leading '#'",
+            example = "hotosm-project-*"
+        )
+        @RequestParam("hashtag", required = false, defaultValue = "")
+        @ValidHashtag
+        hashtag: String,
+
+        @Parameter(description = "the granularity defined as Intervals in ISO 8601 time format eg: P1M")
+        @RequestParam(name = "interval", defaultValue = "P1M", required = false)
+        @ParseableInterval
+        @AtLeastOneMinuteInterval
+        interval: String,
+
+        @StartDateConfig
+        @RequestParam(name = "startdate", required = false)
+        startDate: Instant?,
+
+        @EndDateConfig
+        @RequestParam(name = "enddate", required = false)
+        endDate: Instant?,
+
+        @CountriesConfig
+        @RequestParam("countries", required = false, defaultValue = "")
+        countries: List<String>,
+
+        @RequestHeader(value = "Authorization", required = false)
+        authorization: String?,
+
+        @TopicsConfig
+        @RequestParam("topics", required = true)
+        topics: List<@ValidTopic String>
+    ): OhsomeFormat<StatsIntervalResultWithTopics> {
+        if (authorization == null || authorization != "Basic ${appProperties.token}") {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid Token")
+        }
+
+        val result = measure {
+            statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries, topics, userId)
+        }
+
+        return buildOhsomeFormat(result, httpServletRequest)
+    }
+
 }

@@ -226,7 +226,8 @@ class StatsControllerMVCTests {
                 anyInstant(),
                 anyString(),
                 anyList(),
-                anyList()
+                anyList(),
+                anyString()
             )
         )
             .thenReturn(
@@ -277,7 +278,8 @@ class StatsControllerMVCTests {
                 anyInstant(),
                 anyString(),
                 anyList(),
-                anyList()
+                anyList(),
+                anyString()
             )
         )
             .thenReturn(exampleIntervalStats)

@@ -173,7 +173,8 @@ class TopicRepoIntegrationTests {
             endDate,
             "P1M",
             this.emptyListCountryHandler,
-            TopicHandler(topic)
+            TopicHandler(topic),
+            UserHandler("")
         )
 
         println(result)
@@ -200,7 +201,8 @@ class TopicRepoIntegrationTests {
             endDate,
             "P1M",
             bolivia,
-            TopicHandler(topic)
+            TopicHandler(topic),
+            UserHandler("")
         )
 
         println(result)
@@ -227,7 +229,8 @@ class TopicRepoIntegrationTests {
             endDate,
             "P1M",
             this.emptyListCountryHandler,
-            TopicHandler(topic)
+            TopicHandler(topic),
+            UserHandler("")
         )
 
         println(result)
@@ -252,7 +255,8 @@ class TopicRepoIntegrationTests {
             endDate,
             interval,
             this.emptyListCountryHandler,
-            TopicHandler(topic)
+            TopicHandler(topic),
+            UserHandler("")
         )
 
         // year 2023 has 3 distinct userids with different and without hashtags
@@ -273,7 +277,8 @@ class TopicRepoIntegrationTests {
             endDate,
             "P1M",
             this.emptyListCountryHandler,
-            TopicHandler(topic)
+            TopicHandler(topic),
+            UserHandler("")
         )
 
 

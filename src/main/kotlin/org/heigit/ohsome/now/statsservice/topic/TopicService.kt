@@ -66,7 +66,8 @@ class TopicService {
         endDate: Instant?,
         interval: String,
         countries: List<String>,
-        topics: List<String>
+        topics: List<String>,
+        userId: String
     ): Map<String, TopicIntervalResult> = runBlocking {
         val deferredResults = topics.map { topic ->
             async(IO) {
@@ -76,7 +77,8 @@ class TopicService {
                     endDate,
                     interval,
                     handler(countries),
-                    TopicHandler(topic)
+                    TopicHandler(topic),
+                    UserHandler(userId)
                 ).toTopicIntervalResult(topic)
             }.let { topic to it }
         }
