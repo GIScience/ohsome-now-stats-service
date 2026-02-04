@@ -5,6 +5,7 @@ import org.heigit.ohsome.now.statsservice.WithTopicData
 import org.heigit.ohsome.now.statsservice.createClickhouseContainer
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
+import org.heigit.ohsome.now.statsservice.utils.UserHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,7 +43,7 @@ class TopicRepoIntegrationTests {
     lateinit var repo: TopicRepo
 
     val topic = "place"
-
+    val noUserId = "";
 
     private val emptyListCountryHandler = CountryHandler(emptyList())
     val bolivia = CountryHandler(listOf("BOL"))
@@ -60,7 +61,14 @@ class TopicRepoIntegrationTests {
         )
         val hashtagHandler = HashtagHandler("")
         val result =
-            this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, TopicHandler(topic))
+            this.repo.getTopicStatsForTimeSpan(
+                hashtagHandler,
+                null,
+                null,
+                emptyListCountryHandler,
+                TopicHandler(topic),
+                UserHandler(noUserId)
+            )
 
         println(result)
         assertEquals(5, result.size)
@@ -79,7 +87,14 @@ class TopicRepoIntegrationTests {
         )
         val hashtagHandler = HashtagHandler("hotmicrogrant*")
         val result =
-            this.repo.getTopicStatsForTimeSpan(hashtagHandler, null, null, emptyListCountryHandler, TopicHandler(topic))
+            this.repo.getTopicStatsForTimeSpan(
+                hashtagHandler,
+                null,
+                null,
+                emptyListCountryHandler,
+                TopicHandler(topic),
+                UserHandler(noUserId)
+            )
 
         println(result)
         assertEquals(5, result.size)
@@ -96,7 +111,8 @@ class TopicRepoIntegrationTests {
                 null,
                 null,
                 emptyListCountryHandler,
-                TopicHandler("healthcare")
+                TopicHandler("healthcare"),
+                UserHandler(noUserId)
             )
 
         println(result)
@@ -113,7 +129,8 @@ class TopicRepoIntegrationTests {
                 null,
                 null,
                 emptyListCountryHandler,
-                TopicHandler("waterway")
+                TopicHandler("waterway"),
+                UserHandler(noUserId)
             )
 
         println(result)
@@ -133,7 +150,8 @@ class TopicRepoIntegrationTests {
                 null,
                 endDate,
                 liberia,
-                TopicHandler("amenity")
+                TopicHandler("amenity"),
+                UserHandler(noUserId)
             )
 
         println(result)
@@ -308,42 +326,44 @@ class TopicRepoIntegrationTests {
 
     @Test
     fun `getStatsForUserIdForAllHotTMProjects returns stats for only one userid`() {
-        val result = this.repo.getTopicbyUserId(
-            "4362353",
-            TopicHandler(topic),
+        val result = this.repo.getTopicStatsForTimeSpan(
             HashtagHandler("hotosm-project-*"),
             null,
-            null
+            null,
+            CountryHandler(emptyList()),
+            TopicHandler(topic),
+            UserHandler("4362353")
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
         assertEquals(-1L, result["topic_result"])
-        assertEquals(4, result.size)
+        assertEquals(5, result.size)
     }
 
     @Test
     fun `getStatsForUserIdForAllHotTMProjects returns zeros for unavailable user id`() {
-        val result = this.repo.getTopicbyUserId(
-            "2381",
-            TopicHandler(topic),
+        val result = this.repo.getTopicStatsForTimeSpan(
             HashtagHandler("hotosm-project-*"),
             null,
-            null
+            null,
+            CountryHandler(emptyList()),
+            TopicHandler(topic),
+            UserHandler("2381"),
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
-        assertEquals(2381, result["user_id"])
-        assertEquals(0.0, result["topic_result"])
+        assertEquals(0L, result["topic_result"])
     }
 
     @Test
-    fun `getStatsForUserIdForAllHotTMProjects returns values for different hashtag`() {
-        val result = this.repo.getTopicbyUserId(
-            "6791950",
-            TopicHandler("building"),
+    fun `getTopicStatsForTimeSpan returns user values for different hashtag`() {
+        val result = this.repo.getTopicStatsForTimeSpan(
             HashtagHandler("&uganda"),
             null,
-            null
+            null,
+            CountryHandler(emptyList()),
+            TopicHandler("building"),
+            UserHandler("6791950"),
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)

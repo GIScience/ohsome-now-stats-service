@@ -26,6 +26,11 @@ data class StatsResultWithTopics(
 
 fun Map<String, TopicResult>.toStatsResult() = StatsResultWithTopics(this)
 
+fun StatsResultWithTopics.toUserResult(userId: String) = UserResult(
+    this.topics,
+    userId
+)
+
 data class StatsIntervalResultWithTopics(
     var startDate: Array<LocalDateTime>?,
     var endDate: Array<LocalDateTime>?,

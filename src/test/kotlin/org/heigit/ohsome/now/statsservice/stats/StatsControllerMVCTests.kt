@@ -154,7 +154,7 @@ class StatsControllerMVCTests {
 
     @Test
     fun `stats can be served without explicit timespans`() {
-        `when`(this.statsService.getStatsForTimeSpan(matches(hashtag), any(), any(), anyList(), anyList()))
+        `when`(this.statsService.getStatsForTimeSpan(matches(hashtag), any(), any(), anyList(), anyList(), anyString()))
             .thenReturn(exampleStats)
 
         this.mockMvc

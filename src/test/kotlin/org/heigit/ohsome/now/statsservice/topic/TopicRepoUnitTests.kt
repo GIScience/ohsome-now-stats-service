@@ -5,6 +5,7 @@ import org.heigit.ohsome.now.statsservice.file
 import org.heigit.ohsome.now.statsservice.topicSchemaVersion
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
+import org.heigit.ohsome.now.statsservice.utils.UserHandler
 import org.junit.jupiter.api.Test
 
 
@@ -22,14 +23,14 @@ class TopicRepoUnitTests {
     private val healthcareTopic = TopicHandler("healthcare")
     private val placeTopic = TopicHandler("place")
     private val amenityTopic = TopicHandler("amenity")
-
+    private val noUserHandler = UserHandler("");
 
     @Test
     fun `can create SQL for topic 'amenity', all countries & non-wildcard hashtag`() {
 
         val expected = file("topic_amenity_allcountries_fixed_hashtag")
 
-        val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, amenityTopic)
+        val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, amenityTopic, noUserHandler)
         assertThat(sql)
             .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
@@ -41,7 +42,7 @@ class TopicRepoUnitTests {
 
         val expected = file("topic_amenity_allcountries_no_hashtag")
 
-        val sql = repo.topicStatsFromTimeSpanSQL(noHashtag, allCountries, amenityTopic)
+        val sql = repo.topicStatsFromTimeSpanSQL(noHashtag, allCountries, amenityTopic, noUserHandler)
         assertThat(sql)
             .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)
@@ -77,7 +78,7 @@ class TopicRepoUnitTests {
 
         val expected = file("topic_healthcare_allcountries_fixed_hashtag")
 
-        val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, healthcareTopic)
+        val sql = repo.topicStatsFromTimeSpanSQL(fixedHashtag, allCountries, healthcareTopic, noUserHandler)
         assertThat(sql)
             .contains("_$topicSchemaVersion")
             .isEqualToNormalizingPunctuationAndWhitespace(expected)

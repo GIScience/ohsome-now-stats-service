@@ -5,6 +5,7 @@ import org.heigit.ohsome.now.statsservice.topic.TopicHandler
 import org.heigit.ohsome.now.statsservice.topic.TopicRepo
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
+import org.heigit.ohsome.now.statsservice.utils.UserHandler
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
@@ -33,6 +34,7 @@ class CachingTests {
     val buildingTopic = TopicHandler("building")
     val roadTopic = TopicHandler("road")
 
+    val noUserHandler = UserHandler("");
 
     private val exampleTopicData: Map<String, Any> = mapOf(
         "hashtag" to hotosmHashtag,
@@ -137,15 +139,34 @@ class CachingTests {
                 date,
                 null,
                 noCountries,
-                StatsTopicsHandler(listOf("edit"))
+                StatsTopicsHandler(listOf("edit")),
+                noUserHandler
             )
         )
             .thenReturn(exampleStatsData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, date, null, noCountries, buildingTopic))
+        `when`(
+            this.topicRepo.getTopicStatsForTimeSpan(
+                hashtagHandler,
+                date,
+                null,
+                noCountries,
+                buildingTopic,
+                UserHandler("")
+            )
+        )
             .thenReturn(exampleTopicData)
 
-        `when`(this.topicRepo.getTopicStatsForTimeSpan(hashtagHandler, date, null, noCountries, roadTopic))
+        `when`(
+            this.topicRepo.getTopicStatsForTimeSpan(
+                hashtagHandler,
+                date,
+                null,
+                noCountries,
+                roadTopic,
+                UserHandler("")
+            )
+        )
             .thenReturn(exampleTopicData)
 
     }
@@ -159,7 +180,14 @@ class CachingTests {
     ) {
         assertEquals("213124.0", call().topics["edit"]!!.value.toString())
         verify(this.statsRepo, times(callCount))
-            .getStatsForTimeSpan(hashtagHandler, date, null, noCountries, StatsTopicsHandler(listOf("edit")))
+            .getStatsForTimeSpan(
+                hashtagHandler,
+                date,
+                null,
+                noCountries,
+                StatsTopicsHandler(listOf("edit")),
+                noUserHandler
+            )
     }
 
 

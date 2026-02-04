@@ -48,10 +48,9 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation("org.testcontainers:junit-jupiter:1.21.3")
-    testImplementation("org.testcontainers:clickhouse:1.21.3")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter:2.0.3")
+    testImplementation("org.testcontainers:testcontainers-clickhouse:2.0.3")
     testImplementation("org.mockito:mockito-core")
-
 }
 
 tasks.withType<KotlinCompile> {

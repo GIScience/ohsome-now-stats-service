@@ -4,6 +4,7 @@ import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.statsSchemaVersion
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
+import org.heigit.ohsome.now.statsservice.utils.UserHandler
 import org.heigit.ohsome.now.statsservice.utils.getGroupbyInterval
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi.create
@@ -39,16 +40,18 @@ class StatsRepo {
     fun statsFromTimeSpanSQL(
         hashtagHandler: HashtagHandler,
         countryHandler: CountryHandler,
-        statsTopicHandler: StatsTopicsHandler
+        statsTopicHandler: StatsTopicsHandler,
+        userHandler: UserHandler
     ) = """
         SELECT
             ${statsTopicHandler.statsTopicSQL}
-        FROM "all_stats_$statsSchemaVersion"
+        FROM "all_stats${userHandler.userTableIdentifier}_$statsSchemaVersion"
         WHERE
             ${hashtagHandler.optionalFilterSQL}        
             changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
+            ${userHandler.optionalFilterSQL}
             ;
         """.trimIndent()
 
@@ -146,23 +149,6 @@ class StatsRepo {
         FORMAT CSV
     """.trimIndent()
 
-
-    //language=sql
-    fun statsByUserIdSQL(hashtagHandler: HashtagHandler, statsTopicsHandler: StatsTopicsHandler) = """
-        SELECT
-            ${statsTopicsHandler.statsTopicSQL},
-            user_id
-        FROM "all_stats_user_$statsSchemaVersion"
-        WHERE
-            ${hashtagHandler.optionalFilterSQL}
-            user_id = :userId 
-            AND changeset_timestamp > parseDateTimeBestEffort(:startDate) 
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
-        GROUP BY user_id
-        ;
-    """.trimIndent()
-
-
     //language=sql
     private fun mostUsedHashtagsSQL(countryHandler: CountryHandler) = """
         SELECT 
@@ -223,12 +209,13 @@ class StatsRepo {
         startDate: Instant?,
         endDate: Instant?,
         countryHandler: CountryHandler,
-        statsTopicHandler: StatsTopicsHandler
+        statsTopicHandler: StatsTopicsHandler,
+        userHandler: UserHandler
     ): Map<String, Any> {
         logger.info("Getting stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate")
 
         val result = query {
-            it.select(statsFromTimeSpanSQL(hashtagHandler, countryHandler, statsTopicHandler))
+            it.select(statsFromTimeSpanSQL(hashtagHandler, countryHandler, statsTopicHandler, userHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
@@ -299,34 +286,6 @@ class StatsRepo {
         }
     }
 
-
-    /**
-     * Retrieves aggregated HOT-TM-project statistics for a specific user.
-     * ATTENTION: EXPOSING THIS QUERY MIGHT VIOLATE DATA PRIVACY
-     * @param userId the osm userid which should be queried.
-     * @return A list of maps containing the statistics for all hotTM projects.
-     */
-    @Suppress("LongMethod", "LongParameterList", "CyclomaticComplexMethod")
-    fun getStatsByUserId(
-        userId: String,
-        hashtagHandler: HashtagHandler,
-        statsTopicsHandler: StatsTopicsHandler,
-        startDate: Instant?,
-        endDate: Instant?
-    ): MutableMap<String, Any> {
-        logger.info("Getting HotOSM stats for user: $userId")
-
-        return query {
-            it.select(statsByUserIdSQL(hashtagHandler, statsTopicsHandler))
-                .bind("userId", userId)
-                .bind("hashtag", hashtagHandler.hashtag)
-                .bind("startDate", startDate ?: EPOCH)
-                .bind("endDate", endDate ?: now())
-                .mapToMap()
-                .singleOrNull()
-                ?: defaultResultForMissingUser(userId)
-        }
-    }
 
     fun getStatsForTimeSpanCountry(
         hashtagHandler: HashtagHandler,

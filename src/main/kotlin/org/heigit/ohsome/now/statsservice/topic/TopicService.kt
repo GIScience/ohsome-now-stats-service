@@ -5,6 +5,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
+import org.heigit.ohsome.now.statsservice.utils.UserHandler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Instant
@@ -24,7 +25,8 @@ class TopicService {
         startDate: Instant?,
         endDate: Instant?,
         countries: List<String>,
-        topics: List<String>
+        topics: List<String>,
+        userId: String
     ): Map<String, TopicResult> = runBlocking {
         val deferredResults = topics.map { topic ->
             async(IO) {
@@ -33,7 +35,8 @@ class TopicService {
                     startDate,
                     endDate,
                     handler(countries),
-                    TopicHandler(topic)
+                    TopicHandler(topic),
+                    UserHandler(userId)
                 ).toTopicResult(topic)
             }.let { topic to it }
         }
@@ -115,27 +118,6 @@ class TopicService {
         this.repo
             .getTopicsByH3(handler(hashtag), startDate, endDate, TopicHandler(topic), resolution, countryHandler)
 
-    @Suppress("LongParameterList")
-    fun getTopicsByUserId(
-        userId: String,
-        topics: List<String>,
-        hashtag: String,
-        startDate: Instant?,
-        endDate: Instant?
-    ): Map<String, TopicResult> {
-        val topicResults = mutableMapOf<String, TopicResult>()
-        for (topic in topics) {
-            topicResults[topic] = this.repo
-                .getTopicbyUserId(
-                    userId,
-                    TopicHandler(topic),
-                    HashtagHandler(hashtag),
-                    startDate,
-                    endDate
-                ).toTopicResult(topic)
-        }
-        return topicResults
-    }
 
     fun getTopicDefinitions(topics: List<String>?): Map<String, String> {
         val topicDefinitionMap = buildTopicDefinitionMap()

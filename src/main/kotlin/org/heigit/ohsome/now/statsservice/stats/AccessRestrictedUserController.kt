@@ -50,6 +50,10 @@ class AccessRestrictedUserController {
         @RequestParam(name = "enddate", required = false)
         endDate: Instant?,
 
+        @CountriesConfig
+        @RequestParam("countries", required = false, defaultValue = "")
+        countries: List<String>,
+
         @RequestHeader(value = "Authorization", required = false)
         authorization: String?,
 
@@ -62,7 +66,8 @@ class AccessRestrictedUserController {
         }
 
         val result = measure {
-            statsService.getStatsByUserId(userId, hashtag, topics, startDate, endDate)
+            statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries, topics, userId)
+                .toUserResult(userId)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)

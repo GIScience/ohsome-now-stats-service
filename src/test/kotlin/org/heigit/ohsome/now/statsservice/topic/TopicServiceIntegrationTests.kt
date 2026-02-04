@@ -49,7 +49,14 @@ class TopicServiceIntegrationTests {
         val topics = listOf(topic1, topic2)
 
 
-        val result = this.service.getTopicsByUserId(userId.toString(), topics, "hotosm-project-*", null, null)
+        val result = this.service.getTopicStatsForTimeSpan(
+            "hotosm-project-*",
+            null,
+            null,
+            emptyList(),
+            topics,
+            userId.toString(),
+        )
 
         val placeResult = result[topic1]!!
         assertThat(placeResult.value).isEqualTo(-1.0)
@@ -73,7 +80,14 @@ class TopicServiceIntegrationTests {
         val topic = "place"
 
         val result =
-            this.service.getTopicsByUserId(userId.toString(), listOf(topic), "hotosm-project-*", null, null)
+            this.service.getTopicStatsForTimeSpan(
+                "hotosm-project-*",
+                null,
+                null,
+                emptyList(),
+                listOf(topic),
+                userId.toString(),
+            )
 
         val amenityResult = result[topic]!!
         assertThat(amenityResult.value).isEqualTo(-1.0)
@@ -81,8 +95,6 @@ class TopicServiceIntegrationTests {
         println(amenityResult)
         println("--------------")
     }
-
-
 }
 
 

@@ -5,6 +5,7 @@ import org.heigit.ohsome.now.statsservice.file
 import org.heigit.ohsome.now.statsservice.statsSchemaVersion
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
+import org.heigit.ohsome.now.statsservice.utils.UserHandler
 import org.junit.jupiter.api.Test
 
 
@@ -20,13 +21,14 @@ class StatsRepoUnitTests {
     private val bolivia = CountryHandler(listOf("BOL"))
 
     private val statsTopicsHandler = StatsTopicsHandler(listOf("changeset", "contributor", "edit"))
-
+    private val noUserHandler = UserHandler("");
+    
     @Test
     fun `can create stats SQL for all countries & no hashtag`() {
 
         val expected = file("stats_allcountries_no_hashtag")
 
-        val sql = repo.statsFromTimeSpanSQL(noHashtag, allCountries, statsTopicsHandler)
+        val sql = repo.statsFromTimeSpanSQL(noHashtag, allCountries, statsTopicsHandler, noUserHandler)
 
         assertThat(sql)
             .contains("all_stats_$statsSchemaVersion")
@@ -38,7 +40,7 @@ class StatsRepoUnitTests {
 
         val expected = file("stats_allcountries_fixed_hashtag")
 
-        val sql = repo.statsFromTimeSpanSQL(fixedHashtag, allCountries, statsTopicsHandler)
+        val sql = repo.statsFromTimeSpanSQL(fixedHashtag, allCountries, statsTopicsHandler, noUserHandler)
 
         assertThat(sql)
             .contains("all_stats_$statsSchemaVersion")
@@ -50,7 +52,7 @@ class StatsRepoUnitTests {
 
         val expected = file("stats_allcountries_wildcard_hashtag")
 
-        val sql = repo.statsFromTimeSpanSQL(wildcardHashtag, allCountries, statsTopicsHandler)
+        val sql = repo.statsFromTimeSpanSQL(wildcardHashtag, allCountries, statsTopicsHandler, noUserHandler)
 
         assertThat(sql)
             .contains("all_stats_$statsSchemaVersion")

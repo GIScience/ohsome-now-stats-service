@@ -38,21 +38,21 @@ class AccessRestrictedUserControllerMVCTests {
         "edit" to mapOf("topic_result" to UnsignedLong.valueOf(34L), "user_id" to 4324).toTopicResult("edit"),
         "changeset" to mapOf(
             "topic_result" to UnsignedLong.valueOf(2L),
-            "user_id" to 4324
         ).toTopicResult("changeset")
-    ).toUserResult("4324")
+    ).toStatsResult()
 
 
     @Test
     fun `statsByUserId returns stats for one user only`() {
 
         `when`(
-            statsService.getStatsByUserId(
-                this.userId,
+            statsService.getStatsForTimeSpan(
                 "hotosm-project-*",
-                listOf("edit", "contributor"),
                 null,
-                null
+                null,
+                emptyList(),
+                listOf("edit", "contributor"),
+                this.userId
             )
         )
             .thenReturn(fakeResult)
@@ -75,7 +75,7 @@ class AccessRestrictedUserControllerMVCTests {
 
         // service must never be called because auth happens before service invocation
         verify(statsService, never())
-            .getStatsByUserId(anyString(), anyString(), anyList(), any(), any())
+            .getStatsForTimeSpan(anyString(), any(), any(), anyList(), anyList(), anyString())
 
         val GET = get("/stats/user")
             .queryParam("userId", userId)
@@ -92,7 +92,7 @@ class AccessRestrictedUserControllerMVCTests {
 
         // service must never be called because auth happens before service invocation
         verify(statsService, never())
-            .getStatsByUserId(anyString(), anyString(), anyList(), any(), any())
+            .getStatsForTimeSpan(anyString(), any(), any(), anyList(), anyList(), anyString())
 
         val GET = get("/stats/user")
             .queryParam("userId", userId)

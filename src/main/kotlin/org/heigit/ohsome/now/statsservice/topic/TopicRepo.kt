@@ -3,6 +3,7 @@ package org.heigit.ohsome.now.statsservice.topic
 import org.heigit.ohsome.now.statsservice.topicSchemaVersion
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
+import org.heigit.ohsome.now.statsservice.utils.UserHandler
 import org.heigit.ohsome.now.statsservice.utils.getGroupbyInterval
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.Jdbi.create
@@ -30,7 +31,8 @@ class TopicRepo {
     fun topicStatsFromTimeSpanSQL(
         hashtagHandler: HashtagHandler,
         countryHandler: CountryHandler,
-        topicHandler: TopicHandler
+        topicHandler: TopicHandler,
+        userHandler: UserHandler
     ) = """
         WITH
             ${topicHandler.valueLists()} 
@@ -40,12 +42,13 @@ class TopicRepo {
 
         SELECT ${topicHandler.topicResult()}
         
-        FROM topic_${topicHandler.topic}_$topicSchemaVersion
+        FROM topic${userHandler.userTableIdentifier}_${topicHandler.topic}_$topicSchemaVersion
         WHERE
             ${hashtagHandler.optionalFilterSQL}       
             changeset_timestamp > parseDateTimeBestEffort(:startDate)
             AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
             ${countryHandler.optionalFilterSQL}
+            ${userHandler.optionalFilterSQL}
         ;
         """.trimIndent()
 
@@ -211,12 +214,13 @@ class TopicRepo {
         startDate: Instant?,
         endDate: Instant?,
         countryHandler: CountryHandler,
-        topicHandler: TopicHandler
+        topicHandler: TopicHandler,
+        userHandler: UserHandler
     ): Map<String, Any> {
         logger.info("Getting topic stats for hashtag: ${hashtagHandler.hashtag}, startDate: $startDate, endDate: $endDate, topic: ${topicHandler.topic}")
 
         val result = query {
-            it.select(topicStatsFromTimeSpanSQL(hashtagHandler, countryHandler, topicHandler))
+            it.select(topicStatsFromTimeSpanSQL(hashtagHandler, countryHandler, topicHandler, userHandler))
                 .bind("hashtag", hashtagHandler.hashtag)
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
@@ -293,28 +297,6 @@ class TopicRepo {
                 .reduce { a, b -> "$a\n$b" }
         }
     }
-
-    @Suppress("LongParameterList", "CyclomaticComplexMethod")
-    fun getTopicbyUserId(
-        userId: String,
-        topicHandler: TopicHandler,
-        hashtagHandler: HashtagHandler,
-        startDate: Instant?,
-        endDate: Instant?
-    ): Map<String, Any> {
-        logger.info("Getting topic stats for user: $userId, topic: ${topicHandler.topic}")
-        return query {
-            it.select(topicByUserIdSQL(topicHandler, hashtagHandler))
-                .bind("hashtag", hashtagHandler.hashtag)
-                .bind("userId", userId)
-                .bind("startDate", startDate ?: EPOCH)
-                .bind("endDate", endDate ?: now())
-                .mapToMap()
-                .singleOrNull()
-                ?: defaultTopicResultForMissingUser(userId, topicHandler.definition.aggregationStrategy.toString())
-        }
-    }
-
 
     private fun <T> query(queryFunction: (handle: Handle) -> T) = create(dataSource)
         .withHandle<T, RuntimeException>(queryFunction)
