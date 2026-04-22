@@ -26,7 +26,7 @@ class TopicService {
         endDate: Instant?,
         countries: List<String>,
         topics: List<String>,
-        userId: String
+        userIds: List<String>
     ): Map<String, TopicResult> = runBlocking {
         val deferredResults = topics.map { topic ->
             async(IO) {
@@ -36,7 +36,7 @@ class TopicService {
                     endDate,
                     handler(countries),
                     TopicHandler(topic),
-                    UserHandler(userId)
+                    UserHandler(userIds)
                 ).toTopicResult(topic)
             }.let { topic to it }
         }
@@ -67,7 +67,7 @@ class TopicService {
         interval: String,
         countries: List<String>,
         topics: List<String>,
-        userId: String
+        userIds: List<String>
     ): Map<String, TopicIntervalResult> = runBlocking {
         val deferredResults = topics.map { topic ->
             async(IO) {
@@ -78,7 +78,7 @@ class TopicService {
                     interval,
                     handler(countries),
                     TopicHandler(topic),
-                    UserHandler(userId)
+                    UserHandler(userIds)
                 ).toTopicIntervalResult(topic)
             }.let { topic to it }
         }
@@ -92,7 +92,7 @@ class TopicService {
         startDate: Instant?,
         endDate: Instant?,
         topics: List<String>,
-        userId: String
+        userIds: List<String>
     ): Map<String, List<TopicCountryResult>> = runBlocking {
         val deferredResults = topics.map { topic ->
             async(IO) {
@@ -101,7 +101,7 @@ class TopicService {
                     startDate,
                     endDate,
                     TopicHandler(topic),
-                    UserHandler(userId)
+                    UserHandler(userIds)
                 ).toTopicCountryResult(topic)
             }.let { topic to it }
         }
@@ -118,7 +118,7 @@ class TopicService {
         topic: String,
         resolution: Int,
         countries: List<String>,
-        userId: String
+        userIds: List<String>
     ) =
         this.repo
             .getTopicsByH3(
@@ -128,7 +128,7 @@ class TopicService {
                 TopicHandler(topic),
                 resolution,
                 CountryHandler(countries),
-                UserHandler(userId)
+                UserHandler(userIds)
             )
 
 

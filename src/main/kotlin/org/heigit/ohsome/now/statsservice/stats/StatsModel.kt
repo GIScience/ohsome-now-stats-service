@@ -25,7 +25,7 @@ data class StatsResultWithTopics(
 
 fun Map<String, TopicResult>.toStatsResult() = StatsResultWithTopics(this)
 
-fun StatsResultWithTopics.toUserResult(userId: String) = UserResult(
+fun StatsResultWithTopics.toUserResult(userId: List<String>) = UserResult(
     this.topics,
     userId
 )
@@ -85,15 +85,9 @@ data class MetadataResult(
 )
 
 
-fun Map<String, TopicResult>.toUserResult(userId: String) = UserResult(
-    this,
-    userId
-)
-
-
 data class UserResult(
     val topics: Map<String, TopicResult>,
-    val userId: String
+    val userId: List<String>
 )
 
 

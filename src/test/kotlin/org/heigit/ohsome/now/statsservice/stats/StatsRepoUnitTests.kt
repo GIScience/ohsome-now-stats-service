@@ -21,7 +21,7 @@ class StatsRepoUnitTests {
     private val bolivia = CountryHandler(listOf("BOL"))
 
     private val statsTopicsHandler = StatsTopicsHandler(listOf("changeset", "contributor", "edit"))
-    private val noUserHandler = UserHandler("");
+    private val noUserHandler = UserHandler(emptyList());
 
     @Test
     fun `can create stats SQL for all countries & no hashtag`() {

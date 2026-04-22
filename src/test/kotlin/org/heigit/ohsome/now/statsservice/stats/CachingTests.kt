@@ -33,7 +33,7 @@ class CachingTests {
     val buildingTopic = TopicHandler("building")
     val roadTopic = TopicHandler("road")
 
-    val noUserHandler = UserHandler("");
+    val noUserHandler = UserHandler(emptyList());
 
     private val exampleTopicData: Map<String, Any> = mapOf(
         "hashtag" to hotosmHashtag,
@@ -151,7 +151,7 @@ class CachingTests {
                 null,
                 noCountries,
                 buildingTopic,
-                UserHandler("")
+                noUserHandler
             )
         )
             .thenReturn(exampleTopicData)
@@ -163,7 +163,7 @@ class CachingTests {
                 null,
                 noCountries,
                 roadTopic,
-                UserHandler("")
+                noUserHandler
             )
         )
             .thenReturn(exampleTopicData)

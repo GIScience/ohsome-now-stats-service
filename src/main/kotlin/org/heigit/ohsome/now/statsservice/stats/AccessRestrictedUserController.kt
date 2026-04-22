@@ -32,7 +32,11 @@ class AccessRestrictedUserController {
 
         @Parameter(description = "OSM user id")
         @RequestParam("userId")
-        userId: String,
+        userId: String?,
+
+        @Parameter(description = "A list of OSM user ids")
+        @RequestParam("userIds")
+        userIds: List<String>?,
 
         @Parameter(
             description = "the hashtag to query for - case-insensitive and without the leading '#'",
@@ -65,9 +69,18 @@ class AccessRestrictedUserController {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid Token")
         }
 
+        // todo: write MVC testcase
+        var userList = userIds
+        if (userId != null) {
+            userList = listOf(userId)
+        }
+        if (userList == null) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Either userId or userIds required")
+        }
+
         val result = measure {
-            statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries, topics, userId)
-                .toUserResult(userId)
+            statsService.getStatsForTimeSpan(hashtag, startDate, endDate, countries, topics, userList)
+                .toUserResult(userList)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
@@ -81,7 +94,7 @@ class AccessRestrictedUserController {
 
         @Parameter(description = "OSM user id")
         @RequestParam("userId")
-        userId: String,
+        userIds: List<String>,
 
         @Parameter(
             description = "the hashtag to query for - case-insensitive and without the leading '#'",
@@ -121,7 +134,7 @@ class AccessRestrictedUserController {
         }
 
         val result = measure {
-            statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries, topics, userId)
+            statsService.getStatsForTimeSpanInterval(hashtag, startDate, endDate, interval, countries, topics, userIds)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
@@ -135,8 +148,8 @@ class AccessRestrictedUserController {
         httpServletRequest: HttpServletRequest,
 
         @Parameter(description = "OSM user id")
-        @RequestParam("userId")
-        userId: String,
+        @RequestParam("userIds")
+        userIds: List<String>,
 
         @HashtagConfig
         @RequestParam(name = "hashtag", required = false, defaultValue = "")
@@ -164,7 +177,7 @@ class AccessRestrictedUserController {
         }
 
         val result = measure {
-            statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate, topics, userId)
+            statsService.getStatsForTimeSpanCountry(hashtag, startDate, endDate, topics, userIds)
         }
 
         return buildOhsomeFormat(result, httpServletRequest)
@@ -177,8 +190,8 @@ class AccessRestrictedUserController {
     fun statsByH3andUserId(
 
         @Parameter(description = "OSM user id")
-        @RequestParam("userId")
-        userId: String,
+        @RequestParam("userIds")
+        userIds: List<String>,
 
         @HashtagConfig
         @RequestParam(name = "hashtag", required = false, defaultValue = "")
@@ -214,6 +227,6 @@ class AccessRestrictedUserController {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid Token")
         }
 
-        return statsService.getStatsByH3(hashtag, startDate, endDate, topic, resolution, countries, userId)
+        return statsService.getStatsByH3(hashtag, startDate, endDate, topic, resolution, countries, userIds)
     }
 }

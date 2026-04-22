@@ -48,7 +48,7 @@ class SystemTests {
             registry.add("spring.datasource.username") { clickHouse.username }
             registry.add("spring.datasource.password") { clickHouse.password }
         }
-        
+
     }
 
 
@@ -473,7 +473,7 @@ class SystemTests {
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
                     .path("/stats/user/country")
-                    .queryParam("userId", "552187")
+                    .queryParam("userIds", "552187")
                     .queryParam("topics", listOf("edit", "building"))
                     .build()
             }
@@ -494,6 +494,33 @@ class SystemTests {
                 .jsonPath("$.result.topics.edit[1].value").isEqualTo(8)
         }
 
+        @Test
+        @DisplayName("GET /stats/user/country")
+        fun `get user stats by country with multiple users`() {
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/user/country")
+                    .queryParam("userIds", "552187,11876234")
+                    .queryParam("topics", listOf("edit", "building"))
+                    .build()
+            }
+
+            val response = client()
+                .get()
+                .uri(url)
+                .header("Authorization", "Basic ${appProperties.token}")
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody()
+
+            println(response.returnResult())
+            response
+                .jsonPath("$.result.topics.building[0].added").isEqualTo(10)
+                .jsonPath("$.result.topics.building[0].modified.count_modified").isEqualTo(1)
+                .jsonPath("$.result.topics.edit[1].value").isEqualTo(8)
+        }
+
 
         @Test
         @DisplayName("GET /stats/user/h3")
@@ -501,7 +528,7 @@ class SystemTests {
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
                     .path("/stats/user/h3")
-                    .queryParam("userId", "552187")
+                    .queryParam("userIds", "552187")
                     .queryParam("topic", "edit")
                     .build()
             }

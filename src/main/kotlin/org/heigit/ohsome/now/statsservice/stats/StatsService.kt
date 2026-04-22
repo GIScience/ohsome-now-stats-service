@@ -37,14 +37,14 @@ class StatsService {
         endDate: Instant?,
         countries: List<String>,
         topics: List<String>,
-        userId: String = ""
+        userIds: List<String> = emptyList()
     ) = addStatsTopicsForTimeSpan(
         HashtagHandler(hashtag),
         startDate,
         endDate,
         CountryHandler(countries),
         StatsTopicsHandler(topics),
-        UserHandler(userId)
+        UserHandler(userIds)
     )
         .addTopicsForTimeSpan(
             hashtag,
@@ -52,7 +52,7 @@ class StatsService {
             endDate,
             countries,
             topics.filter { !statsTopics.contains(it) },
-            userId
+            userIds
         )
         .toStatsResult()
 
@@ -88,14 +88,14 @@ class StatsService {
         endDate: Instant?,
         countries: List<String>,
         topics: List<String>,
-        userId: String = ""
+        userIds: List<String> = emptyList()
     ) = this + topicService.getTopicStatsForTimeSpan(
         hashtag,
         startDate,
         endDate,
         countries,
         topics,
-        userId
+        userIds
     )
 
 
@@ -172,7 +172,7 @@ class StatsService {
         interval: String,
         countries: List<String>,
         topics: List<String>,
-        userId: String = ""
+        userIds: List<String> = emptyList()
     ) = addStatsTopicsForTimeSpanInterval(
         HashtagHandler(hashtag),
         startDate,
@@ -180,7 +180,7 @@ class StatsService {
         interval,
         CountryHandler(countries),
         StatsTopicsHandler(topics),
-        UserHandler(userId)
+        UserHandler(userIds)
     ).addTopicsForTimeSpanInterval(
         hashtag,
         startDate,
@@ -188,7 +188,7 @@ class StatsService {
         interval,
         countries,
         topics.filter { !statsTopics.contains(it) },
-        userId
+        userIds
     )
 
     @Suppress("LongParameterList")
@@ -224,10 +224,10 @@ class StatsService {
         interval: String,
         countries: List<String>,
         topics: List<String>,
-        userId: String
+        userIds: List<String>
     ): StatsIntervalResultWithTopics {
         val topicResults = topicService.getTopicStatsForTimeSpanInterval(
-            hashtag, startDate, endDate, interval, countries, topics, userId
+            hashtag, startDate, endDate, interval, countries, topics, userIds
         )
         // if no statsTopic was queried, we need the start and end-date once
         if (this.startDate.isNullOrEmpty()) {
@@ -257,21 +257,21 @@ class StatsService {
         startDate: Instant?,
         endDate: Instant?,
         topics: List<String>,
-        userId: String = ""
+        userIds: List<String> = emptyList()
     ) =
         this.addStatsTopicsForTimeSpanCountry(
             handler(hashtag),
             startDate,
             endDate,
             StatsTopicsHandler(topics),
-            UserHandler(userId)
+            UserHandler(userIds)
         )
             .addTopicsForTimeSpanCountry(
                 hashtag,
                 startDate,
                 endDate,
                 topics.filter { !statsTopics.contains(it) },
-                userId
+                userIds
             )
             .toStatsTopicCountryResult()
 
@@ -304,9 +304,9 @@ class StatsService {
         startDate: Instant?,
         endDate: Instant?,
         topics: List<String>,
-        userId: String
+        userIds: List<String>
     ) = this + topicService.getTopicStatsForTimeSpanCountry(
-        hashtag, startDate, endDate, topics, userId
+        hashtag, startDate, endDate, topics, userIds
     )
 
     @Suppress("LongParameterList")
@@ -317,7 +317,7 @@ class StatsService {
         topic: String,
         resolution: Int,
         countries: List<String>,
-        userId: String = ""
+        userIds: List<String> = emptyList()
     ): String {
         val statsTopicHandler = StatsTopicsHandler(listOf(topic))
         return if (!statsTopicHandler.noStatsTopics)
@@ -329,10 +329,10 @@ class StatsService {
                     statsTopicHandler,
                     resolution,
                     CountryHandler(countries),
-                    UserHandler(userId)
+                    UserHandler(userIds)
                 )
         else this.topicService
-            .getTopicsByH3(hashtag, startDate, endDate, topic, resolution, countries, userId)
+            .getTopicsByH3(hashtag, startDate, endDate, topic, resolution, countries, userIds)
     }
 
     fun getMostUsedHashtags(

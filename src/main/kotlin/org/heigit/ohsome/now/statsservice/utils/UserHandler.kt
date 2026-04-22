@@ -1,12 +1,12 @@
 package org.heigit.ohsome.now.statsservice.utils
 
-data class UserHandler(val userId: String) {
+data class UserHandler(val userIds: List<String>) {
     var optionalFilterSQL = ""
     var userTableIdentifier = ""
 
     init {
-        if (userId != "") {
-            this.optionalFilterSQL = "AND user_id=$userId"
+        if (userIds.isNotEmpty()) {
+            this.optionalFilterSQL = "AND user_id in (${userIds.joinToString(",")})"
             this.userTableIdentifier = "_user"
         }
     }

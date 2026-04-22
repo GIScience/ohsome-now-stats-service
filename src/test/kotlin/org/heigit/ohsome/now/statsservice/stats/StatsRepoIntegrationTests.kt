@@ -58,7 +58,7 @@ class StatsRepoIntegrationTests {
 
     private val emptyListCountryHandler = CountryHandler(emptyList())
     private val statsTopicsHandler = StatsTopicsHandler(listOf("edit", "changeset", "contributor"))
-    private val noUserHandler = UserHandler("");
+    private val noUserHandler = UserHandler(emptyList());
 
     @Test
     fun `getStatsForTimeSpan should return all data when using no hashtag, no time span and null-list of countries`() {
@@ -378,7 +378,7 @@ class StatsRepoIntegrationTests {
             StatsTopicsHandler(listOf("edit")),
             3,
             CountryHandler(emptyList()),
-            UserHandler("")
+            UserHandler(emptyList())
         )
         println(result)
         assertTrue(result.contains("832830fffffffff"))
@@ -394,7 +394,7 @@ class StatsRepoIntegrationTests {
             null,
             CountryHandler(emptyList()),
             StatsTopicsHandler(listOf("edit", "changeset")),
-            UserHandler("2186388"),
+            UserHandler(listOf("2186388")),
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -410,7 +410,7 @@ class StatsRepoIntegrationTests {
             null,
             CountryHandler(emptyList()),
             StatsTopicsHandler(listOf("edit", "changeset")),
-            UserHandler("2186381"),
+            UserHandler(listOf("2186381")),
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)

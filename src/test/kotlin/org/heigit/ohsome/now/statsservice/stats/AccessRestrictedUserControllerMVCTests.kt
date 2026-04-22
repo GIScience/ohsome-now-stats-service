@@ -30,7 +30,7 @@ class AccessRestrictedUserControllerMVCTests {
     lateinit var appProperties: AppProperties
 
 
-    val userId = "12312"
+    val userIds = listOf("12312")
 
 
     val fakeResult = mapOf(
@@ -51,13 +51,13 @@ class AccessRestrictedUserControllerMVCTests {
                 null,
                 emptyList(),
                 listOf("edit", "contributor"),
-                this.userId
+                this.userIds
             )
         )
             .thenReturn(fakeResult)
 
         val GET = get("/stats/user")
-            .queryParam("userId", userId)
+            .queryParam("userId", userIds[0])
             .queryParam("hashtag", "hotosm-project-*")
             .queryParam("topics", "edit,contributor")
             .header("Authorization", "Basic ${appProperties.token}")
@@ -74,10 +74,10 @@ class AccessRestrictedUserControllerMVCTests {
 
         // service must never be called because auth happens before service invocation
         verify(statsService, never())
-            .getStatsForTimeSpan(anyString(), any(), any(), anyList(), anyList(), anyString())
+            .getStatsForTimeSpan(anyString(), any(), any(), anyList(), anyList(), anyList())
 
         val GET = get("/stats/user")
-            .queryParam("userId", userId)
+            .queryParam("userId", userIds[0])
             .queryParam("hashtag", "hotosm-project-*")
             .queryParam("topics", "building,road")
 
@@ -91,15 +91,31 @@ class AccessRestrictedUserControllerMVCTests {
 
         // service must never be called because auth happens before service invocation
         verify(statsService, never())
-            .getStatsForTimeSpan(anyString(), any(), any(), anyList(), anyList(), anyString())
+            .getStatsForTimeSpan(anyString(), any(), any(), anyList(), anyList(), anyList())
 
         val GET = get("/stats/user")
-            .queryParam("userId", userId)
+            .queryParam("userId", userIds[0])
             .queryParam("hashtag", "hotosm-project-*")
             .queryParam("topics", "edit,changeset")
             .header("Authorization", "Basic badToken")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isForbidden)
+    }
+
+
+    @Test
+    fun `statsByUserId returns bad request if not either userId or userIds is specified`() {
+        // service must never be called because auth happens before service invocation
+        verify(statsService, never())
+            .getStatsForTimeSpan(anyString(), any(), any(), anyList(), anyList(), anyList())
+
+        val GET = get("/stats/user")
+            .queryParam("hashtag", "hotosm-project-*")
+            .queryParam("topics", "edit,changeset")
+            .header("Authorization", "Basic ${appProperties.token}")
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isBadRequest)
     }
 }

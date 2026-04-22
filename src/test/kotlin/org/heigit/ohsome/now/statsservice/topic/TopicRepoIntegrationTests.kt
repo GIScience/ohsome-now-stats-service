@@ -3,11 +3,7 @@ package org.heigit.ohsome.now.statsservice.topic
 import org.heigit.ohsome.now.statsservice.SpringTestWithClickhouse
 import org.heigit.ohsome.now.statsservice.WithTopicData
 import org.heigit.ohsome.now.statsservice.createClickhouseContainer
-import org.heigit.ohsome.now.statsservice.utils.CountryHandler
-import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
-import org.heigit.ohsome.now.statsservice.utils.UserHandler
-import org.heigit.ohsome.now.statsservice.utils.getDoubleArray
-import org.heigit.ohsome.now.statsservice.utils.getSqlArray
+import org.heigit.ohsome.now.statsservice.utils.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -48,7 +44,7 @@ class TopicRepoIntegrationTests {
     lateinit var repo: TopicRepo
 
     val topic = "place"
-    val noUserId = "";
+    val noUserHandler = UserHandler(emptyList())
 
     private val emptyListCountryHandler = CountryHandler(emptyList())
     val bolivia = CountryHandler(listOf("BOL"))
@@ -72,7 +68,7 @@ class TopicRepoIntegrationTests {
                 null,
                 emptyListCountryHandler,
                 TopicHandler(topic),
-                UserHandler(noUserId)
+                noUserHandler
             )
 
         println(result)
@@ -98,7 +94,7 @@ class TopicRepoIntegrationTests {
                 null,
                 emptyListCountryHandler,
                 TopicHandler(topic),
-                UserHandler(noUserId)
+                noUserHandler
             )
 
         println(result)
@@ -117,7 +113,7 @@ class TopicRepoIntegrationTests {
                 null,
                 emptyListCountryHandler,
                 TopicHandler("healthcare"),
-                UserHandler(noUserId)
+                noUserHandler
             )
 
         println(result)
@@ -135,7 +131,7 @@ class TopicRepoIntegrationTests {
                 null,
                 emptyListCountryHandler,
                 TopicHandler("waterway"),
-                UserHandler(noUserId)
+                noUserHandler
             )
 
         println(result)
@@ -156,7 +152,7 @@ class TopicRepoIntegrationTests {
                 endDate,
                 liberia,
                 TopicHandler("amenity"),
-                UserHandler(noUserId)
+                noUserHandler
             )
 
         println(result)
@@ -179,7 +175,7 @@ class TopicRepoIntegrationTests {
             "P1M",
             this.emptyListCountryHandler,
             TopicHandler(topic),
-            UserHandler("")
+            noUserHandler
         )
 
         println(result)
@@ -210,7 +206,7 @@ class TopicRepoIntegrationTests {
             "P1M",
             bolivia,
             TopicHandler(topic),
-            UserHandler("")
+            noUserHandler
         )
 
         println(result)
@@ -241,7 +237,7 @@ class TopicRepoIntegrationTests {
             "P1M",
             this.emptyListCountryHandler,
             TopicHandler(topic),
-            UserHandler("")
+            noUserHandler
         )
 
         println(result)
@@ -270,7 +266,7 @@ class TopicRepoIntegrationTests {
             interval,
             this.emptyListCountryHandler,
             TopicHandler(topic),
-            UserHandler("")
+            noUserHandler
         )
 
         // year 2023 has 3 distinct userids with different and without hashtags
@@ -292,7 +288,7 @@ class TopicRepoIntegrationTests {
             "P1M",
             this.emptyListCountryHandler,
             TopicHandler(topic),
-            UserHandler("")
+            noUserHandler
         )
 
 
@@ -321,7 +317,7 @@ class TopicRepoIntegrationTests {
             startDate,
             endDate,
             TopicHandler(topic),
-            UserHandler("")
+            noUserHandler
         )
 
         println(result)
@@ -346,7 +342,7 @@ class TopicRepoIntegrationTests {
             startDate,
             endDate,
             TopicHandler(topic),
-            UserHandler("")
+            noUserHandler
         )
 
         println(result)
@@ -366,7 +362,7 @@ class TopicRepoIntegrationTests {
             null,
             CountryHandler(emptyList()),
             TopicHandler(topic),
-            UserHandler("4362353")
+            UserHandler(listOf("4362353"))
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -382,7 +378,7 @@ class TopicRepoIntegrationTests {
             null,
             CountryHandler(emptyList()),
             TopicHandler(topic),
-            UserHandler("2381"),
+            UserHandler(listOf("2381")),
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -397,7 +393,7 @@ class TopicRepoIntegrationTests {
             null,
             CountryHandler(emptyList()),
             TopicHandler("building"),
-            UserHandler("6791950"),
+            UserHandler(listOf("6791950")),
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)

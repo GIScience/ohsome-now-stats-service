@@ -23,7 +23,7 @@ class TopicRepoUnitTests {
     private val healthcareTopic = TopicHandler("healthcare")
     private val placeTopic = TopicHandler("place")
     private val amenityTopic = TopicHandler("amenity")
-    private val noUserHandler = UserHandler("");
+    private val noUserHandler = UserHandler(emptyList());
 
     @Test
     fun `can create SQL for topic 'amenity', all countries & non-wildcard hashtag`() {
