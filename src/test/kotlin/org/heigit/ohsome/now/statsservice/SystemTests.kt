@@ -446,7 +446,7 @@ class SystemTests {
             val url = { uriBuilder: UriBuilder ->
                 uriBuilder
                     .path("/stats/user/interval")
-                    .queryParam("userId", "552187")
+                    .queryParam("userIds", "552187")
                     .queryParam("topics", listOf("edit", "building"))
                     .queryParam("interval", "P1Y")
                     .build()
