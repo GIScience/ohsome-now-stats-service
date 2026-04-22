@@ -268,7 +268,7 @@ class TopicRepo {
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
                 .bind("resolution", resolution)
-                .mapTo(String::class.java)
+                .map { rs, _ -> "${rs.getString("topic_result")},${rs.getString("hex")}" }
                 .reduce { a, b -> "$a\n$b" }
         }
     }
