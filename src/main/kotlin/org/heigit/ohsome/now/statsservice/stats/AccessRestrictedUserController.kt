@@ -93,7 +93,7 @@ class AccessRestrictedUserController {
         httpServletRequest: HttpServletRequest,
 
         @Parameter(description = "OSM user id")
-        @RequestParam("userId")
+        @RequestParam("userIds")
         userIds: List<String>,
 
         @Parameter(
