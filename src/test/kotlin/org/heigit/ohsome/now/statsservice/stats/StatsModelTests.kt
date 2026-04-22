@@ -1,11 +1,11 @@
 package org.heigit.ohsome.now.statsservice.stats
 
-import com.clickhouse.data.value.UnsignedLong
 import org.assertj.core.api.Assertions.assertThat
 import org.heigit.ohsome.now.statsservice.topic.TopicResult
 import org.heigit.ohsome.now.statsservice.topic.toTopicCountryResult
 import org.heigit.ohsome.now.statsservice.topic.toTopicResult
 import org.junit.jupiter.api.Test
+import java.sql.Timestamp
 import java.time.OffsetDateTime
 
 
@@ -19,12 +19,12 @@ class StatsModelTests {
 
     private fun createMap(hashtag: String) = mapOf(
         "hashtag" to hashtag,
-        "changesets" to UnsignedLong.valueOf(2),
-        "users" to UnsignedLong.valueOf(1001L),
+        "changesets" to 2L,
+        "users" to 1001L,
         "roads" to 43534.5,
         "buildings" to 123L,
-        "edits" to UnsignedLong.valueOf(213124L),
-        "latest" to OffsetDateTime.parse("2021-12-09T13:01:28Z"),
+        "edits" to 213124L,
+        "latest" to Timestamp.from(OffsetDateTime.parse("2021-12-09T13:01:28Z").toInstant()),
     )
 
     private fun createTopicMap() = mapOf(
@@ -82,12 +82,12 @@ class StatsModelTests {
 
         val map3 = mapOf(
             "hashtag" to hashtag1,
-            "number_of_users" to UnsignedLong.valueOf(2),
+            "number_of_users" to 2,
         )
 
         val map4 = mapOf(
             "hashtag" to hashtag2,
-            "number_of_users" to UnsignedLong.valueOf(3),
+            "number_of_users" to 3,
         )
 
         val maps = listOf(map3, map4)

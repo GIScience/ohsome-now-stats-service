@@ -6,6 +6,8 @@ import org.heigit.ohsome.now.statsservice.createClickhouseContainer
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.heigit.ohsome.now.statsservice.utils.UserHandler
+import org.heigit.ohsome.now.statsservice.utils.getDoubleArray
+import org.heigit.ohsome.now.statsservice.utils.getSqlArray
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.junit.jupiter.Container
+import java.sql.Timestamp
 import java.time.Instant
-import java.time.LocalDateTime
 
 
 @SpringTestWithClickhouse
@@ -35,8 +37,11 @@ class TopicRepoIntegrationTests {
 
         @JvmStatic
         @DynamicPropertySource
-        fun clickhouseUrl(registry: DynamicPropertyRegistry) =
+        fun clickhouseUrl(registry: DynamicPropertyRegistry) {
             registry.add("spring.datasource.url") { clickHouse.jdbcUrl }
+            registry.add("spring.datasource.username") { clickHouse.username }
+            registry.add("spring.datasource.password") { clickHouse.password }
+        }
     }
 
     @Autowired
@@ -179,12 +184,15 @@ class TopicRepoIntegrationTests {
 
         println(result)
         assertEquals(6, result.size)
-        assertEquals(84, (result["topic_result"] as DoubleArray).size)
-        assertEquals("2015-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
+        assertEquals(84, result.getSqlArray("topic_result")?.size)
+        assertEquals(
+            "2015-01-01T00:00",
+            (result.getSqlArray("startdate") as Array<Timestamp>)[0].toLocalDateTime().toString()
+        )
 
         // 3 new places at the beginning of the interval
-        assertEquals("3.0", (result["topic_result"] as DoubleArray)[0].toString())
-        assertEquals("2.0", (result["topic_result"] as DoubleArray)[35].toString())
+        assertEquals(3.0, result.getDoubleArray("topic_result")!![0])
+        assertEquals(2.0, result.getDoubleArray("topic_result")!![35])
     }
 
 
@@ -207,13 +215,16 @@ class TopicRepoIntegrationTests {
 
         println(result)
         assertEquals(6, result.size)
-        assertEquals(84, (result["topic_result"] as DoubleArray).size)
+        assertEquals(84, result.getSqlArray("topic_result")?.size)
 
-        assertEquals("2015-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
+        assertEquals(
+            "2015-01-01T00:00",
+            (result.getSqlArray("startdate") as Array<Timestamp>)[0].toLocalDateTime().toString()
+        )
 
         // 3 new places in 'BRA' at the beginning of the interval but countries are restricted to 'BOL'
-        assertEquals("0.0", (result["topic_result"] as DoubleArray)[0].toString())
-        assertEquals("2.0", (result["topic_result"] as DoubleArray)[35].toString())
+        assertEquals(0.0, result.getDoubleArray("topic_result")!![0])
+        assertEquals(2.0, result.getDoubleArray("topic_result")!![35])
     }
 
 
@@ -235,11 +246,14 @@ class TopicRepoIntegrationTests {
 
         println(result)
         assertEquals(6, result.size)
-        assertEquals(624, (result["topic_result"] as DoubleArray).size)
-        assertEquals("1970-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
+        assertEquals(624, result.getSqlArray("topic_result")?.size)
+        assertEquals(
+            "1970-01-01T00:00",
+            (result.getSqlArray("startdate") as Array<Timestamp>)[0].toLocalDateTime().toString()
+        )
 
-        assertEquals("3.0", (result["topic_result"] as DoubleArray)[540].toString())
-        assertEquals("2.0", (result["topic_result"] as DoubleArray)[575].toString())
+        assertEquals(3.0, result.getDoubleArray("topic_result")!![540])
+        assertEquals(2.0, result.getDoubleArray("topic_result")!![575])
     }
 
 
@@ -260,7 +274,7 @@ class TopicRepoIntegrationTests {
         )
 
         // year 2023 has 3 distinct userids with different and without hashtags
-        assertEquals(-2.0, (result["topic_result"] as DoubleArray)[0])
+        assertEquals(-2.0, result.getSqlArray("topic_result")!![0])
     }
 
 
@@ -283,14 +297,17 @@ class TopicRepoIntegrationTests {
 
 
         assertEquals(6, result.size)
-        assertEquals(53, (result["startdate"] as Array<LocalDateTime>).size)
+        assertEquals(53, result.getSqlArray("startdate")?.size)
 
 
-        (result["topic_result"] as DoubleArray).forEach() {
+        result.getSqlArray("topic_result")!!.forEach {
             assertNotNull(it)
         }
 
-        assertEquals("2017-08-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
+        assertEquals(
+            "2017-08-01T00:00",
+            (result.getSqlArray("startdate") as Array<Timestamp>)[0].toLocalDateTime().toString()
+        )
     }
 
 

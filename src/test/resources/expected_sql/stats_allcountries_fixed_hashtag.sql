@@ -6,6 +6,6 @@ FROM "all_stats_3"
 WHERE
    has_hashtags = true
    AND has(hashtags, :hashtag)
-   AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
-   AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+   AND changeset_timestamp > :startDate
+   AND changeset_timestamp < :endDate
 ;

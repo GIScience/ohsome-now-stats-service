@@ -4,6 +4,6 @@ SELECT
    count(map_feature_edit) as edit
 FROM "all_stats_3"
 WHERE
-   changeset_timestamp > parseDateTimeBestEffort(:startDate)
-   AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+   changeset_timestamp > :startDate
+   AND changeset_timestamp < :endDate
 ;

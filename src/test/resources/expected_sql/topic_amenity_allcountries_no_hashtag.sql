@@ -11,6 +11,6 @@ SELECT ifNull(sum(edit), 0) as topic_result,
 
 FROM topic_amenity_3
 WHERE
-    changeset_timestamp > parseDateTimeBestEffort(:startDate)
-    AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+    changeset_timestamp > :startDate
+    AND changeset_timestamp < :endDate
 ;

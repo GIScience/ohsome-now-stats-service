@@ -1,6 +1,5 @@
 package org.heigit.ohsome.now.statsservice.stats
 
-import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.statsSchemaVersion
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
@@ -32,8 +31,8 @@ class StatsRepo {
     fun defaultResultForMissingUser(userId: String): MutableMap<String, Any> = mutableMapOf(
         "user_id" to userId.toInt(),
         "contributor" to 1,
-        "edit" to UnsignedLong.valueOf(0),
-        "changeset" to UnsignedLong.valueOf(0)
+        "edit" to 0L,
+        "changeset" to 0L
     )
 
     //language=sql
@@ -48,8 +47,8 @@ class StatsRepo {
         FROM "all_stats${userHandler.userTableIdentifier}_$statsSchemaVersion"
         WHERE
             ${hashtagHandler.optionalFilterSQL}        
-            changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            changeset_timestamp > :startDate
+            AND changeset_timestamp < :endDate
             ${countryHandler.optionalFilterSQL}
             ${userHandler.optionalFilterSQL}
             ;
@@ -68,8 +67,8 @@ class StatsRepo {
         WHERE
             has_hashtags = true
             AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
-            AND changeset_timestamp > parseDateTimeBestEffort(:startDate) 
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            AND changeset_timestamp > :startDate
+            AND changeset_timestamp < :endDate
         GROUP BY hashtag
         ORDER BY hashtag
         """.trimIndent()
@@ -95,16 +94,16 @@ class StatsRepo {
         FROM "all_stats${userHandler.userTableIdentifier}_$statsSchemaVersion"
         WHERE
             ${hashtagHandler.optionalFilterSQL}
-            changeset_timestamp > parseDateTimeBestEffort(:startdate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
+            changeset_timestamp > :startdate
+            AND changeset_timestamp < :enddate
             ${countryHandler.optionalFilterSQL}
             ${userHandler.optionalFilterSQL}
         GROUP BY
             inner_startdate
         ORDER BY inner_startdate ASC
         WITH FILL
-            FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
-            TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
+            FROM toStartOfInterval(:startdate, INTERVAL :interval)::DateTime
+            TO (toStartOfInterval(:enddate, INTERVAL :interval)::DateTime + INTERVAL :interval)
         STEP INTERVAL :interval 
     )
     ;
@@ -125,8 +124,8 @@ class StatsRepo {
         ARRAY JOIN country_iso_a3
         WHERE
             ${hashtagHandler.optionalFilterSQL}
-            changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            changeset_timestamp > :startDate
+            AND changeset_timestamp < :endDate
             ${userHandler.optionalFilterSQL}
         GROUP BY
             country
@@ -149,13 +148,12 @@ class StatsRepo {
         FROM "all_stats${userHandler.userTableIdentifier}_$statsSchemaVersion"
         WHERE
             ${hashtagHandler.optionalFilterSQL}
-            changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            changeset_timestamp > :startDate
+            AND changeset_timestamp < :endDate
             AND isNotNull(h3_r:resolution) 
             ${countryHandler.optionalFilterSQL}
             ${userHandler.optionalFilterSQL}
         GROUP BY hex
-        FORMAT CSV
     """.trimIndent()
 
     //language=sql
@@ -166,8 +164,8 @@ class StatsRepo {
         FROM "all_stats_$statsSchemaVersion"
         WHERE
             has_hashtags = true
-            AND changeset_timestamp > parseDateTimeBestEffort(:startDate) 
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            AND changeset_timestamp > :startDate
+            AND changeset_timestamp < :endDate
             ${countryHandler.optionalFilterSQL}
         GROUP BY
             hashtag
@@ -332,7 +330,7 @@ class StatsRepo {
                 .bind("startDate", startDate ?: EPOCH)
                 .bind("endDate", endDate ?: now())
                 .bind("resolution", resolution)
-                .mapTo(String::class.java)
+                .map { rs, _ -> "${rs.getString(statsTopicHandler.topics.first())},${rs.getString("hex")}" }
                 .reduce { a, b -> "$a\n$b" }
         }
     }

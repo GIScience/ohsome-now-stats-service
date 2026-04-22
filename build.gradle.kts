@@ -42,14 +42,14 @@ dependencies {
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("com.clickhouse:clickhouse-jdbc:0.7.2")
-    implementation("org.jdbi:jdbi3-core:3.49.6")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("com.clickhouse:clickhouse-jdbc:0.9.8")
+    implementation("org.jdbi:jdbi3-core:3.52.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
-    testImplementation("org.testcontainers:testcontainers-junit-jupiter:2.0.3")
-    testImplementation("org.testcontainers:testcontainers-clickhouse:2.0.3")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter:2.0.5")
+    implementation("org.testcontainers:testcontainers-clickhouse:2.0.5")
     testImplementation("org.mockito:mockito-core")
 }
 

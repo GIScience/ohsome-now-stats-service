@@ -24,15 +24,15 @@ FROM
     WHERE
       has_hashtags = true
       AND arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
-      AND changeset_timestamp > parseDateTimeBestEffort(:startdate)
-      AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
+      AND changeset_timestamp > :startdate
+      AND changeset_timestamp < :enddate
       AND hasAny(country_iso_a3, ['BOL'])
     GROUP BY
         inner_startdate
     ORDER BY inner_startdate ASC
     WITH FILL
-             FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
-               TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
+             FROM toStartOfInterval(:startdate, INTERVAL :interval)::DateTime
+               TO (toStartOfInterval(:enddate, INTERVAL :interval)::DateTime + INTERVAL :interval)
            STEP INTERVAL :interval
 
 )

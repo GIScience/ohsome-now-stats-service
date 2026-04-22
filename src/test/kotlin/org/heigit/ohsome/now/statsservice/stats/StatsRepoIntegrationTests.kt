@@ -1,12 +1,12 @@
 package org.heigit.ohsome.now.statsservice.stats
 
-import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.SpringTestWithClickhouse
 import org.heigit.ohsome.now.statsservice.WithStatsData
 import org.heigit.ohsome.now.statsservice.createClickhouseContainer
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.heigit.ohsome.now.statsservice.utils.UserHandler
+import org.heigit.ohsome.now.statsservice.utils.getSqlArray
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,8 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.junit.jupiter.Container
+import java.sql.Timestamp
 import java.time.Instant
-import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 
 // TODO: do we need more tests with contribution data with more than a single hashtag in the list?
@@ -38,8 +39,11 @@ class StatsRepoIntegrationTests {
 
         @JvmStatic
         @DynamicPropertySource
-        fun clickhouseUrl(registry: DynamicPropertyRegistry) =
+        fun clickhouseUrl(registry: DynamicPropertyRegistry) {
             registry.add("spring.datasource.url") { clickHouse.jdbcUrl }
+            registry.add("spring.datasource.username") { clickHouse.username }
+            registry.add("spring.datasource.password") { clickHouse.password }
+        }
     }
 
     @Autowired
@@ -236,10 +240,13 @@ class StatsRepoIntegrationTests {
         )
         println(result)
         assertEquals(5, result.size)
-        assertEquals(84, (result["changeset"] as DoubleArray).size)
-        assertEquals("2015-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
-        assertEquals("1.0", (result["contributor"] as DoubleArray)[83].toString())
-        assertEquals("7.0", (result["edit"] as DoubleArray)[83].toString())
+        assertEquals(84, result.getSqlArray("changeset")?.size)
+        assertEquals(
+            "2015-01-01T00:00",
+            (result.getSqlArray("startdate") as Array<Timestamp>)[0].toLocalDateTime().toString()
+        )
+        assertEquals("1.0", result.getSqlArray("contributor")!![83].toString())
+        assertEquals("7.0", result.getSqlArray("edit")!![83].toString())
     }
 
 
@@ -253,10 +260,13 @@ class StatsRepoIntegrationTests {
         )
         println(result)
         assertEquals(5, result.size)
-        assertEquals(84, (result["changeset"] as DoubleArray).size)
-        assertEquals("2015-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
-        assertEquals("1.0", (result["contributor"] as DoubleArray)[35].toString())
-        assertEquals("1.0", (result["changeset"] as DoubleArray)[35].toString())
+        assertEquals(84, result.getSqlArray("changeset")?.size)
+        assertEquals(
+            "2015-01-01T00:00",
+            (result.getSqlArray("startdate") as Array<Timestamp>)[0].toLocalDateTime().toString()
+        )
+        assertEquals("1.0", result.getSqlArray("contributor")!![35].toString())
+        assertEquals("1.0", result.getSqlArray("changeset")!![35].toString())
     }
 
 
@@ -272,9 +282,12 @@ class StatsRepoIntegrationTests {
         )
 
         assertEquals(5, result.size)
-        assertEquals(53, (result["changeset"] as DoubleArray).size)
+        assertEquals(53, result.getSqlArray("changeset")?.size)
 
-        assertEquals("2017-08-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
+        assertEquals(
+            "2017-08-01T00:00",
+            (result.getSqlArray("startdate") as Array<Timestamp>)[0].toLocalDateTime().toString()
+        )
     }
 
 
@@ -288,9 +301,13 @@ class StatsRepoIntegrationTests {
         )
         println(result)
         assertEquals(5, result.size)
-        assertEquals(624, (result["edit"] as DoubleArray).size)
-        assertEquals("1970-01-01T00:00", (result["startdate"] as Array<LocalDateTime>)[0].toString())
+        assertEquals(624, result.getSqlArray("edit")?.size)
+        assertEquals(
+            "1970-01-01T00:00",
+            (result.getSqlArray("startdate") as Array<Timestamp>)[0].toLocalDateTime().toString()
+        )
     }
+
 
     @Test
     fun `getStatsForTimeSpanInterval aggregates data by year from all contributions with and without hashtags`() {
@@ -309,7 +326,7 @@ class StatsRepoIntegrationTests {
         )
 
         // year 2023 has 3 distinct userids with different and without hashtags
-        assertEquals(3.0, (result["contributor"] as DoubleArray)[0])
+        assertEquals(3.0, result.getSqlArray("contributor")!![0])
     }
 
 
@@ -397,8 +414,8 @@ class StatsRepoIntegrationTests {
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
-        assertEquals(UnsignedLong.valueOf(0), result["edit"])
-        assertEquals(UnsignedLong.valueOf(0), result["changeset"])
+        assertEquals(0L.toBigInteger(), result["edit"])
+        assertEquals(0L.toBigInteger(), result["changeset"])
     }
 
 
@@ -457,7 +474,10 @@ class StatsRepoIntegrationTests {
     fun `getMetadata returns the minimum and maximum timestamp`() {
         val result = this.repo.getMetadata()
         println(result)
-        assertEquals("2009-04-22T22:00Z", result["min_timestamp"].toString())
+        assertEquals(
+            "2009-04-22T22:00:00Z",
+            (result["min_timestamp"] as Timestamp).toLocalDateTime().toInstant(ZoneOffset.UTC).toString()
+        )
 
     }
 }

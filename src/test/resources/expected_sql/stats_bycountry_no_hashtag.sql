@@ -6,8 +6,8 @@ SELECT
 FROM "all_stats_3"
     ARRAY JOIN country_iso_a3
 WHERE
-    changeset_timestamp > parseDateTimeBestEffort(:startDate)
-    AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+    changeset_timestamp > :startDate
+    AND changeset_timestamp < :endDate
 GROUP BY
     country
 ORDER BY country

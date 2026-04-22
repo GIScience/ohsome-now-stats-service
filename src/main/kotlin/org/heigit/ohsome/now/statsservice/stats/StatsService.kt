@@ -4,13 +4,14 @@ import org.heigit.ohsome.now.statsservice.topic.*
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
 import org.heigit.ohsome.now.statsservice.utils.HashtagHandler
 import org.heigit.ohsome.now.statsservice.utils.UserHandler
+import org.heigit.ohsome.now.statsservice.utils.getSqlArray
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import java.sql.Timestamp
 import java.time.Instant
-import java.time.LocalDateTime
 
 @Suppress("LargeClass")
 @Service
@@ -207,8 +208,8 @@ class StatsService {
         )
 
         return StatsIntervalResultWithTopics(
-            result["startdate"] as Array<LocalDateTime>,
-            result["enddate"] as Array<LocalDateTime>,
+            (result.getSqlArray("startdate") as Array<Timestamp>).map { it.toLocalDateTime() }.toTypedArray(),
+            (result.getSqlArray("enddate") as Array<Timestamp>).map { it.toLocalDateTime() }.toTypedArray(),
             statsTopicHandler.topics.associateWith { topic ->
                 mapOf("topic_result" to result[topic]!!).toTopicIntervalResult(topic)
             }.toMutableMap()

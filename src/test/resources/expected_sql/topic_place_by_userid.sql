@@ -16,6 +16,6 @@ WHERE
     has_hashtags = true
     AND arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)
     AND user_id = :userId
-    AND changeset_timestamp > parseDateTimeBestEffort(:startDate)
-    AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+    AND changeset_timestamp > :startDate
+    AND changeset_timestamp < :endDate
 GROUP BY user_id

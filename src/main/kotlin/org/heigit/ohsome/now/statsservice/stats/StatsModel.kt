@@ -1,22 +1,21 @@
 package org.heigit.ohsome.now.statsservice.stats
 
-import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.topic.TopicCountryResult
 import org.heigit.ohsome.now.statsservice.topic.TopicIntervalResult
 import org.heigit.ohsome.now.statsservice.topic.TopicResult
+import java.sql.Timestamp
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.ISO_INSTANT
+import java.time.ZoneOffset
 
 
 // used in hashtags endpoint, do not remove
 fun Map<String, Any>.toStatsResult() = StatsResult(
-    (this["changesets"] as UnsignedLong).toLong(),
-    (this["users"] as UnsignedLong).toLong(),
+    (this["changesets"] as Number).toLong(),
+    (this["users"] as Number).toLong(),
     this["roads"] as Double,
     this["buildings"] as Long,
-    (this["edits"] as UnsignedLong).toLong(),
-    (this["latest"] as OffsetDateTime).format(ISO_INSTANT)
+    (this["edits"] as Number).toLong(),
+    (this["latest"] as Timestamp).toLocalDateTime().toInstant(ZoneOffset.UTC).toString()
 )
 
 @Suppress("LongParameterList")
@@ -63,7 +62,7 @@ fun List<Map<String, Any>>.toHashtagResult() = this.map(::hashtagResult)
 
 fun hashtagResult(data: Map<String, Any>) = HashtagResult(
     data["hashtag"].toString(),
-    (data["number_of_users"] as UnsignedLong).toLong()
+    data["number_of_users"].toString().toLong()
 )
 
 
@@ -75,8 +74,8 @@ data class HashtagResult(
 
 fun Map<String, Any>.toMetadataResult(): MetadataResult =
     MetadataResult(
-        (this["max_timestamp"] as OffsetDateTime).format(ISO_INSTANT),
-        (this["min_timestamp"] as OffsetDateTime).format(ISO_INSTANT)
+        (this["max_timestamp"] as Timestamp).toLocalDateTime().toInstant(ZoneOffset.UTC).toString(),
+        (this["min_timestamp"] as Timestamp).toLocalDateTime().toInstant(ZoneOffset.UTC).toString()
     )
 
 

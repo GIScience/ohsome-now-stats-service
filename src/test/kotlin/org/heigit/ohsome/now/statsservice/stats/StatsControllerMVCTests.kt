@@ -1,11 +1,7 @@
 package org.heigit.ohsome.now.statsservice.stats
 
-import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.anyInstant
-import org.heigit.ohsome.now.statsservice.topic.TopicCountryResult
-import org.heigit.ohsome.now.statsservice.topic.TopicResult
-import org.heigit.ohsome.now.statsservice.topic.toTopicIntervalResult
-import org.heigit.ohsome.now.statsservice.topic.toTopicResult
+import org.heigit.ohsome.now.statsservice.topic.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -50,36 +46,53 @@ class StatsControllerMVCTests {
     private var exampleStats: StatsResultWithTopics = exampleStatsData.toStatsResult()
 
     private var exampleIntervalStats = StatsIntervalResultWithTopics(
-        arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+        arrayOf(
+            LocalDateTime.parse("2020-05-20T00:00:00")
+        ),
         arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
         mutableMapOf(
-            "contributor" to mapOf(
-                "topic_result" to doubleArrayOf(1001.0),
-                "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
-                "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
-            ).toTopicIntervalResult("contributor"),
-            "road" to mapOf(
-                "topic_result" to doubleArrayOf(43534.5),
-                "topic_result_modified" to longArrayOf(43534),
-                "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
-                "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
-            ).toTopicIntervalResult("road"),
-            "building" to mapOf(
-                "topic_result" to doubleArrayOf(123.0),
-                "topic_result_modified" to longArrayOf(123),
-                "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
-                "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
-            ).toTopicIntervalResult("building"),
-            "edit" to mapOf(
-                "topic_result" to doubleArrayOf(213124.0),
-                "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
-                "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
-            ).toTopicIntervalResult("edit"),
-            "changeset" to mapOf(
-                "topic_result" to doubleArrayOf(1.0),
-                "startdate" to arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
-                "enddate" to arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
-            ).toTopicIntervalResult("changeset")
+            "contributor" to
+                    TopicIntervalResult(
+                        null,
+                        null,
+                        null,
+                        doubleArrayOf(1001.0),
+                        arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+                        arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+                    ),
+            "road" to
+                    TopicIntervalResult(
+                        null,
+                        ModifiedArraySection(longArrayOf(43534), null, null),
+                        null,
+                        doubleArrayOf(43534.5),
+                        arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+                        arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+                    ),
+            "building" to TopicIntervalResult(
+                null,
+                ModifiedArraySection(longArrayOf(123), null, null),
+                null,
+                doubleArrayOf(123.0),
+                arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+                arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+            ),
+            "edit" to TopicIntervalResult(
+                null,
+                null,
+                null,
+                doubleArrayOf(213124.0),
+                arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+                arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+            ),
+            "changeset" to TopicIntervalResult(
+                null,
+                null,
+                null,
+                doubleArrayOf(1.0),
+                arrayOf(LocalDateTime.parse("2020-05-20T00:00:00")),
+                arrayOf(LocalDateTime.parse("2023-05-20T00:00:00")),
+            ),
         )
     )
 
@@ -194,14 +207,14 @@ class StatsControllerMVCTests {
         `when`(this.statsService.getStatsForTimeSpanAggregate(anyList(), any(), any()))
             .thenReturn(
                 mapOf(
-                    this.hashtag to mapOf(
-                        "users" to UnsignedLong.valueOf(1001L),
-                        "roads" to 43534.5,
-                        "buildings" to 123L,
-                        "edits" to UnsignedLong.valueOf(213124L),
-                        "latest" to OffsetDateTime.parse("2023-06-29T12:50Z"),
-                        "changesets" to UnsignedLong.valueOf(2)
-                    ).toStatsResult()
+                    this.hashtag to StatsResult(
+                        2L,
+                        1001L,
+                        43534.5,
+                        123L,
+                        213124L,
+                        OffsetDateTime.parse("2023-06-29T12:50Z").toString(),
+                    )
                 )
             )
 
@@ -406,7 +419,7 @@ class StatsControllerMVCTests {
     @Test
     fun `most-used-hashtags should return list of hashtags`() {
 
-        val data = hashtagResult(mapOf("hashtag" to "testtag", "number_of_users" to UnsignedLong.valueOf(242L)))
+        val data = hashtagResult(mapOf("hashtag" to "testtag", "number_of_users" to 242L))
 
 
         `when`(this.statsService.getMostUsedHashtags(anyInstant(), anyInstant(), anyInt(), anyList()))
@@ -446,10 +459,7 @@ class StatsControllerMVCTests {
 
         `when`(this.statsService.getMetadata())
             .thenReturn(
-                mapOf(
-                    "max_timestamp" to OffsetDateTime.parse("2021-12-09T13:01:28Z"),
-                    "min_timestamp" to OffsetDateTime.parse("2000-12-09T13:01:28Z")
-                ).toMetadataResult()
+                MetadataResult("2021-12-09T13:01:28Z", "2000-12-09T13:01:28Z"),
             )
 
         this.mockMvc

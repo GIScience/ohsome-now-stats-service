@@ -45,8 +45,8 @@ class TopicRepo {
         FROM topic${userHandler.userTableIdentifier}_${topicHandler.topic}_$topicSchemaVersion
         WHERE
             ${hashtagHandler.optionalFilterSQL}       
-            changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            changeset_timestamp > :startDate
+            AND changeset_timestamp < :endDate
             ${countryHandler.optionalFilterSQL}
             ${userHandler.optionalFilterSQL}
         ;
@@ -72,8 +72,8 @@ class TopicRepo {
         WHERE
             has_hashtags = true
             AND arrayExists(hashtag -> ${hashtagHandler.variableFilterSQL}(hashtag, :hashtag), hashtags)        
-            AND changeset_timestamp > parseDateTimeBestEffort(:startDate) 
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            AND changeset_timestamp > :startDate
+            AND changeset_timestamp < :endDate
         GROUP BY hashtag
         ORDER BY hashtag
     """.trimIndent()
@@ -106,16 +106,16 @@ class TopicRepo {
        FROM topic${userHandler.userTableIdentifier}_${topicHandler.topic}_$topicSchemaVersion
        WHERE
            ${hashtagHandler.optionalFilterSQL}
-           changeset_timestamp > parseDateTimeBestEffort(:startdate)
-           AND changeset_timestamp < parseDateTimeBestEffort(:enddate)
+           changeset_timestamp > :startdate
+           AND changeset_timestamp < :enddate
            ${countryHandler.optionalFilterSQL}
            ${userHandler.optionalFilterSQL}
        GROUP BY
            inner_startdate
        ORDER BY inner_startdate ASC
        WITH FILL
-           FROM toStartOfInterval(parseDateTimeBestEffort(:startdate), INTERVAL :interval)::DateTime
-           TO (toStartOfInterval(parseDateTimeBestEffort(:enddate), INTERVAL :interval)::DateTime + INTERVAL :interval)
+           FROM toStartOfInterval(:startdate, INTERVAL :interval)::DateTime
+           TO (toStartOfInterval(:enddate, INTERVAL :interval)::DateTime + INTERVAL :interval)
        STEP INTERVAL :interval
     )
         """.trimIndent()
@@ -142,8 +142,8 @@ class TopicRepo {
         ARRAY JOIN country_iso_a3
         WHERE
             ${hashtagHandler.optionalFilterSQL}
-            changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            changeset_timestamp > :startDate
+            AND changeset_timestamp < :endDate
             ${userHandler.optionalFilterSQL}
         GROUP BY
             country
@@ -172,13 +172,12 @@ class TopicRepo {
         FROM topic${userHandler.userTableIdentifier}_${topicHandler.topic}_$topicSchemaVersion
         WHERE
             ${hashtagHandler.optionalFilterSQL}
-            changeset_timestamp > parseDateTimeBestEffort(:startDate)
-            AND changeset_timestamp < parseDateTimeBestEffort(:endDate)
+            changeset_timestamp > :startDate
+            AND changeset_timestamp < :endDate
             AND isNotNull(h3_r:resolution)
             ${countryHandler.optionalFilterSQL}
             ${userHandler.optionalFilterSQL}
         GROUP BY hex
-        FORMAT CSV
     """.trimIndent()
 
     @Suppress("LongParameterList")

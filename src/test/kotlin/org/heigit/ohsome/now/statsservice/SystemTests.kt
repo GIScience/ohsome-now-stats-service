@@ -43,8 +43,12 @@ class SystemTests {
 
         @JvmStatic
         @DynamicPropertySource
-        fun clickhouseUrl(registry: DynamicPropertyRegistry) =
+        fun clickhouseUrl(registry: DynamicPropertyRegistry) {
             registry.add("spring.datasource.url") { clickHouse.jdbcUrl }
+            registry.add("spring.datasource.username") { clickHouse.username }
+            registry.add("spring.datasource.password") { clickHouse.password }
+        }
+        
     }
 
 

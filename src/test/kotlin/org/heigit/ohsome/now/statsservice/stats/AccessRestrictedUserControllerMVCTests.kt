@@ -1,6 +1,5 @@
 package org.heigit.ohsome.now.statsservice.stats
 
-import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.AppProperties
 import org.heigit.ohsome.now.statsservice.topic.toTopicResult
 import org.junit.jupiter.api.Test
@@ -35,9 +34,9 @@ class AccessRestrictedUserControllerMVCTests {
 
 
     val fakeResult = mapOf(
-        "edit" to mapOf("topic_result" to UnsignedLong.valueOf(34L), "user_id" to 4324).toTopicResult("edit"),
+        "edit" to mapOf("topic_result" to 34L, "user_id" to 4324).toTopicResult("edit"),
         "changeset" to mapOf(
-            "topic_result" to UnsignedLong.valueOf(2L),
+            "topic_result" to 2L,
         ).toTopicResult("changeset")
     ).toStatsResult()
 

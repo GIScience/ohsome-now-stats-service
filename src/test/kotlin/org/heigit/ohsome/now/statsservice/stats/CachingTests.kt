@@ -1,6 +1,5 @@
 package org.heigit.ohsome.now.statsservice.stats
 
-import com.clickhouse.data.value.UnsignedLong
 import org.heigit.ohsome.now.statsservice.topic.TopicHandler
 import org.heigit.ohsome.now.statsservice.topic.TopicRepo
 import org.heigit.ohsome.now.statsservice.utils.CountryHandler
@@ -38,10 +37,10 @@ class CachingTests {
 
     private val exampleTopicData: Map<String, Any> = mapOf(
         "hashtag" to hotosmHashtag,
-        "topic_result" to UnsignedLong.valueOf(20L),
-        "topic_result_modified" to UnsignedLong.valueOf(0L),
-        "topic_result_created" to UnsignedLong.valueOf(20L),
-        "topic_result_deleted" to UnsignedLong.valueOf(0L)
+        "topic_result" to 20L,
+        "topic_result_modified" to 0L,
+        "topic_result_created" to 20L,
+        "topic_result_deleted" to 0L
     )
 
 
@@ -57,11 +56,11 @@ class CachingTests {
 
 
     private var exampleStatsData: Map<String, Any> = mapOf(
-        "contributor" to UnsignedLong.valueOf(1001L),
+        "contributor" to 1001L,
         "road" to 43534.5,
         "building" to 123L,
-        "edit" to UnsignedLong.valueOf(213124L),
-        "changeset" to UnsignedLong.valueOf(2),
+        "edit" to 213124L,
+        "changeset" to 2,
     )
 
 
