@@ -183,14 +183,14 @@ class StatsControllerMVCTests {
     @Test
     fun `stats can be served without explicit timespans and a country filter`() {
 
-        `when`(this.statsService.getStatsForTimeSpan("h*", null, null, listOf("UGA", "DE"), listOf("building")))
+        `when`(this.statsService.getStatsForTimeSpan("h*", null, null, listOf("UGA", "DER"), listOf("building")))
             .thenReturn(exampleStats)
 
         this.mockMvc
             .perform(
                 get("/stats")
                     .queryParam("hashtag", "h*")
-                    .queryParam("countries", "UGA,DE")
+                    .queryParam("countries", "UGA,DER")
                     .queryParam("topics", "building")
 
             )
@@ -198,7 +198,7 @@ class StatsControllerMVCTests {
             .andExpect(content().contentType(APPLICATION_JSON))
             .andExpect(jsonPath("$.result.topics.building.value").value(123))
             .andExpect(jsonPath("$.query.timespan.endDate").exists())
-            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats?hashtag=h*&countries=UGA,DE&topics=building"))
+            .andExpect(jsonPath("$.metadata.requestUrl").value("/stats?hashtag=h*&countries=UGA,DER&topics=building"))
     }
 
 
@@ -302,7 +302,7 @@ class StatsControllerMVCTests {
             .queryParam("startdate", "2017-10-01T04:00:00Z")
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "P1M")
-            .queryParam("countries", "UGA,DE")
+            .queryParam("countries", "UGA,DER")
             .queryParam("topics", "changeset,road,contributor,building,edit")
 
         this.mockMvc.perform(GET)
@@ -313,7 +313,7 @@ class StatsControllerMVCTests {
             .andExpect(jsonPath("$.query.timespan.endDate").value("2020-10-01T04:00:00Z"))
             .andExpect(
                 jsonPath("$.metadata.requestUrl")
-                    .value("/stats/interval?hashtag=%26uganda&startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M&countries=UGA,DE&topics=changeset,road,contributor,building,edit")
+                    .value("/stats/interval?hashtag=%26uganda&startdate=2017-10-01T04:00:00Z&enddate=2020-10-01T04:00:00Z&interval=P1M&countries=UGA,DER&topics=changeset,road,contributor,building,edit")
             )
             .andExpect(jsonPath("$.query.hashtag").value("&uganda"))
             .andExpect(jsonPath("$.result.topics.changeset.value[0]").value(1))
@@ -355,6 +355,27 @@ class StatsControllerMVCTests {
             .queryParam("enddate", "2020-10-01T04:00:00Z")
             .queryParam("interval", "PT1S")
             .queryParam("topics", "edit")
+
+        this.mockMvc.perform(GET)
+            .andExpect(status().isBadRequest)
+            .andExpect(content().string(expectedErrorMessage))
+
+    }
+
+
+    @Test
+    fun `stats throws error for non 3 letter coded country`() {
+
+        val expectedErrorMessage =
+            """[{"message":"Country Code must be ISO 3166-1 alpha-3","invalidValue":"DE"},{"message":"Country Code must be ISO 3166-1 alpha-3","invalidValue":"UGAA"}]"""
+
+        val GET = get("/stats")
+            .queryParam("hashtag", hashtag)
+            .queryParam("startdate", "2017-10-01T04:00:00Z")
+            .queryParam("enddate", "2020-10-01T04:00:00Z")
+            .queryParam("interval", "PT1S")
+            .queryParam("topics", "edit")
+            .queryParam("countries", "UGAA,DE")
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)

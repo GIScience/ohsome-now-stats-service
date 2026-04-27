@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.statsservice.*
 import org.heigit.ohsome.now.statsservice.topic.ValidTopic
+import org.heigit.ohsome.now.statsservice.utils.ValidCountry
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -56,7 +57,7 @@ class AccessRestrictedUserController {
 
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>,
+        countries: List<@ValidCountry String>,
 
         @RequestHeader(value = "Authorization", required = false)
         authorization: String?,
@@ -119,7 +120,7 @@ class AccessRestrictedUserController {
 
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>,
+        countries: List<@ValidCountry String>,
 
         @RequestHeader(value = "Authorization", required = false)
         authorization: String?,
@@ -217,7 +218,7 @@ class AccessRestrictedUserController {
 
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>,
+        countries: List<@ValidCountry String>,
 
         @RequestHeader(value = "Authorization", required = false)
         authorization: String?

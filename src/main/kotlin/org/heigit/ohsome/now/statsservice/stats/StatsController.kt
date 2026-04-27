@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import jakarta.servlet.http.HttpServletRequest
 import org.heigit.ohsome.now.statsservice.*
 import org.heigit.ohsome.now.statsservice.topic.ValidTopic
+import org.heigit.ohsome.now.statsservice.utils.ValidCountry
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -46,7 +47,7 @@ class StatsController {
 
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>,
+        countries: List<@ValidCountry String>,
 
         @TopicsConfig
         @RequestParam("topics", required = true)
@@ -112,7 +113,7 @@ class StatsController {
 
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>,
+        countries: List<@ValidCountry String>,
 
         @TopicsConfig
         @RequestParam("topics", required = true)
@@ -188,7 +189,7 @@ class StatsController {
 
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>
+        countries: List<@ValidCountry String>
     ): String {
         return statsService.getStatsByH3(hashtag, startDate, endDate, topic, resolution, countries)
     }
@@ -213,7 +214,7 @@ class StatsController {
 
         @CountriesConfig
         @RequestParam("countries", required = false, defaultValue = "")
-        countries: List<String>?
+        countries: List<@ValidCountry String>?
     ): OhsomeFormat<List<HashtagResult>> {
 
         val result = measure {
