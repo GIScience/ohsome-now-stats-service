@@ -1,6 +1,6 @@
 package org.heigit.ohsome.now.statsservice.utils
 
-data class UserHandler(val userIds: List<String>) {
+data class UserHandler(val userIds: List<Int>) {
     var optionalFilterSQL = ""
     var userTableIdentifier = ""
 

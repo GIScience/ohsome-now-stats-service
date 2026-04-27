@@ -362,7 +362,7 @@ class TopicRepoIntegrationTests {
             null,
             CountryHandler(emptyList()),
             TopicHandler(topic),
-            UserHandler(listOf("4362353"))
+            UserHandler(listOf(4362353))
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -378,7 +378,7 @@ class TopicRepoIntegrationTests {
             null,
             CountryHandler(emptyList()),
             TopicHandler(topic),
-            UserHandler(listOf("2381")),
+            UserHandler(listOf(2381)),
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -393,7 +393,7 @@ class TopicRepoIntegrationTests {
             null,
             CountryHandler(emptyList()),
             TopicHandler("building"),
-            UserHandler(listOf("6791950")),
+            UserHandler(listOf(6791950)),
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)

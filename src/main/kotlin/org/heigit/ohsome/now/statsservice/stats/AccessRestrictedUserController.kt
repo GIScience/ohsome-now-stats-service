@@ -32,11 +32,11 @@ class AccessRestrictedUserController {
 
         @Parameter(description = "OSM user id")
         @RequestParam("userId")
-        userId: String?,
+        userId: Int?,
 
         @Parameter(description = "A list of OSM user ids")
         @RequestParam("userIds")
-        userIds: List<String>?,
+        userIds: List<Int>?,
 
         @Parameter(
             description = "the hashtag to query for - case-insensitive and without the leading '#'",
@@ -69,7 +69,6 @@ class AccessRestrictedUserController {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid Token")
         }
 
-        // todo: write MVC testcase
         var userList = userIds
         if (userId != null) {
             userList = listOf(userId)
@@ -94,7 +93,7 @@ class AccessRestrictedUserController {
 
         @Parameter(description = "OSM user id")
         @RequestParam("userIds")
-        userIds: List<String>,
+        userIds: List<Int>,
 
         @Parameter(
             description = "the hashtag to query for - case-insensitive and without the leading '#'",
@@ -149,7 +148,7 @@ class AccessRestrictedUserController {
 
         @Parameter(description = "OSM user id")
         @RequestParam("userIds")
-        userIds: List<String>,
+        userIds: List<Int>,
 
         @HashtagConfig
         @RequestParam(name = "hashtag", required = false, defaultValue = "")
@@ -191,7 +190,7 @@ class AccessRestrictedUserController {
 
         @Parameter(description = "OSM user id")
         @RequestParam("userIds")
-        userIds: List<String>,
+        userIds: List<Int>,
 
         @HashtagConfig
         @RequestParam(name = "hashtag", required = false, defaultValue = "")

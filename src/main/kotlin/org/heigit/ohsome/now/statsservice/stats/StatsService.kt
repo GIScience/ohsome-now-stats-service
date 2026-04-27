@@ -37,7 +37,7 @@ class StatsService {
         endDate: Instant?,
         countries: List<String>,
         topics: List<String>,
-        userIds: List<String> = emptyList()
+        userIds: List<Int> = emptyList()
     ) = addStatsTopicsForTimeSpan(
         HashtagHandler(hashtag),
         startDate,
@@ -88,7 +88,7 @@ class StatsService {
         endDate: Instant?,
         countries: List<String>,
         topics: List<String>,
-        userIds: List<String> = emptyList()
+        userIds: List<Int> = emptyList()
     ) = this + topicService.getTopicStatsForTimeSpan(
         hashtag,
         startDate,
@@ -172,7 +172,7 @@ class StatsService {
         interval: String,
         countries: List<String>,
         topics: List<String>,
-        userIds: List<String> = emptyList()
+        userIds: List<Int> = emptyList()
     ) = addStatsTopicsForTimeSpanInterval(
         HashtagHandler(hashtag),
         startDate,
@@ -224,7 +224,7 @@ class StatsService {
         interval: String,
         countries: List<String>,
         topics: List<String>,
-        userIds: List<String>
+        userIds: List<Int>
     ): StatsIntervalResultWithTopics {
         val topicResults = topicService.getTopicStatsForTimeSpanInterval(
             hashtag, startDate, endDate, interval, countries, topics, userIds
@@ -257,7 +257,7 @@ class StatsService {
         startDate: Instant?,
         endDate: Instant?,
         topics: List<String>,
-        userIds: List<String> = emptyList()
+        userIds: List<Int> = emptyList()
     ) =
         this.addStatsTopicsForTimeSpanCountry(
             handler(hashtag),
@@ -304,7 +304,7 @@ class StatsService {
         startDate: Instant?,
         endDate: Instant?,
         topics: List<String>,
-        userIds: List<String>
+        userIds: List<Int>
     ) = this + topicService.getTopicStatsForTimeSpanCountry(
         hashtag, startDate, endDate, topics, userIds
     )
@@ -317,7 +317,7 @@ class StatsService {
         topic: String,
         resolution: Int,
         countries: List<String>,
-        userIds: List<String> = emptyList()
+        userIds: List<Int> = emptyList()
     ): String {
         val statsTopicHandler = StatsTopicsHandler(listOf(topic))
         return if (!statsTopicHandler.noStatsTopics)

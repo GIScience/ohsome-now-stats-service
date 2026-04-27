@@ -26,7 +26,7 @@ class TopicService {
         endDate: Instant?,
         countries: List<String>,
         topics: List<String>,
-        userIds: List<String>
+        userIds: List<Int>
     ): Map<String, TopicResult> = runBlocking {
         val deferredResults = topics.map { topic ->
             async(IO) {
@@ -67,7 +67,7 @@ class TopicService {
         interval: String,
         countries: List<String>,
         topics: List<String>,
-        userIds: List<String>
+        userIds: List<Int>
     ): Map<String, TopicIntervalResult> = runBlocking {
         val deferredResults = topics.map { topic ->
             async(IO) {
@@ -92,7 +92,7 @@ class TopicService {
         startDate: Instant?,
         endDate: Instant?,
         topics: List<String>,
-        userIds: List<String>
+        userIds: List<Int>
     ): Map<String, List<TopicCountryResult>> = runBlocking {
         val deferredResults = topics.map { topic ->
             async(IO) {
@@ -118,7 +118,7 @@ class TopicService {
         topic: String,
         resolution: Int,
         countries: List<String>,
-        userIds: List<String>
+        userIds: List<Int>
     ) =
         this.repo
             .getTopicsByH3(

@@ -45,7 +45,7 @@ class TopicServiceIntegrationTests {
 
     @Test
     fun `can get user topic stats for a given user id and a list of topics`() {
-        val userIds = listOf("4362353")
+        val userIds = listOf(4362353)
         val topic1 = "place"
         val topic2 = "healthcare"
 
@@ -79,7 +79,7 @@ class TopicServiceIntegrationTests {
 
     @Test
     fun `can get user topic stats for a given user id and the 'amenity' topic`() {
-        val userIds = listOf("3243541")
+        val userIds = listOf(3243541)
         val topic = "place"
 
         val result =

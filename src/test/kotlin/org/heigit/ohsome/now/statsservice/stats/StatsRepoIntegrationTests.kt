@@ -394,7 +394,7 @@ class StatsRepoIntegrationTests {
             null,
             CountryHandler(emptyList()),
             StatsTopicsHandler(listOf("edit", "changeset")),
-            UserHandler(listOf("2186388")),
+            UserHandler(listOf(2186388)),
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)
@@ -410,7 +410,7 @@ class StatsRepoIntegrationTests {
             null,
             CountryHandler(emptyList()),
             StatsTopicsHandler(listOf("edit", "changeset")),
-            UserHandler(listOf("2186381")),
+            UserHandler(listOf(2186381)),
         )
         println(result)
         assertTrue(result is MutableMap<String, *>)

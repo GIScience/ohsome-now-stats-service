@@ -30,7 +30,7 @@ class AccessRestrictedUserControllerMVCTests {
     lateinit var appProperties: AppProperties
 
 
-    val userIds = listOf("12312")
+    val userIds = listOf(12312)
 
 
     val fakeResult = mapOf(
@@ -57,7 +57,7 @@ class AccessRestrictedUserControllerMVCTests {
             .thenReturn(fakeResult)
 
         val GET = get("/stats/user")
-            .queryParam("userId", userIds[0])
+            .queryParam("userId", userIds[0].toString())
             .queryParam("hashtag", "hotosm-project-*")
             .queryParam("topics", "edit,contributor")
             .header("Authorization", "Basic ${appProperties.token}")
@@ -77,7 +77,7 @@ class AccessRestrictedUserControllerMVCTests {
             .getStatsForTimeSpan(anyString(), any(), any(), anyList(), anyList(), anyList())
 
         val GET = get("/stats/user")
-            .queryParam("userId", userIds[0])
+            .queryParam("userId", userIds[0].toString())
             .queryParam("hashtag", "hotosm-project-*")
             .queryParam("topics", "building,road")
 
@@ -94,7 +94,7 @@ class AccessRestrictedUserControllerMVCTests {
             .getStatsForTimeSpan(anyString(), any(), any(), anyList(), anyList(), anyList())
 
         val GET = get("/stats/user")
-            .queryParam("userId", userIds[0])
+            .queryParam("userId", userIds[0].toString())
             .queryParam("hashtag", "hotosm-project-*")
             .queryParam("topics", "edit,changeset")
             .header("Authorization", "Basic badToken")
