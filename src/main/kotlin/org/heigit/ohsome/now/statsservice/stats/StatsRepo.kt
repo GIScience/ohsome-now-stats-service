@@ -331,7 +331,7 @@ class StatsRepo {
                 .bind("endDate", endDate ?: now())
                 .bind("resolution", resolution)
                 .map { rs, _ -> "${rs.getString(statsTopicHandler.topics.first())},${rs.getString("hex")}" }
-                .reduce { a, b -> "$a\n$b" }
+                .reduceOrNull { a, b -> "$a\n$b" } ?: ""
         }
     }
 

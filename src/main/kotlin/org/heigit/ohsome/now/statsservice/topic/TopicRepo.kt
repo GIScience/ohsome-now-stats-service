@@ -269,7 +269,7 @@ class TopicRepo {
                 .bind("endDate", endDate ?: now())
                 .bind("resolution", resolution)
                 .map { rs, _ -> "${rs.getString("topic_result")},${rs.getString("hex")}" }
-                .reduce { a, b -> "$a\n$b" }
+                .reduceOrNull { a, b -> "$a\n$b" } ?: ""
         }
     }
 

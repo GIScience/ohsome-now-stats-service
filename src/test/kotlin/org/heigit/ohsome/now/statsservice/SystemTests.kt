@@ -546,6 +546,30 @@ class SystemTests {
             response.toString().contains("hex_cell")
         }
 
+        @Test
+        @DisplayName("GET /stats/user/h3 for user without contributions")
+        fun `get user stats by h3 for user without contributions`() {
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/user/h3")
+                    .queryParam("userIds", "555")
+                    .queryParam("topic", "edit")
+                    .build()
+            }
+
+            val response = client()
+                .get()
+                .uri(url)
+                .header("Authorization", "Basic ${appProperties.token}")
+                .exchange()
+                .expectStatus()
+                .isOk
+                .expectBody()
+
+            println(response.returnResult())
+            response.toString().contains("hex_cell")
+        }
+
     }
 
 
