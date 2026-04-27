@@ -1,5 +1,6 @@
 package org.heigit.ohsome.now.statsservice.stats
 
+import org.hamcrest.CoreMatchers.hasItem
 import org.heigit.ohsome.now.statsservice.anyInstant
 import org.heigit.ohsome.now.statsservice.topic.*
 import org.junit.jupiter.api.Disabled
@@ -379,8 +380,8 @@ class StatsControllerMVCTests {
 
         this.mockMvc.perform(GET)
             .andExpect(status().isBadRequest)
-            .andExpect(content().string(expectedErrorMessage))
-
+            .andExpect(jsonPath("$[*].invalidValue", hasItem("DE")))
+            .andExpect(jsonPath("$[*].invalidValue", hasItem("UGAA")))
     }
 
 
