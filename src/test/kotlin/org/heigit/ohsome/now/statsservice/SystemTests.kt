@@ -246,6 +246,8 @@ class SystemTests {
                 .jsonPath("$.result.topics.road.value[51]").isEqualTo(0)
                 .jsonPath("$.result.topics.building.value[51]").isEqualTo(0)
                 .jsonPath("$.result.topics.edit.value[51]").isEqualTo(7)
+                .jsonPath("$.result.startDate").exists()
+                .jsonPath("$.result.endDate").exists()
 
                 .jsonPath("$.query.timespan.startDate").exists()
                 .jsonPath("$.query.timespan.endDate").exists()
@@ -253,6 +255,50 @@ class SystemTests {
                 .jsonPath("$.query.hashtag").isEqualTo(hashtag)
 
         }
+
+        @Test
+        @DisplayName("GET /stats/interval returns time buckets for only stats_topics and topic requests")
+        fun `get stats grouped by time interval only topic`() {
+
+            val interval = "P1Y"
+
+            val url = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/interval")
+                    .queryParam("interval", interval)
+                    .queryParam("topics", "building")
+                    .build()
+            }
+
+
+            doGetAndAssertThat(url)
+                .jsonPath("$.result.topics.building.value[51]").isEqualTo(0)
+                .jsonPath("$.result.startDate").exists()
+                .jsonPath("$.result.endDate").exists()
+
+                .jsonPath("$.query.timespan.startDate").exists()
+                .jsonPath("$.query.timespan.endDate").exists()
+                .jsonPath("$.query.timespan.interval").isEqualTo(interval)
+
+            val url_2 = { uriBuilder: UriBuilder ->
+                uriBuilder
+                    .path("/stats/interval")
+                    .queryParam("interval", interval)
+                    .queryParam("topics", "contributor")
+                    .build()
+            }
+
+            doGetAndAssertThat(url_2)
+                .jsonPath("$.result.topics.contributor.value[51]").isEqualTo(2)
+                .jsonPath("$.result.startDate").exists()
+                .jsonPath("$.result.endDate").exists()
+
+                .jsonPath("$.query.timespan.startDate").exists()
+                .jsonPath("$.query.timespan.endDate").exists()
+                .jsonPath("$.query.timespan.interval").isEqualTo(interval)
+
+        }
+
 
         @Test
         @DisplayName("GET /stats/country?hashtag=&*")

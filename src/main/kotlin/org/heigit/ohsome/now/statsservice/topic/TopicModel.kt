@@ -1,7 +1,9 @@
 package org.heigit.ohsome.now.statsservice.topic
 
 import org.heigit.ohsome.now.statsservice.utils.getDoubleArray
+import org.heigit.ohsome.now.statsservice.utils.getSqlArray
 import org.heigit.ohsome.now.statsservice.utils.toLongArray
+import java.sql.Timestamp
 import java.time.LocalDateTime
 
 
@@ -58,8 +60,8 @@ fun Map<String, Any>.toTopicIntervalResult(topic: String) = TopicIntervalResult(
         ),
     this.getDoubleArray("topic_result_deleted"),
     this.getDoubleArray("topic_result")!!,
-    this["startdate"] as? Array<LocalDateTime>,
-    this["enddate"] as? Array<LocalDateTime>,
+    (this.getSqlArray("startdate") as? Array<Timestamp>)?.map { it.toLocalDateTime() }?.toTypedArray(),
+    (this.getSqlArray("enddate") as? Array<Timestamp>)?.map { it.toLocalDateTime() }?.toTypedArray(),
 )
 
 

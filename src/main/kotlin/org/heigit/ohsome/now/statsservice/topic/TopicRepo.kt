@@ -226,7 +226,6 @@ class TopicRepo {
                 .mapToMap()
                 .single()
         }
-        println(result)
         return result
     }
 
