@@ -21,7 +21,7 @@ plugins {
     // manages publication of snapshot and release artifacts to respective maven repos (not release management)
     `maven-publish`
 
-    id("org.sonarqube") version "6.1.0.5360"
+    id("org.sonarqube") version "7.5.0.8588"
 }
 
 group = "org.heigit.ohsome.now.stats"
