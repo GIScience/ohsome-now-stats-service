@@ -13,7 +13,7 @@ plugins {
 
     id("dev.detekt") version "2.0.0-alpha.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.2"
-    id("io.gatling.gradle") version "3.13.5.4"
+    // id("io.gatling.gradle") version "3.13.5.4"
 
     // manages releases, i.e. maven version number and git tags (not artifact publication)
     id("net.researchgate.release") version "3.1.0"
