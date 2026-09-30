@@ -8,12 +8,11 @@ import dev.detekt.gradle.Detekt
 plugins {
     id("org.springframework.boot") version "3.5.6"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("jvm") version "2.2.10"
-    kotlin("plugin.spring") version "2.2.10"
+    kotlin("jvm") version "2.4.10"
+    kotlin("plugin.spring") version "2.4.10"
 
-    id("dev.detekt") version "2.0.0-alpha.0"
-    id("org.jetbrains.kotlinx.kover") version "0.9.2"
-    // id("io.gatling.gradle") version "3.13.5.4"
+    id("dev.detekt") version "2.0.0-alpha.6"
+    id("org.jetbrains.kotlinx.kover") version "0.9.8"
 
     // manages releases, i.e. maven version number and git tags (not artifact publication)
     id("net.researchgate.release") version "3.1.0"
@@ -26,7 +25,7 @@ plugins {
 }
 
 group = "org.heigit.ohsome.now.stats"
-java.sourceCompatibility = JavaVersion.VERSION_21
+java.sourceCompatibility = JavaVersion.VERSION_25
 
 repositories {
     mavenCentral()
@@ -56,7 +55,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.set(listOf("-Xjsr305=strict", "-Xemit-jvm-type-annotations"))
-        jvmTarget.set(JvmTarget.JVM_21)
+        jvmTarget.set(JvmTarget.JVM_25)
     }
 }
 

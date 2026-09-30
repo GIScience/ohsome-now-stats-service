@@ -45,10 +45,10 @@ check [GIScience/ohsome-now-stats-frontend](https://github.com/GIScience/ohsome-
 
 ## Technology
 
-* JVM: Java 17
+* JVM: Java 25
 * Base framework: Spring Boot 3
-* Build tool: Gradle 8.14
-* Implementation language: Kotlin 2.0.21
+* Build tool: Gradle 9.8.0
+* Implementation language: Kotlin 2.4.10
 * Test Framework: JUnit Jupiter 5.9
 * additional HTTP integration and performance tests: Hurl 1.8
 * API documentation: OpenAPI / Swagger
