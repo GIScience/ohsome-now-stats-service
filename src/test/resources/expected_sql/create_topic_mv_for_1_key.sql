@@ -14,8 +14,8 @@ SELECT `changeset_timestamp`,
        `h3_r6`
 
 FROM int.all_stats_7
-WHERE changeset_timestamp > parseDateTimeBestEffort('2023-06-15 17:00:00')
-  AND (
+WHERE
+   (
     amenity_current != '' OR amenity_before != ''
     )
 ;

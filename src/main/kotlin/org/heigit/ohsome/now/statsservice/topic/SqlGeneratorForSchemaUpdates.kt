@@ -273,8 +273,6 @@ fun createTopicMvDDL(
         `h3_r6`
     FROM $stage.all_stats_${statsSchemaVersion}
     WHERE
-        changeset_timestamp > parseDateTimeBestEffort('$dateTime')
-        AND
         (
             ${whereClause(definition)}
         )

@@ -215,6 +215,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
     @Nested
     @DisplayName("topic insert statement")
+    //    TODO: remove feature and tests for mv insertion
     inner class InsertStatementTests {
 
         @Test
