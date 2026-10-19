@@ -14,7 +14,6 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
     private val topicSchemaVersion = "6"
     private val stage = "int"
 
-    private val dateTime = "2023-06-15 17:00:00"
 
     val amenityMatcher = KeyValueMatcher("amenity", listOf("doctors", "clinic")) // values not important here
     val healthcareMatcher = KeyValueMatcher("healthcare", listOf("doctors", "clinic")) // values not important here
@@ -92,7 +91,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
         @Test
         fun `stats user MV DDL`() {
 
-            val sql = createStatsMaterializedViewForUserTable(stage, statsSchemaVersion, dateTime)
+            val sql = createStatsMaterializedViewForUserTable(stage, statsSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedMVForStatsUser)
         }
@@ -162,7 +161,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("amenity", listOf(amenityMatcher))
 
-            val sql = createTopicMvDDL(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTopicMvDDL(definition, stage, statsSchemaVersion, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
         }
@@ -173,7 +172,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
 
-            val sql = createTopicMvDDL(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTopicMvDDL(definition, stage, statsSchemaVersion, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingPunctuationAndWhitespace(expectedMV1Key)
         }
@@ -184,7 +183,7 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
 
             val definition = TopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
 
-            val sql = createTopicMvDDL(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
+            val sql = createTopicMvDDL(definition, stage, statsSchemaVersion, topicSchemaVersion)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedMV2Keys)
         }

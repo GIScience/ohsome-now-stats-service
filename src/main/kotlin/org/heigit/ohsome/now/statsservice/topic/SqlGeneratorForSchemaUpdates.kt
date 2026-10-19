@@ -148,7 +148,7 @@ fun createStatsUserTable(stage: String, schemaVersion: String) = """
     """.trimIndent().trimMargin()
 
 @Suppress("LongMethod")
-fun createStatsMaterializedViewForUserTable(stage: String, schemaVersion: String, dateTime: String) = """
+fun createStatsMaterializedViewForUserTable(stage: String, schemaVersion: String) = """
 CREATE MATERIALIZED VIEW ${stage}.mv__all_stats_${schemaVersion}_to_all_stats_user_${schemaVersion}
 TO ${stage}.all_stats_user_${schemaVersion}
 AS
@@ -177,19 +177,9 @@ FROM ${stage}.all_stats_${schemaVersion}
 
 
 
-fun createTopicDeleteStatement(
-    definition: TopicDefinition,
-    dateTime: String,
-    stage: String,
-    topicSchemaVersion: String
-) = """ALTER TABLE $stage.topic_${definition.topicName}_${topicSchemaVersion} DELETE 
-       WHERE changeset_timestamp <= parseDateTimeBestEffort('$dateTime');
-""".trimIndent()
-
 @Suppress("LongMethod", "LongParameterList")
 fun createTopicMvDDL(
     definition: TopicDefinition,
-    dateTime: String,
     stage: String,
     statsSchemaVersion: String,
     topicSchemaVersion: String
