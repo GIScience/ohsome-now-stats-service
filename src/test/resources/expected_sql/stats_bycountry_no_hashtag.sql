@@ -3,7 +3,7 @@ SELECT
     count(distinct user_id) as contributor,
     count(map_feature_edit) as edit,
     country_iso_a3 as country
-FROM "all_stats_3"
+FROM "all_stats_4"
     ARRAY JOIN country_iso_a3
 WHERE
     changeset_timestamp > :startDate

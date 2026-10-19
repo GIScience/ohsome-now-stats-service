@@ -1,6 +1,6 @@
-TRUNCATE all_stats_3;
+TRUNCATE all_stats_4;
 
-INSERT INTO all_stats_3 (
+INSERT INTO all_stats_4 (
   "changeset_id",
   "changeset_timestamp",
   "hashtags",
