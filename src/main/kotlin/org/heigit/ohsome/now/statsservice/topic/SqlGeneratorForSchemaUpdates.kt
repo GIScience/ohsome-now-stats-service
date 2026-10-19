@@ -36,6 +36,10 @@ fun createStatsTableDDL(stage: String, schemaVersion: String) = """
         `h3_r3`               Nullable(UInt64),
         `h3_r6`               Nullable(UInt64),
         `country_iso_a3`      Array(String),
+        
+        -- new metadata column
+        `ohsomedb_changeset_upserted_at`      DateTime('UTC')
+    
         INDEX all_stats_${schemaVersion}_skip_ht_ix hashtags TYPE set(0) GRANULARITY 1,
         INDEX all_stats_${schemaVersion}_skip_cts_ix country_iso_a3 TYPE set(0) GRANULARITY 1
     )
