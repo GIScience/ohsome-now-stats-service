@@ -1,4 +1,4 @@
-INSERT INTO topic_healthcare_3
+INSERT INTO topic_healthcare_4
     (changeset_timestamp, hashtags, user_id, healthcare_current, healthcare_before, amenity_current, amenity_before, country_iso_a3, has_hashtags)
 VALUES
     (parseDateTimeBestEffort('2023-11-25T08:43:19.000Z'), ['adt'], 20366537, 'hospital', 'hospital', 'hospital', 'hospital', ['BRA'], true),

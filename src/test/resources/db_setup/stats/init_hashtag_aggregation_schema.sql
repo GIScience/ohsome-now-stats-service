@@ -1,5 +1,5 @@
 -- for hashtags endpoint
-CREATE TABLE IF NOT EXISTS hashtag_aggregation_3
+CREATE TABLE IF NOT EXISTS hashtag_aggregation_4
 (
     `hashtag`           String,
     `count`             UInt64

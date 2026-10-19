@@ -1,4 +1,4 @@
-INSERT INTO topic_user_place_3
+INSERT INTO topic_user_place_4
     (user_id, changeset_timestamp, country_iso_a3, hashtags, place_current, place_before, has_hashtags)
 VALUES
     (4362353, toDateTime(1420991580), ['BRA'], ['hotmicrogrant'], 'town', '', true),

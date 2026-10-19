@@ -1,4 +1,4 @@
-INSERT INTO topic_building_3
+INSERT INTO topic_building_4
     (changeset_timestamp,hashtags,user_id,country_iso_a3,building_current,building_before,has_hashtags)
 VALUES
     (parseDateTimeBestEffort('2013-07-18 00:27:14'),['&'],1654628,['USA'],'house','',true),

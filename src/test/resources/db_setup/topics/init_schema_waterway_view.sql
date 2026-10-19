@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS topic_waterway_3;
+DROP TABLE IF EXISTS topic_waterway_4;
 
 
-CREATE TABLE topic_waterway_3
+CREATE TABLE topic_waterway_4
 (
     `changeset_timestamp` DateTime('UTC'),
     `hashtags`            Array(String),

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS all_stats_user_3
+CREATE TABLE IF NOT EXISTS all_stats_user_4
 (
     changeset_id Int64,
     changeset_timestamp DateTime('UTC'),

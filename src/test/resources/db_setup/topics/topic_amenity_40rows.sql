@@ -1,5 +1,5 @@
 
-INSERT INTO topic_amenity_3
+INSERT INTO topic_amenity_4
     (changeset_timestamp, hashtags, user_id, country_iso_a3, amenity_current, amenity_before, has_hashtags)
 VALUES
     (parseDateTimeBestEffort('2017-06-03 14:22:11'), ['hotosm-project-osmliberia'], 3243541, ['LBR'], 'place_of_worship', '', true),

@@ -1,6 +1,6 @@
-TRUNCATE hashtag_aggregation_3;
+TRUNCATE hashtag_aggregation_4;
 
-INSERT INTO hashtag_aggregation_3
+INSERT INTO hashtag_aggregation_4
     (hashtag, count)
 VALUES ('&gid', 4),
        ('&uganda', 1),

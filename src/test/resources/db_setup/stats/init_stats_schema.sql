@@ -27,8 +27,12 @@ CREATE TABLE IF NOT EXISTS all_stats_4
     h3_r3 Nullable(UInt64),
     h3_r6 Nullable(UInt64),
 
-    country_iso_a3 Array(String)
-)
+    country_iso_a3 Array(String),
+
+    -- new metadata column
+    `ohsomedb_changeset_upserted_at`      DateTime('UTC')
+
+    )
 ENGINE = MergeTree
 PRIMARY KEY(has_hashtags, changeset_timestamp)
 SETTINGS non_replicated_deduplication_window = 10000

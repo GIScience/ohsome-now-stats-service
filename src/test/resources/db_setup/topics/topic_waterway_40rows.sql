@@ -1,4 +1,4 @@
-INSERT INTO topic_waterway_3
+INSERT INTO topic_waterway_4
     (user_id, changeset_timestamp, country_iso_a3, hashtags, waterway_current, waterway_before, length, length_delta, has_hashtags)
 VALUES
     (4362353, toDateTime(1630486233), ['BRA'], ['hotmicrogrant2021'], 'canal', 'brook', 512.3, 743, true),

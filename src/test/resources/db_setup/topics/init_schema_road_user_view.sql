@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS topic_user_road_3;
+DROP TABLE IF EXISTS topic_user_road_4;
 
 
-CREATE TABLE topic_user_road_3
+CREATE TABLE topic_user_road_4
 (
     `changeset_timestamp` DateTime('UTC'),
     `hashtags`            Array(String),

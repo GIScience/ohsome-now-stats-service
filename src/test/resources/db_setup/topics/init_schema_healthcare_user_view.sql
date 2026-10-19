@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS topic_user_healthcare_3;
+DROP TABLE IF EXISTS topic_user_healthcare_4;
 
-CREATE TABLE IF NOT EXISTS topic_user_healthcare_3
+CREATE TABLE IF NOT EXISTS topic_user_healthcare_4
 (
     `changeset_timestamp` DateTime('UTC'),
     `hashtags`            Array(String),
