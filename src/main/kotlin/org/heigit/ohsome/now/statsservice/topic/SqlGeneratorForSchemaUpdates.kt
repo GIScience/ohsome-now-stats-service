@@ -172,8 +172,6 @@ SELECT
     `h3_r6`,
     `country_iso_a3`
 FROM ${stage}.all_stats_${schemaVersion}
-WHERE
-    changeset_timestamp > parseDateTimeBestEffort('$dateTime')
 ;    
 """.trimIndent().trimMargin()
 
