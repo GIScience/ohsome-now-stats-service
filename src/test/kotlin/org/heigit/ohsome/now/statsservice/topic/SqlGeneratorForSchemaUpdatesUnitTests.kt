@@ -26,7 +26,6 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
     val expectedMVForHashtagAggregation = file("create_stats_mv_for_hashtag_aggregation")
     val expectedTableForStatsUser = file("create_stats_user_table")
     val expectedMVForStatsUser = file("create_stats_user_mv_for_user_table")
-    val expectedInsertForStatsUser = file("create_stats_user_insert")
 
 
     //topics
@@ -38,9 +37,6 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
     val expectedMV1Key = file("create_topic_mv_for_1_key")
     val expectedMV2Keys = file("create_topic_mv_for_2_keys")
     val expectedMVUser = file("create_topic_user_mv")
-
-    val expectedInsertStatement1Key = file("create_topic_insert_statement_for_1_key")
-    val expectedInsertStatement2Keys = file("create_topic_insert_statement_for_2_keys")
 
 
     @Nested
@@ -99,14 +95,6 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
             val sql = createStatsMaterializedViewForUserTable(stage, statsSchemaVersion, dateTime)
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedMVForStatsUser)
-        }
-
-        @Test
-        fun `stats user insert`() {
-
-            val sql = createStatsUserTableInsert(stage, statsSchemaVersion, dateTime)
-            assertThat(sql)
-                .isEqualToNormalizingWhitespace(expectedInsertForStatsUser)
         }
 
     }
@@ -210,46 +198,6 @@ class SqlGeneratorForSchemaUpdatesUnitTests {
             assertThat(sql)
                 .isEqualToNormalizingWhitespace(expectedMVUser)
         }
-
-    }
-
-    @Nested
-    @DisplayName("topic insert statement")
-    //    TODO: remove feature and tests for mv insertion
-    inner class InsertStatementTests {
-
-        @Test
-        fun `for single key and INT stage - key-value definition`() {
-
-            val definition = TopicDefinition("amenity", listOf(amenityMatcher))
-
-            val sql = createTopicInsertStatement(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
-            assertThat(sql)
-                .isEqualToNormalizingWhitespace(expectedInsertStatement1Key)
-        }
-
-        @Test
-        fun `for single key and INT stage - key-only definition`() {
-
-            val definition = TopicDefinition("amenity", listOf(KeyOnlyMatcher("amenity")))
-
-
-            val sql = createTopicInsertStatement(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
-            assertThat(sql)
-                .isEqualToNormalizingWhitespace(expectedInsertStatement1Key)
-        }
-
-
-        @Test
-        fun `for two keys and INT stage`() {
-
-            val definition = TopicDefinition("healthcare", listOf(healthcareMatcher, amenityMatcher))
-
-            val sql = createTopicInsertStatement(definition, dateTime, stage, statsSchemaVersion, topicSchemaVersion)
-            assertThat(sql)
-                .isEqualToNormalizingWhitespace(expectedInsertStatement2Keys)
-        }
-
 
     }
 

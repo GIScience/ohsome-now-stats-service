@@ -177,67 +177,6 @@ WHERE
 ;    
 """.trimIndent().trimMargin()
 
-@Suppress("LongMethod")
-fun createStatsUserTableInsert(
-    stage: String, schemaVersion: String, dateTime: String
-) = """
-INSERT INTO ${stage}.all_stats_user_${schemaVersion}
-SELECT
-    `changeset_id`,
-    `changeset_timestamp`,
-    `hashtags`,
-    `editor`,
-    `user_id`,
-    `osm_id`,
-    `tags`,
-    `tags_before`,
-    `area`,
-    `area_delta`,
-    `length`,
-    `length_delta`,
-    `map_feature_edit`,
-    `has_hashtags`,
-    `centroid`,
-    `h3_r3`,
-    `h3_r6`,
-    `country_iso_a3`
-FROM ${stage}.all_stats_${schemaVersion}
-WHERE
-    changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
-;
-""".trimIndent().trimMargin()
-
-
-@Suppress("LongMethod", "LongParameterList")
-fun createTopicInsertStatement(
-    definition: TopicDefinition,
-    dateTime: String,
-    stage: String,
-    statsSchemaVersion: String,
-    topicSchemaVersion: String
-) = """
-    INSERT into $stage.topic_${definition.topicName}_${topicSchemaVersion}
-    SELECT
-        `changeset_timestamp`,
-        `hashtags`,
-        `user_id`,
-        `country_iso_a3`,
-        ${keyColumnsFromTags(definition)}
-        ${optionalAreaOrLengthColumnNames(definition)}
-        `has_hashtags`,
-        `centroid`,
-        `h3_r3`,
-        `h3_r6`
-    FROM
-        $stage.all_stats_${statsSchemaVersion}
-    WHERE
-        changeset_timestamp <= parseDateTimeBestEffort('$dateTime')
-        AND
-        (
-            ${whereClause(definition)}
-        )
-    ;
-    """.trimIndent().trimMargin()
 
 
 fun createTopicDeleteStatement(
