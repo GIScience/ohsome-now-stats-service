@@ -20,7 +20,7 @@ FROM
            ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted,
         toStartOfInterval(changeset_timestamp, INTERVAL :interval)::DateTime as inner_startdate
 
-    FROM topic_place_3
+    FROM topic_place_4
     WHERE
       has_hashtags = true
       AND arrayExists(hashtag -> startsWith(hashtag, :hashtag), hashtags)

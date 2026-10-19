@@ -9,7 +9,7 @@ SELECT ifNull(sum(edit), 0) as topic_result,
        ifNull(sum(if(edit = 0, 1, 0)), 0) as topic_result_modified,
        ifNull(sum(if(edit = -1, 1, 0)), 0) as topic_result_deleted
 
-FROM topic_amenity_3
+FROM topic_amenity_4
 WHERE
     changeset_timestamp > :startDate
     AND changeset_timestamp < :endDate
