@@ -7,7 +7,7 @@ import java.io.File
 import java.time.Instant.now
 
 
-@Disabled("Run manually only for schema changes")
+//@Disabled("Run manually only for schema changes")
 class SqlGenerator {
 
 
